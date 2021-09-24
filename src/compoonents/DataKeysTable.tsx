@@ -62,6 +62,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
               <li>
                 <code>{keyInfo.key}</code>
               </li>
+              <li>{keyInfo.valueType}</li>
               <li>
                 Raw value: <code>{data.value}</code>
               </li>
