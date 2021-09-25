@@ -36,14 +36,20 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
 
   console.log(decodedDataOneKey);
 
-  return (
-    <div>
-      <pre>{JSON.stringify(decodedDataOneKey, null, 4)}</pre>
-      {decodedDataOneKey[erc725JSONSchema.name].url && (
-        <span>URL: {decodedDataOneKey[erc725JSONSchema.name].url}</span>
-      )}
-    </div>
-  );
+  try {
+    return (
+      <div>
+        <pre>
+          {JSON.stringify(decodedDataOneKey[erc725JSONSchema.name], null, 4)}
+        </pre>
+        {decodedDataOneKey[erc725JSONSchema.name].url && (
+          <span>URL: {decodedDataOneKey[erc725JSONSchema.name].url}</span>
+        )}
+      </div>
+    );
+  } catch (err) {
+    return <span>Can't decode this key</span>;
+  }
 };
 
 export default ValueTypeDecoder;
