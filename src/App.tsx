@@ -27,6 +27,7 @@ const App = () => {
 
       setIsErc725X(false);
       setIsErc725Y(false);
+      setErrorMessage('');
 
       if (!isAddress(address)) {
         setErrorMessage('Address is not valid');
@@ -49,13 +50,14 @@ const App = () => {
       <section className="section">
         <div className="container is-fluid">
           <div className="columns is-vcentered">
-            <div className="column">
+            <div className="column is-offset-one-quarter is-half has-text-centered">
               <div className="field">
-                <label className="label">Contract Address</label>
-                <div className="control">
+                <div className={`control ${isLoading && 'is-loading'}`}>
                   <input
-                    className={`input ${
-                      errorMessage === '' ? 'is-success' : 'is-danger'
+                    className={`input is-rounded has-text-centered is-medium ${
+                      errorMessage === '' && (isErc725X || isErc725Y)
+                        ? 'is-success'
+                        : 'is-danger'
                     }`}
                     type="text"
                     placeholder="ERC725 Contract Address"
@@ -64,29 +66,26 @@ const App = () => {
                       setAddress(e.target.value);
                     }}
                   />
-                  <span className="icon is-small is-left">
-                    <i className="fas fa-user"></i>
-                  </span>
-                  <span className="icon is-small is-right">
-                    <i className="fas fa-check"></i>
-                  </span>
                 </div>
                 {errorMessage && (
                   <p className="help is-danger">{errorMessage}</p>
                 )}
+                {!errorMessage && !isErc725X && !isErc725Y && (
+                  <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
+                )}
+
+                {(isErc725X || isErc725Y) && (
+                  <p className="help is-success">
+                    ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y:{' '}
+                    {isErc725Y ? '✅' : '❌'}
+                  </p>
+                )}
               </div>
-            </div>
-            <div className="column">
-              ERC725X: {isErc725X ? '✅' : '❌'}
-              <br />
-              ERC725Y: {isErc725Y ? '✅' : '❌'}
             </div>
           </div>
         </div>
         <div className="container is-fluid">
-          {isLoading ? (
-            'Loading...'
-          ) : (
+          {!isLoading && (
             <div>
               <DataKeysTable address={address} isErc725Y={isErc725Y} />
             </div>
