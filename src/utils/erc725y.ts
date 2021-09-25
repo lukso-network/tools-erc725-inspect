@@ -85,7 +85,6 @@ export const explainErc725YKey = (
         valueContent: 'JSONURL',
         valueType: 'bytes',
       };
-
     default:
       break;
   }

@@ -67,6 +67,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                 Raw value:{' '}
                 <code style={{ lineBreak: 'anywhere' }}>{data.value}</code>
               </li>
+              <li>Value content: {keyInfo.valueContent}</li>
               <li>
                 Decoded value{' '}
                 <span className="tag is-link is-light">
