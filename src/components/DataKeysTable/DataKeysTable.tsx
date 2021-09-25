@@ -92,6 +92,12 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                     >
                       Blockscout
                     </a>
+                    <a
+                      className="button is-link is-light"
+                      href={`/?address=${data.value}`}
+                    >
+                      ERC725 Inspect
+                    </a>
                   </div>
                 )}
               </li>
