@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import useWeb3 from '../../hooks/useWeb3';
 import { getAllDataKeys, getDataMultiple } from '../../utils/web3';
 import { explainErc725YKey } from '../../utils/erc725y';
+import AddressButtons from '../AddressButtons';
 
 interface Props {
   address: string;
@@ -77,43 +78,20 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                 {keyInfo.valueType === 'address' ? (
                   <>
                     <code>{data.value}</code>
-                    <div className="buttons are-small pt-2">
-                      <a
-                        className="button is-primary is-light"
-                        target="_blank"
-                        rel="noreferrer"
-                        href={`https://universalprofile.cloud/${data.value}`}
-                      >
-                        View on UP as Profile 🧑‍🎤
-                      </a>
-                      <a
-                        className="button is-info is-light"
-                        target="_blank"
-                        rel="noreferrer"
-                        href={`https://universalprofile.cloud/asset/${data.value}`}
-                      >
-                        View on UP as Asset 👗
-                      </a>
-                      <a
-                        className="button is-link is-light"
-                        target="_blank"
-                        rel="noreferrer"
-                        href={`https://blockscout.com/lukso/l14/address/${data.value}`}
-                      >
-                        View on Blockscout ⛓
-                      </a>
-                      <a
-                        className="button is-link is-light"
-                        href={`/?address=${data.value}`}
-                      >
-                        ERC725 Inspect 🔍
-                      </a>
-                    </div>
+                    <AddressButtons address={data.value} />
                   </>
                 ) : (
                   'TODO'
                 )}
               </li>
+              {keyInfo.keyType === 'AddressMappingWithGrouping' && (
+                <li>
+                  Mapped address: <code>0x{keyInfo.name.split(':').pop()}</code>{' '}
+                  <AddressButtons
+                    address={`0x${keyInfo.name.split(':').pop()}`}
+                  />
+                </li>
+              )}
             </ul>
           </div>
         );
