@@ -31,7 +31,10 @@ const AddressButtons: React.FC<Props> = ({ address }) => {
       >
         View on Blockscout ⛓
       </a>
-      <a className="button is-link is-light" href={`/?address=${address}`}>
+      <a
+        className="button is-link is-light"
+        href={`${window.location}?address=${address}`}
+      >
         ERC725 Inspect 🔍
       </a>
     </div>
