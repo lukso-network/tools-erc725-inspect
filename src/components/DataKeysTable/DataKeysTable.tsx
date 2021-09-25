@@ -65,7 +65,35 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
               </li>
               <li>{keyInfo.valueType}</li>
               <li>
-                Raw value: <code>{data.value}</code>
+                Raw value: <code>{data.value}</code>{' '}
+                {keyInfo.valueType === 'address' && (
+                  <div className="buttons are-small">
+                    <a
+                      className="button is-primary is-light"
+                      target="_blank"
+                      rel="noreferrer"
+                      href={`https://universalprofile.cloud/${data.value}`}
+                    >
+                      View UP as Profile
+                    </a>
+                    <a
+                      className="button is-info is-light"
+                      target="_blank"
+                      rel="noreferrer"
+                      href={`https://universalprofile.cloud/asset/${data.value}`}
+                    >
+                      View UP as Asset
+                    </a>
+                    <a
+                      className="button is-link is-light"
+                      target="_blank"
+                      rel="noreferrer"
+                      href={`https://blockscout.com/lukso/l14/address/${data.value}`}
+                    >
+                      Blockscout
+                    </a>
+                  </div>
+                )}
               </li>
               <li>Decoded value: TODO</li>
             </ul>
