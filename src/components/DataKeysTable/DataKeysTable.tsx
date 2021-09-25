@@ -45,7 +45,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
   }, [address, web3, isErc725Y]);
 
   if (!isErc725Y) {
-    return <div>This address does not support ERC725Y</div>;
+    return null;
   }
 
   return (

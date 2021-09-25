@@ -32,6 +32,17 @@ export const explainErc725YKey = (
         valueType: 'bytes',
       };
     }
+    case '0x114bd03b3a46d48759680d81ebb2b414fda7d030a7105a851867accf1c2352e7': {
+      return {
+        name: 'LSP4Creators[]',
+        key: '0x114bd03b3a46d48759680d81ebb2b414fda7d030a7105a851867accf1c2352e7',
+        keyType: 'Array',
+        valueContent: 'Number',
+        valueType: 'uint256',
+        elementValueContent: 'Address',
+        elementValueType: 'address',
+      };
+    }
     // LSP3
     case '0xeafec4d89fa9619884b6b89135626455000000000000000000000000abe425d6':
       return {
@@ -104,6 +115,18 @@ export const explainErc725YKey = (
       keyType: 'AddressMappingWithGrouping',
       valueContent: 'BitArray',
       valueType: 'bytes4',
+    };
+  }
+
+  if (key.indexOf('0x114bd03b3a46d48759680d81ebb2b414') !== -1) {
+    const itemNumber = parseInt(key.substr(34), 10);
+
+    return {
+      name: `LSP4Creators[${itemNumber}]`,
+      key: key,
+      keyType: 'Singleton',
+      valueContent: 'Address',
+      valueType: 'address',
     };
   }
 
