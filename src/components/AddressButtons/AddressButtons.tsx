@@ -2,11 +2,15 @@ import React from 'react';
 
 interface Props {
   address: string;
+  showInspectButton?: boolean;
 }
 
-const AddressButtons: React.FC<Props> = ({ address }) => {
+const AddressButtons: React.FC<Props> = ({
+  address,
+  showInspectButton = true,
+}) => {
   return (
-    <div className="buttons are-small pt-2">
+    <div className="buttons is-centered are-small pt-2">
       <a
         className="button is-primary is-light"
         target="_blank"
@@ -31,12 +35,14 @@ const AddressButtons: React.FC<Props> = ({ address }) => {
       >
         View on Blockscout ⛓
       </a>
-      <a
-        className="button is-link is-light"
-        href={`${window.location}?address=${address}`}
-      >
-        ERC725 Inspect 🔍
-      </a>
+      {showInspectButton && (
+        <a
+          className="button is-link is-light"
+          href={`${window.location.href.split('?')[0]}?address=${address}`}
+        >
+          ERC725 Inspect 🔍
+        </a>
+      )}
     </div>
   );
 };

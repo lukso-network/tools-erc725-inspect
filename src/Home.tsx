@@ -8,6 +8,7 @@ import { checkInterface } from './utils/web3';
 
 import DataKeysTable from './components/DataKeysTable';
 import Header from './components/Header';
+import AddressButtons from './components/AddressButtons';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -96,7 +97,9 @@ const Home = () => {
                     className="button is-success"
                     onClick={() => {
                       navigator.clipboard.writeText(
-                        `${window.location}?address=${address}`,
+                        `${
+                          window.location.href.split('?')[0]
+                        }?address=${address}`,
                       );
                       setShareButtonTitle('Address copied in clipboard');
                     }}
@@ -105,6 +108,9 @@ const Home = () => {
                   </button>
                 </p>
               </div>
+              {!errorMessage && (
+                <AddressButtons address={address} showInspectButton={false} />
+              )}
             </div>
           </div>
         </div>
