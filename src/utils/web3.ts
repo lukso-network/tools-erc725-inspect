@@ -35,9 +35,51 @@ export const getDataMultiple = async (
     dataMultiple = await Contract.methods.getDataMultiple(keys).call();
   } catch (err: any) {
     console.log(err.message);
+
+    // Maybe getDataMultiple is not avail. on this contract, use getData instead
+    keys.map(async (key) => {
+      const data = await getData(address, web3, key);
+      dataMultiple.push(data);
+    });
   }
 
   return dataMultiple;
+};
+
+export const getData = async (address: string, web3: Web3, key: string) => {
+  const Contract = new web3.eth.Contract(
+    [
+      {
+        type: 'function',
+        stateMutability: 'view',
+        outputs: [
+          {
+            type: 'bytes',
+            name: '_value',
+            internalType: 'bytes',
+          },
+        ],
+        name: 'getData',
+        inputs: [
+          {
+            type: 'bytes32',
+            name: '_key',
+            internalType: 'bytes32',
+          },
+        ],
+      },
+    ],
+    address,
+  );
+
+  let data;
+  try {
+    data = await Contract.methods.getData(key).call();
+  } catch (err: any) {
+    console.log(err.message);
+  }
+
+  return data;
 };
 
 export const checkInterface = async (address: string, web3: Web3) => {
