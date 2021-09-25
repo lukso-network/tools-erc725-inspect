@@ -130,6 +130,18 @@ export const explainErc725YKey = (
     };
   }
 
+  if (key.indexOf('0x3a47ab5bd3a594c3a8995f8fa58d0876') !== -1) {
+    const itemNumber = parseInt(key.substr(34), 10);
+
+    return {
+      name: `LSP3IssuedAssets[${itemNumber}]`,
+      key: key,
+      keyType: 'Singleton',
+      valueContent: 'Address',
+      valueType: 'address',
+    };
+  }
+
   return {
     name: 'UNKNOWN',
     key,
