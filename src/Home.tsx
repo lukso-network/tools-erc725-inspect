@@ -96,7 +96,7 @@ const Home = () => {
                     className="button is-success"
                     onClick={() => {
                       navigator.clipboard.writeText(
-                        `${window.location.origin}/?address=${address}`,
+                        `${window.location}/?address=${address}`,
                       );
                       setShareButtonTitle('Address copied in clipboard');
                     }}
