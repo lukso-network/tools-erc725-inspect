@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import useWeb3 from '../hooks/useWeb3';
-import { getAllDataKeys, getDataMultiple } from '../utils/web3';
-import { explainErc725YKey } from '../utils/erc725y';
+
+import useWeb3 from '../../hooks/useWeb3';
+import { getAllDataKeys, getDataMultiple } from '../../utils/web3';
+import { explainErc725YKey } from '../../utils/erc725y';
 
 interface Props {
   address: string;

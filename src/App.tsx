@@ -5,7 +5,7 @@ import './App.css';
 import useWeb3 from './hooks/useWeb3';
 import { checkInterface } from './utils/web3';
 
-import DataKeysTable from './compoonents/DataKeysTable';
+import DataKeysTable from './components/DataKeysTable';
 
 const App = () => {
   const [address, setAddress] = useState(
