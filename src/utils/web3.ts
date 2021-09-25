@@ -30,17 +30,16 @@ export const getDataMultiple = async (
     address,
   );
 
-  let dataMultiple = [];
+  let dataMultiple: string[] = [];
   try {
     dataMultiple = await Contract.methods.getDataMultiple(keys).call();
   } catch (err: any) {
     console.log(err.message);
 
-    // Maybe getDataMultiple is not avail. on this contract, use getData instead
-    keys.map(async (key) => {
-      const data = await getData(address, web3, key);
-      dataMultiple.push(data);
-    });
+    console.log('getDataMultiple not working, fetching with getData');
+    dataMultiple = await Promise.all(
+      keys.map((key) => getData(address, web3, key)),
+    );
   }
 
   return dataMultiple;
