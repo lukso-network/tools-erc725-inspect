@@ -85,6 +85,14 @@ export const explainErc725YKey = (
         valueContent: 'JSONURL',
         valueType: 'bytes',
       };
+    case '0xdf30dba06db6a30e65354d9a64c609861f089545ca58c6b4dbe31a5f338cb0e3':
+      return {
+        name: 'AddressPermissions[]',
+        key: '0xdf30dba06db6a30e65354d9a64c609861f089545ca58c6b4dbe31a5f338cb0e3',
+        keyType: 'Array',
+        valueContent: 'Address',
+        valueType: 'address',
+      };
     default:
       break;
   }
@@ -105,6 +113,7 @@ export const explainErc725YKey = (
     };
   }
 
+  // LSP6 - https://github.com/lukso-network/LIPs/blob/7e3f5db43330c5c8d2643ccba32f896461db7381/LSPs/LSP-6-KeyManager.md#permission-keys-on-the-erc725account
   if (key.indexOf('0x4b80742d0000000082ac0000') !== -1) {
     const address = key.substr(26);
 
@@ -114,6 +123,39 @@ export const explainErc725YKey = (
       keyType: 'AddressMappingWithGrouping',
       valueContent: 'BitArray',
       valueType: 'bytes4',
+    };
+  }
+  if (key.indexOf('0x4b80742d00000000c6dd0000') !== -1) {
+    const address = key.substr(26);
+
+    return {
+      name: `AddressPermissions:AllowedAddresses:${address}`,
+      key,
+      keyType: 'AddressMappingWithGrouping',
+      valueContent: 'Address',
+      valueType: 'address[]',
+    };
+  }
+  if (key.indexOf('0x4b80742d000000008efe0000') !== -1) {
+    const address = key.substr(26);
+
+    return {
+      name: `AddressPermissions:AllowedFunctions:${address}`,
+      key,
+      keyType: 'AddressMappingWithGrouping',
+      valueContent: 'Bytes4',
+      valueType: 'bytes4[]',
+    };
+  }
+  if (key.indexOf('0x4b80742d000000003efa0000') !== -1) {
+    const address = key.substr(26);
+
+    return {
+      name: `AddressPermissions:AllowedStandards:${address}`,
+      key,
+      keyType: 'AddressMappingWithGrouping',
+      valueContent: 'Bytes4',
+      valueType: 'bytes4[]',
     };
   }
 
