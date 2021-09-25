@@ -110,9 +110,7 @@ const Home = () => {
         </div>
         <div className="container is-fluid">
           {!isLoading && (
-            <div>
-              <DataKeysTable address={address} isErc725Y={isErc725Y} />
-            </div>
+            <DataKeysTable address={address} isErc725Y={isErc725Y} />
           )}
         </div>
       </section>

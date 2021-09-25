@@ -1,5 +1,5 @@
 @charset "utf-8";
-@import "../node_modules/bulma/bulma.sass";
+@import '../node_modules/bulma/bulma.sass';
 
 body {
   margin: 0;
@@ -11,6 +11,5 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  line-break: anywhere;
 }

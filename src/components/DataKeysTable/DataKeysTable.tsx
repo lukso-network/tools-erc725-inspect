@@ -50,49 +50,51 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
   }
 
   return (
-    <div>
+    <div className="columns is-multiline">
       {data.map((data) => {
         const keyInfo = explainErc725YKey(data.key);
 
         return (
-          <div key={data.key} className="content py-5">
-            <h4 className="title is-4">
-              {keyInfo.name}{' '}
-              <span className="tag is-link is-light">{keyInfo.keyType}</span>
-            </h4>
-            <ul>
-              <li>
-                Key: <code>{keyInfo.key}</code>
-              </li>
-              <li>
-                Raw value:{' '}
-                <code style={{ lineBreak: 'anywhere' }}>{data.value}</code>
-              </li>
-              <li>Value content: {keyInfo.valueContent}</li>
-              <li>
-                Decoded value{' '}
-                <span className="tag is-link is-light">
-                  {keyInfo.valueType}
-                </span>
-                :{' '}
-                {keyInfo.valueType === 'address' ? (
-                  <>
-                    <code>{data.value}</code>
-                    <AddressButtons address={data.value} />
-                  </>
-                ) : (
-                  'TODO'
-                )}
-              </li>
-              {keyInfo.keyType === 'AddressMappingWithGrouping' && (
+          <div className="column is-half">
+            <div key={data.key} className="content py-5">
+              <h4 className="title is-4">
+                {keyInfo.name}{' '}
+                <span className="tag is-link is-light">{keyInfo.keyType}</span>
+              </h4>
+              <ul>
                 <li>
-                  Mapped address: <code>0x{keyInfo.name.split(':').pop()}</code>{' '}
-                  <AddressButtons
-                    address={`0x${keyInfo.name.split(':').pop()}`}
-                  />
+                  Key: <code>{keyInfo.key}</code>
                 </li>
-              )}
-            </ul>
+                <li>
+                  Raw value: <code>{data.value}</code>
+                </li>
+                <li>Value content: {keyInfo.valueContent}</li>
+                <li>
+                  Decoded value{' '}
+                  <span className="tag is-link is-light">
+                    {keyInfo.valueType}
+                  </span>
+                  :{' '}
+                  {keyInfo.valueType === 'address' ? (
+                    <>
+                      <code>{data.value}</code>
+                      <AddressButtons address={data.value} />
+                    </>
+                  ) : (
+                    'TODO'
+                  )}
+                </li>
+                {keyInfo.keyType === 'AddressMappingWithGrouping' && (
+                  <li>
+                    Mapped address:{' '}
+                    <code>0x{keyInfo.name.split(':').pop()}</code>{' '}
+                    <AddressButtons
+                      address={`0x${keyInfo.name.split(':').pop()}`}
+                    />
+                  </li>
+                )}
+              </ul>
+            </div>
           </div>
         );
       })}
