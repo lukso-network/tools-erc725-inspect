@@ -1,13 +1,5 @@
 import { ERC725JSONSchema } from '@erc725/erc725.js';
-
-// Used to put UNKNOWN and to deal with missing types in erc725.js
-interface Erc725JsonSchemaAll {
-  name: string;
-  key: string;
-  keyType: string;
-  valueContent: string;
-  valueType: string;
-}
+import { Erc725JsonSchemaAll } from '../interfaces/erc725';
 
 export const explainErc725YKey = (
   key: string,

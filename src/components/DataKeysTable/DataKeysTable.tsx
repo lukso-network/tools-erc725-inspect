@@ -4,6 +4,7 @@ import useWeb3 from '../../hooks/useWeb3';
 import { getAllDataKeys, getDataMultiple } from '../../utils/web3';
 import { explainErc725YKey } from '../../utils/erc725y';
 import AddressButtons from '../AddressButtons';
+import ValueTypeDecoder from '../ValueTypeDecoder';
 
 interface Props {
   address: string;
@@ -66,23 +67,22 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                   Key: <code>{keyInfo.key}</code>
                 </li>
                 <li>
-                  Raw value: <code>{data.value}</code>
-                </li>
-                <li>Value content: {keyInfo.valueContent}</li>
-                <li>
-                  Decoded value{' '}
+                  Raw value{' '}
                   <span className="tag is-link is-light">
                     {keyInfo.valueType}
                   </span>
+                  : <code>{data.value}</code>
+                </li>
+                <li>
+                  Decoded value{' '}
+                  <span className="tag is-link is-light">
+                    {keyInfo.valueContent}
+                  </span>
                   :{' '}
-                  {keyInfo.valueType === 'address' ? (
-                    <>
-                      <code>{data.value}</code>
-                      <AddressButtons address={data.value} />
-                    </>
-                  ) : (
-                    'TODO'
-                  )}
+                  <ValueTypeDecoder
+                    erc725JSONSchema={keyInfo}
+                    value={data.value}
+                  />
                 </li>
                 {keyInfo.keyType === 'AddressMappingWithGrouping' && (
                   <li>
