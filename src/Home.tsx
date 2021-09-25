@@ -22,6 +22,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
+  const [shareButtonTitle, setShareButtonTitle] = useState('Copy share link');
   const [errorMessage, setErrorMessage] = useState('');
 
   const web3 = useWeb3();
@@ -87,6 +88,22 @@ const Home = () => {
                     {isErc725Y ? '✅' : '❌'}
                   </p>
                 )}
+              </div>
+              <div className="field">
+                <p className="control">
+                  <button
+                    disabled={!!errorMessage}
+                    className="button is-success"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        `${window.location.origin}/?address=${address}`,
+                      );
+                      setShareButtonTitle('Address copied in clipboard');
+                    }}
+                  >
+                    {shareButtonTitle}
+                  </button>
+                </p>
               </div>
             </div>
           </div>
