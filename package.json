@@ -1,8 +1,7 @@
 {
-  "name": "erc725-inspect",
+  "name": "tools-erc725-inspect",
   "version": "0.1.0",
-  "private": true,
-  "homepage": "https://hugoo.github.io/erc725-inspect",
+  "private": false,
   "dependencies": {
     "@erc725/erc725.js": "^0.6.2-beta.4",
     "@testing-library/jest-dom": "^5.11.4",

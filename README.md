@@ -2,7 +2,7 @@
 
 Blockchain is transparent, but it is hard to read. This web app let's you inspect in a user friendly way the content of ERC725 smart contracts.
 
-Live url: <https://hugoo.github.io/erc725-inspect>
+Live url: <https://erc725-inspect.lukso.tech/>
 
 ## Resources
 
