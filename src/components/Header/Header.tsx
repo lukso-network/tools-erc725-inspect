@@ -1,3 +1,6 @@
+/**
+ * @author Hugo Masclet <git@hugom.xyz>
+ */
 import React from 'react';
 
 const Header: React.FC = () => {

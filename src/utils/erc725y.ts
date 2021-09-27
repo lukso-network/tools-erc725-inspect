@@ -1,3 +1,6 @@
+/**
+ * @author Hugo Masclet <git@hugom.xyz>
+ */
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 import { Erc725JsonSchemaAll } from '../interfaces/erc725';
 

@@ -1,3 +1,6 @@
+/**
+ * @author Hugo Masclet <git@hugom.xyz>
+ */
 import Web3 from 'web3';
 
 export const getDataMultiple = async (

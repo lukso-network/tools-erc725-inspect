@@ -1,3 +1,7 @@
+/**
+ * @author Hugo Masclet <git@hugom.xyz>
+ */
+
 import React, { useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 import { useLocation } from 'react-router-dom';
