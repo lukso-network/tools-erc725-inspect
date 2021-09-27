@@ -20,7 +20,7 @@ const Header: React.FC = () => {
                 href="https://github.com/lukso-network/LIPs/tree/master/LSPs"
                 className="button is-light"
               >
-                LUKSO LIP
+                LUKSO LSPs
               </a>
             </div>
           </div>
