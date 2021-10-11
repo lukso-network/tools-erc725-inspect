@@ -41,7 +41,7 @@ const Header: React.FC = () => {
               <p className="control">
                 <a
                   className="button is-primary"
-                  href="https://github.com/Hugoo/erc725-inspect/"
+                  href="https://github.com/lukso-network/tools-erc725-inspect"
                 >
                   <span>GitHub</span>
                 </a>
