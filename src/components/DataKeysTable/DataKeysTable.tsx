@@ -12,16 +12,21 @@ import ValueTypeDecoder from '../ValueTypeDecoder';
 interface Props {
   address: string;
   isErc725Y: boolean;
+  isErc725YLegacy: boolean;
 }
 
-const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
+const DataKeysTable: React.FC<Props> = ({
+  address,
+  isErc725Y,
+  isErc725YLegacy,
+}) => {
   const [data, setData] = useState<{ key: string; value: string }[]>([]);
 
   const web3 = useWeb3();
 
   useEffect(() => {
     const fetch = async () => {
-      if (!web3 || !isErc725Y) {
+      if (!web3 || !isErc725YLegacy) {
         return;
       }
 
@@ -47,10 +52,14 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
     };
 
     fetch();
-  }, [address, web3, isErc725Y]);
+  }, [address, web3, isErc725Y, isErc725YLegacy]);
 
-  if (!isErc725Y) {
+  if (!isErc725Y && !isErc725YLegacy) {
     return null;
+  }
+
+  if (isErc725Y) {
+    return <div>New ERC725Y contracts are not supported yet.</div>;
   }
 
   return (
