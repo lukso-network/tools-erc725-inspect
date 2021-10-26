@@ -27,6 +27,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
+  const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
   const [shareButtonTitle, setShareButtonTitle] = useState('Copy share link');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -40,6 +41,7 @@ const Home = () => {
 
       setIsErc725X(false);
       setIsErc725Y(false);
+      setIsErc725YLegacy(false);
       setErrorMessage('');
 
       if (!isAddress(address)) {
@@ -52,6 +54,7 @@ const Home = () => {
 
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
+      setIsErc725YLegacy(supportStandards.isErc725YLegacy);
       setIsLoading(false);
     };
     check();
@@ -89,8 +92,9 @@ const Home = () => {
 
                 {(isErc725X || isErc725Y) && (
                   <p className="help is-success">
-                    ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y:{' '}
-                    {isErc725Y ? '✅' : '❌'}
+                    ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
+                    {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
+                    {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
                   </p>
                 )}
               </div>
@@ -120,7 +124,11 @@ const Home = () => {
         </div>
         <div className="container is-fluid">
           {!isLoading && (
-            <DataKeysTable address={address} isErc725Y={isErc725Y} />
+            <DataKeysTable
+              address={address}
+              isErc725YLegacy={isErc725YLegacy}
+              isErc725Y={isErc725Y}
+            />
           )}
         </div>
       </section>
