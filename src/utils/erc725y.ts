@@ -32,10 +32,8 @@ export const explainErc725YKey = (
         name: 'LSP4Creators[]',
         key: '0x114bd03b3a46d48759680d81ebb2b414fda7d030a7105a851867accf1c2352e7',
         keyType: 'Array',
-        valueContent: 'Number',
-        valueType: 'uint256',
-        elementValueContent: 'Address',
-        elementValueType: 'address',
+        valueContent: 'Address',
+        valueType: 'address',
       };
     }
     // LSP3
@@ -53,10 +51,8 @@ export const explainErc725YKey = (
         name: 'LSP3IssuedAssets[]',
         key: '0x3a47ab5bd3a594c3a8995f8fa58d0876c96819ca4516bd76100c92462f2f9dc0',
         keyType: 'Array',
-        valueContent: 'Number',
-        valueType: 'uint256',
-        elementValueContent: 'Address',
-        elementValueType: 'address',
+        valueContent: 'Address',
+        valueType: 'address',
       };
     case '0xeafec4d89fa9619884b6b89135626455000000000000000000000000afdeb5d6':
       return {
@@ -117,9 +113,9 @@ export const explainErc725YKey = (
     return {
       name: `AddressPermissions:Permissions:${address}`,
       key,
-      keyType: 'AddressMappingWithGrouping',
+      keyType: 'Bytes20MappingWithGrouping',
       valueContent: 'BitArray',
-      valueType: 'bytes4',
+      valueType: 'bytes32',
     };
   }
   if (key.indexOf('0x4b80742d00000000c6dd0000') !== -1) {
@@ -128,7 +124,7 @@ export const explainErc725YKey = (
     return {
       name: `AddressPermissions:AllowedAddresses:${address}`,
       key,
-      keyType: 'AddressMappingWithGrouping',
+      keyType: 'Bytes20MappingWithGrouping',
       valueContent: 'Address',
       valueType: 'address[]',
     };
@@ -139,7 +135,7 @@ export const explainErc725YKey = (
     return {
       name: `AddressPermissions:AllowedFunctions:${address}`,
       key,
-      keyType: 'AddressMappingWithGrouping',
+      keyType: 'Bytes20MappingWithGrouping',
       valueContent: 'Bytes4',
       valueType: 'bytes4[]',
     };
@@ -150,7 +146,7 @@ export const explainErc725YKey = (
     return {
       name: `AddressPermissions:AllowedStandards:${address}`,
       key,
-      keyType: 'AddressMappingWithGrouping',
+      keyType: 'Bytes20MappingWithGrouping',
       valueContent: 'Bytes4',
       valueType: 'bytes4[]',
     };
@@ -161,6 +157,18 @@ export const explainErc725YKey = (
 
     return {
       name: `LSP4Creators[${itemNumber}]`,
+      key: key,
+      keyType: 'Singleton',
+      valueContent: 'Address',
+      valueType: 'address',
+    };
+  }
+
+  if (key.indexOf('0xdf30dba06db6a30e65354d9a64c60986') !== -1) {
+    const itemNumber = parseInt(key.substr(34), 10);
+
+    return {
+      name: `AddressPermissions[${itemNumber}]`,
       key: key,
       keyType: 'Singleton',
       valueContent: 'Address',
@@ -193,7 +201,7 @@ export const explainErc725YKey = (
 Array: An array spanning multiple ERC725Y keys.
 Mapping: A key that maps two words.
 AddressMapping: A key that maps a word to an address.
-AddressMappingWithGrouping
+Bytes20MappingWithGrouping
 
 */
 };

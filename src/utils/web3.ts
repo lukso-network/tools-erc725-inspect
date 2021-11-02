@@ -45,14 +45,18 @@ export const getDataMultiple = async (
 
     console.log('getDataMultiple not working, fetching with getData');
     dataMultiple = await Promise.all(
-      keys.map((key) => getData(address, web3, key)),
+      keys.map((key) => getDataLegacy(address, web3, key)),
     );
   }
 
   return dataMultiple;
 };
 
-export const getData = async (address: string, web3: Web3, key: string) => {
+/**
+ * For contracts deployed with version bellow: 0.1.3
+ * @lukso/universalprofile-smart-contracts
+ */
+const getDataLegacy = async (address: string, web3: Web3, key: string) => {
   const Contract = new web3.eth.Contract(
     [
       {
@@ -81,6 +85,46 @@ export const getData = async (address: string, web3: Web3, key: string) => {
   let data;
   try {
     data = await Contract.methods.getData(key).call();
+  } catch (err: any) {
+    console.log(err.message);
+  }
+
+  return data;
+};
+
+/**
+ * For contracts deployed with version bellow: 0.1.3
+ * @lukso/universalprofile-smart-contracts
+ */
+export const getData = async (address: string, keys: string[], web3: Web3) => {
+  const Contract = new web3.eth.Contract(
+    [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [
+          {
+            internalType: 'bytes32[]',
+            name: '_keys',
+            type: 'bytes32[]',
+          },
+        ],
+        name: 'getData',
+        outputs: [
+          {
+            internalType: 'bytes[]',
+            name: 'values',
+            type: 'bytes[]',
+          },
+        ],
+      },
+    ],
+    address,
+  );
+
+  let data: string[] = [];
+  try {
+    data = await Contract.methods.getData(keys).call();
   } catch (err: any) {
     console.log(err.message);
   }
