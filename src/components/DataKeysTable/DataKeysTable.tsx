@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 
 import useWeb3 from '../../hooks/useWeb3';
-import { getAllDataKeys, getDataMultiple } from '../../utils/web3';
+import { getAllDataKeys, getData, getDataMultiple } from '../../utils/web3';
 import { explainErc725YKey } from '../../utils/erc725y';
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
@@ -26,17 +26,28 @@ const DataKeysTable: React.FC<Props> = ({
 
   useEffect(() => {
     const fetch = async () => {
-      if (!web3 || !isErc725YLegacy) {
+      if (!web3) {
+        return;
+      }
+
+      if (!isErc725Y && !isErc725YLegacy) {
         return;
       }
 
       try {
         const fetchedDataKeys = await getAllDataKeys(address, web3);
-        const fetchedDataValues = await getDataMultiple(
-          address,
-          fetchedDataKeys,
-          web3,
-        );
+
+        let fetchedDataValues: string[] = [];
+
+        if (isErc725Y) {
+          fetchedDataValues = await getData(address, fetchedDataKeys, web3);
+        } else {
+          fetchedDataValues = await getDataMultiple(
+            address,
+            fetchedDataKeys,
+            web3,
+          );
+        }
 
         setData(
           fetchedDataKeys.map((fetchedDataKey, i) => {
@@ -56,10 +67,6 @@ const DataKeysTable: React.FC<Props> = ({
 
   if (!isErc725Y && !isErc725YLegacy) {
     return null;
-  }
-
-  if (isErc725Y) {
-    return <div>New ERC725Y contracts are not supported yet.</div>;
   }
 
   return (
