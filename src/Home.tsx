@@ -52,6 +52,8 @@ const Home = () => {
       setIsLoading(true);
       const supportStandards = await checkInterface(address, web3);
 
+      console.log(supportStandards);
+
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
       setIsErc725YLegacy(supportStandards.isErc725YLegacy);
@@ -86,11 +88,14 @@ const Home = () => {
                 {errorMessage && (
                   <p className="help is-danger">{errorMessage}</p>
                 )}
-                {!errorMessage && !isErc725X && !isErc725Y && (
-                  <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
-                )}
+                {!errorMessage &&
+                  !isErc725X &&
+                  !isErc725Y &&
+                  !isErc725YLegacy && (
+                    <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
+                  )}
 
-                {(isErc725X || isErc725Y) && (
+                {(isErc725X || isErc725Y || isErc725YLegacy) && (
                   <p className="help is-success">
                     ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
                     {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
