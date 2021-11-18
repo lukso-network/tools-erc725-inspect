@@ -86,6 +86,14 @@ export const explainErc725YKey = (
         valueContent: 'Address',
         valueType: 'address',
       };
+    case '0x1a1e32b38337f521a36766193fd2e091a127818911ce81e81e5541ae7f577bbb':
+      return {
+        name: 'LSP3Follows[]',
+        key: '0x1a1e32b38337f521a36766193fd2e091a127818911ce81e81e5541ae7f577bbb',
+        keyType: 'Array',
+        valueContent: 'Address',
+        valueType: 'address',
+      };      
     default:
       break;
   }
@@ -181,6 +189,18 @@ export const explainErc725YKey = (
 
     return {
       name: `LSP3IssuedAssets[${itemNumber}]`,
+      key: key,
+      keyType: 'Singleton',
+      valueContent: 'Address',
+      valueType: 'address',
+    };
+  }
+
+  if (key.indexOf('0x1a1e32b38337f521a36766193fd2e091') !== -1) {
+    const itemNumber = parseInt(key.substr(34), 10);
+
+    return {
+      name: `LSP3Follows[${itemNumber}]`,
       key: key,
       keyType: 'Singleton',
       valueContent: 'Address',
