@@ -1,8 +1,14 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import "../styles/globals.scss";
+import type { AppProps } from "next/app";
+
+import ScopedCssBaseline from "@mui/material/ScopedCssBaseline";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <ScopedCssBaseline>
+      <Component {...pageProps} />
+    </ScopedCssBaseline>
+  );
 }
 
-export default MyApp
+export default MyApp;
