@@ -5,7 +5,6 @@ import { TRANSACTION_TYPES } from "../../interfaces/transaction";
 import EncodeExecute from "./components/EncodeExecute";
 import EncodeSetData from "./components/EncodeSetData";
 import EncodeTransferOwnership from "./components/EncodeTransferOwnership";
-import ERC725Account from "../../abis/ERC725Account.json";
 
 interface Props {
     web3: Web3;
@@ -13,21 +12,19 @@ interface Props {
 
 const DEFAULT_TRANSACTION_TYPE = TRANSACTION_TYPES.SET_DATA;
 
-const Encode: React.FC<Props> = ({web3}) => {
+const Encode: React.FC<Props> = ({ web3 }) => {
     const [mode, setMode] = useState(DEFAULT_TRANSACTION_TYPE);
     const [encodedPayload, setEncodedPayload] = useState('')
-
-    // const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
 
     return (
         <>
             <FormControl component="fieldset">
-            <FormLabel component="legend">Transaction Type</FormLabel>
-            <RadioGroup row aria-label="mode" name="row-radio-buttons-group" defaultValue={DEFAULT_TRANSACTION_TYPE} onChange={(e) => setMode(e.target.value as TRANSACTION_TYPES)}>
-                <FormControlLabel value={TRANSACTION_TYPES.SET_DATA} control={<Radio />} label="Set Data" />
-                <FormControlLabel value={TRANSACTION_TYPES.EXECUTE} control={<Radio />} label="Execute" />
-                <FormControlLabel value={TRANSACTION_TYPES.TRANSFER_OWNERSHIP} control={<Radio />} label="Transfer Ownership" />
-            </RadioGroup>
+                <FormLabel component="legend">Transaction Type</FormLabel>
+                <RadioGroup row aria-label="mode" name="row-radio-buttons-group" defaultValue={DEFAULT_TRANSACTION_TYPE} onChange={(e) => setMode(e.target.value as TRANSACTION_TYPES)}>
+                    <FormControlLabel value={TRANSACTION_TYPES.SET_DATA} control={<Radio />} label="Set Data" />
+                    <FormControlLabel value={TRANSACTION_TYPES.EXECUTE} control={<Radio />} label="Execute" />
+                    <FormControlLabel value={TRANSACTION_TYPES.TRANSFER_OWNERSHIP} control={<Radio />} label="Transfer Ownership" />
+                </RadioGroup>
             </FormControl>
 
             <Container>

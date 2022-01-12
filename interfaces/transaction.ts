@@ -16,28 +16,3 @@ export const TRANSACTION_PARAMETERS = {
   TRANSFER_OWNERSHIP: ["address"],
 };
 
-interface BaseTransaction {
-  type: TRANSACTION_TYPES;
-}
-
-export interface SetData extends BaseTransaction {
-  type: TRANSACTION_TYPES.SET_DATA;
-  data: { keys: string[]; values: string[] };
-}
-
-export interface Execute extends BaseTransaction {
-  type: TRANSACTION_TYPES.EXECUTE;
-  data: {
-    operation: string;
-    recipient: string;
-    amount: number;
-    data: string;
-  };
-}
-
-export interface TransferOwnership extends BaseTransaction {
-  type: TRANSACTION_TYPES.TRANSFER_OWNERSHIP;
-  data: { newOwner: string };
-}
-
-export type Transaction = Execute | SetData | TransferOwnership;

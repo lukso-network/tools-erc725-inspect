@@ -1,4 +1,4 @@
-import { Box, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, useTheme } from "@mui/material";
+import { Box, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -17,7 +17,6 @@ const DEFAULT_MODE = TX_PARSER_MODES.ENODE;
 const Home: NextPage = () => {
     const router = useRouter();
     const web3 = useWeb3();
-    const theme = useTheme();
     const [mode, setMode] = useState(DEFAULT_MODE);
 
     return (

@@ -2,18 +2,35 @@ import { Button, TextField } from "@mui/material";
 import { useState } from "react";
 import Web3 from "web3";
 import EncodedPayload from "./EncodedPayload";
-
-// import SaveIcon from "@material-ui/icons/Save";
+import ERC725Account from "../../../abis/ERC725Account.json"
+import ErrorMessage from "../../ErrorMessage";
 
 interface Props {
     web3: Web3;
-    erc725Account: any
 }
 
-const EncodeTransferOwnership: React.FC<Props> = ({web3, erc725Account}) => {
+const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
     const [newOwner, setNewOwner] = useState("");
     const [encodedPayload, setEncodedPayload] = useState("");
+    const [encodingError, setEncodingError] = useState({ isError: false, message: "" });
 
+
+    const encodeABI = () => {
+        const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
+
+        try {
+            setEncodedPayload(
+                erc725Account.methods
+                    .transferOwnership(newOwner)
+                    .encodeABI()
+            );
+
+            setEncodingError({ isError: false, message: '' });
+        } catch (error) {
+            setEncodingError({ isError: true, message: error.message });
+            setEncodedPayload('')
+        }
+    }
 
     return (
         <>
@@ -30,16 +47,13 @@ const EncodeTransferOwnership: React.FC<Props> = ({web3, erc725Account}) => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    onClick={() => {
-                        setEncodedPayload(
-                            newOwner
-                        );
-                    }}
+                    onClick={encodeABI}
                 >
                     Encode ABI
                 </Button>
 
                 {encodedPayload ? <EncodedPayload encodedPayload={encodedPayload} /> : null}
+                {encodingError.isError ? <ErrorMessage header='ABI Encoding Error!' message={encodingError.message} /> : null}
             </div>
         </>
     )

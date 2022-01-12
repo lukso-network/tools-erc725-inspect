@@ -2,10 +2,11 @@ import { Grid, MenuItem, InputLabel, Select, TextField, Button } from "@mui/mate
 import { useState } from "react";
 import Web3 from "web3";
 import EncodedPayload from "./EncodedPayload";
+import ERC725Account from "../../../abis/ERC725Account.json"
+import ErrorMessage from "../../ErrorMessage";
 
 interface Props {
     web3: Web3;
-    erc725Account: any
 }
 
 const EncodeExecute: React.FC<Props> = ({ web3 }) => {
@@ -14,10 +15,30 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
     const [recipient, setRecipient] = useState("");
     const [amount, setAmount] = useState("");
     const [data, setData] = useState("");
+    const [encodingError, setEncodingError] = useState({ isError: false, message: "" });
+
+    const encodeABI = () => {
+        const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
+
+        try {
+            let weiAmount = web3.utils.toWei(amount);
+
+            setEncodedPayload(
+                erc725Account.methods
+                    .execute(operation, recipient, weiAmount, data)
+                    .encodeABI()
+            );
+
+            setEncodingError({ message: '', isError: false })
+        } catch (error) {
+            setEncodedPayload('')
+            setEncodingError({ message: error.message, isError: true })
+        }
+    }
 
     return (
         <>
-            <Grid container justifyContent="center">
+            <Grid container justifyContent="center" spacing={2}>
                 <Grid item md={12}>
                     <InputLabel id="demo-simple-select-label">Operation</InputLabel>
                     <Select
@@ -74,19 +95,12 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    onClick={() => {
-                        // let weiAmount = web3.utils.toWei(amount);
-                        setEncodedPayload(
-                            // account.methods
-                            //   .execute(operation, recipient, weiAmount, data)
-                            //   .encodeABI()
-                            '0x'
-                        );
-                    }}
+                    onClick={encodeABI}
                 >
                     Encode ABI
                 </Button>
                 {encodedPayload ? <EncodedPayload encodedPayload={encodedPayload} /> : null}
+                {encodingError.isError ? <ErrorMessage header='ABI Encoding Error!' message={encodingError.message} /> : null}
             </div>
         </>
     );

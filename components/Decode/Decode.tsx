@@ -1,106 +1,237 @@
-import { Alert, Box, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextareaAutosize, useTheme } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Alert, Box, Chip, Container, FormControl, FormControlLabel, FormLabel, Grid, List, ListItem, Radio, RadioGroup, TextareaAutosize, TextField, useTheme } from "@mui/material";
+import React, { ReactElement, useEffect, useState } from "react";
 import Web3 from "web3";
-import { Transaction, TRANSACTION_PARAMETERS, TRANSACTION_SELECTORS, TRANSACTION_TYPES } from "../../interfaces/transaction";
+import { TRANSACTION_SELECTORS, TRANSACTION_TYPES } from "../../interfaces/transaction";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 interface Props {
     web3: Web3;
 }
 
-const Decode: React.FC<Props> = ({web3}) => {
-    const [transactionData, setTransactionData] = useState<Transaction | null>(null);
-    const [abiError, setABIError] = useState({ error: false, message: "" });
+const Decode: React.FC<Props> = ({ web3 }) => {
+    const [abiError, setABIError] = useState({ isError: false, message: "" });
+    const [selector, setSelector] = useState("");
+    const [payload, setPayload] = useState("");
+    const [transactionType, setTransactionType] = useState(null)
 
     const handleChange = (input: string) => {
         if (input.slice(0, 2) !== "0x") {
             setABIError({
-                error: true,
+                isError: true,
                 message: "Invalid payload. Missing `0x` prefix for hexadecimal",
-              });
-              return;
+            });
+            return;
         }
 
         let selector = input.slice(2, 10);
         let payload = input.slice(10);
 
-        let transaction: Transaction;
+        setSelector(selector);
+        setPayload(payload);
 
+
+        if (!Object.values(TRANSACTION_SELECTORS).includes(selector)) {
+            setABIError({
+                isError: true,
+                message: "Unrecognised ERC725 selector",
+            });
+            return;
+        } else {
+            setABIError({ isError: false, message: "" });
+        }
+    }
+
+    function ShowDecoder({ selector, payload, web3 }: { selector: string, payload: string, web3: Web3 }) {
         switch (selector) {
             case (TRANSACTION_SELECTORS.SET_DATA): {
-                const result = web3.eth.abi.decodeParameters(TRANSACTION_PARAMETERS.SET_DATA, payload);
-
-                transaction = {
-                    type: TRANSACTION_TYPES.SET_DATA,
-                    data: {
-                        keys: result[0],
-                        values: result[1]
-                    }
-                }
-                
-                break;
+                setTransactionType(TRANSACTION_TYPES.SET_DATA);
+                return decodeSetData(payload, web3);
             }
             case (TRANSACTION_SELECTORS.EXECUTE): {
-                const result = web3.eth.abi.decodeParameters(TRANSACTION_PARAMETERS.EXECUTE, payload);
-
-                transaction = {
-                    type: TRANSACTION_TYPES.EXECUTE,
-                    data: {
-                        operation: result[0],
-                        recipient: result[1],
-                        amount: result[2],
-                        data: result[3] ? result[3] : '0x'
-                    }
-                }
-
-                break;
+                setTransactionType(TRANSACTION_TYPES.EXECUTE);
+                return decodeExecute(payload, web3);
             }
             case (TRANSACTION_SELECTORS.TRANSFER_OWNERSHIP): {
-                const result = web3.eth.abi.decodeParameters(TRANSACTION_PARAMETERS.TRANSFER_OWNERSHIP, payload);
-
-                transaction = {
-                    type: TRANSACTION_TYPES.TRANSFER_OWNERSHIP,
-                    data: {
-                        newOwner: result[0]
-                    }
-                }
-
-                break;
-            }
-            default: {
-                setABIError({
-                    error: true,
-                    message: "Unrecognised ERC725 transaction selector",
-                  });
-                return;
+                setTransactionType(TRANSACTION_TYPES.TRANSFER_OWNERSHIP);
+                return decodeTransferOwnership(payload, web3);
             }
         }
-
-        setABIError({ error: false, message: "" });
-        setTransactionData(transaction as Transaction);
     }
 
     return (<>
-        <TextareaAutosize
-            minRows={8}
-            maxRows={8}
-            placeholder="Paste your abi here..."
-            onChange={(e) => handleChange(e.target.value as string)}
-        />
+        <Container>
 
-        {abiError.error ? <Alert severity="error">{abiError.message}</Alert> : ""}
 
-        <div>{transactionData?.type}</div>
-        <ul>{transactionData?.data ? 
-            Object.keys(transactionData?.data).map(function(keyName, keyIndex) {
-                return (
-                    <li key={keyName}>
-                        {keyName}: {transactionData?.data[keyName]}
-                    </li>
-                )
-            }) : null}
-	    </ul>
+            <Grid container spacing={2}>
+                <Grid item sm={12} md={12}>
+                    <TextareaAutosize
+                        minRows={8}
+                        maxRows={8}
+                        placeholder="Paste your abi here..."
+                        onChange={(e) => handleChange(e.target.value as string)}
+                        style={{ width: 500 }}
+                    />
+                </Grid>
+
+                <Grid md={12} sm={12}>
+                    {abiError.isError ? <Alert severity="error">{abiError.message}</Alert> : ""}
+                </Grid>
+
+                <Grid item>
+                    <Chip
+                        label="Set Data"
+                        color={transactionType === TRANSACTION_TYPES.SET_DATA ? 'primary' : 'default'}
+                    />
+                    <Chip
+                        label="Execute"
+                        color={transactionType === TRANSACTION_TYPES.EXECUTE ? 'primary' : 'default'}
+                    />
+                    <Chip
+                        label="Transfer Ownership"
+                        color={transactionType === TRANSACTION_TYPES.TRANSFER_OWNERSHIP ? 'primary' : 'default'}
+                    />
+                </Grid>
+
+                <Grid item md={12}>
+                    {!abiError.isError && payload.length > 0 ? (
+                        <ShowDecoder
+                            selector={selector}
+                            payload={payload}
+                            web3={web3}
+                        />
+                    ) : ""}
+                </Grid>
+            </Grid>
+        </Container>
     </>);
 }
 
+const decodeTransferOwnership = (payload: string, web3: Web3) => {
+    try {
+        let result = web3.eth.abi.decodeParameters(["address"], payload);
+        return (
+            <Grid container spacing={2}>
+                <Grid item md={12}>
+                    <Alert severity="warning">
+                        <b>Warning! </b>
+                        This payload will transfer ownership to {result[0]}.<br /> Be cautious!
+                    </Alert>
+                </Grid>
+                <Grid item md={12}>
+                    <TextField
+                        label="new owner"
+                        defaultValue="0x..."
+                        value={result[0]}
+                        fullWidth
+                        InputProps={{ readOnly: true }}
+                    />
+                </Grid>
+            </Grid >
+        );
+    } catch (error) {
+        return (
+            <Grid item md={12}>
+                <ErrorMessage header='ABI Decoder Error!' message={error.message} />
+            </Grid>
+        );;
+    }
+}
+
+const decodeSetData = (payload: string, web3: Web3) => {
+    try {
+        let result = web3.eth.abi.decodeParameters(
+            ["bytes32[]", "bytes[]"],
+            payload
+        );
+
+        return (
+            <Grid container spacing={2}>
+                <Grid item md={6}>
+                    Keys
+                </Grid>
+                <Grid item md={6}>
+                    Values
+                </Grid>
+                {result[0].map((key: string, index: number) => (
+                    <>
+                        <Grid item md={6}>
+                            <TextField
+                                value={key}
+                                fullWidth
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item md={6}>
+                            <TextField
+                                value={result[1][index]}
+                                fullWidth
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                    </>
+                ))}
+            </Grid>
+
+        );
+
+    } catch (error) {
+        return (
+            <Grid item md={12}>
+                <ErrorMessage header='ABI Decoder Error!' message={error.message} />
+            </Grid>
+        );;
+    }
+}
+
+const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
+    try {
+        let result = web3.eth.abi.decodeParameters(
+            ["uint256", "address", "uint256", "bytes"],
+            payload
+        );
+        return (
+            <Grid container container spacing={2}>
+                <Grid item md={12}>
+                    <TextField
+                        label="Operation"
+                        value={result[0]}
+                        fullWidth
+                        InputProps={{ readOnly: true }}
+                    />
+                </Grid>
+                <Grid item md={12}>
+                    <TextField
+                        label="Recipient"
+                        value={result[1]}
+                        fullWidth
+                        InputProps={{ readOnly: true }}
+                    />
+                </Grid>
+                <Grid item md={12}>
+                    <TextField
+                        label="Amount"
+                        value={result[2]}
+                        fullWidth
+                        InputProps={{ readOnly: true }}
+                    />
+                </Grid>
+                <Grid item md={12}>
+                    <TextField
+                        label="Data"
+                        value={result[3] ? result[3] : '0x'}
+                        fullWidth
+                        InputProps={{ readOnly: true }}
+                    />
+                </Grid>
+            </Grid>
+        );
+    } catch (error) {
+        return (
+            <Grid item md={12}>
+                <ErrorMessage header='ABI Decoder Error!' message={error.message} />
+            </Grid>
+        );;
+    }
+}
 
 export default Decode;

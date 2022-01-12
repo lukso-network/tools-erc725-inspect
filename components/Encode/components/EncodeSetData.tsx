@@ -1,18 +1,19 @@
-import { Grid, TextField, Button } from "@mui/material";
+import { Grid, TextField, Button, Alert } from "@mui/material";
 import { useState } from "react";
 import Web3 from "web3";
 import EncodedPayload from "./EncodedPayload";
+import ERC725Account from "../../../abis/ERC725Account.json"
+import ErrorMessage from "../../ErrorMessage";
 
 interface Props {
     web3: Web3;
-    erc725Account: any
 }
 
 const EncodeSetData: React.FC<Props> = ({ web3 }) => {
     const [encodedPayload, setEncodedPayload] = useState("");
-    // const [keys, setKeys] = useState([]);
-    // const [values, setValues] = useState([]);
     const [keyValuePairs, setKeyValuePairs] = useState<{ key: string, value: string }[]>([{ key: '', value: '' }]);
+    const [encodingError, setEncodingError] = useState({ isError: false, message: "" });
+
 
     const createInputs = (keyValuePairs: { key: string, value: string }[]) => {
         return keyValuePairs.map((keyValuePair: { key: string, value: string }, index) => {
@@ -47,13 +48,11 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
 
     const removeKeyValue = (index: number) => {
         let vals = [...keyValuePairs];
-        console.log(vals);
         vals.splice(index, 1);
         setKeyValuePairs(vals);
     }
 
     const handleChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target)
         let newKeyValuePairs = [...keyValuePairs];
 
         if (!event.target.id in newKeyValuePairs) {
@@ -65,10 +64,33 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
         setKeyValuePairs(newKeyValuePairs);
     }
 
+    const encodeABI = () => {
+        const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
+
+        const keys = keyValuePairs.map((keyValuePair) => {
+            return keyValuePair.key;
+        });
+
+        const values = keyValuePairs.map((keyValuePair) => {
+            return keyValuePair.value;
+        });
+
+        try {
+            setEncodedPayload(
+                erc725Account.methods
+                    .setData(keys, values)
+                    .encodeABI()
+            );
+
+            setEncodingError({ isError: false, message: '' })
+        } catch (error) {
+            setEncodingError({ isError: true, message: error.message })
+        }
+    }
+
     return (
         <>
             {createInputs(keyValuePairs)}
-
             <div
                 style={{ height: 300, width: "100%", marginBottom: 10, marginTop: 10 }}
             >
@@ -76,15 +98,7 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    onClick={() => {
-                        // let weiAmount = web3.utils.toWei(amount);
-                        setEncodedPayload(
-                            // account.methods
-                            //   .execute(operation, recipient, weiAmount, data)
-                            //   .encodeABI()
-                            '0x'
-                        );
-                    }}
+                    onClick={encodeABI}
                 >
                     Encode ABI
                 </Button>
@@ -92,11 +106,11 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
                 <Button onClick={addKeyValue}>
                     Add Key
                 </Button>
-                {encodedPayload ? <EncodedPayload encodedPayload={encodedPayload} /> : null}
+                {encodedPayload && !encodingError.isError ? <EncodedPayload encodedPayload={encodedPayload} /> : null}
+                {encodingError.isError ? <ErrorMessage header='ABI Encoding Error!' message={encodingError.message} /> : null}
             </div>
         </>
     )
 }
-
 
 export default EncodeSetData;
