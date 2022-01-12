@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Link from "next/link";
 
-const pages = [{ name: "Inspect 📝🔍", link: "/inspect" }];
+const pages = [{ name: "Inspect 📝🔍", link: "/inspect" }, { name: "Tx Parser", link: '/tx-parser' }];
 
 const ResponsiveAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
