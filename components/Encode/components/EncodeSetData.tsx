@@ -1,4 +1,4 @@
-import { Grid, TextField, Button, Alert } from "@mui/material";
+import { Grid, TextField, Button } from "@mui/material";
 import { useState } from "react";
 import Web3 from "web3";
 import EncodedPayload from "./EncodedPayload";
@@ -47,19 +47,23 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
     }
 
     const removeKeyValue = (index: number) => {
-        let vals = [...keyValuePairs];
-        vals.splice(index, 1);
-        setKeyValuePairs(vals);
+        const values = [...keyValuePairs];
+        values.splice(index, 1);
+        setKeyValuePairs(values);
     }
 
     const handleChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-        let newKeyValuePairs = [...keyValuePairs];
+        const newKeyValuePairs = [...keyValuePairs];
 
-        if (!event.target.id in newKeyValuePairs) {
+        const id: string = event.target.id;
+
+        if (!(id in newKeyValuePairs[0])) {
             return;
         }
 
-        newKeyValuePairs[index][event.target.id] = event.target.value;
+        // eslint-disable-next-line
+        // @ts-ignore
+        newKeyValuePairs[index][id] = event.target.value;
 
         setKeyValuePairs(newKeyValuePairs);
     }
@@ -83,7 +87,7 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
             );
 
             setEncodingError({ isError: false, message: '' })
-        } catch (error) {
+        } catch (error: any) {
             setEncodingError({ isError: true, message: error.message })
         }
     }

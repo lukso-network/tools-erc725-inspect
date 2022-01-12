@@ -22,7 +22,8 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
   }
 
   // The schema may be wrong, this error will be catched bellow
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore 
   const schema: ERC725JSONSchema[] = [erc725JSONSchema];
 
   const erc725 = new ERC725(schema);

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Grid, Box, Typography, Tooltip } from "@mui/material";
-import Web3 from "web3";
 
 interface Props {
   encodedPayload: string
