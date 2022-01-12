@@ -1,5 +1,5 @@
-import { Alert, Box, Chip, Container, FormControl, FormControlLabel, FormLabel, Grid, List, ListItem, Radio, RadioGroup, TextareaAutosize, TextField, useTheme } from "@mui/material";
-import React, { ReactElement, useEffect, useState } from "react";
+import { Alert, Grid, Chip, Container, TextareaAutosize, TextField } from "@mui/material";
+import React, { ReactElement, useState } from "react";
 import Web3 from "web3";
 import { TRANSACTION_SELECTORS, TRANSACTION_TYPES } from "../../interfaces/transaction";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
@@ -12,7 +12,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
     const [abiError, setABIError] = useState({ isError: false, message: "" });
     const [selector, setSelector] = useState("");
     const [payload, setPayload] = useState("");
-    const [transactionType, setTransactionType] = useState(null)
+    const [transactionType, setTransactionType] = useState<TRANSACTION_TYPES | null>(null)
 
     const handleChange = (input: string) => {
         if (input.slice(0, 2) !== "0x") {
@@ -23,8 +23,8 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             return;
         }
 
-        let selector = input.slice(2, 10);
-        let payload = input.slice(10);
+        const selector = input.slice(2, 10);
+        const payload = input.slice(10);
 
         setSelector(selector);
         setPayload(payload);
@@ -56,6 +56,8 @@ const Decode: React.FC<Props> = ({ web3 }) => {
                 return decodeTransferOwnership(payload, web3);
             }
         }
+
+        return null;
     }
 
     return (<>
@@ -108,7 +110,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
 
 const decodeTransferOwnership = (payload: string, web3: Web3) => {
     try {
-        let result = web3.eth.abi.decodeParameters(["address"], payload);
+        const result = web3.eth.abi.decodeParameters(["address"], payload);
         return (
             <Grid container spacing={2}>
                 <Grid item md={12}>
@@ -128,18 +130,18 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
                 </Grid>
             </Grid >
         );
-    } catch (error) {
+    } catch (error: any) {
         return (
             <Grid item md={12}>
                 <ErrorMessage header='ABI Decoder Error!' message={error.message} />
             </Grid>
-        );;
+        );
     }
 }
 
 const decodeSetData = (payload: string, web3: Web3) => {
     try {
-        let result = web3.eth.abi.decodeParameters(
+        const result = web3.eth.abi.decodeParameters(
             ["bytes32[]", "bytes[]"],
             payload
         );
@@ -174,23 +176,23 @@ const decodeSetData = (payload: string, web3: Web3) => {
 
         );
 
-    } catch (error) {
+    } catch (error: any) {
         return (
             <Grid item md={12}>
                 <ErrorMessage header='ABI Decoder Error!' message={error.message} />
             </Grid>
-        );;
+        );
     }
 }
 
 const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
     try {
-        let result = web3.eth.abi.decodeParameters(
+        const result = web3.eth.abi.decodeParameters(
             ["uint256", "address", "uint256", "bytes"],
             payload
         );
         return (
-            <Grid container container spacing={2}>
+            <Grid container spacing={2}>
                 <Grid item md={12}>
                     <TextField
                         label="Operation"
@@ -225,12 +227,12 @@ const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
                 </Grid>
             </Grid>
         );
-    } catch (error) {
+    } catch (error: any) {
         return (
             <Grid item md={12}>
                 <ErrorMessage header='ABI Decoder Error!' message={error.message} />
             </Grid>
-        );;
+        );
     }
 }
 

@@ -1,7 +1,6 @@
 import { Box, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Decode from "../components/Decode";
 import Encode from "../components/Encode";
 import NavBar from "../components/NavBar";
@@ -15,7 +14,6 @@ enum TX_PARSER_MODES {
 const DEFAULT_MODE = TX_PARSER_MODES.ENODE;
 
 const Home: NextPage = () => {
-    const router = useRouter();
     const web3 = useWeb3();
     const [mode, setMode] = useState(DEFAULT_MODE);
 
@@ -40,8 +38,8 @@ const Home: NextPage = () => {
                 </Container>
 
                 <Container>
-                    {mode === TX_PARSER_MODES.ENODE ? (<Encode web3={web3} />) : null}
-                    {mode === TX_PARSER_MODES.DECODE ? (<Decode web3={web3} />) : null}
+                    {mode === TX_PARSER_MODES.ENODE && web3 ? (<Encode web3={web3} />) : null}
+                    {mode === TX_PARSER_MODES.DECODE && web3 ? (<Decode web3={web3} />) : null}
                 </Container>
 
             </Box>

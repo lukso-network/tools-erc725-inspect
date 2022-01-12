@@ -1,4 +1,4 @@
-import { Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, useTheme } from "@mui/material";
+import { Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import React, { useState } from "react";
 import Web3 from "web3";
 import { TRANSACTION_TYPES } from "../../interfaces/transaction";
@@ -14,7 +14,6 @@ const DEFAULT_TRANSACTION_TYPE = TRANSACTION_TYPES.SET_DATA;
 
 const Encode: React.FC<Props> = ({ web3 }) => {
     const [mode, setMode] = useState(DEFAULT_TRANSACTION_TYPE);
-    const [encodedPayload, setEncodedPayload] = useState('')
 
     return (
         <>

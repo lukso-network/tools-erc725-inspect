@@ -21,7 +21,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
         const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
 
         try {
-            let weiAmount = web3.utils.toWei(amount);
+            const weiAmount = web3.utils.toWei(amount);
 
             setEncodedPayload(
                 erc725Account.methods
@@ -30,7 +30,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
             );
 
             setEncodingError({ message: '', isError: false })
-        } catch (error) {
+        } catch (error: any) {
             setEncodedPayload('')
             setEncodingError({ message: error.message, isError: true })
         }
@@ -60,7 +60,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
                         value={recipient}
                         fullWidth
                         onChange={(event) => {
-                            let input = event.target.value;
+                            const input = event.target.value;
                             setRecipient(input);
                         }}
                     />
@@ -71,7 +71,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
                         value={amount}
                         fullWidth
                         onChange={(event) => {
-                            let input = event.target.value;
+                            const input = event.target.value;
                             setAmount(input);
                         }}
                     />
@@ -82,7 +82,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
                         value={data}
                         fullWidth
                         onChange={(event) => {
-                            let input = event.target.value;
+                            const input = event.target.value;
                             setData(input);
                         }}
                     />

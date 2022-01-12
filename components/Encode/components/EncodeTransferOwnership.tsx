@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { useState } from "react";
 import Web3 from "web3";
 import EncodedPayload from "./EncodedPayload";
@@ -16,9 +16,6 @@ const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
     const [encodingError, setEncodingError] = useState({ isError: false, message: "" });
 
     let erc725Account: Contract;
-    const encodeABI = () => {
-
-    }
 
     const handleChange = (value: string) => {
         setNewOwner(value);
@@ -35,7 +32,7 @@ const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
             );
 
             setEncodingError({ isError: false, message: '' });
-        } catch (error) {
+        } catch (error: any) {
             setEncodingError({ isError: true, message: error.message });
             setEncodedPayload('')
         }
