@@ -22656,78 +22656,30 @@
   "ast": {
     "absolutePath": "project:/contracts/ERC725/ERC725Account.sol",
     "exportedSymbols": {
-      "BytesLib": [
-        4029
-      ],
-      "Context": [
-        447
-      ],
-      "Create2": [
-        558
-      ],
-      "ECDSA": [
-        1128
-      ],
-      "ERC165": [
-        1152
-      ],
-      "ERC165Storage": [
-        1203
-      ],
-      "ERC725": [
-        1550
-      ],
-      "ERC725Account": [
-        1633
-      ],
-      "ERC725AccountCore": [
-        1815
-      ],
-      "ERC725Utils": [
-        2727
-      ],
-      "ERC725X": [
-        1995
-      ],
-      "ERC725XCore": [
-        2294
-      ],
-      "ERC725Y": [
-        2405
-      ],
-      "ERC725YCore": [
-        2550
-      ],
-      "ERC725YInit": [
-        2604
-      ],
-      "IERC1271": [
-        2683
-      ],
-      "IERC165": [
-        1215
-      ],
-      "IERC725X": [
-        2638
-      ],
-      "IERC725Y": [
-        2669
-      ],
-      "ILSP1": [
-        3623
-      ],
-      "ILSP1Delegate": [
-        3638
-      ],
-      "Initializable": [
-        425
-      ],
-      "OwnableUnset": [
-        2843
-      ],
-      "UtilsLib": [
-        3600
-      ]
+      "BytesLib": [4029],
+      "Context": [447],
+      "Create2": [558],
+      "ECDSA": [1128],
+      "ERC165": [1152],
+      "ERC165Storage": [1203],
+      "ERC725": [1550],
+      "ERC725Account": [1633],
+      "ERC725AccountCore": [1815],
+      "ERC725Utils": [2727],
+      "ERC725X": [1995],
+      "ERC725XCore": [2294],
+      "ERC725Y": [2405],
+      "ERC725YCore": [2550],
+      "ERC725YInit": [2604],
+      "IERC1271": [2683],
+      "IERC165": [1215],
+      "IERC725X": [2638],
+      "IERC725Y": [2669],
+      "ILSP1": [3623],
+      "ILSP1Delegate": [3638],
+      "Initializable": [425],
+      "OwnableUnset": [2843],
+      "UtilsLib": [3600]
     },
     "id": 1634,
     "license": "Apache-2.0",
@@ -22735,12 +22687,7 @@
     "nodes": [
       {
         "id": 1552,
-        "literals": [
-          "solidity",
-          "^",
-          "0.8",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.8", ".0"],
         "nodeType": "PragmaDirective",
         "src": "39:23:12"
       },
@@ -22797,21 +22744,8 @@
           }
         ],
         "contractDependencies": [
-          447,
-          1152,
-          1203,
-          1215,
-          1550,
-          1815,
-          1995,
-          2294,
-          2405,
-          2550,
-          2638,
-          2669,
-          2683,
-          2843,
-          3623
+          447, 1152, 1203, 1215, 1550, 1815, 1995, 2294, 2405, 2550, 2638, 2669,
+          2683, 2843, 3623
         ],
         "contractKind": "contract",
         "documentation": {
@@ -22823,22 +22757,8 @@
         "fullyImplemented": true,
         "id": 1633,
         "linearizedBaseContracts": [
-          1633,
-          1815,
-          2683,
-          3623,
-          1550,
-          2405,
-          2550,
-          2669,
-          1995,
-          2294,
-          2638,
-          1203,
-          1152,
-          1215,
-          2843,
-          447
+          1633, 1815, 2683, 3623, 1550, 2405, 2550, 2669, 1995, 2294, 2638,
+          1203, 1152, 1215, 2843, 447
         ],
         "name": "ERC725Account",
         "nameLocation": "318:13:12",
@@ -23099,10 +23019,7 @@
             "visibility": "public"
           },
           {
-            "baseFunctions": [
-              1994,
-              2169
-            ],
+            "baseFunctions": [1994, 2169],
             "body": {
               "id": 1609,
               "nodeType": "Block",
@@ -23452,10 +23369,7 @@
             "visibility": "public"
           },
           {
-            "baseFunctions": [
-              2404,
-              2516
-            ],
+            "baseFunctions": [2404, 2516],
             "body": {
               "id": 1631,
               "nodeType": "Block",
@@ -23691,78 +23605,30 @@
   "legacyAST": {
     "absolutePath": "project:/contracts/ERC725/ERC725Account.sol",
     "exportedSymbols": {
-      "BytesLib": [
-        4029
-      ],
-      "Context": [
-        447
-      ],
-      "Create2": [
-        558
-      ],
-      "ECDSA": [
-        1128
-      ],
-      "ERC165": [
-        1152
-      ],
-      "ERC165Storage": [
-        1203
-      ],
-      "ERC725": [
-        1550
-      ],
-      "ERC725Account": [
-        1633
-      ],
-      "ERC725AccountCore": [
-        1815
-      ],
-      "ERC725Utils": [
-        2727
-      ],
-      "ERC725X": [
-        1995
-      ],
-      "ERC725XCore": [
-        2294
-      ],
-      "ERC725Y": [
-        2405
-      ],
-      "ERC725YCore": [
-        2550
-      ],
-      "ERC725YInit": [
-        2604
-      ],
-      "IERC1271": [
-        2683
-      ],
-      "IERC165": [
-        1215
-      ],
-      "IERC725X": [
-        2638
-      ],
-      "IERC725Y": [
-        2669
-      ],
-      "ILSP1": [
-        3623
-      ],
-      "ILSP1Delegate": [
-        3638
-      ],
-      "Initializable": [
-        425
-      ],
-      "OwnableUnset": [
-        2843
-      ],
-      "UtilsLib": [
-        3600
-      ]
+      "BytesLib": [4029],
+      "Context": [447],
+      "Create2": [558],
+      "ECDSA": [1128],
+      "ERC165": [1152],
+      "ERC165Storage": [1203],
+      "ERC725": [1550],
+      "ERC725Account": [1633],
+      "ERC725AccountCore": [1815],
+      "ERC725Utils": [2727],
+      "ERC725X": [1995],
+      "ERC725XCore": [2294],
+      "ERC725Y": [2405],
+      "ERC725YCore": [2550],
+      "ERC725YInit": [2604],
+      "IERC1271": [2683],
+      "IERC165": [1215],
+      "IERC725X": [2638],
+      "IERC725Y": [2669],
+      "ILSP1": [3623],
+      "ILSP1Delegate": [3638],
+      "Initializable": [425],
+      "OwnableUnset": [2843],
+      "UtilsLib": [3600]
     },
     "id": 1634,
     "license": "Apache-2.0",
@@ -23770,12 +23636,7 @@
     "nodes": [
       {
         "id": 1552,
-        "literals": [
-          "solidity",
-          "^",
-          "0.8",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.8", ".0"],
         "nodeType": "PragmaDirective",
         "src": "39:23:12"
       },
@@ -23832,21 +23693,8 @@
           }
         ],
         "contractDependencies": [
-          447,
-          1152,
-          1203,
-          1215,
-          1550,
-          1815,
-          1995,
-          2294,
-          2405,
-          2550,
-          2638,
-          2669,
-          2683,
-          2843,
-          3623
+          447, 1152, 1203, 1215, 1550, 1815, 1995, 2294, 2405, 2550, 2638, 2669,
+          2683, 2843, 3623
         ],
         "contractKind": "contract",
         "documentation": {
@@ -23858,22 +23706,8 @@
         "fullyImplemented": true,
         "id": 1633,
         "linearizedBaseContracts": [
-          1633,
-          1815,
-          2683,
-          3623,
-          1550,
-          2405,
-          2550,
-          2669,
-          1995,
-          2294,
-          2638,
-          1203,
-          1152,
-          1215,
-          2843,
-          447
+          1633, 1815, 2683, 3623, 1550, 2405, 2550, 2669, 1995, 2294, 2638,
+          1203, 1152, 1215, 2843, 447
         ],
         "name": "ERC725Account",
         "nameLocation": "318:13:12",
@@ -24134,10 +23968,7 @@
             "visibility": "public"
           },
           {
-            "baseFunctions": [
-              1994,
-              2169
-            ],
+            "baseFunctions": [1994, 2169],
             "body": {
               "id": 1609,
               "nodeType": "Block",
@@ -24487,10 +24318,7 @@
             "visibility": "public"
           },
           {
-            "baseFunctions": [
-              2404,
-              2516
-            ],
+            "baseFunctions": [2404, 2516],
             "body": {
               "id": 1631,
               "nodeType": "Block",
