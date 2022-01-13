@@ -1,98 +1,65 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Link from "next/link";
+/**
+ * @author Hugo Masclet <git@hugom.xyz>
+ */
+import React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
-const pages = [{ name: "Inspect 📝🔍", link: "/inspect" }, { name: "Tx Parser", link: '/tx-parser' }];
-
-const ResponsiveAppBar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
+const NavBar: React.FC = () => {
+  const router = useRouter();
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
-          >
-            <Link href="/">ERC725 Tools</Link>
-          </Typography>
+    <nav className="navbar is-light">
+      <div className="navbar-menu is-active">
+        <div className="navbar-start">
+          <Link href="/">
+            <a className="navbar-item">🛠 ERC725 Tools</a>
+          </Link>
+          <Link href="/inspect">
+            <a
+              className={`navbar-item ${
+                router.pathname === '/inspect' && 'has-text-link'
+              }`}
+            >
+              🔎 Inspect
+            </a>
+          </Link>
+          <Link href="/abi-parser">
+            <a
+              className={`navbar-item ${
+                router.pathname === '/abi-parser' && 'has-text-link'
+              }`}
+            >
+              📜 ABI Parser
+            </a>
+          </Link>
+        </div>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page.link}>
-                  <Typography textAlign="center">
-                    <Link href={page.link}>{page.name}</Link>
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
-          >
-            ERC725 Tools
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page.link}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                <Link href={page.link}>{page.name}</Link>
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+        <div className="navbar-end">
+          <div className="navbar-item">
+            <div className="buttons">
+              <a href="https://docs.lukso.tech/" className="button is-light">
+                DOCS
+              </a>
+            </div>
+          </div>
+
+          <div className="navbar-item">
+            <div className="field is-grouped">
+              <p className="control">
+                <a
+                  className="button is-primary"
+                  href="https://github.com/lukso-network/tools-erc725-inspect"
+                >
+                  <span>GitHub</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 };
-export default ResponsiveAppBar;
+
+export default NavBar;
