@@ -7,15 +7,12 @@ import { useRouter } from 'next/router';
 
 import React, { useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
-import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
 
 import '../styles/Inspect.module.css';
 import useWeb3 from '../hooks/useWeb3';
 import { checkInterface } from '../utils/web3';
 
-import NavBar from '../components/NavBar';
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
 
@@ -65,81 +62,70 @@ const Home: NextPage = () => {
   }, [address, web3]);
 
   return (
-    <>
-      <NavBar />
-      <Box
-        sx={{
-          bgcolor: 'background.paper',
-          pt: 8,
-          pb: 6,
+    <div className="container">
+      <TextField
+        label="ERC725 Address"
+        fullWidth
+        type="text"
+        value={address}
+        onChange={(e) => {
+          setAddress(e.target.value);
         }}
-      >
-        <Container>
-          <TextField
-            label="ERC725 Address"
-            fullWidth
-            type="text"
-            value={address}
-            onChange={(e) => {
-              setAddress(e.target.value);
-            }}
-            placeholder="ERC725 Contract Address"
-            error={errorMessage !== ''}
-          />
+        placeholder="ERC725 Contract Address"
+        error={errorMessage !== ''}
+      />
 
-          <div className="field">
-            {!errorMessage && !isErc725X && !isErc725Y && !isErc725YLegacy && (
-              <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
-            )}
+      <div className="field">
+        {!errorMessage && !isErc725X && !isErc725Y && !isErc725YLegacy && (
+          <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
+        )}
 
-            {(isErc725X || isErc725Y || isErc725YLegacy) && (
-              <p className="help is-success">
-                ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
-                {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
-                {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
+        {(isErc725X || isErc725Y || isErc725YLegacy) && (
+          <p className="help is-success">
+            ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
+            {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
+            {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
+          </p>
+        )}
+      </div>
+
+      <div className="container is-fluid">
+        <div className="columns is-vcentered">
+          <div className="column is-offset-one-quarter is-half has-text-centered">
+            <div className="field">
+              <p className="control">
+                <button
+                  disabled={!!errorMessage}
+                  className="button is-success"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `${
+                        window.location.href.split('?')[0]
+                      }?address=${address}`,
+                    );
+                    setShareButtonTitle('Address copied in clipboard');
+                  }}
+                >
+                  {shareButtonTitle}
+                </button>
               </p>
-            )}
-          </div>
-
-          <div className="container is-fluid">
-            <div className="columns is-vcentered">
-              <div className="column is-offset-one-quarter is-half has-text-centered">
-                <div className="field">
-                  <p className="control">
-                    <button
-                      disabled={!!errorMessage}
-                      className="button is-success"
-                      onClick={() => {
-                        navigator.clipboard.writeText(
-                          `${
-                            window.location.href.split('?')[0]
-                          }?address=${address}`,
-                        );
-                        setShareButtonTitle('Address copied in clipboard');
-                      }}
-                    >
-                      {shareButtonTitle}
-                    </button>
-                  </p>
-                </div>
-                {!errorMessage && (
-                  <AddressButtons address={address} showInspectButton={false} />
-                )}
-              </div>
             </div>
-          </div>
-          <div className="container is-fluid">
-            {!isLoading && (
-              <DataKeysTable
-                address={address}
-                isErc725YLegacy={isErc725YLegacy}
-                isErc725Y={isErc725Y}
-              />
+            {!errorMessage && (
+              <AddressButtons address={address} showInspectButton={false} />
             )}
           </div>
-        </Container>
-      </Box>
-    </>
+        </div>
+      </div>
+      <div className="container is-fluid">
+        {!isLoading && (
+          <DataKeysTable
+            address={address}
+            isErc725YLegacy={isErc725YLegacy}
+            isErc725Y={isErc725Y}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 

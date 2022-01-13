@@ -24,13 +24,13 @@ const NavBar: React.FC = () => {
               🔎 Inspect
             </a>
           </Link>
-          <Link href="/abi-parser">
+          <Link href="/abi-coder">
             <a
               className={`navbar-item ${
-                router.pathname === '/abi-parser' && 'has-text-link'
+                router.pathname === '/abi-coder' && 'has-text-link'
               }`}
             >
-              📜 ABI Parser
+              📜 ABI Coder
             </a>
           </Link>
         </div>

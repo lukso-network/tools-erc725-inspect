@@ -1,4 +1,4 @@
-import { Grid, TextField, Button } from '@mui/material';
+import { TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
@@ -23,8 +23,8 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
     return keyValuePairs.map(
       (keyValuePair: { key: string; value: string }, index) => {
         return (
-          <Grid container spacing={2} key={index}>
-            <Grid item xs={6}>
+          <div className="columns is-vcentered" key={keyValuePair.key}>
+            <div className="column is-5">
               <TextField
                 label="Key"
                 value={keyValuePair.key}
@@ -32,8 +32,8 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
                 id="key"
                 onChange={handleChange.bind(this, index)}
               />
-            </Grid>
-            <Grid item xs={6}>
+            </div>
+            <div className="column is-5">
               <TextField
                 label="Value"
                 value={keyValuePair.value}
@@ -41,9 +41,16 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
                 id="value"
                 onChange={handleChange.bind(this, index)}
               />
-            </Grid>
-            <Button onClick={removeKeyValue.bind(this, index)}>Remove</Button>
-          </Grid>
+            </div>
+            <div className="column ">
+              <button
+                className="button"
+                onClick={removeKeyValue.bind(this, index)}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
         );
       },
     );
@@ -72,7 +79,7 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
     }
 
     // eslint-disable-next-line
-        // @ts-ignore
+    // @ts-ignore
     newKeyValuePairs[index][id] = event.target.value;
 
     setKeyValuePairs(newKeyValuePairs);
@@ -103,28 +110,33 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
   return (
     <>
       {createInputs(keyValuePairs)}
-      <div
-        style={{ height: 300, width: '100%', marginBottom: 10, marginTop: 10 }}
-      >
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={encodeABI}
-        >
-          Encode ABI
-        </Button>
+      <div className="columns">
+        <div className="column">
+          <Button onClick={addKeyValue}>Add Key</Button>
+        </div>
+      </div>
 
-        <Button onClick={addKeyValue}>Add Key</Button>
-        {encodedPayload && !encodingError.isError ? (
-          <EncodedPayload encodedPayload={encodedPayload} />
-        ) : null}
-        {encodingError.isError ? (
-          <ErrorMessage
-            header="ABI Encoding Error!"
-            message={encodingError.message}
-          />
-        ) : null}
+      <div className="columns">
+        <div className="column">
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={encodeABI}
+          >
+            Encode ABI
+          </Button>
+
+          {encodedPayload && !encodingError.isError ? (
+            <EncodedPayload encodedPayload={encodedPayload} />
+          ) : null}
+          {encodingError.isError ? (
+            <ErrorMessage
+              header="ABI Encoding Error!"
+              message={encodingError.message}
+            />
+          ) : null}
+        </div>
       </div>
     </>
   );
