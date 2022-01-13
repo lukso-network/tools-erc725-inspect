@@ -1,1 +1,1 @@
-export { default } from "./Decode";
+export { default } from './Decode';

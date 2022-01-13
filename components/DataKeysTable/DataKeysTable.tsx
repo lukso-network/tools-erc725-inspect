@@ -1,14 +1,14 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import React, { useEffect, useState } from "react";
-import Chip from "@mui/material/Chip";
+import React, { useEffect, useState } from 'react';
+import Chip from '@mui/material/Chip';
 
-import useWeb3 from "../../hooks/useWeb3";
-import { getAllDataKeys, getData, getDataMultiple } from "../../utils/web3";
-import { explainErc725YKey } from "../../utils/erc725y";
-import AddressButtons from "../AddressButtons";
-import ValueTypeDecoder from "../ValueTypeDecoder";
+import useWeb3 from '../../hooks/useWeb3';
+import { getAllDataKeys, getData, getDataMultiple } from '../../utils/web3';
+import { explainErc725YKey } from '../../utils/erc725y';
+import AddressButtons from '../AddressButtons';
+import ValueTypeDecoder from '../ValueTypeDecoder';
 
 interface Props {
   address: string;
@@ -46,7 +46,7 @@ const DataKeysTable: React.FC<Props> = ({
           fetchedDataValues = await getDataMultiple(
             address,
             fetchedDataKeys,
-            web3
+            web3,
           );
         }
 
@@ -56,7 +56,7 @@ const DataKeysTable: React.FC<Props> = ({
               key: fetchedDataKey,
               value: fetchedDataValues[i],
             };
-          })
+          }),
         );
       } catch (err) {
         setData([]);
@@ -79,7 +79,7 @@ const DataKeysTable: React.FC<Props> = ({
           <div className="column is-full" key={data.key}>
             <div className="content py-5">
               <h4 className="title is-4">
-                {keyInfo.name}{" "}
+                {keyInfo.name}{' '}
                 <Chip
                   label={keyInfo.keyType}
                   color="success"
@@ -92,29 +92,29 @@ const DataKeysTable: React.FC<Props> = ({
                   Key: <code>{keyInfo.key}</code>
                 </li>
                 <li>
-                  Raw value{" "}
+                  Raw value{' '}
                   <span className="tag is-link is-light">
                     {keyInfo.valueType}
                   </span>
                   : <code>{data.value}</code>
                 </li>
                 <li>
-                  Decoded value{" "}
+                  Decoded value{' '}
                   <span className="tag is-link is-light">
                     {keyInfo.valueContent}
                   </span>
-                  :{" "}
+                  :{' '}
                   <ValueTypeDecoder
                     erc725JSONSchema={keyInfo}
                     value={data.value}
                   />
                 </li>
-                {keyInfo.keyType === "AddressMappingWithGrouping" && (
+                {keyInfo.keyType === 'AddressMappingWithGrouping' && (
                   <li>
-                    Mapped address:{" "}
-                    <code>0x{keyInfo.name.split(":").pop()}</code>{" "}
+                    Mapped address:{' '}
+                    <code>0x{keyInfo.name.split(':').pop()}</code>{' '}
                     <AddressButtons
-                      address={`0x${keyInfo.name.split(":").pop()}`}
+                      address={`0x${keyInfo.name.split(':').pop()}`}
                     />
                   </li>
                 )}
