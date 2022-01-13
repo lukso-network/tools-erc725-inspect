@@ -24,7 +24,15 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
       (keyValuePair: { key: string; value: string }, index) => {
         return (
           <div className="columns is-vcentered" key={keyValuePair.key}>
-            <div className="column is-5">
+            <div className="column is-1">
+              <button
+                className="delete is-large"
+                onClick={removeKeyValue.bind(this, index)}
+              >
+                Remove
+              </button>
+            </div>
+            <div className="column">
               <TextField
                 label="Key"
                 value={keyValuePair.key}
@@ -33,7 +41,7 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
                 onChange={handleChange.bind(this, index)}
               />
             </div>
-            <div className="column is-5">
+            <div className="column">
               <TextField
                 label="Value"
                 value={keyValuePair.value}
@@ -41,14 +49,6 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
                 id="value"
                 onChange={handleChange.bind(this, index)}
               />
-            </div>
-            <div className="column ">
-              <button
-                className="button"
-                onClick={removeKeyValue.bind(this, index)}
-              >
-                Remove
-              </button>
             </div>
           </div>
         );

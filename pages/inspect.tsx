@@ -63,53 +63,73 @@ const Home: NextPage = () => {
 
   return (
     <div className="container">
-      <TextField
-        label="ERC725 Address"
-        fullWidth
-        type="text"
-        value={address}
-        onChange={(e) => {
-          setAddress(e.target.value);
-        }}
-        placeholder="ERC725 Contract Address"
-        error={errorMessage !== ''}
-      />
+      <article className="message is-info">
+        <div className="message-body">
+          This tool will fetch all data keys of{' '}
+          <a href="https://github.com/ERC725Alliance/ERC725">ERC725Y</a> smart
+          contract and attempt to match them with their{' '}
+          <a href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md">
+            LSP2 ERC725YJSONSchema
+          </a>
+          .<br />
+          The erc725.js lib provides a{' '}
+          <a href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#getschema">
+            getSchema
+          </a>{' '}
+          method to decode the keys.
+        </div>
+      </article>
+      <div className="columns">
+        <div className="column is-5">
+          <TextField
+            label="ERC725 Address"
+            fullWidth
+            type="text"
+            value={address}
+            onChange={(e) => {
+              setAddress(e.target.value);
+            }}
+            placeholder="ERC725 Contract Address"
+            error={errorMessage !== ''}
+          />
 
-      <div className="field">
-        {!errorMessage && !isErc725X && !isErc725Y && !isErc725YLegacy && (
-          <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
-        )}
+          <div className="field">
+            {!errorMessage && !isErc725X && !isErc725Y && !isErc725YLegacy && (
+              <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
+            )}
 
-        {(isErc725X || isErc725Y || isErc725YLegacy) && (
-          <p className="help is-success">
-            ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
-            {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
-            {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
-          </p>
-        )}
+            {(isErc725X || isErc725Y || isErc725YLegacy) && (
+              <p className="help is-success">
+                ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
+                {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
+                {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="column">
+          <div className="field">
+            <p className="control">
+              <button
+                disabled={!!errorMessage}
+                className="button is-success"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${window.location.href.split('?')[0]}?address=${address}`,
+                  );
+                  setShareButtonTitle('Address copied in clipboard');
+                }}
+              >
+                {shareButtonTitle}
+              </button>
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="container is-fluid">
         <div className="columns is-vcentered">
           <div className="column is-offset-one-quarter is-half has-text-centered">
-            <div className="field">
-              <p className="control">
-                <button
-                  disabled={!!errorMessage}
-                  className="button is-success"
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      `${
-                        window.location.href.split('?')[0]
-                      }?address=${address}`,
-                    );
-                    setShareButtonTitle('Address copied in clipboard');
-                  }}
-                >
-                  {shareButtonTitle}
-                </button>
-              </p>
-            </div>
             {!errorMessage && (
               <AddressButtons address={address} showInspectButton={false} />
             )}
