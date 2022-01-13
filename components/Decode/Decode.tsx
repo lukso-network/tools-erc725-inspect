@@ -1,11 +1,4 @@
-import {
-  Alert,
-  Grid,
-  Chip,
-  Container,
-  TextareaAutosize,
-  TextField,
-} from '@mui/material';
+import { Alert, Grid, Chip, TextField } from '@mui/material';
 import React, { ReactElement, useState } from 'react';
 import Web3 from 'web3';
 import {
@@ -79,64 +72,61 @@ const Decode: React.FC<Props> = ({ web3 }) => {
   }
 
   return (
-    <>
-      <Container>
-        <Grid container spacing={2}>
-          <Grid item sm={12} md={12}>
-            <TextareaAutosize
-              minRows={8}
-              maxRows={8}
-              placeholder="Paste your abi here..."
-              onChange={(e) => handleChange(e.target.value as string)}
-              style={{ width: 500 }}
-            />
-          </Grid>
-
-          <Grid md={12} sm={12}>
-            {abiError.isError ? (
-              <Alert severity="error">{abiError.message}</Alert>
-            ) : (
-              ''
-            )}
-          </Grid>
-
-          <Grid item>
-            <Chip
-              label="Set Data"
-              color={
-                transactionType === TRANSACTION_TYPES.SET_DATA
-                  ? 'primary'
-                  : 'default'
-              }
-            />
-            <Chip
-              label="Execute"
-              color={
-                transactionType === TRANSACTION_TYPES.EXECUTE
-                  ? 'primary'
-                  : 'default'
-              }
-            />
-            <Chip
-              label="Transfer Ownership"
-              color={
-                transactionType === TRANSACTION_TYPES.TRANSFER_OWNERSHIP
-                  ? 'primary'
-                  : 'default'
-              }
-            />
-          </Grid>
-
-          <Grid item md={12}>
-            {!abiError.isError && payload.length > 0 ? (
-              <ShowDecoder selector={selector} payload={payload} web3={web3} />
-            ) : (
-              ''
-            )}
-          </Grid>
+    <div className="container">
+      <Grid container spacing={2}>
+        <Grid item sm={12} md={12}>
+          <textarea
+            className="textarea"
+            placeholder="Paste your abi here..."
+            onChange={(e) => handleChange(e.target.value as string)}
+            style={{ width: 500 }}
+          />
         </Grid>
-      </Container>
-    </>
+
+        <Grid md={12} sm={12}>
+          {abiError.isError ? (
+            <Alert severity="error">{abiError.message}</Alert>
+          ) : (
+            ''
+          )}
+        </Grid>
+
+        <Grid item>
+          <Chip
+            label="setData"
+            color={
+              transactionType === TRANSACTION_TYPES.SET_DATA
+                ? 'primary'
+                : 'default'
+            }
+          />
+          <Chip
+            label="execute"
+            color={
+              transactionType === TRANSACTION_TYPES.EXECUTE
+                ? 'primary'
+                : 'default'
+            }
+          />
+          <Chip
+            label="transferOwnership"
+            color={
+              transactionType === TRANSACTION_TYPES.TRANSFER_OWNERSHIP
+                ? 'primary'
+                : 'default'
+            }
+          />
+        </Grid>
+
+        <Grid item md={12}>
+          {!abiError.isError && payload.length > 0 ? (
+            <ShowDecoder selector={selector} payload={payload} web3={web3} />
+          ) : (
+            ''
+          )}
+        </Grid>
+      </Grid>
+    </div>
   );
 };
 
@@ -146,11 +136,10 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
     return (
       <Grid container spacing={2}>
         <Grid item md={12}>
-          <Alert severity="warning">
-            <b>Warning! </b>
+          <div className="notification is-danger">
             This payload will transfer ownership to {result[0]}.<br /> Be
             cautious!
-          </Alert>
+          </div>
         </Grid>
         <Grid item md={12}>
           <TextField
