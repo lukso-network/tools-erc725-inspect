@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Grid, Box, Typography, Tooltip } from "@mui/material";
+import React, { useState } from 'react';
+import { Grid, Box, Typography, Tooltip } from '@mui/material';
 
 interface Props {
-  encodedPayload: string
+  encodedPayload: string;
 }
 
 const EncodedPayload: React.FC<Props> = ({ encodedPayload }) => {
@@ -11,19 +11,21 @@ const EncodedPayload: React.FC<Props> = ({ encodedPayload }) => {
   const handleClick = () => {
     navigator.clipboard.writeText(encodedPayload);
     setIsTextCopied(true);
-  }
+  };
 
   return (
     <>
       <Tooltip
-        title={
-          isTextCopied ? "Copied!" : "Copy To Clipboard"
-        }
+        title={isTextCopied ? 'Copied!' : 'Copy To Clipboard'}
         placement="top"
       >
-        <Grid item component={Box} paddingLeft="15px" paddingRight="15px"
+        <Grid
+          item
+          component={Box}
+          paddingLeft="15px"
+          paddingRight="15px"
           onClick={handleClick}
-          style={{ cursor: "pointer" }}
+          style={{ cursor: 'pointer' }}
         >
           <Box
             component="button"
@@ -42,16 +44,15 @@ const EncodedPayload: React.FC<Props> = ({ encodedPayload }) => {
             type="button"
           >
             <div>
-              <Typography style={{ wordWrap: "break-word" }}>
+              <Typography style={{ wordWrap: 'break-word' }}>
                 {encodedPayload}
               </Typography>
             </div>
           </Box>
         </Grid>
       </Tooltip>
-
     </>
-  )
-}
+  );
+};
 
 export default EncodedPayload;
