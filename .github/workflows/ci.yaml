@@ -1,26 +1,19 @@
-name: Build and Deploy
+name: Build and Lint
 
 on:
   pull_request:
-  push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  build-and-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
 
-      - name: Install and Build 🔧
-        run: |
-          npm install
-          npm run export
+      - name: Install
+        run: npm install
 
-      - run: touch ./out/.nojekyll
-
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.5
-        with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: out # The folder the action should deploy.
+      - name: Lint
+        run: npm run lint
