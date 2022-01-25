@@ -74,24 +74,29 @@ const KeyManager: NextPage = () => {
       <div className="columns">
         <div className="column">
           <div className="buttons">
-            {['SETDATA', 'SIGN', 'STATICCALL', 'CALL', 'DELEGATECALL'].map(
-              (permission: string) => (
-                <button
-                  key={permission}
-                  className={`button is-info ${
-                    !decodedPermissions[permission] && 'is-outlined'
-                  }`}
-                  onClick={(e) => {
-                    handlePermissionClick(permission);
-                  }}
-                >
-                  {permission}
-                </button>
-              ),
-            )}
+            {['SETDATA', 'SIGN'].map((permission: string) => (
+              <button
+                key={permission}
+                className={`button is-info ${
+                  !decodedPermissions[permission] && 'is-outlined'
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePermissionClick(permission);
+                }}
+              >
+                {permission}
+              </button>
+            ))}
           </div>
           <div className="buttons">
-            {['DEPLOY', 'TRANSFERVALUE'].map((permission: string) => (
+            {[
+              'STATICCALL',
+              'CALL',
+              'DELEGATECALL',
+              'DEPLOY',
+              'TRANSFERVALUE',
+            ].map((permission: string) => (
               <button
                 key={permission}
                 className={`button is-warning ${
