@@ -1,6 +1,6 @@
 import ERC725 from '@erc725/erc725.js';
 import type { NextPage } from 'next';
-import { ChangeEventHandler, useState } from 'react';
+import { useState } from 'react';
 
 const KeyManager: NextPage = () => {
   const [encodedPermissions, setEncodedPermissions] = useState(
