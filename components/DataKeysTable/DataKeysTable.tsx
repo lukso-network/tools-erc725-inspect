@@ -3,12 +3,18 @@
  */
 import React, { useEffect, useState } from 'react';
 import Chip from '@mui/material/Chip';
+import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
 
 import useWeb3 from '../../hooks/useWeb3';
 import { getAllDataKeys, getData, getDataMultiple } from '../../utils/web3';
-import { explainErc725YKey } from '../../utils/erc725y';
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
+
+import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
+
+import LegacySchema from './legacySchemas.json';
+
+const erc725 = new ERC725([]);
 
 interface Props {
   address: string;
@@ -21,7 +27,13 @@ const DataKeysTable: React.FC<Props> = ({
   isErc725Y,
   isErc725YLegacy,
 }) => {
-  const [data, setData] = useState<{ key: string; value: string }[]>([]);
+  const [data, setData] = useState<
+    {
+      key: string;
+      value: string;
+      schema: ERC725JSONSchema | Erc725JsonSchemaAll;
+    }[]
+  >([]);
 
   const web3 = useWeb3();
 
@@ -50,11 +62,27 @@ const DataKeysTable: React.FC<Props> = ({
           );
         }
 
+        console.log(fetchedDataKeys);
+
+        const schema = erc725.getSchema(
+          fetchedDataKeys,
+          LegacySchema as ERC725JSONSchema[],
+        );
+
+        console.log('schema', schema);
+
         setData(
           fetchedDataKeys.map((fetchedDataKey, i) => {
             return {
               key: fetchedDataKey,
               value: fetchedDataValues[i],
+              schema: schema[fetchedDataKey] || {
+                name: 'UNKNOWN',
+                key: fetchedDataKey,
+                keyType: 'UNKNOWN',
+                valueContent: 'UNKNOWN',
+                valueType: 'UNKNOWN',
+              },
             };
           }),
         );
@@ -73,15 +101,13 @@ const DataKeysTable: React.FC<Props> = ({
   return (
     <div className="columns is-multiline">
       {data.map((data) => {
-        const keyInfo = explainErc725YKey(data.key);
-
         return (
           <div className="column is-full" key={data.key}>
             <div className="content py-5">
               <h4 className="title is-4">
-                {keyInfo.name}{' '}
+                {data.schema.name}{' '}
                 <Chip
-                  label={keyInfo.keyType}
+                  label={data.schema.keyType}
                   color="success"
                   variant="outlined"
                   size="small"
@@ -89,32 +115,32 @@ const DataKeysTable: React.FC<Props> = ({
               </h4>
               <ul>
                 <li>
-                  Key: <code>{keyInfo.key}</code>
+                  Key: <code>{data.schema.key}</code>
                 </li>
                 <li>
                   Raw value{' '}
                   <span className="tag is-link is-light">
-                    {keyInfo.valueType}
+                    {data.schema.valueType}
                   </span>
                   : <code>{data.value}</code>
                 </li>
                 <li>
                   Decoded value{' '}
                   <span className="tag is-link is-light">
-                    {keyInfo.valueContent}
+                    {data.schema.valueContent}
                   </span>
                   :{' '}
                   <ValueTypeDecoder
-                    erc725JSONSchema={keyInfo}
+                    erc725JSONSchema={data.schema}
                     value={data.value}
                   />
                 </li>
-                {keyInfo.keyType === 'AddressMappingWithGrouping' && (
+                {data.schema.keyType === 'AddressMappingWithGrouping' && (
                   <li>
                     Mapped address:{' '}
-                    <code>0x{keyInfo.name.split(':').pop()}</code>{' '}
+                    <code>0x{data.schema.name.split(':').pop()}</code>{' '}
                     <AddressButtons
-                      address={`0x${keyInfo.name.split(':').pop()}`}
+                      address={`0x${data.schema.name.split(':').pop()}`}
                     />
                   </li>
                 )}
