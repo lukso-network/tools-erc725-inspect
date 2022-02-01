@@ -6,6 +6,7 @@ import {
   RadioGroup,
 } from '@mui/material';
 import { NextPage } from 'next';
+import Head from 'next/head';
 import { useState } from 'react';
 
 import Decode from '../components/Decode';
@@ -25,6 +26,9 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>ABI Coder - ERC725 Tools</title>
+      </Head>
       <div className="container">
         <article className="message is-info">
           <div className="message-body">
