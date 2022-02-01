@@ -5,6 +5,7 @@ import React from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 import AddressButtons from '../AddressButtons';
+import { LUKSO_IPFS_BASE_URL } from '../../globals';
 
 interface Props {
   erc725JSONSchema: ERC725JSONSchema | Erc725JsonSchemaAll;
@@ -38,8 +39,6 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
     return <span>Can&apos;t decode this key</span>;
   }
 
-  console.log(decodedDataOneKey);
-
   try {
     return (
       <div>
@@ -47,7 +46,26 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
           {JSON.stringify(decodedDataOneKey[erc725JSONSchema.name], null, 4)}
         </pre>
         {decodedDataOneKey[erc725JSONSchema.name].url && (
-          <span>URL: {decodedDataOneKey[erc725JSONSchema.name].url}</span>
+          <div>
+            <span>URL: {decodedDataOneKey[erc725JSONSchema.name].url}</span> -{' '}
+            {decodedDataOneKey[erc725JSONSchema.name].url.indexOf('ipfs://') !==
+              -1 && (
+              <>
+                [
+                <a
+                  className="has-text-link"
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[
+                    erc725JSONSchema.name
+                  ].url.replace('ipfs://', '')}`}
+                >
+                  LUKSO IPFS
+                </a>
+                ]
+              </>
+            )}
+          </div>
         )}
       </div>
     );
