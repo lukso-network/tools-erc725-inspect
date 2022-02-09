@@ -21,8 +21,7 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   const [address, setAddress] = useState(
-    (router.query.address as string) ||
-      '0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99',
+    '0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99',
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isErc725X, setIsErc725X] = useState(false);
@@ -34,6 +33,12 @@ const Home: NextPage = () => {
   const web3 = useWeb3();
 
   useEffect(() => {
+    if (router.query.address) {
+      setAddress(router.query.address as string);
+    }
+  }, [router.query.address]);
+
+  useEffect(() => {
     const check = async () => {
       if (!web3) {
         return;
@@ -43,6 +48,7 @@ const Home: NextPage = () => {
       setIsErc725Y(false);
       setIsErc725YLegacy(false);
       setErrorMessage('');
+      setShareButtonTitle('Copy share link');
 
       if (!isAddress(address)) {
         setErrorMessage('Address is not valid');
