@@ -55,6 +55,8 @@ const Home: NextPage = () => {
         return;
       }
 
+      router.push(`/inspect?address=${address}`);
+
       setIsLoading(true);
       const supportStandards = await checkInterface(address, web3);
 
