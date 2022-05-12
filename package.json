@@ -8,14 +8,17 @@
     "lint": "next lint",
     "export": "next build && next export"
   },
+  "author": {
+    "name": "Hugo Masclet",
+    "url": "https://github.com/hugoo"
+  },
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@erc725/erc725.js": "^0.9.1",
+    "@erc725/erc725.js": "^0.11.1",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.6",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "next": "12.0.7",
+    "next": "^12.1.6",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "web3": "^1.6.1",
@@ -24,12 +27,13 @@
   "devDependencies": {
     "@types/node": "17.0.5",
     "@types/react": "17.0.38",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
     "bulma": "^0.9.3",
     "eslint": "8.5.0",
     "eslint-config-next": "12.0.7",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "node-sass": "^6.0.1",
+    "node-sass": "^7.0.1",
     "prettier": "^2.5.1",
     "typescript": "4.5.4"
   }
