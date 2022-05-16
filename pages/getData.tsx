@@ -106,7 +106,7 @@ const GetData: NextPage = () => {
         </article>
 
         <div className="columns">
-          <div className="column is-6">
+          <div className="column is-half">
             <div className="field">
               <label className="label">Contract address</label>
               <div className="control">
