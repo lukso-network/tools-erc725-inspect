@@ -42,6 +42,15 @@ const NavBar: React.FC = () => {
               🔐 Key Manager
             </a>
           </Link>
+          <Link href="/getData">
+            <a
+              className={`navbar-item ${
+                router.pathname === '/getData' && 'has-text-link'
+              }`}
+            >
+              💽 getData
+            </a>
+          </Link>
         </div>
 
         <div className="navbar-end">
