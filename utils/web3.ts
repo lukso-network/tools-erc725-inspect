@@ -56,7 +56,11 @@ export const getDataMultiple = async (
  * For contracts deployed with version bellow: 0.1.3
  * @lukso/universalprofile-smart-contracts
  */
-const getDataLegacy = async (address: string, web3: Web3, key: string) => {
+export const getDataLegacy = async (
+  address: string,
+  web3: Web3,
+  key: string,
+) => {
   const Contract = new web3.eth.Contract(
     [
       {
@@ -93,8 +97,8 @@ const getDataLegacy = async (address: string, web3: Web3, key: string) => {
 };
 
 /**
- * For contracts deployed with version bellow: 0.1.3
- * @lukso/universalprofile-smart-contracts
+ * For contracts deployed with version above: 0.1.3
+ * @lukso/lsp-smart-contracts
  */
 export const getData = async (address: string, keys: string[], web3: Web3) => {
   const Contract = new web3.eth.Contract(
