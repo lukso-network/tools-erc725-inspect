@@ -8,7 +8,6 @@ import Head from 'next/head';
 
 import React, { useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
-import TextField from '@mui/material/TextField';
 
 import '../styles/Inspect.module.css';
 import useWeb3 from '../hooks/useWeb3';
@@ -27,7 +26,6 @@ const Home: NextPage = () => {
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
   const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
-  const [shareButtonTitle, setShareButtonTitle] = useState('Copy share link');
   const [errorMessage, setErrorMessage] = useState('');
 
   const web3 = useWeb3();
@@ -48,7 +46,6 @@ const Home: NextPage = () => {
       setIsErc725Y(false);
       setIsErc725YLegacy(false);
       setErrorMessage('');
-      setShareButtonTitle('Copy share link');
 
       if (!isAddress(address)) {
         setErrorMessage('Address is not valid');
@@ -93,20 +90,20 @@ const Home: NextPage = () => {
           </div>
         </article>
         <div className="columns">
-          <div className="column is-5">
-            <TextField
-              label="ERC725 Address"
-              fullWidth
-              type="text"
-              value={address}
-              onChange={(e) => {
-                setAddress(e.target.value);
-              }}
-              placeholder="ERC725 Contract Address"
-              error={errorMessage !== ''}
-            />
-
+          <div className="column is-half">
             <div className="field">
+              <label className="label">Contract address</label>
+              <div className="control">
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
+                  value={address}
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                  }}
+                />
+              </div>
               {!errorMessage &&
                 !isErc725X &&
                 !isErc725Y &&
@@ -121,26 +118,6 @@ const Home: NextPage = () => {
                   {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
                 </p>
               )}
-            </div>
-          </div>
-          <div className="column">
-            <div className="field">
-              <p className="control">
-                <button
-                  disabled={!!errorMessage}
-                  className="button is-success"
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      `${
-                        window.location.href.split('?')[0]
-                      }?address=${address}`,
-                    );
-                    setShareButtonTitle('Address copied in clipboard');
-                  }}
-                >
-                  {shareButtonTitle}
-                </button>
-              </p>
             </div>
           </div>
         </div>
