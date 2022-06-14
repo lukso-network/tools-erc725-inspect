@@ -2,12 +2,6 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 import { isAddress } from 'web3-utils';
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
 
 import useWeb3 from '../hooks/useWeb3';
 import { checkInterface, getData, getDataLegacy } from '../utils/web3';
@@ -83,7 +77,7 @@ const dataKeyList = [
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
   const [addressError, setAddressError] = useState('');
-  4;
+
   const [dataKey, setDataKey] = useState('');
   const [dataKeyError, setDataKeyError] = useState('');
 
@@ -189,9 +183,7 @@ const GetData: NextPage = () => {
                   type="text"
                   placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
                   value={address}
-                  onChange={(e: SelectChangeEvent) =>
-                    onContractAddressChange(e.target.value)
-                  }
+                  onChange={(e) => onContractAddressChange(e.target.value)}
                 />
               </div>
               {addressError !== '' && (
@@ -212,7 +204,7 @@ const GetData: NextPage = () => {
 
             <div className="field">
               <label className="label">Data key</label>
-              <FormControl fullWidth>
+              <div className="control">
                 <input
                   className="input"
                   type="text"
@@ -221,22 +213,19 @@ const GetData: NextPage = () => {
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />
                 <br />
-                <Select
-                  placeholder="find your ERC725Y data key"
-                  onChange={(e: SelectChangeEvent) =>
-                    onDataKeyChange(e.target.value)
-                  }
-                >
-                  {dataKeyList.map((dataKey) => {
-                    return (
-                      <MenuItem value={dataKey.key}>
-                        {dataKey.icon}&nbsp;<code>{dataKey.name}</code> -{' '}
-                        {dataKey.key}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
+                <div className="select">
+                  <select onChange={(e) => onDataKeyChange(e.target.value)}>
+                    {dataKeyList.map((dataKey) => {
+                      return (
+                        <option value={dataKey.key}>
+                          {dataKey.icon} &nbsp;
+                          {dataKey.name} - {dataKey.key}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
               {dataKeyError !== '' && (
                 <p className="help is-danger">{dataKeyError}</p>
               )}
