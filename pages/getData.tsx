@@ -1,17 +1,30 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { isAddress } from 'web3-utils';
+import {
+  FormControl,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 
 import useWeb3 from '../hooks/useWeb3';
 import { checkInterface, getData, getDataLegacy } from '../utils/web3';
 
+interface DataKeysList {
+  name: string;
+  key: string;
+  icon: string;
+}
+
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
   const [addressError, setAddressError] = useState('');
-
+  4;
   const [dataKey, setDataKey] = useState('');
   const [dataKeyError, setDataKeyError] = useState('');
+  const [dataKeyList, setDataKeyList] = useState<DataKeysList[]>([]);
 
   const [data, setData] = useState('');
 
@@ -22,6 +35,31 @@ const GetData: NextPage = () => {
   });
 
   const web3 = useWeb3();
+
+  useEffect(() => {
+    setDataKeyList([
+      {
+        name: 'LSP1UniversalReceiverDelegate',
+        key: '0x0cfc51aec37c55a4d0b1a65c6255c4bf2fbdf6277f3cc0730c45b828b6db8b47',
+        icon: '📢',
+      },
+      {
+        name: 'LSP3Profile',
+        key: '0x5ef83ad9559033e6e941db7d7c495acdce616347d28e90c7ce47cbfcfcad3bc5',
+        icon: '👤',
+      },
+      {
+        name: 'LSP4TokenName',
+        key: '0xdeba1e292f8ba88238e10ab3c7f88bd4be4fac56cad5194b6ecceaf653468af1',
+        icon: '🔵',
+      },
+      {
+        name: 'LSP5ReceivedAssets[]',
+        key: '0x6460ee3c0aac563ccbf76d6e1d07bada78e3a9514e6382b736ed3f478ab7b90b',
+        icon: '💰',
+      },
+    ]);
+  }, []);
 
   const onContractAddressChange = async (address: string) => {
     setAddress(address);
@@ -115,7 +153,9 @@ const GetData: NextPage = () => {
                   type="text"
                   placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
                   value={address}
-                  onChange={(e) => onContractAddressChange(e.target.value)}
+                  onChange={(e: SelectChangeEvent) =>
+                    onContractAddressChange(e.target.value)
+                  }
                 />
               </div>
               {addressError !== '' && (
@@ -136,7 +176,7 @@ const GetData: NextPage = () => {
 
             <div className="field">
               <label className="label">Data key</label>
-              <div className="control">
+              <FormControl fullWidth>
                 <input
                   className="input"
                   type="text"
@@ -144,7 +184,22 @@ const GetData: NextPage = () => {
                   value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />
-              </div>
+                <Select
+                  label="Find your ERC725Y data key"
+                  onChange={(e: SelectChangeEvent) =>
+                    onDataKeyChange(e.target.value)
+                  }
+                >
+                  {dataKeyList.map((dataKey) => {
+                    return (
+                      <MenuItem value={dataKey.key}>
+                        {dataKey.icon}&nbsp;<code>{dataKey.name}</code> -{' '}
+                        {dataKey.key}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
               {dataKeyError !== '' && (
                 <p className="help is-danger">{dataKeyError}</p>
               )}
