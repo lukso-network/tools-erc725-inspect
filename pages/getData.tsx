@@ -54,9 +54,54 @@ const GetData: NextPage = () => {
         icon: '🔵',
       },
       {
+        name: 'LSP4TokenSymbol',
+        key: '0x2f0a68ab07768e01943a599e73362a0e17a63a72e94dd2e384d2c1d4db932756',
+        icon: '🔵',
+      },
+      {
+        name: 'LSP4Metadata',
+        key: '0x9afb95cacc9f95858ec44aa8c3b685511002e30ae54415823f406128b85b238e',
+        icon: '🔵',
+      },
+      {
         name: 'LSP5ReceivedAssets[]',
         key: '0x6460ee3c0aac563ccbf76d6e1d07bada78e3a9514e6382b736ed3f478ab7b90b',
         icon: '💰',
+      },
+      {
+        name: 'LSP5ReceivedAssetsMap',
+        key: '0x812c4334633eb816c80d0000',
+        icon: '💰',
+      },
+      {
+        name: 'AddressPermissions[]',
+        key: '0xdf30dba06db6a30e65354d9a64c609861f089545ca58c6b4dbe31a5f338cb0e3',
+        icon: '🔐',
+      },
+      {
+        name: 'AddressPermissions:Permissions:<address>',
+        key: '0x4b80742de2bf82acb3630000',
+        icon: '🔐',
+      },
+      {
+        name: 'AddressPermissions:AllowedAddresses:<address>',
+        key: '0x4b80742de2bfc6dd6b3c0000',
+        icon: '🔐',
+      },
+      {
+        name: 'AddressPermissions:AllowedFunctions:<address>',
+        key: '0x4b80742de2bf8efea1e80000',
+        icon: '🔐',
+      },
+      {
+        name: 'AddressPermissions:AllowedStandards:<address>',
+        key: '0x4b80742de2bf3efa94a30000',
+        icon: '🔐',
+      },
+      {
+        name: 'AddressPermissions:AllowedERC725YKeys:<address>',
+        key: '0x4b80742de2bf90b8b4850000',
+        icon: '🔐',
       },
     ]);
   }, []);
@@ -184,8 +229,9 @@ const GetData: NextPage = () => {
                   value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />
+                <br />
                 <Select
-                  label="Find your ERC725Y data key"
+                  placeholder="find your ERC725Y data key"
                   onChange={(e: SelectChangeEvent) =>
                     onDataKeyChange(e.target.value)
                   }
