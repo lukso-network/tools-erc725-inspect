@@ -3,8 +3,22 @@ import Head from 'next/head';
 import { useState } from 'react';
 import { isAddress } from 'web3-utils';
 
+import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
+import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
+import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
+import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
+import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
+
 import useWeb3 from '../hooks/useWeb3';
 import { checkInterface, getData, getDataLegacy } from '../utils/web3';
+
+const dataKeyList = [
+  ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
+  ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
+  ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
+  ...LSP5DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💰' })),
+  ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔐' })),
+];
 
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
@@ -144,6 +158,19 @@ const GetData: NextPage = () => {
                   value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />
+                <br />
+                <div className="select">
+                  <select onChange={(e) => onDataKeyChange(e.target.value)}>
+                    {dataKeyList.map((dataKey, index) => {
+                      return (
+                        <option key={index} value={dataKey.key}>
+                          {dataKey.icon} &nbsp;
+                          {dataKey.name} - {dataKey.key}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
               </div>
               {dataKeyError !== '' && (
                 <p className="help is-danger">{dataKeyError}</p>
