@@ -3,75 +3,21 @@ import Head from 'next/head';
 import { useState } from 'react';
 import { isAddress } from 'web3-utils';
 
+import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
+import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
+import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
+import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
+import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
+
 import useWeb3 from '../hooks/useWeb3';
 import { checkInterface, getData, getDataLegacy } from '../utils/web3';
 
 const dataKeyList = [
-  {
-    name: 'LSP1UniversalReceiverDelegate',
-    key: '0x0cfc51aec37c55a4d0b1a65c6255c4bf2fbdf6277f3cc0730c45b828b6db8b47',
-    icon: '📢',
-  },
-  {
-    name: 'LSP3Profile',
-    key: '0x5ef83ad9559033e6e941db7d7c495acdce616347d28e90c7ce47cbfcfcad3bc5',
-    icon: '👤',
-  },
-  {
-    name: 'LSP4TokenName',
-    key: '0xdeba1e292f8ba88238e10ab3c7f88bd4be4fac56cad5194b6ecceaf653468af1',
-    icon: '🔵',
-  },
-  {
-    name: 'LSP4TokenSymbol',
-    key: '0x2f0a68ab07768e01943a599e73362a0e17a63a72e94dd2e384d2c1d4db932756',
-    icon: '🔵',
-  },
-  {
-    name: 'LSP4Metadata',
-    key: '0x9afb95cacc9f95858ec44aa8c3b685511002e30ae54415823f406128b85b238e',
-    icon: '🔵',
-  },
-  {
-    name: 'LSP5ReceivedAssets[]',
-    key: '0x6460ee3c0aac563ccbf76d6e1d07bada78e3a9514e6382b736ed3f478ab7b90b',
-    icon: '💰',
-  },
-  {
-    name: 'LSP5ReceivedAssetsMap',
-    key: '0x812c4334633eb816c80d0000',
-    icon: '💰',
-  },
-  {
-    name: 'AddressPermissions[]',
-    key: '0xdf30dba06db6a30e65354d9a64c609861f089545ca58c6b4dbe31a5f338cb0e3',
-    icon: '🔐',
-  },
-  {
-    name: 'AddressPermissions:Permissions:<address>',
-    key: '0x4b80742de2bf82acb3630000',
-    icon: '🔐',
-  },
-  {
-    name: 'AddressPermissions:AllowedAddresses:<address>',
-    key: '0x4b80742de2bfc6dd6b3c0000',
-    icon: '🔐',
-  },
-  {
-    name: 'AddressPermissions:AllowedFunctions:<address>',
-    key: '0x4b80742de2bf8efea1e80000',
-    icon: '🔐',
-  },
-  {
-    name: 'AddressPermissions:AllowedStandards:<address>',
-    key: '0x4b80742de2bf3efa94a30000',
-    icon: '🔐',
-  },
-  {
-    name: 'AddressPermissions:AllowedERC725YKeys:<address>',
-    key: '0x4b80742de2bf90b8b4850000',
-    icon: '🔐',
-  },
+  ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
+  ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
+  ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
+  ...LSP5DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💰' })),
+  ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔐' })),
 ];
 
 const GetData: NextPage = () => {
@@ -215,9 +161,9 @@ const GetData: NextPage = () => {
                 <br />
                 <div className="select">
                   <select onChange={(e) => onDataKeyChange(e.target.value)}>
-                    {dataKeyList.map((dataKey) => {
+                    {dataKeyList.map((dataKey, index) => {
                       return (
-                        <option value={dataKey.key}>
+                        <option key={index} value={dataKey.key}>
                           {dataKey.icon} &nbsp;
                           {dataKey.name} - {dataKey.key}
                         </option>
