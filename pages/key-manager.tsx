@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { useState } from 'react';
 import useWeb3 from '../hooks/useWeb3';
 
+import LSP6KeyManager from '../abis/LSP6KeyManager.json';
+
 const KeyManager: NextPage = () => {
   const [encodedPermissions, setEncodedPermissions] = useState(
     '0x0000000000000000000000000000000000000000000000000000000000000001',
@@ -162,51 +164,7 @@ const Nonce = () => {
     if (!web3) return;
 
     const keyManagerInstance = new web3.eth.Contract(
-      [
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: '_from',
-              type: 'address',
-            },
-            {
-              internalType: 'uint256',
-              name: '_channel',
-              type: 'uint256',
-            },
-          ],
-          name: 'getNonce',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'bytes4',
-              name: 'interfaceId',
-              type: 'bytes4',
-            },
-          ],
-          name: 'supportsInterface',
-          outputs: [
-            {
-              internalType: 'bool',
-              name: '',
-              type: 'bool',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-      ],
+      LSP6KeyManager.abi as any,
       web3.utils.toChecksumAddress(keyManagerAddress),
     );
 
