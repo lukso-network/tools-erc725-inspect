@@ -19,12 +19,14 @@ const erc725 = new ERC725([]);
 interface Props {
   address: string;
   isErc725Y: boolean;
+  isERC725Yv2: boolean;
   isErc725YLegacy: boolean;
 }
 
 const DataKeysTable: React.FC<Props> = ({
   address,
   isErc725Y,
+  isErc725Y_v2,
   isErc725YLegacy,
 }) => {
   const [data, setData] = useState<
