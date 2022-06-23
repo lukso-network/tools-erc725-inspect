@@ -31,9 +31,12 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
 
   let decodedDataOneKey;
   try {
-    decodedDataOneKey = erc725.decodeData({
-      [erc725JSONSchema.name]: value,
-    });
+    decodedDataOneKey = erc725.decodeData([
+      {
+        keyName: erc725JSONSchema.name,
+        value: value,
+      },
+    ]);
   } catch (err) {
     // Goes here if key is not in erc725.js yet or if key is undefined
     return <span>Can&apos;t decode this key</span>;
