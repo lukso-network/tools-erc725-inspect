@@ -97,7 +97,7 @@ const Home: NextPage = () => {
           <div className="column is-half">
             <div className="field">
               <label className="label">Contract address</label>
-              <div className="control">
+              <div className="control mb-0">
                 <input
                   className="input"
                   type="text"
@@ -108,22 +108,34 @@ const Home: NextPage = () => {
                   }}
                 />
               </div>
-              {!errorMessage &&
-                !isErc725X &&
-                !isErc725Y &&
-                !isErc725Y_v2 &&
-                !isErc725YLegacy && (
-                  <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
-                )}
+              <div className="columns">
+                <div className="column is-one-quarter">
+                  {!errorMessage &&
+                    !isErc725X &&
+                    !isErc725Y &&
+                    !isErc725Y_v2 &&
+                    !isErc725YLegacy && (
+                      <div>
+                        <p className="help is-danger">ERC725X: ❌</p>
+                        <p className="help is-danger">ERC725Y: ❌</p>
+                      </div>
+                    )}
 
-              {(isErc725X || isErc725Y || isErc725YLegacy) && (
-                <p className="help is-success">
-                  ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
-                  {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
-                  {isErc725Y_v2 ? ' (v2.0)' : ''}
-                  {isErc725Y || isErc725Y_v2 || isErc725YLegacy ? '✅' : '❌'}
-                </p>
-              )}
+                  {(isErc725X || isErc725Y || isErc725YLegacy) && (
+                    <p className="help is-success">
+                      <p>ERC725X: {isErc725X ? '✅' : '❌'}</p>
+                      <p>
+                        ERC725Y:{' '}
+                        {isErc725Y || isErc725Y_v2 || isErc725YLegacy
+                          ? '✅'
+                          : '❌'}{' '}
+                        {isErc725Y_v2 && '(v2.0)'}
+                        {isErc725YLegacy && '(legacy)'}
+                      </p>
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -142,6 +154,7 @@ const Home: NextPage = () => {
             <DataKeysTable
               address={address}
               isErc725YLegacy={isErc725YLegacy}
+              isErc725Y_v2={isErc725Y_v2}
               isErc725Y={isErc725Y}
             />
           )}

@@ -19,7 +19,7 @@ const erc725 = new ERC725([]);
 interface Props {
   address: string;
   isErc725Y: boolean;
-  isERC725Yv2: boolean;
+  isErc725Y_v2: boolean;
   isErc725YLegacy: boolean;
 }
 
@@ -45,7 +45,7 @@ const DataKeysTable: React.FC<Props> = ({
         return;
       }
 
-      if (!isErc725Y && !isErc725YLegacy) {
+      if (!isErc725Y && !isErc725Y_v2 && !isErc725YLegacy) {
         return;
       }
 
@@ -56,7 +56,12 @@ const DataKeysTable: React.FC<Props> = ({
 
         if (isErc725Y) {
           fetchedDataValues = await getData(address, fetchedDataKeys, web3);
-        } else {
+        }
+
+        if (isErc725Y_v2) {
+        }
+
+        if (isErc725YLegacy) {
           fetchedDataValues = await getDataMultiple(
             address,
             fetchedDataKeys,
