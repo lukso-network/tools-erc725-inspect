@@ -1,5 +1,6 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Jean Cavaller <git@jeanc.abc>
  */
 
 import type { NextPage } from 'next';
@@ -25,6 +26,7 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
+  const [isErc725Y_v2, setIsErc725Y_v2] = useState(false);
   const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -44,6 +46,7 @@ const Home: NextPage = () => {
 
       setIsErc725X(false);
       setIsErc725Y(false);
+      setIsErc725Y_v2(false);
       setIsErc725YLegacy(false);
       setErrorMessage('');
 
@@ -61,6 +64,7 @@ const Home: NextPage = () => {
 
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
+      setIsErc725Y_v2(supportStandards.isErc725Y_v2);
       setIsErc725YLegacy(supportStandards.isErc725YLegacy);
       setIsLoading(false);
     };
@@ -107,6 +111,7 @@ const Home: NextPage = () => {
               {!errorMessage &&
                 !isErc725X &&
                 !isErc725Y &&
+                !isErc725Y_v2 &&
                 !isErc725YLegacy && (
                   <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
                 )}
@@ -115,7 +120,8 @@ const Home: NextPage = () => {
                 <p className="help is-success">
                   ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
                   {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
-                  {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
+                  {isErc725Y_v2 ? ' (v2.0)' : ''}
+                  {isErc725Y || isErc725Y_v2 || isErc725YLegacy ? '✅' : '❌'}
                 </p>
               )}
             </div>
