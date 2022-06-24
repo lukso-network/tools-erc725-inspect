@@ -9,20 +9,32 @@ import { LUKSO_IPFS_BASE_URL } from '../../globals';
 
 interface Props {
   erc725JSONSchema: ERC725JSONSchema | Erc725JsonSchemaAll;
-  value: string;
+  value: string | string[];
 }
 
 const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
-  if (erc725JSONSchema.valueContent === 'Address') {
+  if (erc725JSONSchema.keyType === 'Array') {
     return (
-      <>
-        <code>{value}</code>
-        <AddressButtons address={value} />
-      </>
+      <ul>
+        {(value as string[]).map((element, index) => (
+          <li>
+            [ {index} ] {'=>'} <code>{element}</code>
+          </li>
+        ))}
+      </ul>
     );
+  } else {
+    if (erc725JSONSchema.valueContent === 'Address') {
+      return (
+        <>
+          <code>{value}</code>
+          <AddressButtons address={value} />
+        </>
+      );
+    }
   }
 
-  // The schema may be wrong, this error will be catched bellow
+  // The schema may be wrong, this error will be catched below
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const schema: ERC725JSONSchema[] = [erc725JSONSchema];
@@ -37,6 +49,7 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
         value: value,
       },
     ]);
+    console.log('decodedDataOneKey', decodedDataOneKey);
   } catch (err) {
     // Goes here if key is not in erc725.js yet or if key is undefined
     return <span>Can&apos;t decode this key</span>;
@@ -45,14 +58,11 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
   try {
     return (
       <div>
-        <pre>
-          {JSON.stringify(decodedDataOneKey[erc725JSONSchema.name], null, 4)}
-        </pre>
-        {decodedDataOneKey[erc725JSONSchema.name].url && (
+        <pre>{JSON.stringify(decodedDataOneKey[0], null, 4)}</pre>
+        {decodedDataOneKey[0].url && (
           <div>
-            <span>URL: {decodedDataOneKey[erc725JSONSchema.name].url}</span> -{' '}
-            {decodedDataOneKey[erc725JSONSchema.name].url.indexOf('ipfs://') !==
-              -1 && (
+            <span>URL: {decodedDataOneKey[0].url}</span> -{' '}
+            {decodedDataOneKey[0].url.indexOf('ipfs://') !== -1 && (
               <>
                 [
                 <a
@@ -75,6 +85,15 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
   } catch (err) {
     return <span>Can&apos;t decode this key</span>;
   }
+};
+
+const AddressView = (value: string) => {
+  return (
+    <>
+      <code>{value}</code>
+      <AddressButtons address={value} />
+    </>
+  );
 };
 
 export default ValueTypeDecoder;
