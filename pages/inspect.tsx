@@ -1,8 +1,7 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
- * @author Jean Cavaller <git@jeanc.abc>
+ * @author Jean Cavallera0 <git@jeanc.abc>
  */
-
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -27,6 +26,11 @@ const Home: NextPage = () => {
   const [isErc725Y_v2, setIsErc725Y_v2] = useState(false);
   const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [notification, setNotification] = useState({
+    text: '',
+    class: '',
+  });
 
   const web3 = useWeb3();
 
@@ -64,6 +68,22 @@ const Home: NextPage = () => {
       setIsErc725Y(supportStandards.isErc725Y);
       setIsErc725Y_v2(supportStandards.isErc725Y_v2);
       setIsErc725YLegacy(supportStandards.isErc725YLegacy);
+
+      if (isErc725Y_v2) {
+        console.log('v2 !!!');
+        setNotification({
+          text: 'This Profile was created with version 0.5.0. You are missing out on new cool features! Consider upgrading.',
+          class: 'warning',
+        });
+      }
+
+      if (isErc725YLegacy) {
+        console.log('Legacy!!!');
+        setNotification({
+          text: 'This is a legacy Universal Profile. Consider creating a new one.',
+          class: 'danger',
+        });
+      }
       setIsLoading(false);
     };
     check();
@@ -135,6 +155,13 @@ const Home: NextPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="column is-half">
+            {(isErc725Y_v2 || isErc725YLegacy) && !isLoading && (
+              <div className={'notification is-' + notification.class}>
+                {notification.text}
+              </div>
+            )}
           </div>
         </div>
 
