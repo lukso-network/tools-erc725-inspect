@@ -13,11 +13,16 @@ import ValueTypeDecoder from '../ValueTypeDecoder';
 
 import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 
+// for 0.6.0 (to be removed and fetch directly from erc725.js)
 import Schema_v06 from './Schema_v06.json';
 
 // for 0.5.0
 import Schema_v05 from './Schema_v05.json';
 import { getData } from '../../utils/web3';
+
+// legacy
+import LegacySchema from './legacySchemas.json';
+import { getAllDataKeys } from '../../utils/web3';
 
 interface Props {
   address: string;
@@ -82,7 +87,6 @@ const DataKeysTable: React.FC<Props> = ({
                 schema: SCHEMA[i],
               });
           });
-          setData(dataResult);
         }
 
         // if 0.5.0 UP, manually fetch via contract call
@@ -99,14 +103,26 @@ const DataKeysTable: React.FC<Props> = ({
               schema: Schema_v05[i],
             });
           });
+        }
 
-          setData(dataResult);
+        // for very old UPs, try legacy contract calls
+        if (isErc725YLegacy) {
+          const dataKeys = LegacySchema.map((schema) => schema.key);
+
+          const result = await getAllDataKeys(address, web3);
+          console.log('result legacy: ', result);
+
+          dataResult.push({
+            key: dataKeys[0],
+            value: result[0],
+            schema: LegacySchema[0],
+          });
         }
       } catch (err) {
         console.error(err);
       }
 
-      console.log('data: ', dataResult);
+      setData(dataResult);
     };
 
     fetch();
