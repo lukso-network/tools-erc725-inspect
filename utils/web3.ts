@@ -208,6 +208,10 @@ export const checkInterface = async (address: string, web3: Web3) => {
   };
 };
 
+/**
+ * For contracts deployed with version up to: 0.4.3
+ * @lukso/lsp-smart-contracts
+ */
 export const getAllDataKeys = async (
   address: string,
   web3: Web3,
