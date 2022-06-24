@@ -47,19 +47,15 @@ const DataKeysTable: React.FC<Props> = ({
 
   const web3 = useWeb3();
 
+  const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
+
   useEffect(() => {
     const fetch = async () => {
-      if (!web3) {
-        return;
-      }
-
-      if (!isErc725Y && !isErc725Y_v2 && !isErc725YLegacy) {
-        return;
-      }
+      if (!web3) return;
+      if (!isErc725YContract) return;
 
       let SCHEMA: ERC725JSONSchema[];
 
-      let erc725: ERC725;
       let dataResult: {
         key: string;
         value: string | string[] | URLDataWithHash;
@@ -71,14 +67,15 @@ const DataKeysTable: React.FC<Props> = ({
         if (isErc725Y) {
           SCHEMA = Schema_v06 as ERC725JSONSchema[];
 
-          // 1.1 create instance of erc725.js
-          erc725 = new ERC725(SCHEMA, address, web3.currentProvider);
+          const erc725: ERC725 = new ERC725(
+            SCHEMA,
+            address,
+            web3.currentProvider,
+          );
 
-          // 1.2 retrieve the data + console.log
           const result = await erc725.getData();
           console.log('result v0.6.0: ', result);
 
-          // 1.3 display in UI
           result.map((data, i) => {
             if (data.value)
               dataResult.push({
@@ -127,10 +124,6 @@ const DataKeysTable: React.FC<Props> = ({
 
     fetch();
   }, [address, web3, isErc725Y, isErc725Y_v2, isErc725YLegacy]);
-
-  if (!isErc725Y && !isErc725Y_v2 && !isErc725YLegacy) {
-    return null;
-  }
 
   return (
     <div className="columns is-multiline">
