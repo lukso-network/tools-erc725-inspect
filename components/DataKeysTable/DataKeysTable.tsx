@@ -1,5 +1,6 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Jean Cavallera <git@jeanc.abc>
  */
 import React, { useEffect, useState } from 'react';
 import Chip from '@mui/material/Chip';
@@ -13,6 +14,10 @@ import ValueTypeDecoder from '../ValueTypeDecoder';
 import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 
 import Schema_v06 from './Schema_v06.json';
+
+// for 0.5.0
+import Schema_v05 from './Schema_v05.json';
+import { getData } from '../../utils/web3';
 
 interface Props {
   address: string;
@@ -47,7 +52,7 @@ const DataKeysTable: React.FC<Props> = ({
         return;
       }
 
-      const SCHEMA = Schema_v06 as ERC725JSONSchema[];
+      let SCHEMA: ERC725JSONSchema[];
 
       let erc725: ERC725;
       let dataResult: {
@@ -57,13 +62,16 @@ const DataKeysTable: React.FC<Props> = ({
       }[] = [];
 
       try {
+        // if latest 0.6.0 UP, use erc725.js to retrieve the data keys
         if (isErc725Y) {
+          SCHEMA = Schema_v06 as ERC725JSONSchema[];
+
           // 1.1 create instance of erc725.js
           erc725 = new ERC725(SCHEMA, address, web3.currentProvider);
 
           // 1.2 retrieve the data + console.log
           const result = await erc725.getData();
-          console.log('result: ', result);
+          console.log('result v0.6.0: ', result);
 
           // 1.3 display in UI
           result.map((data, i) => {
@@ -71,21 +79,40 @@ const DataKeysTable: React.FC<Props> = ({
               dataResult.push({
                 key: data.key,
                 value: data.value,
-                schema: SCHEMA[i] as ERC725JSONSchema,
+                schema: SCHEMA[i],
               });
           });
+          setData(dataResult);
+        }
+
+        // if 0.5.0 UP, manually fetch via contract call
+        if (isErc725Y_v2) {
+          const dataKeys = Schema_v05.map((schema) => schema.key);
+
+          const result = await getData(address, dataKeys, web3);
+          console.log('result v0.5.0: ', result);
+
+          result.map((_, i) => {
+            dataResult.push({
+              key: dataKeys[i],
+              value: result[i],
+              schema: Schema_v05[i],
+            });
+          });
+
+          setData(dataResult);
         }
       } catch (err) {
         console.error(err);
       }
 
-      setData(dataResult);
+      console.log('data: ', dataResult);
     };
 
     fetch();
   }, [address, web3, isErc725Y, isErc725Y_v2, isErc725YLegacy]);
 
-  if (!isErc725Y && !isErc725YLegacy) {
+  if (!isErc725Y && !isErc725Y_v2 && !isErc725YLegacy) {
     return null;
   }
 
