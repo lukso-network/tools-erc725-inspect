@@ -4,17 +4,15 @@
 import React, { useEffect, useState } from 'react';
 import Chip from '@mui/material/Chip';
 import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
+import { URLDataWithHash } from '@erc725/erc725.js/build/main/src/types';
 
 import useWeb3 from '../../hooks/useWeb3';
-import { getAllDataKeys, getData, getDataMultiple } from '../../utils/web3';
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
 
 import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 
-import LegacySchema from './legacySchemas.json';
-
-const erc725 = new ERC725([]);
+import Schema_v06 from './Schema_v06.json';
 
 interface Props {
   address: string;
@@ -32,7 +30,7 @@ const DataKeysTable: React.FC<Props> = ({
   const [data, setData] = useState<
     {
       key: string;
-      value: string;
+      value: string | string[] | URLDataWithHash;
       schema: ERC725JSONSchema | Erc725JsonSchemaAll;
     }[]
   >([]);
@@ -49,57 +47,43 @@ const DataKeysTable: React.FC<Props> = ({
         return;
       }
 
+      const SCHEMA = Schema_v06 as ERC725JSONSchema[];
+
+      let erc725: ERC725;
+      let dataResult: {
+        key: string;
+        value: string | string[] | URLDataWithHash;
+        schema: ERC725JSONSchema | Erc725JsonSchemaAll;
+      }[] = [];
+
       try {
-        const fetchedDataKeys = await getAllDataKeys(address, web3);
-
-        let fetchedDataValues: string[] = [];
-
         if (isErc725Y) {
-          fetchedDataValues = await getData(address, fetchedDataKeys, web3);
+          // 1.1 create instance of erc725.js
+          erc725 = new ERC725(SCHEMA, address, web3.currentProvider);
+
+          // 1.2 retrieve the data + console.log
+          const result = await erc725.getData();
+          console.log('result: ', result);
+
+          // 1.3 display in UI
+          result.map((data, i) => {
+            if (data.value)
+              dataResult.push({
+                key: data.key,
+                value: data.value,
+                schema: SCHEMA[i] as ERC725JSONSchema,
+              });
+          });
         }
-
-        if (isErc725Y_v2) {
-        }
-
-        if (isErc725YLegacy) {
-          fetchedDataValues = await getDataMultiple(
-            address,
-            fetchedDataKeys,
-            web3,
-          );
-        }
-
-        console.log(fetchedDataKeys);
-
-        const schema = erc725.getSchema(
-          fetchedDataKeys,
-          LegacySchema as ERC725JSONSchema[],
-        );
-
-        console.log('schema', schema);
-
-        setData(
-          fetchedDataKeys.map((fetchedDataKey, i) => {
-            return {
-              key: fetchedDataKey,
-              value: fetchedDataValues[i],
-              schema: schema[fetchedDataKey] || {
-                name: 'UNKNOWN',
-                key: fetchedDataKey,
-                keyType: 'UNKNOWN',
-                valueContent: 'UNKNOWN',
-                valueType: 'UNKNOWN',
-              },
-            };
-          }),
-        );
       } catch (err) {
-        setData([]);
+        console.error(err);
       }
+
+      setData(dataResult);
     };
 
     fetch();
-  }, [address, web3, isErc725Y, isErc725YLegacy]);
+  }, [address, web3, isErc725Y, isErc725Y_v2, isErc725YLegacy]);
 
   if (!isErc725Y && !isErc725YLegacy) {
     return null;

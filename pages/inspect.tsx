@@ -20,9 +20,7 @@ import AddressButtons from '../components/AddressButtons';
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const [address, setAddress] = useState(
-    '0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99',
-  );
+  const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
