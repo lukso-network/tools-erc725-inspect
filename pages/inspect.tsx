@@ -19,20 +19,21 @@ import AddressButtons from '../components/AddressButtons';
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const [address, setAddress] = useState('');
+  const web3 = useWeb3();
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const [address, setAddress] = useState('');
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
   const [isErc725Y_v2, setIsErc725Y_v2] = useState(false);
   const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
+  const [errorMessage, setErrorMessage] = useState('');
   const [notification, setNotification] = useState({
     text: '',
     class: '',
   });
-
-  const web3 = useWeb3();
 
   useEffect(() => {
     if (router.query.address) {
@@ -40,6 +41,7 @@ const Home: NextPage = () => {
     }
   }, [router.query.address]);
 
+  console.log('======= RENDER START =======');
   useEffect(() => {
     const check = async () => {
       if (!web3) {
@@ -61,30 +63,33 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       const supportStandards = await checkInterface(address, web3);
-
-      console.log(supportStandards);
+      console.log('supportStandards: ', supportStandards);
 
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
       setIsErc725Y_v2(supportStandards.isErc725Y_v2);
       setIsErc725YLegacy(supportStandards.isErc725YLegacy);
-
-      if (isErc725Y_v2) {
-        console.log('v2 !!!');
-        setNotification({
-          text: 'This Profile was created with version 0.5.0. You are missing out on new cool features! Consider upgrading.',
-          class: 'warning',
-        });
-      }
-
-      if (isErc725YLegacy) {
-        console.log('Legacy!!!');
-        setNotification({
-          text: 'This is a legacy Universal Profile. Consider creating a new one.',
-          class: 'danger',
-        });
-      }
       setIsLoading(false);
+
+      let notificationText = '';
+      let notificationClass = '';
+
+      if (supportStandards.isErc725Y_v2) {
+        notificationText =
+          '⚠️ 🆙 This Profile was created with version 0.5.0. You are missing out on a lot of new cool features. Consider upgrading! ';
+        notificationClass = 'warning';
+      }
+
+      if (supportStandards.isErc725YLegacy) {
+        notificationText =
+          '😞 ❗ This is a legacy Universal Profile. Most of the features might not be working properly. Consider creating a new one. ';
+        notificationClass = 'danger';
+      }
+
+      setNotification({
+        text: notificationText,
+        class: notificationClass,
+      });
     };
     check();
   }, [address, web3]);
@@ -157,7 +162,7 @@ const Home: NextPage = () => {
             </div>
           </div>
           <div className="column is-half">
-            {(isErc725Y_v2 || isErc725YLegacy) && !isLoading && (
+            {(isErc725Y_v2 || isErc725YLegacy) && (
               <div className={'notification is-' + notification.class}>
                 {notification.text}
               </div>
