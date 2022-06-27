@@ -54,8 +54,6 @@ const DataKeysTable: React.FC<Props> = ({
       if (!web3) return;
       if (!isErc725YContract) return;
 
-      let SCHEMA: ERC725JSONSchema[];
-
       let dataResult: {
         key: string;
         value: string | string[] | URLDataWithHash;
@@ -63,30 +61,23 @@ const DataKeysTable: React.FC<Props> = ({
       }[] = [];
 
       try {
-        // if latest 0.6.0 UP, use erc725.js to retrieve the data keys
+        // if latest 0.6.0 UP, use data keys from 0.6.0 schema
         if (isErc725Y) {
-          SCHEMA = Schema_v06 as ERC725JSONSchema[];
+          const dataKeys = Schema_v06.map((schema) => schema.key);
 
-          const erc725: ERC725 = new ERC725(
-            SCHEMA,
-            address,
-            web3.currentProvider,
-          );
-
-          const result = await erc725.getData();
+          const result = await getData(address, dataKeys, web3);
           console.log('result v0.6.0: ', result);
 
-          result.map((data, i) => {
-            if (data.value)
+          result.map((_, i) => {
               dataResult.push({
-                key: data.key,
-                value: data.value,
-                schema: SCHEMA[i],
+                key: dataKeys[i],
+                value: result[i],
+                schema: Schema_v06[i],
               });
           });
         }
 
-        // if 0.5.0 UP, manually fetch via contract call
+        // if 0.5.0 UP, use data keys from v0.5.0 schema
         if (isErc725Y_v2) {
           const dataKeys = Schema_v05.map((schema) => schema.key);
 
@@ -157,10 +148,10 @@ const DataKeysTable: React.FC<Props> = ({
                     {data.schema.valueContent}
                   </span>
                   :{' '}
-                  <ValueTypeDecoder
+                  {/* <ValueTypeDecoder
                     erc725JSONSchema={data.schema}
                     value={data.value}
-                  />
+                  /> */}
                 </li>
                 {data.schema.keyType === 'AddressMappingWithGrouping' && (
                   <li>
