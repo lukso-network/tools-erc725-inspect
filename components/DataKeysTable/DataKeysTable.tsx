@@ -5,7 +5,6 @@
 import React, { useEffect, useState } from 'react';
 import Chip from '@mui/material/Chip';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
-import { URLDataWithHash } from '@erc725/erc725.js/build/main/src/types';
 
 import useWeb3 from '../../hooks/useWeb3';
 import AddressButtons from '../AddressButtons';
@@ -40,7 +39,7 @@ const DataKeysTable: React.FC<Props> = ({
   const [data, setData] = useState<
     {
       key: string;
-      value: string | string[] | URLDataWithHash;
+      value: string | string[];
       schema: ERC725JSONSchema | Erc725JsonSchemaAll;
     }[]
   >([]);
@@ -56,7 +55,7 @@ const DataKeysTable: React.FC<Props> = ({
 
       let dataResult: {
         key: string;
-        value: string | string[] | URLDataWithHash;
+        value: string;
         schema: ERC725JSONSchema | Erc725JsonSchemaAll;
       }[] = [];
 

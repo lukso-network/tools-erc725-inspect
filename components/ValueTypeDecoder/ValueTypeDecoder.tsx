@@ -11,7 +11,7 @@ import useWeb3 from '../../hooks/useWeb3';
 interface Props {
   address: string;
   erc725JSONSchema: ERC725JSONSchema | Erc725JsonSchemaAll;
-  value: string | string[];
+  value: string;
 }
 
 const ValueTypeDecoder: React.FC<Props> = ({
