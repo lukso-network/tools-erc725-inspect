@@ -41,7 +41,6 @@ const Home: NextPage = () => {
     }
   }, [router.query.address]);
 
-  console.log('======= RENDER START =======');
   useEffect(() => {
     const check = async () => {
       if (!web3) {
