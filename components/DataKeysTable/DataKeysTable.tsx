@@ -69,11 +69,11 @@ const DataKeysTable: React.FC<Props> = ({
           console.log('result v0.6.0: ', result);
 
           result.map((_, i) => {
-              dataResult.push({
-                key: dataKeys[i],
-                value: result[i],
-                schema: Schema_v06[i],
-              });
+            dataResult.push({
+              key: dataKeys[i],
+              value: result[i],
+              schema: Schema_v06[i],
+            });
           });
         }
 
@@ -148,10 +148,10 @@ const DataKeysTable: React.FC<Props> = ({
                     {data.schema.valueContent}
                   </span>
                   :{' '}
-                  {/* <ValueTypeDecoder
+                  <ValueTypeDecoder
                     erc725JSONSchema={data.schema}
                     value={data.value}
-                  /> */}
+                  />
                 </li>
                 {data.schema.keyType === 'AddressMappingWithGrouping' && (
                   <li>

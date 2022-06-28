@@ -7,33 +7,18 @@ import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
 
+interface JSONURL {
+  hashFunction: string;
+  hash: string;
+  url: string;
+}
+
 interface Props {
   erc725JSONSchema: ERC725JSONSchema | Erc725JsonSchemaAll;
-  value: string | string[];
+  value: string | string[] | JSONURL;
 }
 
 const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
-  if (erc725JSONSchema.keyType === 'Array') {
-    return (
-      <ul>
-        {(value as string[]).map((element, index) => (
-          <li>
-            [ {index} ] {'=>'} <code>{element}</code>
-          </li>
-        ))}
-      </ul>
-    );
-  } else {
-    if (erc725JSONSchema.valueContent === 'Address') {
-      return (
-        <>
-          <code>{value}</code>
-          <AddressButtons address={value} />
-        </>
-      );
-    }
-  }
-
   // The schema may be wrong, this error will be catched below
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -56,22 +41,31 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
   }
 
   try {
-    return (
-      <div>
-        <pre>{JSON.stringify(decodedDataOneKey[0], null, 4)}</pre>
-        {decodedDataOneKey[0].url && (
+    if (typeof decodedDataOneKey[0].value === 'string') {
+      if (erc725JSONSchema.valueContent === 'Address') {
+        return <AddressView value={decodedDataOneKey[0].value} />;
+      }
+
+      return <code>{value}</code>;
+    }
+
+    if (erc725JSONSchema.valueContent === 'JSONURL') {
+      return (
+        <>
+          <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
           <div>
-            <span>URL: {decodedDataOneKey[0].url}</span> -{' '}
-            {decodedDataOneKey[0].url.indexOf('ipfs://') !== -1 && (
+            <span>URL: {decodedDataOneKey[0].value.url}</span> -{' '}
+            {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
               <>
                 [
                 <a
                   className="has-text-link"
                   target="_blank"
                   rel="noreferrer"
-                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[
-                    erc725JSONSchema.name
-                  ].url.replace('ipfs://', '')}`}
+                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
+                    'ipfs://',
+                    '',
+                  )}`}
                 >
                   LUKSO IPFS
                 </a>
@@ -79,7 +73,14 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
               </>
             )}
           </div>
-        )}
+        </>
+      );
+    }
+
+    // display in a code block as a fallback
+    return (
+      <div>
+        <pre>{JSON.stringify(decodedDataOneKey[0], null, 4)}</pre>
       </div>
     );
   } catch (err) {
@@ -87,7 +88,7 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
   }
 };
 
-const AddressView = (value: string) => {
+const AddressView = ({ value }: { value: string }) => {
   return (
     <>
       <code>{value}</code>
