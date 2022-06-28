@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import Chip from '@mui/material/Chip';
-import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
+import { ERC725JSONSchema } from '@erc725/erc725.js';
 import { URLDataWithHash } from '@erc725/erc725.js/build/main/src/types';
 
 import useWeb3 from '../../hooks/useWeb3';
@@ -149,6 +149,7 @@ const DataKeysTable: React.FC<Props> = ({
                   </span>
                   :{' '}
                   <ValueTypeDecoder
+                    address={address}
                     erc725JSONSchema={data.schema}
                     value={data.value}
                   />

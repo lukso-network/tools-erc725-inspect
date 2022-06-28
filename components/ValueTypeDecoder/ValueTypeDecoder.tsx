@@ -6,28 +6,33 @@ import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
-
-interface JSONURL {
-  hashFunction: string;
-  hash: string;
-  url: string;
-}
+import useWeb3 from '../../hooks/useWeb3';
 
 interface Props {
+  address: string;
   erc725JSONSchema: ERC725JSONSchema | Erc725JsonSchemaAll;
-  value: string | string[] | JSONURL;
+  value: string | string[];
 }
 
-const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
-  // The schema may be wrong, this error will be catched below
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const schema: ERC725JSONSchema[] = [erc725JSONSchema];
-
-  const erc725 = new ERC725(schema);
-
+const ValueTypeDecoder: React.FC<Props> = ({
+  address,
+  erc725JSONSchema,
+  value,
+}) => {
   let decodedDataOneKey;
+
   try {
+    const web3 = useWeb3();
+
+    // The schema may be wrong, this error will be catched below
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const schema: ERC725JSONSchema[] = [erc725JSONSchema];
+
+    const erc725 = new ERC725(schema, address, web3?.currentProvider);
+
+    console.log('value', value);
+
     decodedDataOneKey = erc725.decodeData([
       {
         keyName: erc725JSONSchema.name,
@@ -47,6 +52,18 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
       }
 
       return <code>{value}</code>;
+    }
+
+    if (
+      Array.isArray(decodedDataOneKey[0].value) &&
+      erc725JSONSchema.keyType === 'Array'
+    ) {
+      console.log('decodedDataOneKey', decodedDataOneKey);
+      return (
+        <ul>
+          <li>{decodedDataOneKey[0].value[0]}</li>
+        </ul>
+      );
     }
 
     if (erc725JSONSchema.valueContent === 'JSONURL') {
