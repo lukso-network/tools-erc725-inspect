@@ -109,11 +109,9 @@ const Home: NextPage = () => {
     }
 
     return (
-      <div className="help inspect-result">
-        <p className={isErc725X ? 'is-success' : 'is-danger'}>
-          ERC725X: {isErc725X ? '✅' : '❌'}
-        </p>
-        <p className={isErc725YContract ? 'is-success' : 'is-danger'}>
+      <div className="help is-success inspect-result">
+        <p>ERC725X: {isErc725X ? '✅' : '❌'}</p>
+        <p>
           ERC725Y: {isErc725YContract ? '✅' : '❌'} {isErc725Y_v2 && '(v2.0)'}
           {isErc725YLegacy && '(legacy)'}
         </p>
