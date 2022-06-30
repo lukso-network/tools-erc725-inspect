@@ -56,7 +56,12 @@ const ValueTypeDecoder: React.FC<Props> = ({
   try {
     if (typeof decodedDataOneKey[0].value === 'string') {
       if (erc725JSONSchema.valueContent === 'Address') {
-        return <AddressView value={decodedDataOneKey[0].value} />;
+        return (
+          <>
+            <code>{value}</code>
+            <AddressButtons address={decodedDataOneKey[0].value} />
+          </>
+        );
       }
 
       return <code>{value}</code>;
@@ -115,15 +120,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
   } catch (err) {
     return <span>Can&apos;t decode this key</span>;
   }
-};
-
-const AddressView = ({ value }: { value: string }) => {
-  return (
-    <>
-      <code>{value}</code>
-      <AddressButtons address={value} />
-    </>
-  );
 };
 
 export default ValueTypeDecoder;
