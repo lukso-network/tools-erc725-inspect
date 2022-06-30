@@ -3,9 +3,9 @@
  */
 import Web3 from 'web3';
 
+import { ERC725Y_INTERFACE_IDS } from '@erc725/erc725.js/build/main/src/lib/constants';
+
 const ERC725X_INTERFACE_ID = '0x44c028fe';
-const ERC725Y_LEGACY_INTERFACE_ID = '0x2bd57b73';
-const ERC725Y_INTERFACE_ID = '0x5a988c0f';
 
 export const getDataMultiple = async (
   address: string,
@@ -174,30 +174,44 @@ export const checkInterface = async (address: string, web3: Web3) => {
   let isErc725Y = false;
   try {
     isErc725Y = await Contract.methods
-      .supportsInterface(ERC725Y_INTERFACE_ID)
+      .supportsInterface(ERC725Y_INTERFACE_IDS['3.0'])
       .call();
   } catch (err: any) {
-    console.log(err.message);
+    console.warn(err.message);
+  }
+
+  let isErc725Y_v2 = false;
+  try {
+    isErc725Y_v2 = await Contract.methods
+      .supportsInterface(ERC725Y_INTERFACE_IDS['2.0'])
+      .call();
+  } catch (err: any) {
+    console.warn(err.message);
   }
 
   let isErc725YLegacy = false;
   if (!isErc725Y) {
     try {
       isErc725YLegacy = await Contract.methods
-        .supportsInterface(ERC725Y_LEGACY_INTERFACE_ID)
+        .supportsInterface(ERC725Y_INTERFACE_IDS.legacy)
         .call();
     } catch (err: any) {
-      console.log(err.message);
+      console.warn(err.message);
     }
   }
 
   return {
     isErc725X,
-    isErc725YLegacy,
     isErc725Y,
+    isErc725Y_v2,
+    isErc725YLegacy,
   };
 };
 
+/**
+ * For contracts deployed with version up to: 0.4.3
+ * @lukso/lsp-smart-contracts
+ */
 export const getAllDataKeys = async (
   address: string,
   web3: Web3,

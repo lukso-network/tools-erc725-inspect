@@ -1,101 +1,119 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Jean Cavallera <git@jeanc.abc>
  */
 import React, { useEffect, useState } from 'react';
 import Chip from '@mui/material/Chip';
-import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
+import { ERC725JSONSchema } from '@erc725/erc725.js';
 
 import useWeb3 from '../../hooks/useWeb3';
-import { getAllDataKeys, getData, getDataMultiple } from '../../utils/web3';
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
 
-import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
+// for 0.6.0 (to be removed and fetch directly from erc725.js)
+import Schema_v06 from './Schema_v06.json';
 
+// for 0.5.0
+import Schema_v05 from './Schema_v05.json';
+import { getData } from '../../utils/web3';
+
+// legacy
 import LegacySchema from './legacySchemas.json';
-
-const erc725 = new ERC725([]);
+import { getAllDataKeys } from '../../utils/web3';
 
 interface Props {
   address: string;
   isErc725Y: boolean;
+  isErc725Y_v2: boolean;
   isErc725YLegacy: boolean;
 }
 
 const DataKeysTable: React.FC<Props> = ({
   address,
   isErc725Y,
+  isErc725Y_v2,
   isErc725YLegacy,
 }) => {
   const [data, setData] = useState<
     {
       key: string;
-      value: string;
-      schema: ERC725JSONSchema | Erc725JsonSchemaAll;
+      value: string | string[];
+      schema: ERC725JSONSchema;
     }[]
   >([]);
 
   const web3 = useWeb3();
 
+  const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
+
   useEffect(() => {
     const fetch = async () => {
-      if (!web3) {
-        return;
-      }
+      if (!web3) return;
+      if (!isErc725YContract) return;
 
-      if (!isErc725Y && !isErc725YLegacy) {
-        return;
-      }
+      const dataResult: {
+        key: string;
+        value: string;
+        schema: ERC725JSONSchema;
+      }[] = [];
 
       try {
-        const fetchedDataKeys = await getAllDataKeys(address, web3);
-
-        let fetchedDataValues: string[] = [];
-
+        // if latest 0.6.0 UP, use data keys from 0.6.0 schema
         if (isErc725Y) {
-          fetchedDataValues = await getData(address, fetchedDataKeys, web3);
-        } else {
-          fetchedDataValues = await getDataMultiple(
-            address,
-            fetchedDataKeys,
-            web3,
-          );
+          const dataKeys = Schema_v06.map((schema) => schema.key);
+
+          const result = await getData(address, dataKeys, web3);
+
+          result.map((_, i) => {
+            dataResult.push({
+              key: dataKeys[i],
+              value: result[i],
+              schema: Schema_v06[i],
+            });
+          });
         }
 
-        console.log(fetchedDataKeys);
+        // if 0.5.0 UP, use data keys from v0.5.0 schema
+        if (isErc725Y_v2) {
+          const dataKeys = Schema_v05.map((schema) => schema.key);
 
-        const schema = erc725.getSchema(
-          fetchedDataKeys,
-          LegacySchema as ERC725JSONSchema[],
-        );
+          const result = await getData(address, dataKeys, web3);
 
-        console.log('schema', schema);
+          result.map((_, i) => {
+            dataResult.push({
+              key: dataKeys[i],
+              value: result[i],
+              schema: Schema_v05[i],
+            });
+          });
+        }
 
-        setData(
-          fetchedDataKeys.map((fetchedDataKey, i) => {
-            return {
-              key: fetchedDataKey,
-              value: fetchedDataValues[i],
-              schema: schema[fetchedDataKey] || {
-                name: 'UNKNOWN',
-                key: fetchedDataKey,
-                keyType: 'UNKNOWN',
-                valueContent: 'UNKNOWN',
-                valueType: 'UNKNOWN',
-              },
-            };
-          }),
-        );
+        // for very old UPs, try legacy contract calls
+        if (isErc725YLegacy) {
+          const dataKeys = LegacySchema.map((schema) => schema.key);
+
+          const result = await getAllDataKeys(address, web3);
+
+          dataResult.push({
+            key: dataKeys[0],
+            value: result[0],
+            schema: LegacySchema[0],
+          });
+        }
       } catch (err) {
-        setData([]);
+        console.error(err);
       }
+
+      setData(dataResult);
     };
 
     fetch();
-  }, [address, web3, isErc725Y, isErc725YLegacy]);
+  }, [address, web3, isErc725Y, isErc725Y_v2, isErc725YLegacy]);
 
-  if (!isErc725Y && !isErc725YLegacy) {
-    return null;
+  if (!web3) return <p>error: could not load provider</p>;
+
+  if (!address) {
+    return <p>⬆️ enter the address of your UP</p>;
   }
 
   return (
@@ -131,6 +149,7 @@ const DataKeysTable: React.FC<Props> = ({
                   </span>
                   :{' '}
                   <ValueTypeDecoder
+                    address={address}
                     erc725JSONSchema={data.schema}
                     value={data.value}
                   />

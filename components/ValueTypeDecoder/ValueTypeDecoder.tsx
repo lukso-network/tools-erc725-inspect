@@ -1,64 +1,114 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
-import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
 
+import useWeb3 from '../../hooks/useWeb3';
+
+import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
+
 interface Props {
-  erc725JSONSchema: ERC725JSONSchema | Erc725JsonSchemaAll;
-  value: string;
+  address: string;
+  erc725JSONSchema: ERC725JSONSchema;
+  value: string | string[];
 }
 
-const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
-  if (erc725JSONSchema.valueContent === 'Address') {
-    return (
-      <>
-        <code>{value}</code>
-        <AddressButtons address={value} />
-      </>
-    );
-  }
+const ValueTypeDecoder: React.FC<Props> = ({
+  address,
+  erc725JSONSchema,
+  value,
+}) => {
+  // state to decoded the value retrieved from a data key
+  const [decodedDataOneKey, setDecodedDataOneKey] = useState<{
+    [key: string]: any;
+  }>([]);
+  // state used to retrieve entries for an Array data key
+  const [decodedDataArray, setDecodedDataArray] = useState<DecodeDataOutput>({
+    key: '',
+    name: '',
+    value: [],
+  });
 
-  // The schema may be wrong, this error will be catched bellow
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const schema: ERC725JSONSchema[] = [erc725JSONSchema];
+  const web3 = useWeb3();
 
-  const erc725 = new ERC725(schema);
+  useEffect(() => {
+    const startDecoding = async () => {
+      if (address && web3 !== undefined) {
+        const schema: ERC725JSONSchema[] = [erc725JSONSchema];
+        const erc725 = new ERC725(schema, address, web3.currentProvider);
 
-  let decodedDataOneKey;
+        const decodedData = erc725.decodeData([
+          {
+            keyName: erc725JSONSchema.name,
+            value: value as string,
+          },
+        ]);
+
+        setDecodedDataOneKey(decodedData);
+
+        if (erc725JSONSchema.keyType === 'Array') {
+          const result = await erc725.getData(erc725JSONSchema.name);
+          setDecodedDataArray(result);
+        }
+      }
+    };
+    startDecoding();
+  }, [address, web3]);
+
   try {
-    decodedDataOneKey = erc725.decodeData({
-      [erc725JSONSchema.name]: value,
-    });
-  } catch (err) {
-    // Goes here if key is not in erc725.js yet or if key is undefined
-    return <span>Can&apos;t decode this key</span>;
-  }
+    if (typeof decodedDataOneKey[0].value === 'string') {
+      if (erc725JSONSchema.valueContent === 'Address') {
+        return (
+          <>
+            <code>{value}</code>
+            <AddressButtons address={decodedDataOneKey[0].value} />
+          </>
+        );
+      }
 
-  try {
-    return (
-      <div>
-        <pre>
-          {JSON.stringify(decodedDataOneKey[erc725JSONSchema.name], null, 4)}
-        </pre>
-        {decodedDataOneKey[erc725JSONSchema.name].url && (
+      return <code>{value}</code>;
+    }
+
+    if (
+      decodedDataArray !== undefined &&
+      Array.isArray(decodedDataArray.value) &&
+      erc725JSONSchema.keyType === 'Array'
+    ) {
+      if (decodedDataArray.value.length === 0) {
+        return <span className="help">No array entries found.</span>;
+      } else {
+        return (
+          <ul>
+            {decodedDataArray.value.map((item, index) => (
+              <li key={index}>
+                <code>{item}</code>
+              </li>
+            ))}
+          </ul>
+        );
+      }
+    }
+
+    if (erc725JSONSchema.valueContent === 'JSONURL') {
+      return (
+        <>
+          <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
           <div>
-            <span>URL: {decodedDataOneKey[erc725JSONSchema.name].url}</span> -{' '}
-            {decodedDataOneKey[erc725JSONSchema.name].url.indexOf('ipfs://') !==
-              -1 && (
+            <span>URL: {decodedDataOneKey[0].value.url}</span> -{' '}
+            {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
               <>
                 [
                 <a
                   className="has-text-link"
                   target="_blank"
                   rel="noreferrer"
-                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[
-                    erc725JSONSchema.name
-                  ].url.replace('ipfs://', '')}`}
+                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
+                    'ipfs://',
+                    '',
+                  )}`}
                 >
                   LUKSO IPFS
                 </a>
@@ -66,10 +116,18 @@ const ValueTypeDecoder: React.FC<Props> = ({ erc725JSONSchema, value }) => {
               </>
             )}
           </div>
-        )}
+        </>
+      );
+    }
+
+    // display in a code block as a fallback
+    return (
+      <div>
+        <pre>{JSON.stringify(decodedDataOneKey[0], null, 4)}</pre>
       </div>
     );
   } catch (err) {
+    console.warn('Could not decode the key: ', err);
     return <span>Can&apos;t decode this key</span>;
   }
 };

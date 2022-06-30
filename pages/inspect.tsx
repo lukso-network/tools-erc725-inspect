@@ -1,7 +1,7 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Jean Cavallera0 <git@jeanc.abc>
  */
-
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -19,16 +19,21 @@ import AddressButtons from '../components/AddressButtons';
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const [address, setAddress] = useState(
-    '0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99',
-  );
+  const web3 = useWeb3();
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const [address, setAddress] = useState('');
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
+  const [isErc725Y_v2, setIsErc725Y_v2] = useState(false);
   const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const web3 = useWeb3();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [notification, setNotification] = useState({
+    text: '',
+    class: '',
+  });
 
   useEffect(() => {
     if (router.query.address) {
@@ -44,6 +49,7 @@ const Home: NextPage = () => {
 
       setIsErc725X(false);
       setIsErc725Y(false);
+      setIsErc725Y_v2(false);
       setIsErc725YLegacy(false);
       setErrorMessage('');
 
@@ -57,15 +63,61 @@ const Home: NextPage = () => {
       setIsLoading(true);
       const supportStandards = await checkInterface(address, web3);
 
-      console.log(supportStandards);
-
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
+      setIsErc725Y_v2(supportStandards.isErc725Y_v2);
       setIsErc725YLegacy(supportStandards.isErc725YLegacy);
       setIsLoading(false);
+
+      let notificationText = '';
+      let notificationClass = '';
+
+      if (supportStandards.isErc725Y_v2) {
+        notificationText =
+          '⚠️ 🆙 This Profile was created with version 0.5.0. You are missing out on a lot of new cool features. Consider upgrading! ';
+        notificationClass = 'warning';
+      }
+
+      if (supportStandards.isErc725YLegacy) {
+        notificationText =
+          '😞 ❗ This is a legacy Universal Profile. Most of the features might not be working properly. Consider creating a new one. ';
+        notificationClass = 'danger';
+      }
+
+      setNotification({
+        text: notificationText,
+        class: notificationClass,
+      });
     };
     check();
-  }, [address, web3]);
+  }, [address, web3, errorMessage]);
+
+  const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
+
+  const ERC725InspectResult = () => {
+    if (!isErc725X && !isErc725YContract) {
+      return (
+        <div className="help is-danger inspect-result">
+          <p>ERC725X: ❌</p>
+          <p>ERC725Y: ❌</p>
+          <p>
+            This address is not a valid ERC725 Profile. Please check the address
+            is correct.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="help is-success inspect-result">
+        <p>ERC725X: {isErc725X ? '✅' : '❌'}</p>
+        <p>
+          ERC725Y: {isErc725YContract ? '✅' : '❌'} {isErc725Y_v2 && '(v2.0)'}
+          {isErc725YLegacy && '(legacy)'}
+        </p>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -93,7 +145,7 @@ const Home: NextPage = () => {
           <div className="column is-half">
             <div className="field">
               <label className="label">Contract address</label>
-              <div className="control">
+              <div className="control mb-0">
                 <input
                   className="input"
                   type="text"
@@ -104,21 +156,23 @@ const Home: NextPage = () => {
                   }}
                 />
               </div>
-              {!errorMessage &&
-                !isErc725X &&
-                !isErc725Y &&
-                !isErc725YLegacy && (
-                  <p className="help is-danger">ERC725X: ❌ - ERC725Y: ❌</p>
-                )}
-
-              {(isErc725X || isErc725Y || isErc725YLegacy) && (
-                <p className="help is-success">
-                  ERC725X: {isErc725X ? '✅' : '❌'} - ERC725Y
-                  {isErc725YLegacy ? ' (legacy)' : ''}:{' '}
-                  {isErc725Y || isErc725YLegacy ? '✅' : '❌'}
-                </p>
-              )}
+              <div className="columns">
+                <div className="column is-one-half">
+                  {errorMessage ? (
+                    <div className="help is-danger">{errorMessage}</div>
+                  ) : (
+                    <ERC725InspectResult />
+                  )}
+                </div>
+              </div>
             </div>
+          </div>
+          <div className="column is-half">
+            {(isErc725Y_v2 || isErc725YLegacy) && (
+              <div className={'notification is-' + notification.class}>
+                {notification.text}
+              </div>
+            )}
           </div>
         </div>
 
@@ -132,10 +186,11 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="container is-fluid">
-          {!isLoading && (
+          {!errorMessage && !isLoading && (
             <DataKeysTable
               address={address}
               isErc725YLegacy={isErc725YLegacy}
+              isErc725Y_v2={isErc725Y_v2}
               isErc725Y={isErc725Y}
             />
           )}
