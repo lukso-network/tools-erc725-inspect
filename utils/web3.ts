@@ -177,7 +177,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
       .supportsInterface(ERC725Y_INTERFACE_IDS['3.0'])
       .call();
   } catch (err: any) {
-    console.log(err.message);
+    console.warn(err.message);
   }
 
   let isErc725Y_v2 = false;
@@ -186,7 +186,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
       .supportsInterface(ERC725Y_INTERFACE_IDS['2.0'])
       .call();
   } catch (err: any) {
-    console.log(err.message);
+    console.warn(err.message);
   }
 
   let isErc725YLegacy = false;
@@ -196,7 +196,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
         .supportsInterface(ERC725Y_INTERFACE_IDS.legacy)
         .call();
     } catch (err: any) {
-      console.log(err.message);
+      console.warn(err.message);
     }
   }
 

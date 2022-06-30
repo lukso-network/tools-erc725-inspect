@@ -63,7 +63,6 @@ const DataKeysTable: React.FC<Props> = ({
           const dataKeys = Schema_v06.map((schema) => schema.key);
 
           const result = await getData(address, dataKeys, web3);
-          console.log('result v0.6.0: ', result);
 
           result.map((_, i) => {
             dataResult.push({
@@ -79,7 +78,6 @@ const DataKeysTable: React.FC<Props> = ({
           const dataKeys = Schema_v05.map((schema) => schema.key);
 
           const result = await getData(address, dataKeys, web3);
-          console.log('result v0.5.0: ', result);
 
           result.map((_, i) => {
             dataResult.push({
@@ -95,7 +93,6 @@ const DataKeysTable: React.FC<Props> = ({
           const dataKeys = LegacySchema.map((schema) => schema.key);
 
           const result = await getAllDataKeys(address, web3);
-          console.log('result legacy: ', result);
 
           dataResult.push({
             key: dataKeys[0],

@@ -47,7 +47,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
         setDecodedDataOneKey(decodedData);
 
         const result = await erc725.getData(erc725JSONSchema.name);
-        console.log(result);
         setFetchedData(result);
       }
     };
