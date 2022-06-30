@@ -92,6 +92,33 @@ const Home: NextPage = () => {
     check();
   }, [address, web3]);
 
+  const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
+
+  const ERC725InspectResult = () => {
+    if (!errorMessage && !isErc725X && !isErc725YContract) {
+      return (
+        <div className="help is-danger inspect-result">
+          <p>ERC725X: ❌</p>
+          <p>ERC725Y: ❌</p>
+          <p>
+            This address is not a valid ERC725 Profile. Please check the address
+            is correct.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="help is-success inspect-result">
+        <p>ERC725X: {isErc725X ? '✅' : '❌'}</p>
+        <p>
+          ERC725Y: {isErc725YContract ? '✅' : '❌'} {isErc725Y_v2 && '(v2.0)'}
+          {isErc725YLegacy && '(legacy)'}
+        </p>
+      </div>
+    );
+  };
+
   return (
     <>
       <Head>
@@ -130,31 +157,8 @@ const Home: NextPage = () => {
                 />
               </div>
               <div className="columns">
-                <div className="column is-one-quarter">
-                  {!errorMessage &&
-                    !isErc725X &&
-                    !isErc725Y &&
-                    !isErc725Y_v2 &&
-                    !isErc725YLegacy && (
-                      <div>
-                        <p className="help is-danger">ERC725X: ❌</p>
-                        <p className="help is-danger">ERC725Y: ❌</p>
-                      </div>
-                    )}
-
-                  {(isErc725X || isErc725Y || isErc725YLegacy) && (
-                    <p className="help is-success">
-                      <p>ERC725X: {isErc725X ? '✅' : '❌'}</p>
-                      <p>
-                        ERC725Y:{' '}
-                        {isErc725Y || isErc725Y_v2 || isErc725YLegacy
-                          ? '✅'
-                          : '❌'}{' '}
-                        {isErc725Y_v2 && '(v2.0)'}
-                        {isErc725YLegacy && '(legacy)'}
-                      </p>
-                    </p>
-                  )}
+                <div className="column is-one-half">
+                  <ERC725InspectResult />
                 </div>
               </div>
             </div>
