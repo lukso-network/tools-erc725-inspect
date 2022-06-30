@@ -90,7 +90,7 @@ const Home: NextPage = () => {
       });
     };
     check();
-  }, [address, web3]);
+  }, [address, web3, errorMessage]);
 
   const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
 
