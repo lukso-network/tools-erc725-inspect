@@ -149,7 +149,6 @@ const DataKeysTable: React.FC<Props> = ({
                   </span>
                   :{' '}
                   <ValueTypeDecoder
-                    provider={web3}
                     address={address}
                     erc725JSONSchema={data.schema}
                     value={data.value}

@@ -5,37 +5,40 @@ import React, { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
-import Web3 from 'web3';
+
+import useWeb3 from '../../hooks/useWeb3';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
 
 interface Props {
-  provider: Web3;
   address: string;
   erc725JSONSchema: ERC725JSONSchema;
   value: string | string[];
 }
 
 const ValueTypeDecoder: React.FC<Props> = ({
-  provider,
   address,
   erc725JSONSchema,
   value,
 }) => {
+  // state to decoded the value retrieved from a data key
   const [decodedDataOneKey, setDecodedDataOneKey] = useState<{
     [key: string]: any;
   }>([]);
-  const [fetchedData, setFetchedData] = useState<DecodeDataOutput>({
+  // state used to retrieve entries for an Array data key
+  const [decodedDataArray, setDecodedDataArray] = useState<DecodeDataOutput>({
     key: '',
     name: '',
     value: [],
   });
 
+  const web3 = useWeb3();
+
   useEffect(() => {
     const startDecoding = async () => {
-      if (address) {
+      if (address && web3 !== undefined) {
         const schema: ERC725JSONSchema[] = [erc725JSONSchema];
-        const erc725 = new ERC725(schema, address, provider.currentProvider);
+        const erc725 = new ERC725(schema, address, web3.currentProvider);
 
         const decodedData = erc725.decodeData([
           {
@@ -46,12 +49,14 @@ const ValueTypeDecoder: React.FC<Props> = ({
 
         setDecodedDataOneKey(decodedData);
 
-        const result = await erc725.getData(erc725JSONSchema.name);
-        setFetchedData(result);
+        if (erc725JSONSchema.keyType === 'Array') {
+          const result = await erc725.getData(erc725JSONSchema.name);
+          setDecodedDataArray(result);
+        }
       }
     };
     startDecoding();
-  }, [address]);
+  }, [address, web3]);
 
   try {
     if (typeof decodedDataOneKey[0].value === 'string') {
@@ -68,19 +73,23 @@ const ValueTypeDecoder: React.FC<Props> = ({
     }
 
     if (
-      fetchedData !== undefined &&
-      Array.isArray(fetchedData.value as any) &&
+      decodedDataArray !== undefined &&
+      Array.isArray(decodedDataArray.value) &&
       erc725JSONSchema.keyType === 'Array'
     ) {
-      return (
-        <ul>
-          {(fetchedData.value as string[]).map((item, index) => (
-            <li key={index}>
-              <code>{item}</code>
-            </li>
-          ))}
-        </ul>
-      );
+      if (decodedDataArray.value.length === 0) {
+        return <span className="help">No array entries found.</span>;
+      } else {
+        return (
+          <ul>
+            {decodedDataArray.value.map((item, index) => (
+              <li key={index}>
+                <code>{item}</code>
+              </li>
+            ))}
+          </ul>
+        );
+      }
     }
 
     if (erc725JSONSchema.valueContent === 'JSONURL') {
@@ -118,6 +127,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
       </div>
     );
   } catch (err) {
+    console.warn('Could not decode the key: ', err);
     return <span>Can&apos;t decode this key</span>;
   }
 };
