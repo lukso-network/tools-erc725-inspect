@@ -10,8 +10,6 @@ import useWeb3 from '../../hooks/useWeb3';
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
 
-import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
-
 // for 0.6.0 (to be removed and fetch directly from erc725.js)
 import Schema_v06 from './Schema_v06.json';
 
@@ -40,7 +38,7 @@ const DataKeysTable: React.FC<Props> = ({
     {
       key: string;
       value: string | string[];
-      schema: ERC725JSONSchema | Erc725JsonSchemaAll;
+      schema: ERC725JSONSchema;
     }[]
   >([]);
 
@@ -53,10 +51,10 @@ const DataKeysTable: React.FC<Props> = ({
       if (!web3) return;
       if (!isErc725YContract) return;
 
-      let dataResult: {
+      const dataResult: {
         key: string;
         value: string;
-        schema: ERC725JSONSchema | Erc725JsonSchemaAll;
+        schema: ERC725JSONSchema;
       }[] = [];
 
       try {
@@ -114,6 +112,12 @@ const DataKeysTable: React.FC<Props> = ({
 
     fetch();
   }, [address, web3, isErc725Y, isErc725Y_v2, isErc725YLegacy]);
+
+  if (!web3) return <p>error: could not load provider</p>;
+
+  if (!address) {
+    return <p>⬆️ enter the address of your UP</p>;
+  }
 
   return (
     <div className="columns is-multiline">

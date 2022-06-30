@@ -3,16 +3,17 @@
  */
 import React, { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
-import { Erc725JsonSchemaAll } from '../../interfaces/erc725';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
 import Web3 from 'web3';
 
+import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
+
 interface Props {
   provider: Web3;
   address: string;
-  erc725JSONSchema: ERC725JSONSchema | Erc725JsonSchemaAll;
-  value: string;
+  erc725JSONSchema: ERC725JSONSchema;
+  value: string | string[];
 }
 
 const ValueTypeDecoder: React.FC<Props> = ({
@@ -21,14 +22,17 @@ const ValueTypeDecoder: React.FC<Props> = ({
   erc725JSONSchema,
   value,
 }) => {
-  const [decodedDataOneKey, setDecodedDataOneKey] = useState([]);
-  const [fetchedData, setFetchedData] = useState({});
-  const [loading, isLoading] = useState(false);
+  const [decodedDataOneKey, setDecodedDataOneKey] = useState<{
+    [key: string]: any;
+  }>([]);
+  const [fetchedData, setFetchedData] = useState<DecodeDataOutput>({
+    key: '',
+    name: '',
+    value: [],
+  });
 
   useEffect(() => {
     const startDecoding = async () => {
-      isLoading(true);
-
       if (address) {
         const schema: ERC725JSONSchema[] = [erc725JSONSchema];
         const erc725 = new ERC725(schema, address, provider.currentProvider);
@@ -36,24 +40,20 @@ const ValueTypeDecoder: React.FC<Props> = ({
         const decodedData = erc725.decodeData([
           {
             keyName: erc725JSONSchema.name,
-            value: value,
+            value: value as string,
           },
         ]);
 
         setDecodedDataOneKey(decodedData);
 
         const result = await erc725.getData(erc725JSONSchema.name);
+        console.log(result);
         setFetchedData(result);
       }
-
-      isLoading(false);
     };
     startDecoding();
-
-    return () => {};
   }, [address]);
 
-  if (loading) return <span>loading...</span>;
   try {
     if (typeof decodedDataOneKey[0].value === 'string') {
       if (erc725JSONSchema.valueContent === 'Address') {
@@ -64,12 +64,13 @@ const ValueTypeDecoder: React.FC<Props> = ({
     }
 
     if (
-      Array.isArray(fetchedData.value) &&
+      fetchedData !== undefined &&
+      Array.isArray(fetchedData.value as any) &&
       erc725JSONSchema.keyType === 'Array'
     ) {
       return (
         <ul>
-          {fetchedData.value.map((item, index) => (
+          {(fetchedData.value as string[]).map((item, index) => (
             <li key={index}>
               <code>{item}</code>
             </li>
