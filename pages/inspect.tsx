@@ -95,7 +95,7 @@ const Home: NextPage = () => {
   const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
 
   const ERC725InspectResult = () => {
-    if (!errorMessage && !isErc725X && !isErc725YContract) {
+    if (!isErc725X && !isErc725YContract) {
       return (
         <div className="help is-danger inspect-result">
           <p>ERC725X: ❌</p>
@@ -109,9 +109,11 @@ const Home: NextPage = () => {
     }
 
     return (
-      <div className="help is-success inspect-result">
-        <p>ERC725X: {isErc725X ? '✅' : '❌'}</p>
-        <p>
+      <div className="help inspect-result">
+        <p className={isErc725X ? 'is-success' : 'is-danger'}>
+          ERC725X: {isErc725X ? '✅' : '❌'}
+        </p>
+        <p className={isErc725YContract ? 'is-success' : 'is-danger'}>
           ERC725Y: {isErc725YContract ? '✅' : '❌'} {isErc725Y_v2 && '(v2.0)'}
           {isErc725YLegacy && '(legacy)'}
         </p>
@@ -158,7 +160,11 @@ const Home: NextPage = () => {
               </div>
               <div className="columns">
                 <div className="column is-one-half">
-                  <ERC725InspectResult />
+                  {errorMessage ? (
+                    <div className="help is-danger">{errorMessage}</div>
+                  ) : (
+                    <ERC725InspectResult />
+                  )}
                 </div>
               </div>
             </div>
@@ -182,7 +188,7 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="container is-fluid">
-          {!isLoading && (
+          {!errorMessage && !isLoading && (
             <DataKeysTable
               address={address}
               isErc725YLegacy={isErc725YLegacy}
