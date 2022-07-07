@@ -68,7 +68,7 @@ const DataKeysTable: React.FC<Props> = ({
             dataResult.push({
               key: dataKeys[i],
               value: result[i],
-              schema: Schema_v06[i],
+              schema: Schema_v06[i] as ERC725JSONSchema,
             });
           });
         }
@@ -83,7 +83,7 @@ const DataKeysTable: React.FC<Props> = ({
             dataResult.push({
               key: dataKeys[i],
               value: result[i],
-              schema: Schema_v05[i],
+              schema: Schema_v05[i] as ERC725JSONSchema,
             });
           });
         }
@@ -97,7 +97,7 @@ const DataKeysTable: React.FC<Props> = ({
           dataResult.push({
             key: dataKeys[0],
             value: result[0],
-            schema: LegacySchema[0],
+            schema: LegacySchema[0] as ERC725JSONSchema,
           });
         }
       } catch (err) {
@@ -154,7 +154,7 @@ const DataKeysTable: React.FC<Props> = ({
                     value={data.value}
                   />
                 </li>
-                {data.schema.keyType === 'AddressMappingWithGrouping' && (
+                {data.schema.keyType === 'MappingWithGrouping' && (
                   <li>
                     Mapped address:{' '}
                     <code>0x{data.schema.name.split(':').pop()}</code>{' '}
