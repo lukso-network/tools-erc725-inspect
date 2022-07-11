@@ -2,11 +2,10 @@
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Jean Cavallera <git@jeanc.abc>
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Chip from '@mui/material/Chip';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 
-import useWeb3 from '../../hooks/useWeb3';
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
 
@@ -20,6 +19,7 @@ import { getData } from '../../utils/web3';
 // legacy
 import LegacySchema from './legacySchemas.json';
 import { getAllDataKeys } from '../../utils/web3';
+import { NetworkContext } from '../../contexts/NetworksContext';
 
 interface Props {
   address: string;
@@ -42,7 +42,7 @@ const DataKeysTable: React.FC<Props> = ({
     }[]
   >([]);
 
-  const web3 = useWeb3();
+  const { web3 } = useContext(NetworkContext);
 
   const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
 

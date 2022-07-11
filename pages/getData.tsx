@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { isAddress } from 'web3-utils';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
@@ -9,8 +9,8 @@ import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
 import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 
-import useWeb3 from '../hooks/useWeb3';
 import { checkInterface, getData, getDataLegacy } from '../utils/web3';
+import { NetworkContext } from '../contexts/NetworksContext';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -35,7 +35,7 @@ const GetData: NextPage = () => {
     isErc725YLegacy: false,
   });
 
-  const web3 = useWeb3();
+  const { web3 } = useContext(NetworkContext);
 
   const onContractAddressChange = async (address: string) => {
     setAddress(address);

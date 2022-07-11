@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
-import useWeb3 from '../../hooks/useWeb3';
 import LSP6KeyManager from '../../abis/LSP6KeyManager.json';
+import { NetworkContext } from '../../contexts/NetworksContext';
 
 const KeyManagerNonceChecker: React.FC = () => {
-  const web3 = useWeb3();
+  const { web3 } = useContext(NetworkContext);
 
   const [keyManagerAddress, setKeyManagerAddress] = useState('');
   const [callerAddress, setCallerAddress] = useState('');
