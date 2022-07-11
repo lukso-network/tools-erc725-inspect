@@ -1,12 +1,12 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
 
-import useWeb3 from '../../hooks/useWeb3';
+import { NetworkContext } from '../../contexts/NetworksContext';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
 
@@ -32,7 +32,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
     value: [],
   });
 
-  const web3 = useWeb3();
+  const { web3 } = useContext(NetworkContext);
 
   useEffect(() => {
     const startDecoding = async () => {

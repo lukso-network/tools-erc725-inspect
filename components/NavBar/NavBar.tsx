@@ -4,6 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import NetworkSwitch from './components/NetworksSwitch';
 
 const NavBar: React.FC = () => {
   const router = useRouter();
@@ -54,6 +55,9 @@ const NavBar: React.FC = () => {
         </div>
 
         <div className="navbar-end">
+          <div className="navbar-item">
+            <NetworkSwitch />
+          </div>
           <div className="navbar-item">
             <div className="buttons">
               <a href="https://docs.lukso.tech/" className="button is-light">

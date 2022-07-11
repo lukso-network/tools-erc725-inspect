@@ -6,20 +6,20 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { isAddress } from 'web3-utils';
 
 import '../styles/Inspect.module.css';
-import useWeb3 from '../hooks/useWeb3';
 import { checkInterface } from '../utils/web3';
 
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
+import { NetworkContext } from '../contexts/NetworksContext';
 
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const web3 = useWeb3();
+  const { web3 } = useContext(NetworkContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
