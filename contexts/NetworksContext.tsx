@@ -15,8 +15,7 @@ export interface INetworksContext {
 
 export const NetworkContext = createContext<INetworksContext>({
   network: { name: '', rpc: '' },
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setNetwork: () => {},
+  setNetwork: () => null,
   web3: new Web3(),
 });
 
@@ -31,7 +30,6 @@ const NetworksProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     setWeb3(new Web3(network.rpc));
     if (process.env.NODE_ENV === 'development') {
-      // @ts-ignore
       window.web3 = web3;
     }
   }, [network]);
