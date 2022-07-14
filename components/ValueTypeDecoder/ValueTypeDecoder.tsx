@@ -47,7 +47,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
               value: value as string,
             },
           ]);
-
           setDecodedDataOneKey(decodedData);
 
           if (erc725JSONSchema.keyType === 'Array') {

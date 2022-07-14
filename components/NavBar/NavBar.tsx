@@ -52,6 +52,15 @@ const NavBar: React.FC = () => {
               💽 getData
             </a>
           </Link>
+          <Link href="/lsp2-coder">
+            <a
+              className={`navbar-item ${
+                router.pathname === '/lsp2-coder' && 'has-text-link'
+              }`}
+            >
+              📖 LSP2 coder
+            </a>
+          </Link>
         </div>
 
         <div className="navbar-end">
