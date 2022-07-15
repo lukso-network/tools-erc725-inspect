@@ -5,6 +5,10 @@ const valueContents = [
   'Number',
   // 'BytesN', //will use bytes for the momment
   'Bytes',
+  'Bytes4',
+  'Bytes8',
+  'Bytes16',
+  'Bytes32',
   'Keccak256',
   'BitArray',
   'URL',

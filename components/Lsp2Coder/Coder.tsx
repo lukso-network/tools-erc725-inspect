@@ -1,8 +1,8 @@
 import schemas from './utils/schemas';
 import valueContents from './utils/valueContents';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ERC725 } from '@erc725/erc725.js';
-import styles from './styles/Encode.module.scss';
+import errorsDict from './utils/errorsDict';
 
 interface IJSONURLEncode {
   hash: string;
@@ -22,6 +22,7 @@ const Encode: React.FC = () => {
     });
   const [encodingError, setEncodingError] = useState<boolean>(false);
   const [decodingError, setDecodingError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const erc725 = new ERC725(schemas);
 
@@ -30,9 +31,10 @@ const Encode: React.FC = () => {
       return (
         <div className="is-flex is-flex-direction-column">
           <textarea
-            className="p-1 mb-2"
+            className="p-1 mb-2 textarea"
             placeholder="hash"
             value={jsonUrlDecodedValue.hash}
+            rows={6}
             onChange={(e) => {
               setJsonUrlDecodedValue({
                 ...jsonUrlDecodedValue,
@@ -42,9 +44,10 @@ const Encode: React.FC = () => {
             }}
           />
           <textarea
-            className="p-1"
+            className="p-1 textarea"
             placeholder="url"
             value={jsonUrlDecodedValue.url}
+            rows={6}
             onChange={(e) => {
               setJsonUrlDecodedValue({
                 ...jsonUrlDecodedValue,
@@ -60,8 +63,9 @@ const Encode: React.FC = () => {
         <textarea
           placeholder="value"
           value={decodedValue as string}
-          className="p-1"
+          className="p-1  textarea is-fullwidth"
           onChange={(e) => encode(e.target.value)}
+          rows={6}
         />
       );
     }
@@ -70,7 +74,8 @@ const Encode: React.FC = () => {
   const renderDecoderField = () => {
     return (
       <textarea
-        className="p-2"
+        className="p-1 textarea"
+        rows={6}
         onChange={(e) => decode(e.target.value)}
         value={encodedValue}
       />
@@ -82,6 +87,13 @@ const Encode: React.FC = () => {
     setEncodingError(false);
   };
 
+  useEffect(() => {
+    if (encodingError) {
+      const message = `${decodedValue} ${errorsDict[valueContent]}`;
+      setErrorMessage(message);
+    }
+  }, [decodedValue, encodingError]);
+
   const encode = (val: string | IJSONURLEncode) => {
     resetErrors();
     try {
@@ -89,7 +101,9 @@ const Encode: React.FC = () => {
       const encoded = erc725.encodeData([
         { keyName: valueContent, value: val },
       ]);
-      setEncodedValue(encoded.values[0]);
+      encoded.values[0] === '0x'
+        ? setEncodedValue('')
+        : setEncodedValue(encoded.values[0]);
     } catch (error) {
       setEncodingError(true);
       setEncodedValue('');
@@ -112,6 +126,11 @@ const Encode: React.FC = () => {
           });
     } catch (error) {
       setDecodedValue('');
+      setJsonUrlDecodedValue({
+        url: '',
+        hash: '',
+        hashFunction: 'keccak256(utf8)',
+      });
       setDecodingError(true);
     }
   };
@@ -130,10 +149,11 @@ const Encode: React.FC = () => {
     const valContent = e.target.value;
     setValueContent(valContent);
     resetValues();
+    resetErrors();
   };
 
   return (
-    <div className={styles.main}>
+    <div>
       <article className="message is-info">
         <div className="message-body">
           This tool will encode/decode values following the
@@ -159,19 +179,21 @@ const Encode: React.FC = () => {
         </select>
       </div>
       {valueContent && (
-        <div className="is-flex">
-          <div className="mr-6">
-            <div className="mt-4 mb-2">Encoder</div>
-            {renderEncoderFields()}
-            {encodingError && (
-              <div className="my-2 has-text-danger">Wrong value</div>
-            )}
+        <div className="columns is-two-thirds-desktop is-half-widescreen is-flex ">
+          <div className="mr-6 column">
+            <div className=" is-fullwidth">
+              <div className="mt-4 mb-2">Encoder</div>
+              {renderEncoderFields()}
+              {encodingError && (
+                <div className="my-2 has-text-danger">{errorMessage}</div>
+              )}
+            </div>
           </div>
-          <div className="">
-            <div className="mt-4 mb-2">Decoder</div>
+          <div className="column">
+            <div className="mt-4 mb-2 ">Decoder</div>
             {renderDecoderField()}
             {decodingError && (
-              <div className="my-2 has-text-danger">Wrong value</div>
+              <div className="my-2 has-text-danger">Could not decode</div>
             )}
           </div>
         </div>
