@@ -29,33 +29,37 @@ const Encode: React.FC = () => {
   const renderEncoderFields = () => {
     if (valueContent === 'JSONURL') {
       return (
-        <div className="is-flex is-flex-direction-column">
-          <textarea
-            className="p-1 mb-2 textarea"
-            placeholder="hash"
-            value={jsonUrlDecodedValue.hash}
-            rows={6}
-            onChange={(e) => {
-              setJsonUrlDecodedValue({
-                ...jsonUrlDecodedValue,
-                hash: e.target.value,
-              });
-              jsonUrlDecodedValue.url && encode(jsonUrlDecodedValue);
-            }}
-          />
-          <textarea
-            className="p-1 textarea"
-            placeholder="url"
-            value={jsonUrlDecodedValue.url}
-            rows={6}
-            onChange={(e) => {
-              setJsonUrlDecodedValue({
-                ...jsonUrlDecodedValue,
-                url: e.target.value,
-              });
-              jsonUrlDecodedValue.hash && encode(jsonUrlDecodedValue);
-            }}
-          />
+        <div className="">
+          <div className="columns">
+            <div className="column is-half">
+              <textarea
+                className="p-1 textarea"
+                placeholder="hash"
+                value={jsonUrlDecodedValue.hash}
+                rows={6}
+                onChange={(e) => {
+                  setJsonUrlDecodedValue({
+                    ...jsonUrlDecodedValue,
+                    hash: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div className="column is half">
+              <textarea
+                className="p-1 textarea"
+                placeholder="url"
+                value={jsonUrlDecodedValue.url}
+                rows={6}
+                onChange={(e) => {
+                  setJsonUrlDecodedValue({
+                    ...jsonUrlDecodedValue,
+                    url: e.target.value,
+                  });
+                }}
+              />
+            </div>
+          </div>
         </div>
       );
     } else {
@@ -86,6 +90,12 @@ const Encode: React.FC = () => {
     setDecodingError(false);
     setEncodingError(false);
   };
+
+  useEffect(() => {
+    if (jsonUrlDecodedValue.hash && jsonUrlDecodedValue.url) {
+      encode(jsonUrlDecodedValue);
+    }
+  }, [jsonUrlDecodedValue]);
 
   useEffect(() => {
     if (encodingError) {
@@ -154,7 +164,7 @@ const Encode: React.FC = () => {
 
   return (
     <div>
-      <article className="message is-info">
+      <article className="message is-info mx-3">
         <div className="message-body">
           This tool will encode/decode values following the
           <a
@@ -166,7 +176,7 @@ const Encode: React.FC = () => {
           .
         </div>
       </article>
-      <div className="select my-2">
+      <div className="select my-2 px-3">
         <select onChange={setKeyName}>
           <option>Select valueContent</option>
           {valueContents.map((valCont) => {
@@ -179,10 +189,10 @@ const Encode: React.FC = () => {
         </select>
       </div>
       {valueContent && (
-        <div className="columns is-two-thirds-desktop is-half-widescreen is-flex ">
-          <div className="mr-6 column">
+        <div className="is-two-thirds-desktop is-half-widescreen ">
+          <div className="column">
             <div className=" is-fullwidth">
-              <div className="mt-4 mb-2">Encoder</div>
+              <div className="mt-4 mb-2 ">Encoder</div>
               {renderEncoderFields()}
               {encodingError && (
                 <div className="my-2 has-text-danger">{errorMessage}</div>

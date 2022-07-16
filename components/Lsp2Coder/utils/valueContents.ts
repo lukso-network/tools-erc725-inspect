@@ -1,5 +1,5 @@
 const valueContents = [
-  'Boolean',
+  // 'Boolean', not implemented in the library yet
   'String',
   'Address',
   'Number',
