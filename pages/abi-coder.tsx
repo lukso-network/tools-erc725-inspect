@@ -7,11 +7,11 @@ import {
 } from '@mui/material';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import Decode from '../components/Decode';
 import Encode from '../components/Encode';
-import useWeb3 from '../hooks/useWeb3';
+import { NetworkContext } from '../contexts/NetworksContext';
 
 enum TX_PARSER_MODES {
   ENCODE = 'ENCODE',
@@ -21,7 +21,8 @@ enum TX_PARSER_MODES {
 const DEFAULT_MODE = TX_PARSER_MODES.ENCODE;
 
 const Home: NextPage = () => {
-  const web3 = useWeb3();
+  const { web3 } = useContext(NetworkContext);
+
   const [mode, setMode] = useState(DEFAULT_MODE);
 
   return (

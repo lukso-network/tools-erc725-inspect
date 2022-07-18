@@ -1,12 +1,12 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
 
-import useWeb3 from '../../hooks/useWeb3';
+import { NetworkContext } from '../../contexts/NetworksContext';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
 
@@ -32,27 +32,31 @@ const ValueTypeDecoder: React.FC<Props> = ({
     value: [],
   });
 
-  const web3 = useWeb3();
+  const { web3 } = useContext(NetworkContext);
 
   useEffect(() => {
     const startDecoding = async () => {
-      if (address && web3 !== undefined) {
-        const schema: ERC725JSONSchema[] = [erc725JSONSchema];
-        const erc725 = new ERC725(schema, address, web3.currentProvider);
+      try {
+        if (address && web3 !== undefined) {
+          const schema: ERC725JSONSchema[] = [erc725JSONSchema];
+          const erc725 = new ERC725(schema, address, web3.currentProvider);
 
-        const decodedData = erc725.decodeData([
-          {
-            keyName: erc725JSONSchema.name,
-            value: value as string,
-          },
-        ]);
+          const decodedData = erc725.decodeData([
+            {
+              keyName: erc725JSONSchema.name,
+              value: value as string,
+            },
+          ]);
 
-        setDecodedDataOneKey(decodedData);
+          setDecodedDataOneKey(decodedData);
 
-        if (erc725JSONSchema.keyType === 'Array') {
-          const result = await erc725.getData(erc725JSONSchema.name);
-          setDecodedDataArray(result);
+          if (erc725JSONSchema.keyType === 'Array') {
+            const result = await erc725.getData(erc725JSONSchema.name);
+            setDecodedDataArray(result);
+          }
         }
+      } catch (error: any) {
+        console.log(error.message);
       }
     };
     startDecoding();
