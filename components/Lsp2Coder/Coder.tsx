@@ -11,7 +11,7 @@ interface IJSONURLEncode {
 }
 
 const Encode: React.FC = () => {
-  const [valueContent, setValueContent] = useState<string>('');
+  const [valueContent, setValueContent] = useState<string>('String');
   const [encodedValue, setEncodedValue] = useState<string>('');
   const [decodedValue, setDecodedValue] = useState<string | IJSONURLEncode>('');
   const [jsonUrlDecodedValue, setJsonUrlDecodedValue] =
@@ -177,8 +177,7 @@ const Encode: React.FC = () => {
         </div>
       </article>
       <div className="select my-2 px-3">
-        <select onChange={setKeyName}>
-          <option>Select valueContent</option>
+        <select onChange={setKeyName} value={valueContent}>
           {valueContents.map((valCont) => {
             return (
               <option key={valCont} value={valCont}>
