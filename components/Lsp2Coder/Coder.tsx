@@ -176,7 +176,8 @@ const Encode: React.FC = () => {
           .
         </div>
       </article>
-      <div className="select my-2 px-3">
+      <div className="column mt-2">Select valueContent</div>
+      <div className="select mb-2 px-3">
         <select onChange={setKeyName} value={valueContent}>
           {valueContents.map((valCont) => {
             return <option key={valCont}>{valCont}</option>;
