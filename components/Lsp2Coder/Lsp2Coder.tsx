@@ -10,11 +10,7 @@ interface IJSONURLEncode {
   hashFunction: string;
 }
 
-<<<<<<< HEAD:components/Lsp2Coder/Lsp2Coder.tsx
 const Lsp2Coder: React.FC = () => {
-=======
-const Encode: React.FC = () => {
->>>>>>> 18c088a ([WIP] #27 - initiated valueContent with String in order to show the inputs directly on the page):components/Lsp2Coder/Coder.tsx
   const [valueContent, setValueContent] = useState<string>('String');
   const [encodedValue, setEncodedValue] = useState<string>('');
   const [decodedValue, setDecodedValue] = useState<string | IJSONURLEncode>('');
