@@ -1,1 +1,1 @@
-export { default } from './Coder';
+export { default } from './Lsp2Coder';

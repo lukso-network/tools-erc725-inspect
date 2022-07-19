@@ -10,7 +10,7 @@ interface IJSONURLEncode {
   hashFunction: string;
 }
 
-const Encode: React.FC = () => {
+const Lsp2Coder: React.FC = () => {
   const [valueContent, setValueContent] = useState<string>('String');
   const [encodedValue, setEncodedValue] = useState<string>('');
   const [decodedValue, setDecodedValue] = useState<string | IJSONURLEncode>('');
@@ -208,4 +208,4 @@ const Encode: React.FC = () => {
   );
 };
 
-export default Encode;
+export default Lsp2Coder;
