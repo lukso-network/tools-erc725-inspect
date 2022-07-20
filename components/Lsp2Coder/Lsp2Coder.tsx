@@ -29,60 +29,73 @@ const Lsp2Coder: React.FC = () => {
   const renderEncoderFields = () => {
     if (valueContent === 'JSONURL') {
       return (
-        <div className="">
-          <div className="columns">
-            <div className="column is-half">
-              <textarea
-                className="p-1 textarea"
-                placeholder="hash"
-                value={jsonUrlDecodedValue.hash}
-                rows={6}
-                onChange={(e) => {
-                  setJsonUrlDecodedValue({
-                    ...jsonUrlDecodedValue,
-                    hash: e.target.value,
-                  });
-                }}
-              />
-            </div>
-            <div className="column is half">
-              <textarea
-                className="p-1 textarea"
-                placeholder="url"
-                value={jsonUrlDecodedValue.url}
-                rows={6}
-                onChange={(e) => {
-                  setJsonUrlDecodedValue({
-                    ...jsonUrlDecodedValue,
-                    url: e.target.value,
-                  });
-                }}
-              />
+        <div className="field">
+          <div className="label">Encoded value</div>
+          <div className="control">
+            <div className="columns">
+              <div className="column is-half">
+                <textarea
+                  className="p-1 textarea"
+                  placeholder="hash"
+                  value={jsonUrlDecodedValue.hash}
+                  rows={6}
+                  onChange={(e) => {
+                    setJsonUrlDecodedValue({
+                      ...jsonUrlDecodedValue,
+                      hash: e.target.value,
+                    });
+                  }}
+                />
+              </div>
+              <div className="column is half">
+                <textarea
+                  className="p-1 textarea"
+                  placeholder="url"
+                  value={jsonUrlDecodedValue.url}
+                  rows={6}
+                  onChange={(e) => {
+                    setJsonUrlDecodedValue({
+                      ...jsonUrlDecodedValue,
+                      url: e.target.value,
+                    });
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
       );
     } else {
       return (
-        <textarea
-          placeholder="value"
-          value={decodedValue as string}
-          className="p-1  textarea is-fullwidth"
-          onChange={(e) => encode(e.target.value)}
-          rows={6}
-        />
+        <div className="field">
+          <div className="label">Encoded value</div>
+          <div className="control">
+            <textarea
+              placeholder="value"
+              value={decodedValue as string}
+              className="p-1 textarea is-fullwidth"
+              onChange={(e) => encode(e.target.value)}
+              rows={6}
+            />
+          </div>
+        </div>
       );
     }
   };
 
   const renderDecoderField = () => {
     return (
-      <textarea
-        className="p-1 textarea"
-        rows={6}
-        onChange={(e) => decode(e.target.value)}
-        value={encodedValue}
-      />
+      <div className="field">
+        <div className="label">Decoded value</div>
+        <div className="control">
+          <textarea
+            className="p-1 textarea"
+            rows={6}
+            onChange={(e) => decode(e.target.value)}
+            value={encodedValue}
+          />
+        </div>
+      </div>
     );
   };
 
@@ -176,19 +189,22 @@ const Lsp2Coder: React.FC = () => {
           .
         </div>
       </article>
-      <div className="column mt-2">Select valueContent</div>
-      <div className="select mb-2 px-3">
-        <select onChange={setKeyName} value={valueContent}>
-          {valueContents.map((valCont) => {
-            return <option key={valCont}>{valCont}</option>;
-          })}
-        </select>
+      <div className="field px-3">
+        <div className="label">Select valueContent</div>
+        <div className="control">
+          <div className="select mb-2">
+            <select onChange={setKeyName} value={valueContent}>
+              {valueContents.map((valCont) => {
+                return <option key={valCont}>{valCont}</option>;
+              })}
+            </select>
+          </div>
+        </div>
       </div>
       {valueContent && (
         <div className="is-two-thirds-desktop is-half-widescreen ">
           <div className="column">
             <div className=" is-fullwidth">
-              <div className="mt-4 mb-2 ">Encoder</div>
               {renderEncoderFields()}
               {encodingError && (
                 <div className="my-2 has-text-danger">{errorMessage}</div>
@@ -196,7 +212,6 @@ const Lsp2Coder: React.FC = () => {
             </div>
           </div>
           <div className="column">
-            <div className="mt-4 mb-2 ">Decoder</div>
             {renderDecoderField()}
             {decodingError && (
               <div className="my-2 has-text-danger">Could not decode</div>
