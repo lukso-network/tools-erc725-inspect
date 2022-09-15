@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState, useContext } from 'react';
-import { isAddress } from 'web3-utils';
+import { isAddress, toDecimal } from 'web3-utils';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
 import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
@@ -101,6 +101,92 @@ const GetData: NextPage = () => {
     }
 
     setData(data);
+  };
+
+  const decodeData = (data: string) => {
+    const decodedData = [
+      {
+        permissionName: "CHANGEOWNER",
+        permissionBit: 1/*1 << 0*/,
+       permissionPresence: false
+      },
+      {
+        permissionName: "CHANGEPERMISSIONS",
+        permissionBit: 2/*1 << 1*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "ADDPERMISSIONS",
+        permissionBit: 4/*1 << 2*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "SETDATA",
+        permissionBit: 8/*1 << 3*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "CALL",
+        permissionBit: 16/*1 << 4*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "STATICCALL",
+        permissionBit: 32/*1 << 5*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "DELEGATECALL",
+        permissionBit: 64/*1 << 6*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "DEPLOY",
+        permissionBit: 128/*1 << 7*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "TRANSFERVALUE",
+        permissionBit: 256/*1 << 8*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "SIGN",
+        permissionBit: 512/*1 << 9*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "SUPER_SETDATA",
+        permissionBit: 1024/*1 << 10*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "SUPER_TRANSFERVALUE",
+        permissionBit: 2048/*1 << 11*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "SUPER_CALL",
+        permissionBit: 4096/*1 << 12*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "SUPER_STATICCALL",
+        permissionBit: 8192/*1 << 13*/,
+        permissionPresence: false
+      },
+      {
+        permissionName: "SUPER_DELEGATECALL",
+        permissionBit: 16384/*1 << 14*/,
+        permissionPresence: false
+      }
+    ];
+    for (let i = 0; i < decodedData.length; i++) {
+      if ((decodedData[i].permissionBit & toDecimal(data[0])) != 0) {
+        decodedData[i].permissionPresence = true;
+      }
+    }
+    return decodedData;
   };
 
   return (
@@ -210,7 +296,18 @@ const GetData: NextPage = () => {
                 </div>
               </article>
               <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                {data}
+                {decodeData(data).map((element, index) => {
+                  if(element.permissionPresence) {
+                    return (
+                      <p key={index}>
+                        {element.permissionName}
+                      </p>
+                    );
+                  }
+                  else {
+                    return;
+                  }
+                })}
               </pre>
             </div>
           )}
