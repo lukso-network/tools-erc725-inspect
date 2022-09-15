@@ -244,9 +244,11 @@ const GetData: NextPage = () => {
                 </div>
               </article>
               <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                {decodePermissionsData(data).map((element, index) => {
-                  return <p key={index}>{element}</p>;
-                })}
+                {dataKey.substring(0, 26) == '0x4b80742de2bf82acb3630000'
+                  ? decodePermissionsData(data).map((element, index) => {
+                      return <p key={index}>{element}</p>;
+                    })
+                  : data}
               </pre>
             </div>
           )}
