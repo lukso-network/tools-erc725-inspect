@@ -125,7 +125,11 @@ const GetData: NextPage = () => {
     const decodedPermissionsData: string[] = [];
     const erc752DecodePermissions = ERC725.decodePermissions(data[0]);
     for (let i = 0; i < permissionsArray.length; i++) {
-      if (erc752DecodePermissions[permissionsArray[i]]) {
+      if (
+        erc752DecodePermissions[
+          permissionsArray[i] as keyof typeof erc752DecodePermissions
+        ]
+      ) {
         decodedPermissionsData.push(permissionsArray[i]);
       }
     }
