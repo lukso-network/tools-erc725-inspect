@@ -105,7 +105,7 @@ const GetData: NextPage = () => {
   };
 
   const decodePermissionsData = (data: string) => {
-    const permissionsArray: string = [
+    const permissionsArray: string[] = [
       'CHANGEOWNER',
       'CHANGEPERMISSIONS',
       'ADDPERMISSIONS',
