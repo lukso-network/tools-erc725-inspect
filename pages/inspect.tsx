@@ -29,6 +29,15 @@ const Home: NextPage = () => {
   const [isErc725Y_v2, setIsErc725Y_v2] = useState(false);
   const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
 
+  const [isERC1271, setIsERC1271] = useState(false);
+  const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
+  const [isLSP1UniversalReceiver, setIsLSP1UniversalReceiver] = useState(false);
+  const [isLSP1UniversalReceiverDelegate, setIsLSP1UniversalReceiverDelegate] = useState(false);
+  const [isLSP6KeyManager, setIsLSP6KeyManager] = useState(false);
+  const [isLSP7DigitalAsset, setIsLSP7DigitalAsset] = useState(false);
+  const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] = useState(false);
+  const [isLSP9Vault, setIsLSP9Vault] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState('');
   const [notification, setNotification] = useState({
     text: '',
@@ -62,11 +71,22 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       const supportStandards = await checkInterface(address, web3);
+      console.log(supportStandards);
 
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
       setIsErc725Y_v2(supportStandards.isErc725Y_v2);
       setIsErc725YLegacy(supportStandards.isErc725YLegacy);
+
+      setIsERC1271(supportStandards.isErc1271);
+      setIsLSP0ERC725Account(supportStandards.isLsp0Erc725Account);
+      setIsLSP1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
+      setIsLSP1UniversalReceiverDelegate(supportStandards.isLsp1UniversalReceiverDelegate);
+      setIsLSP6KeyManager(supportStandards.isLsp6KeyManager);
+      setIsLSP7DigitalAsset(supportStandards.isLsp7DigitalAsset);
+      setIsLSP8IdentifiableDigitalAsset(supportStandards.isLsp8IdentifiableDigitalAsset);
+      setIsLSP9Vault(supportStandards.isLsp9Vault);
+
       setIsLoading(false);
 
       let notificationText = '';
@@ -95,14 +115,35 @@ const Home: NextPage = () => {
   const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
 
   const ERC725InspectResult = () => {
-    if (!isErc725X && !isErc725YContract) {
+    if (
+      !isErc725X &&
+      !isErc725YContract &&
+      !isERC1271 &&
+      !isLSP0ERC725Account &&
+      !isLSP1UniversalReceiver &&
+      !isLSP1UniversalReceiverDelegate &&
+      !isLSP6KeyManager &&
+      !isLSP7DigitalAsset &&
+      !isLSP8IdentifiableDigitalAsset &&
+      !isLSP9Vault
+    ) {
       return (
         <div className="help is-danger inspect-result">
           <p>ERC725X: ❌</p>
           <p>ERC725Y: ❌</p>
+          <p>ERC1271: ❌</p>
+          <p>LSP0ERC725Account: ❌</p>
+          <p>LSP1UniversalReceiver: ❌</p>
+          <p>LSP1UniversalReceiverDelegate: ❌</p>
+          <p>LSP6KeyManager: ❌</p>
+          <p>LSP7DigitalAsset: ❌</p>
+          <p>LSP8IdentifiableDigitalAsset: ❌</p>
+          <p>LSP9Vault: ❌</p>
           <p>
-            This address is not a valid ERC725 Profile. Please check the address
-            is correct.
+            This address is not a valid ERC725 Profile, nor it is a valid LSP contract.
+          </p>
+          <p>
+            Please check if the addressis correct.
           </p>
         </div>
       );
@@ -115,6 +156,14 @@ const Home: NextPage = () => {
           ERC725Y: {isErc725YContract ? '✅' : '❌'} {isErc725Y_v2 && '(v2.0)'}
           {isErc725YLegacy && '(legacy)'}
         </p>
+        <p>ERC1271: {isERC1271 ? '✅' : '❌'}</p>
+        <p>LSP0ERC725Account: {isLSP0ERC725Account ? '✅' : '❌'}</p>
+        <p>LSP1UniversalReceiver: {isLSP1UniversalReceiver ? '✅' : '❌'}</p>
+        <p>LSP1UniversalReceiverDelegate: {isLSP1UniversalReceiverDelegate ? '✅' : '❌'}</p>
+        <p>LSP6KeyManager: {isLSP6KeyManager ? '✅' : '❌'}</p>
+        <p>LSP7DigitalAsset: {isLSP7DigitalAsset ? '✅' : '❌'}</p>
+        <p>LSP8IdentifiableDigitalAsset: {isLSP8IdentifiableDigitalAsset ? '✅' : '❌'}</p>
+        <p>LSP9Vault: {isLSP9Vault ? '✅' : '❌'}</p>
       </div>
     );
   };
