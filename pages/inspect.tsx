@@ -73,7 +73,6 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       const supportStandards = await checkInterface(address, web3);
-      console.log(supportStandards);
 
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
