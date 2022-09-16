@@ -32,10 +32,12 @@ const Home: NextPage = () => {
   const [isERC1271, setIsERC1271] = useState(false);
   const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
   const [isLSP1UniversalReceiver, setIsLSP1UniversalReceiver] = useState(false);
-  const [isLSP1UniversalReceiverDelegate, setIsLSP1UniversalReceiverDelegate] = useState(false);
+  const [isLSP1UniversalReceiverDelegate, setIsLSP1UniversalReceiverDelegate] =
+    useState(false);
   const [isLSP6KeyManager, setIsLSP6KeyManager] = useState(false);
   const [isLSP7DigitalAsset, setIsLSP7DigitalAsset] = useState(false);
-  const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] = useState(false);
+  const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] =
+    useState(false);
   const [isLSP9Vault, setIsLSP9Vault] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -81,10 +83,14 @@ const Home: NextPage = () => {
       setIsERC1271(supportStandards.isErc1271);
       setIsLSP0ERC725Account(supportStandards.isLsp0Erc725Account);
       setIsLSP1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
-      setIsLSP1UniversalReceiverDelegate(supportStandards.isLsp1UniversalReceiverDelegate);
+      setIsLSP1UniversalReceiverDelegate(
+        supportStandards.isLsp1UniversalReceiverDelegate,
+      );
       setIsLSP6KeyManager(supportStandards.isLsp6KeyManager);
       setIsLSP7DigitalAsset(supportStandards.isLsp7DigitalAsset);
-      setIsLSP8IdentifiableDigitalAsset(supportStandards.isLsp8IdentifiableDigitalAsset);
+      setIsLSP8IdentifiableDigitalAsset(
+        supportStandards.isLsp8IdentifiableDigitalAsset,
+      );
       setIsLSP9Vault(supportStandards.isLsp9Vault);
 
       setIsLoading(false);
@@ -140,11 +146,10 @@ const Home: NextPage = () => {
           <p>LSP8IdentifiableDigitalAsset: ❌</p>
           <p>LSP9Vault: ❌</p>
           <p>
-            This address is not a valid ERC725 Profile, nor it is a valid LSP contract.
+            This address is not a valid ERC725 Profile, nor it is a valid LSP
+            contract.
           </p>
-          <p>
-            Please check if the addressis correct.
-          </p>
+          <p>Please check if the addressis correct.</p>
         </div>
       );
     }
@@ -159,10 +164,16 @@ const Home: NextPage = () => {
         <p>ERC1271: {isERC1271 ? '✅' : '❌'}</p>
         <p>LSP0ERC725Account: {isLSP0ERC725Account ? '✅' : '❌'}</p>
         <p>LSP1UniversalReceiver: {isLSP1UniversalReceiver ? '✅' : '❌'}</p>
-        <p>LSP1UniversalReceiverDelegate: {isLSP1UniversalReceiverDelegate ? '✅' : '❌'}</p>
+        <p>
+          LSP1UniversalReceiverDelegate:{' '}
+          {isLSP1UniversalReceiverDelegate ? '✅' : '❌'}
+        </p>
         <p>LSP6KeyManager: {isLSP6KeyManager ? '✅' : '❌'}</p>
         <p>LSP7DigitalAsset: {isLSP7DigitalAsset ? '✅' : '❌'}</p>
-        <p>LSP8IdentifiableDigitalAsset: {isLSP8IdentifiableDigitalAsset ? '✅' : '❌'}</p>
+        <p>
+          LSP8IdentifiableDigitalAsset:{' '}
+          {isLSP8IdentifiableDigitalAsset ? '✅' : '❌'}
+        </p>
         <p>LSP9Vault: {isLSP9Vault ? '✅' : '❌'}</p>
       </div>
     );
