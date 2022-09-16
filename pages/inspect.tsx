@@ -15,6 +15,7 @@ import { checkInterface } from '../utils/web3';
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
 import { NetworkContext } from '../contexts/NetworksContext';
+import UPOwner from '../components/UPOwner';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -187,12 +188,15 @@ const Home: NextPage = () => {
         </div>
         <div className="container is-fluid">
           {!errorMessage && !isLoading && (
-            <DataKeysTable
-              address={address}
-              isErc725YLegacy={isErc725YLegacy}
-              isErc725Y_v2={isErc725Y_v2}
-              isErc725Y={isErc725Y}
-            />
+            <>
+              <UPOwner UPAddress={address} />
+              <DataKeysTable
+                address={address}
+                isErc725YLegacy={isErc725YLegacy}
+                isErc725Y_v2={isErc725Y_v2}
+                isErc725Y={isErc725Y}
+              />
+            </>
           )}
         </div>
       </div>
