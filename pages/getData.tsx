@@ -8,6 +8,7 @@ import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata
 import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
 import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
+import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
 
 import { checkInterface, getData, getDataLegacy } from '../utils/web3';
 import { NetworkContext } from '../contexts/NetworksContext';
@@ -17,7 +18,8 @@ const dataKeyList = [
   ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
   ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
   ...LSP5DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💰' })),
-  ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔐' })),
+  ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
+  ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
 ];
 
 const GetData: NextPage = () => {
