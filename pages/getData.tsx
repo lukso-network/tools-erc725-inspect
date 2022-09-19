@@ -22,6 +22,10 @@ const dataKeyList = [
   ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
   ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
 ];
+const ADDDRESS_PERMISSIONS_PERMISSION_PREFIX = dataKeyList[17].key.substring(
+  0,
+  26,
+);
 
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
@@ -213,7 +217,8 @@ const GetData: NextPage = () => {
                 </div>
               </article>
               <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                {dataKey.substring(0, 26) == '0x4b80742de2bf82acb3630000'
+                {dataKey.substring(0, 26) ==
+                ADDDRESS_PERMISSIONS_PERMISSION_PREFIX
                   ? JSON.stringify(
                       ERC725.decodePermissions(data[0]),
                       undefined,
