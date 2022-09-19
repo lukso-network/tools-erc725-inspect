@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState, useContext } from 'react';
-import { isAddress, toDecimal } from 'web3-utils';
+import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
@@ -22,10 +22,7 @@ const dataKeyList = [
   ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
   ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
 ];
-const ADDDRESS_PERMISSIONS_PERMISSION_PREFIX = dataKeyList[17].key.substring(
-  0,
-  26,
-);
+const ADDDRESS_PERMISSIONS_PERMISSION_PREFIX = '0x4b80742de2bf82acb3630000';
 
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
