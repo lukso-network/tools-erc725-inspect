@@ -74,7 +74,7 @@ const KeyManagerPermissions: React.FC = () => {
       <div className="columns">
         <div className="column">
           <div className="buttons">
-            {['SETDATA', 'SIGN'].map((permission: string) => (
+            {['SETDATA', 'SIGN', 'ENCRYPT'].map((permission: string) => (
               <button
                 key={permission}
                 className={`button is-info ${
@@ -126,6 +126,27 @@ const KeyManagerPermissions: React.FC = () => {
                 </button>
               ),
             )}
+          </div>
+          <div className="buttons">
+            {[
+              'SUPER_SETDATA',
+              'SUPER_TRANSFERVALUE',
+              'SUPER_CALL',
+              'SUPER_STATICCALL',
+              'SUPER_DELEGATECALL',
+            ].map((permission: string) => (
+              <button
+                key={permission}
+                className={`button is-success ${
+                  !decodedPermissions[permission] && 'is-outlined'
+                }`}
+                onClick={() => {
+                  handlePermissionClick(permission);
+                }}
+              >
+                {permission}
+              </button>
+            ))}
           </div>
         </div>
       </div>
