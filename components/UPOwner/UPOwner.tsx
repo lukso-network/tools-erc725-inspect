@@ -39,12 +39,16 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
   };
 
   const findOwnerType = async (ownerAddress: string) => {
-    const isEOA = (await web3.eth.getCode(ownerAddress)) === '0x';
-    if (isEOA) {
-      setOwnerType(ownerTypeEnum.EOA);
-      return;
+    try {
+      const isEOA = (await web3.eth.getCode(ownerAddress)) === '0x';
+      if (isEOA) {
+        setOwnerType(ownerTypeEnum.EOA);
+        return;
+      }
+      await checkIsKeyManager(ownerAddress);
+    } catch (error) {
+      console.log(error);
     }
-    await checkIsKeyManager(ownerAddress);
   };
 
   useEffect(() => {
@@ -53,13 +57,17 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
       UniversalProfile.abi as any,
       UPAddress,
     );
-    universalProfile.methods
-      .owner()
-      .call()
-      .then((owner: string) => {
-        setUPowner(owner);
-        findOwnerType(owner);
-      });
+    try {
+      universalProfile.methods
+        .owner()
+        .call()
+        .then((owner: string) => {
+          setUPowner(owner);
+          findOwnerType(owner);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }, [UPAddress, web3]);
 
   return (
