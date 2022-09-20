@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useState, useContext } from 'react';
-import { isAddress, toDecimal } from 'web3-utils';
+import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
@@ -22,6 +22,15 @@ const dataKeyList = [
   ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
   ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
 ];
+
+const addressPermissionIndex = LSP6DataKeys.findIndex((key) =>
+  key.name.startsWith('AddressPermissions:Permissions:'),
+);
+
+const ADDDRESS_PERMISSIONS_PERMISSION_PREFIX =
+  addressPermissionIndex !== -1
+    ? LSP6DataKeys[addressPermissionIndex].key.replace('<address>', '')
+    : ''; // Hopefully we never end in the false case...
 
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
@@ -104,39 +113,6 @@ const GetData: NextPage = () => {
     }
 
     setData(data);
-  };
-
-  const decodePermissionsData = (data: string) => {
-    const permissionsArray: string[] = [
-      'CHANGEOWNER',
-      'CHANGEPERMISSIONS',
-      'ADDPERMISSIONS',
-      'SETDATA',
-      'CALL',
-      'STATICCALL',
-      'DELEGATECALL',
-      'DEPLOY',
-      'TRANSFERVALUE',
-      'SIGN',
-      'SUPER_SETDATA',
-      'SUPER_TRANSFERVALUE',
-      'SUPER_CALL',
-      'SUPER_STATICCALL',
-      'SUPER_DELEGATECALL',
-    ];
-    const decodedPermissionsData: string[] = [];
-    const erc752DecodePermissions = ERC725.decodePermissions(data[0]);
-    for (let i = 0; i < permissionsArray.length; i++) {
-      if (
-        erc752DecodePermissions[
-          permissionsArray[i] as keyof typeof erc752DecodePermissions
-        ]
-      ) {
-        decodedPermissionsData.push(permissionsArray[i]);
-      }
-    }
-    console.log(ERC725.decodePermissions(data[0]));
-    return decodedPermissionsData;
   };
 
   return (
@@ -246,10 +222,13 @@ const GetData: NextPage = () => {
                 </div>
               </article>
               <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                {dataKey.substring(0, 26) == '0x4b80742de2bf82acb3630000'
-                  ? decodePermissionsData(data).map((element, index) => {
-                      return <p key={index}>{element}</p>;
-                    })
+                {dataKey.substring(0, 26) ==
+                ADDDRESS_PERMISSIONS_PERMISSION_PREFIX
+                  ? JSON.stringify(
+                      ERC725.decodePermissions(data[0]),
+                      undefined,
+                      2,
+                    )
                   : data}
               </pre>
             </div>
