@@ -7,9 +7,8 @@ import {
   ERC725Y_INTERFACE_IDS,
 } from '@erc725/erc725.js/build/main/src/lib/constants';
 
-import {
-  LSP_INTERFACE_IDS
-} from '../interfaces/interface_ids';
+
+import { INTERFACE_IDS as LSP_INTERFACE_IDS } from '@lukso/lsp-smart-contracts/constants.js';
 
 const ERC725X_INTERFACE_ID = '0x44c028fe';
 
