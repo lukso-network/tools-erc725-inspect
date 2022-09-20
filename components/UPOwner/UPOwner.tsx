@@ -4,6 +4,7 @@ import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts/constants.js';
 
 import { NetworkContext } from '../../contexts/NetworksContext';
 import { supportsInterfaceAbi } from '../../constants';
+import { isAddress } from 'web3-utils';
 
 type Props = {
   UPAddress: string;
@@ -53,6 +54,8 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
 
   useEffect(() => {
     if (!web3 || !UPAddress) return;
+    if (!isAddress(UPAddress)) return;
+
     const universalProfile = new web3.eth.Contract(
       UniversalProfile.abi as any,
       UPAddress,
