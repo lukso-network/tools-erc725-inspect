@@ -22,7 +22,15 @@ const dataKeyList = [
   ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
   ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
 ];
-const ADDDRESS_PERMISSIONS_PERMISSION_PREFIX = '0x4b80742de2bf82acb3630000';
+
+const addressPermissionIndex = LSP6DataKeys.findIndex((key) =>
+  key.name.startsWith('AddressPermissions:Permissions:'),
+);
+
+const ADDDRESS_PERMISSIONS_PERMISSION_PREFIX =
+  addressPermissionIndex !== -1
+    ? LSP6DataKeys[addressPermissionIndex].key.replace('<address>', '')
+    : ''; // Hopefully we never end in the false case...
 
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
