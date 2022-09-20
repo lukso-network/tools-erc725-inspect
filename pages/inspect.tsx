@@ -124,57 +124,144 @@ const Home: NextPage = () => {
     if (
       !isErc725X &&
       !isErc725YContract &&
-      !isERC1271 &&
-      !isLSP0ERC725Account &&
       !isLSP1UniversalReceiver &&
       !isLSP1UniversalReceiverDelegate &&
-      !isLSP6KeyManager &&
-      !isLSP7DigitalAsset &&
-      !isLSP8IdentifiableDigitalAsset &&
-      !isLSP9Vault
+      !isLSP6KeyManager
     ) {
       return (
         <div className="help is-danger inspect-result">
-          <p>ERC725X: ❌</p>
-          <p>ERC725Y: ❌</p>
-          <p>ERC1271: ❌</p>
-          <p>LSP0ERC725Account: ❌</p>
-          <p>LSP1UniversalReceiver: ❌</p>
-          <p>LSP1UniversalReceiverDelegate: ❌</p>
-          <p>LSP6KeyManager: ❌</p>
-          <p>LSP7DigitalAsset: ❌</p>
-          <p>LSP8IdentifiableDigitalAsset: ❌</p>
-          <p>LSP9Vault: ❌</p>
           <p>
             This address is not a valid ERC725 Profile, nor it is a valid LSP
             contract.
           </p>
-          <p>Please check if the addressis correct.</p>
+          <p>Please check if the address is correct.</p>
         </div>
       );
     }
 
     return (
       <div className="help is-success inspect-result">
-        <p>ERC725X: {isErc725X ? '✅' : '❌'}</p>
-        <p>
-          ERC725Y: {isErc725YContract ? '✅' : '❌'} {isErc725Y_v2 && '(v2.0)'}
+        <a
+          className={
+            isErc725X
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725x---generic-executor"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ERC725X
+        </a>
+        <a
+          className={
+            isErc725YContract
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ERC725Y {isErc725Y_v2 && '(v2.0)'}
           {isErc725YLegacy && '(legacy)'}
-        </p>
-        <p>ERC1271: {isERC1271 ? '✅' : '❌'}</p>
-        <p>LSP0ERC725Account: {isLSP0ERC725Account ? '✅' : '❌'}</p>
-        <p>LSP1UniversalReceiver: {isLSP1UniversalReceiver ? '✅' : '❌'}</p>
-        <p>
-          LSP1UniversalReceiverDelegate:{' '}
-          {isLSP1UniversalReceiverDelegate ? '✅' : '❌'}
-        </p>
-        <p>LSP6KeyManager: {isLSP6KeyManager ? '✅' : '❌'}</p>
-        <p>LSP7DigitalAsset: {isLSP7DigitalAsset ? '✅' : '❌'}</p>
-        <p>
-          LSP8IdentifiableDigitalAsset:{' '}
-          {isLSP8IdentifiableDigitalAsset ? '✅' : '❌'}
-        </p>
-        <p>LSP9Vault: {isLSP9Vault ? '✅' : '❌'}</p>
+        </a>
+        <a
+          className={
+            isERC1271
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://eips.ethereum.org/EIPS/eip-1271"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ERC1271
+        </a>
+        <a
+          className={
+            isLSP0ERC725Account
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP0ERC725Account
+        </a>
+        <a
+          className={
+            isLSP1UniversalReceiver
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/generic-standards/lsp1-universal-receiver"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP1UniversalReceiver
+        </a>
+        <a
+          className={
+            isLSP1UniversalReceiverDelegate
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/universal-profile/lsp1-universal-receiver-delegate"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP1UniversalReceiverDelegate
+        </a>
+        <a
+          className={
+            isLSP6KeyManager
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP6KeyManager
+        </a>
+        <a
+          className={
+            isLSP7DigitalAsset
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/nft-2.0/LSP7-Digital-Asset"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP7DigitalAsset
+        </a>
+        <a
+          className={
+            isLSP8IdentifiableDigitalAsset
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/nft-2.0/LSP8-Identifiable-Digital-Asset"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP8IdentifiableDigitalAsset
+        </a>
+        <a
+          className={
+            isLSP9Vault
+              ? 'button is-link mr-2 mt-2'
+              : 'button is-link is-outlined mr-2 mt-2'
+          }
+          href="https://docs.lukso.tech/standards/universal-profile/lsp9-vault"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP9Vault
+        </a>
       </div>
     );
   };
