@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ERC725 from '@erc725/erc725.js';
+import PermissionsBtns from '../PermissionsBtns';
 
 const KeyManagerPermissions: React.FC = () => {
   const [encodedPermissions, setEncodedPermissions] = useState(
@@ -73,81 +74,43 @@ const KeyManagerPermissions: React.FC = () => {
       </div>
       <div className="columns">
         <div className="column">
-          <div className="buttons">
-            {['SETDATA', 'SIGN', 'ENCRYPT'].map((permission: string) => (
-              <button
-                key={permission}
-                className={`button is-info ${
-                  !decodedPermissions[permission] && 'is-outlined'
-                }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePermissionClick(permission);
-                }}
-              >
-                {permission}
-              </button>
-            ))}
-          </div>
-          <div className="buttons">
-            {[
+          <PermissionsBtns
+            permissions={['SETDATA', 'SIGN', 'ENCRYPT']}
+            color={'is-info'}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
+          <PermissionsBtns
+            permissions={[
               'STATICCALL',
               'CALL',
               'DELEGATECALL',
               'DEPLOY',
               'TRANSFERVALUE',
-            ].map((permission: string) => (
-              <button
-                key={permission}
-                className={`button is-warning ${
-                  !decodedPermissions[permission] && 'is-outlined'
-                }`}
-                onClick={() => {
-                  handlePermissionClick(permission);
-                }}
-              >
-                {permission}
-              </button>
-            ))}
-          </div>
-          <div className="buttons">
-            {['CHANGEOWNER', 'CHANGEPERMISSIONS', 'ADDPERMISSIONS'].map(
-              (permission: string) => (
-                <button
-                  key={permission}
-                  className={`button is-danger ${
-                    !decodedPermissions[permission] && 'is-outlined'
-                  }`}
-                  onClick={() => {
-                    handlePermissionClick(permission);
-                  }}
-                >
-                  {permission}
-                </button>
-              ),
-            )}
-          </div>
-          <div className="buttons">
-            {[
+            ]}
+            color={'is-warning'}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
+
+          <PermissionsBtns
+            permissions={['CHANGEOWNER', 'CHANGEPERMISSIONS', 'ADDPERMISSIONS']}
+            color={'is-primary'}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
+          <PermissionsBtns
+            permissions={[
               'SUPER_SETDATA',
               'SUPER_TRANSFERVALUE',
               'SUPER_CALL',
               'SUPER_STATICCALL',
               'SUPER_DELEGATECALL',
-            ].map((permission: string) => (
-              <button
-                key={permission}
-                className={`button is-success ${
-                  !decodedPermissions[permission] && 'is-outlined'
-                }`}
-                onClick={() => {
-                  handlePermissionClick(permission);
-                }}
-              >
-                {permission}
-              </button>
-            ))}
-          </div>
+            ]}
+            color={'is-danger '}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
         </div>
       </div>
       <div className="columns">

@@ -135,7 +135,6 @@ const GetData: NextPage = () => {
         decodedPermissionsData.push(permissionsArray[i]);
       }
     }
-    console.log(ERC725.decodePermissions(data[0]));
     return decodedPermissionsData;
   };
 
