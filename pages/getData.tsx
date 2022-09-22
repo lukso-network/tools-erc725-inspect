@@ -115,6 +115,38 @@ const GetData: NextPage = () => {
     setData(data);
   };
 
+  const decodePermissionsData = (data: string) => {
+    const permissionsArray: string[] = [
+      'CHANGEOWNER',
+      'CHANGEPERMISSIONS',
+      'ADDPERMISSIONS',
+      'SETDATA',
+      'CALL',
+      'STATICCALL',
+      'DELEGATECALL',
+      'DEPLOY',
+      'TRANSFERVALUE',
+      'SIGN',
+      'SUPER_SETDATA',
+      'SUPER_TRANSFERVALUE',
+      'SUPER_CALL',
+      'SUPER_STATICCALL',
+      'SUPER_DELEGATECALL',
+    ];
+    const decodedPermissionsData: string[] = [];
+    const erc752DecodePermissions = ERC725.decodePermissions(data[0]);
+    for (let i = 0; i < permissionsArray.length; i++) {
+      if (
+        erc752DecodePermissions[
+          permissionsArray[i] as keyof typeof erc752DecodePermissions
+        ]
+      ) {
+        decodedPermissionsData.push(permissionsArray[i]);
+      }
+    }
+    return decodedPermissionsData;
+  };
+
   return (
     <>
       <Head>
