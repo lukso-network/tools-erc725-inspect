@@ -111,6 +111,7 @@ const GetData: NextPage = () => {
       'CHANGEOWNER',
       'CHANGEPERMISSIONS',
       'ADDPERMISSIONS',
+      'ENCRYPT',
       'SETDATA',
       'CALL',
       'STATICCALL',
