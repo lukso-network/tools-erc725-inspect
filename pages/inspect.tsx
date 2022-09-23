@@ -311,7 +311,7 @@ const Home: NextPage = () => {
         <div className="container is-fluid">
           {!errorMessage && !isLoading && (
             <>
-              <UPOwner UPAddress={address} />
+              {isErc725X && <UPOwner UPAddress={address} />}
               <DataKeysTable
                 address={address}
                 isErc725YLegacy={isErc725YLegacy}

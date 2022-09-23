@@ -3,23 +3,16 @@ import ERC725 from '@erc725/erc725.js';
 import PermissionsBtns from '../PermissionsBtns';
 
 const KeyManagerPermissions: React.FC = () => {
+  const initialEncodedPermissions =
+    '0x0000000000000000000000000000000000000000000000000000000000000001';
+
   const [encodedPermissions, setEncodedPermissions] = useState(
-    '0x0000000000000000000000000000000000000000000000000000000000000001',
+    initialEncodedPermissions,
   );
+
   const [decodedPermissions, setDecodedPermissions] = useState<
     Record<string, boolean>
-  >({
-    CHANGEOWNER: true,
-    CHANGEPERMISSIONS: false,
-    ADDPERMISSIONS: false,
-    SETDATA: false,
-    CALL: false,
-    STATICCALL: false,
-    DELEGATECALL: false,
-    DEPLOY: false,
-    TRANSFERVALUE: false,
-    SIGN: false,
-  });
+  >(ERC725.decodePermissions(initialEncodedPermissions));
 
   const handleEncodedPermissionChange = (input: string) => {
     try {
@@ -32,6 +25,8 @@ const KeyManagerPermissions: React.FC = () => {
   };
 
   const handlePermissionClick = (permissionName: string) => {
+    console.log('updatedDecodedPermissions', permissionName);
+
     const updatedDecodedPermissions = decodedPermissions;
     updatedDecodedPermissions[permissionName] =
       !updatedDecodedPermissions[permissionName];
