@@ -61,6 +61,13 @@ const NavBar: React.FC = () => {
               📖 LSP2 coder
             </a>
           </Link>
+          <a
+            href="https://up-test-dapp.lukso.tech/"
+            rel="noreferrer"
+            className="navbar-item"
+          >
+            🎯 Test dApp
+          </a>
         </div>
 
         <div className="navbar-end">
