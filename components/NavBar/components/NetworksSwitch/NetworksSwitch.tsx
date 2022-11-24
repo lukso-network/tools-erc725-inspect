@@ -20,22 +20,22 @@ const NetworkSwitch: React.FC = () => {
         </a>
       </div>
       <div className="navbar-dropdown">
-        <>
-          {luksoChains.map((chain) => (
-            <>
-              {chain.rpc !== network.rpc ? (
-                <a
-                  className="navbar-item"
-                  onClick={() => setNetwork(chain)}
-                  key={chain.rpc}
-                >
-                  <img src={chain.imgUrl} alt={chain.name} className="mr-1" />
-                  <span>{chain.name}</span>
-                </a>
-              ) : null}
-            </>
-          ))}
-        </>
+        {luksoChains.map((chain) => {
+          if (chain.rpc === network.rpc) {
+            return null;
+          }
+
+          return (
+            <a
+              className="navbar-item"
+              onClick={() => setNetwork(chain)}
+              key={chain.rpc}
+            >
+              <img src={chain.imgUrl} alt={chain.name} className="mr-1" />
+              <span>{chain.name}</span>
+            </a>
+          );
+        })}
       </div>
     </div>
   );
