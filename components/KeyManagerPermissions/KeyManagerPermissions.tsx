@@ -70,17 +70,23 @@ const KeyManagerPermissions: React.FC = () => {
       <div className="columns">
         <div className="column">
           <PermissionsBtns
-            permissions={['SETDATA', 'SIGN', 'ENCRYPT']}
+            permissions={[
+              'CHANGEOWNER',
+              'ADDCONTROLLER',
+              'CHANGEPERMISSIONS',
+              'ADDEXTENSIONS',
+              'CHANGEEXTENSIONS',
+            ]}
             color={'is-info'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
           <PermissionsBtns
             permissions={[
-              'STATICCALL',
-              'CALL',
-              'DELEGATECALL',
-              'DEPLOY',
+              'ADDUNIVERSALRECEIVERDELEGATE',
+              'CHANGEUNIVERSALRECEIVERDELEGATE',
+              'REENTRANCY',
+              'SUPER_TRANSFERVALUE',
               'TRANSFERVALUE',
             ]}
             color={'is-warning'}
@@ -89,18 +95,26 @@ const KeyManagerPermissions: React.FC = () => {
           />
 
           <PermissionsBtns
-            permissions={['CHANGEOWNER', 'CHANGEPERMISSIONS', 'ADDPERMISSIONS']}
+            permissions={[
+              'SUPER_CALL',
+              'CALL',
+              'SUPER_STATICCALL',
+              'STATICCALL',
+              'SUPER_DELEGATECALL',
+            ]}
             color={'is-primary'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
           <PermissionsBtns
             permissions={[
+              'DELEGATECALL',
+              'DEPLOY',
               'SUPER_SETDATA',
-              'SUPER_TRANSFERVALUE',
-              'SUPER_CALL',
-              'SUPER_STATICCALL',
-              'SUPER_DELEGATECALL',
+              'SETDATA',
+              'ENCRYPT',
+              'DECRYPT',
+              'SIGN',
             ]}
             color={'is-danger '}
             decodedPermissions={decodedPermissions}

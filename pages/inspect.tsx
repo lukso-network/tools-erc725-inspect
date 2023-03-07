@@ -33,8 +33,6 @@ const Home: NextPage = () => {
   const [isERC1271, setIsERC1271] = useState(false);
   const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
   const [isLSP1UniversalReceiver, setIsLSP1UniversalReceiver] = useState(false);
-  const [isLSP1UniversalReceiverDelegate, setIsLSP1UniversalReceiverDelegate] =
-    useState(false);
   const [isLSP6KeyManager, setIsLSP6KeyManager] = useState(false);
   const [isLSP7DigitalAsset, setIsLSP7DigitalAsset] = useState(false);
   const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] =
@@ -83,9 +81,6 @@ const Home: NextPage = () => {
       setIsERC1271(supportStandards.isErc1271);
       setIsLSP0ERC725Account(supportStandards.isLsp0Erc725Account);
       setIsLSP1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
-      setIsLSP1UniversalReceiverDelegate(
-        supportStandards.isLsp1UniversalReceiverDelegate,
-      );
       setIsLSP6KeyManager(supportStandards.isLsp6KeyManager);
       setIsLSP7DigitalAsset(supportStandards.isLsp7DigitalAsset);
       setIsLSP8IdentifiableDigitalAsset(
@@ -125,8 +120,8 @@ const Home: NextPage = () => {
       !isErc725X &&
       !isErc725YContract &&
       !isLSP1UniversalReceiver &&
-      !isLSP1UniversalReceiverDelegate &&
-      !isLSP6KeyManager
+      !isLSP6KeyManager &&
+      !isLSP0ERC725Account
     ) {
       return (
         <div className="help is-danger inspect-result">
@@ -187,16 +182,6 @@ const Home: NextPage = () => {
           rel="noreferrer"
         >
           LSP1UniversalReceiver
-        </a>
-        <a
-          className={`button is-link mr-2 mt-2 ${
-            !isLSP1UniversalReceiverDelegate && 'is-outlined'
-          }`}
-          href="https://docs.lukso.tech/standards/universal-profile/lsp1-universal-receiver-delegate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LSP1UniversalReceiverDelegate
         </a>
         <a
           className={`button is-link mr-2 mt-2 ${

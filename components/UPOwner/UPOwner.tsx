@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
-import UniversalProfile from '@lukso/lsp-smart-contracts/artifacts/UniversalProfile.json';
-import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts/constants.js';
+import ERC725Account from '../../abis/ERC725Account.json';
 
 import { NetworkContext } from '../../contexts/NetworksContext';
 import { supportsInterfaceAbi } from '../../constants';
-import { isAddress } from 'web3-utils';
+import { AbiItem, isAddress } from 'web3-utils';
+import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 
 type Props = {
   UPAddress: string;
@@ -57,7 +57,7 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
     if (!isAddress(UPAddress)) return;
 
     const universalProfile = new web3.eth.Contract(
-      UniversalProfile.abi as any,
+      ERC725Account.abi as AbiItem[],
       UPAddress,
     );
     try {
