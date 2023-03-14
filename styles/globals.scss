@@ -21,3 +21,39 @@ a {
 code {
   word-break: break-all;
 }
+
+.is-outlined.is-purple {
+  background-color: transparent;
+  border-color: purple;
+  color: purple;
+}
+
+.is-purple  {
+  background-color: rgba(128, 0, 128, 0.45);
+  border-color: transparent;
+  color: black;
+}
+
+.is-outlined.is-orange {
+  background-color: transparent;
+  border-color: orange;
+  color: orange;
+}
+
+.is-orange  {
+  background-color: rgba(255, 165, 0, 0.45);
+  border-color: transparent;
+  color: black;
+}
+
+.is-outlined.is-orange-dark {
+  background-color: transparent;
+  border-color: #b37700;
+  color: #b37700;
+}
+
+.is-orange-dark  {
+  background-color: rgba(179, 119, 0, 0.45);
+  border-color: transparent;
+  color: black;
+}

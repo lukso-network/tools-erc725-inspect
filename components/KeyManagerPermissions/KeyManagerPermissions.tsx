@@ -70,14 +70,14 @@ const KeyManagerPermissions: React.FC = () => {
       <div className="columns">
         <div className="column">
           <PermissionsBtns
-            permissions={[
-              'CHANGEOWNER',
-              'ADDCONTROLLER',
-              'CHANGEPERMISSIONS',
-              'ADDEXTENSIONS',
-              'CHANGEEXTENSIONS',
-            ]}
-            color={'is-info'}
+            permissions={['CHANGEOWNER', 'ADDCONTROLLER', 'CHANGEPERMISSIONS']}
+            color={'is-orange-dark'}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
+          <PermissionsBtns
+            permissions={['ADDEXTENSIONS', 'CHANGEEXTENSIONS']}
+            color={'is-orange'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
@@ -85,38 +85,42 @@ const KeyManagerPermissions: React.FC = () => {
             permissions={[
               'ADDUNIVERSALRECEIVERDELEGATE',
               'CHANGEUNIVERSALRECEIVERDELEGATE',
-              'REENTRANCY',
-              'SUPER_TRANSFERVALUE',
-              'TRANSFERVALUE',
             ]}
             color={'is-warning'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
-
+          <PermissionsBtns
+            permissions={['REENTRANCY']}
+            color={'is-danger'}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
           <PermissionsBtns
             permissions={[
+              'SUPER_TRANSFERVALUE',
+              'TRANSFERVALUE',
               'SUPER_CALL',
               'CALL',
               'SUPER_STATICCALL',
               'STATICCALL',
               'SUPER_DELEGATECALL',
+              'DELEGATECALL',
+              'DEPLOY',
             ]}
             color={'is-primary'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
           <PermissionsBtns
-            permissions={[
-              'DELEGATECALL',
-              'DEPLOY',
-              'SUPER_SETDATA',
-              'SETDATA',
-              'ENCRYPT',
-              'DECRYPT',
-              'SIGN',
-            ]}
-            color={'is-danger '}
+            permissions={['SUPER_SETDATA', 'SETDATA']}
+            color={'is-success'}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
+          <PermissionsBtns
+            permissions={['ENCRYPT', 'DECRYPT', 'SIGN']}
+            color={'is-purple'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
