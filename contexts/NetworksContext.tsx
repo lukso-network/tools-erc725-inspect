@@ -1,6 +1,5 @@
-import { createContext, useEffect, useState } from 'react';
-import Web3 from 'web3';
-
+import { createContext, useState } from 'react';
+import { RPC_URL_TESTNET } from '../globals';
 export interface INetwork {
   name: string;
   rpc: string;
@@ -10,32 +9,23 @@ export interface INetwork {
 export interface INetworksContext {
   network: INetwork;
   setNetwork: (network: INetwork) => void;
-  web3: Web3;
 }
 
 export const NetworkContext = createContext<INetworksContext>({
   network: { name: '', rpc: '' },
   setNetwork: () => null,
-  web3: new Web3(),
 });
 
 const NetworksProvider = ({ children }: { children: React.ReactNode }) => {
   const [network, setNetwork] = useState<INetwork>({
-    name: 'L16',
-    rpc: 'https://rpc.l16.lukso.network',
+    // Default Network
+    name: 'TESTNET',
+    rpc: RPC_URL_TESTNET,
     imgUrl: '/lukso.png',
   });
-  const [web3, setWeb3] = useState<Web3>(new Web3());
-
-  useEffect(() => {
-    setWeb3(new Web3(network.rpc));
-    if (process.env.NODE_ENV === 'development') {
-      window.web3 = web3;
-    }
-  }, [network]);
 
   return (
-    <NetworkContext.Provider value={{ network, setNetwork, web3 }}>
+    <NetworkContext.Provider value={{ network, setNetwork }}>
       {children}
     </NetworkContext.Provider>
   );

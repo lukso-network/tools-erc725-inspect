@@ -19,7 +19,7 @@ import { getData } from '../../utils/web3';
 // legacy
 import LegacySchema from './legacySchemas.json';
 import { getAllDataKeys } from '../../utils/web3';
-import { NetworkContext } from '../../contexts/NetworksContext';
+import useWeb3 from '../../hooks/useWeb3';
 
 interface Props {
   address: string;
@@ -42,7 +42,7 @@ const DataKeysTable: React.FC<Props> = ({
     }[]
   >([]);
 
-  const { web3 } = useContext(NetworkContext);
+  const web3 = useWeb3();
 
   const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
 
