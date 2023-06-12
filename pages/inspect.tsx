@@ -1,12 +1,12 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
- * @author Jean Cavallera0 <git@jeanc.abc>
+ * @author Jean Cavallera <git@jeanc.abc>
  */
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 
 import '../styles/Inspect.module.css';
@@ -14,13 +14,13 @@ import { checkInterface } from '../utils/web3';
 
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
-import { NetworkContext } from '../contexts/NetworksContext';
 import UPOwner from '../components/UPOwner';
+import useWeb3 from '../hooks/useWeb3';
 
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const { web3 } = useContext(NetworkContext);
+  const web3 = useWeb3();
 
   const [isLoading, setIsLoading] = useState(false);
 

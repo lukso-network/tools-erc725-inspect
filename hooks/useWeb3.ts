@@ -1,28 +1,27 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3';
-
-import { RPC_URL } from '../globals';
+import { NetworkContext } from '../contexts/NetworksContext';
 
 export default function useWeb3() {
   const [web3Info, setWeb3Info] = useState<Web3>();
+  const { network } = useContext(NetworkContext);
 
   useEffect(() => {
     const getWeb3 = async () => {
-      const web3 = new Web3(RPC_URL);
+      const web3 = new Web3(network.rpc);
       return web3;
     };
 
     getWeb3().then((web3) => {
       setWeb3Info(web3);
       if (process.env.NODE_ENV === 'development') {
-        // @ts-ignore
         window.web3 = web3;
       }
     });
-  }, []);
+  }, [network]);
 
   return web3Info;
 }

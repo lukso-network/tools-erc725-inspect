@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import ERC725Account from '../../abis/ERC725Account.json';
+import useWeb3 from '../../hooks/useWeb3';
 
-import { NetworkContext } from '../../contexts/NetworksContext';
 import { supportsInterfaceAbi } from '../../constants';
 import { AbiItem, isAddress } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
@@ -20,13 +20,19 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
   const [UPOwner, setUPowner] = useState('');
   const [ownerType, setOwnerType] = useState<ownerTypeEnum>();
 
-  const { web3 } = useContext(NetworkContext);
+  const web3 = useWeb3();
 
   const checkIsKeyManager = async (ownerAddress: string) => {
+    if (!web3) {
+      console.error('Web3 is not initialized');
+      return;
+    }
+
     const OwnerContract = new web3.eth.Contract(
       supportsInterfaceAbi as any,
       ownerAddress,
     );
+
     const isKeyManager = await OwnerContract.methods
       .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
       .call();
@@ -40,6 +46,11 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
   };
 
   const findOwnerType = async (ownerAddress: string) => {
+    if (!web3) {
+      console.error('Web3 is not initialized');
+      return;
+    }
+
     try {
       const isEOA = (await web3.eth.getCode(ownerAddress)) === '0x';
       if (isEOA) {

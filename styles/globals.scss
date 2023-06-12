@@ -28,7 +28,7 @@ code {
   color: purple;
 }
 
-.is-purple  {
+.is-purple {
   background-color: rgba(128, 0, 128, 0.45);
   border-color: transparent;
   color: black;
@@ -40,7 +40,7 @@ code {
   color: orange;
 }
 
-.is-orange  {
+.is-orange {
   background-color: rgba(255, 165, 0, 0.45);
   border-color: transparent;
   color: black;
@@ -52,8 +52,12 @@ code {
   color: #b37700;
 }
 
-.is-orange-dark  {
+.is-orange-dark {
   background-color: rgba(179, 119, 0, 0.45);
   border-color: transparent;
   color: black;
+}
+
+.navbar-link {
+  min-width: 160px;
 }

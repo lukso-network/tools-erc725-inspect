@@ -6,7 +6,7 @@ import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
 
-import { NetworkContext } from '../../contexts/NetworksContext';
+import useWeb3 from '../../hooks/useWeb3';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
 
@@ -32,7 +32,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
     value: [],
   });
 
-  const { web3 } = useContext(NetworkContext);
+  const web3 = useWeb3();
 
   useEffect(() => {
     const startDecoding = async () => {
