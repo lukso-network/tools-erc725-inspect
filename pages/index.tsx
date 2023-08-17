@@ -1,5 +1,9 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import packageJson from '../package.json';
+
+const LSP_SMART_CONTRACTS_VERSION =
+  packageJson.dependencies['@lukso/lsp-smart-contracts'];
 
 const Home: NextPage = () => {
   return (
@@ -23,6 +27,15 @@ const Home: NextPage = () => {
               >
                 erc725.js
               </a>
+              <li>
+                <a
+                  className="has-text-link"
+                  href="https://docs.lukso.tech/tools/lsp-smart-contracts/getting-started"
+                >
+                  lsp-smart-contracts&nbsp;
+                </a>
+                (version: {LSP_SMART_CONTRACTS_VERSION})
+              </li>
             </li>
           </ul>
         </div>
