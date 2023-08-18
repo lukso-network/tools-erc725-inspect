@@ -29,15 +29,15 @@ const Home: NextPage = () => {
                 erc725.js
               </a>
               &nbsp;(version: {ERC725_JS_VERSION})
-              <li>
-                <a
-                  className="has-text-link"
-                  href="https://docs.lukso.tech/tools/lsp-smart-contracts/getting-started"
-                >
-                  lsp-smart-contracts&nbsp;
-                </a>
-                (version: {LSP_SMART_CONTRACTS_VERSION})
-              </li>
+            </li>
+            <li>
+              <a
+                className="has-text-link"
+                href="https://docs.lukso.tech/tools/lsp-smart-contracts/getting-started"
+              >
+                lsp-smart-contracts&nbsp;
+              </a>
+              (version: {LSP_SMART_CONTRACTS_VERSION})
             </li>
           </ul>
         </div>
