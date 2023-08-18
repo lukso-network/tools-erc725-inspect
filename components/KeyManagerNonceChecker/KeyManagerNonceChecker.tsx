@@ -1,6 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 
-import LSP6KeyManager from '../../abis/LSP6KeyManager.json';
+import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
 import useWeb3 from '../../hooks/useWeb3';
 
 const KeyManagerNonceChecker: React.FC = () => {

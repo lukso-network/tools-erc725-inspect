@@ -2,8 +2,9 @@ import { TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
-import ERC725Account from '../../../abis/ERC725Account.json';
+import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '../../ErrorMessage';
+import { AbiItem } from 'web3-utils';
 
 interface Props {
   web3: Web3;
@@ -86,7 +87,7 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
   };
 
   const encodeABI = () => {
-    const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
+    const erc725Account = new web3.eth.Contract(ERC725Account.abi as AbiItem[]);
 
     const keys = keyValuePairs.map((keyValuePair) => {
       return keyValuePair.key;

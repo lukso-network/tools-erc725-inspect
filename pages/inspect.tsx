@@ -27,8 +27,6 @@ const Home: NextPage = () => {
   const [address, setAddress] = useState('');
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
-  const [isErc725Y_v2, setIsErc725Y_v2] = useState(false);
-  const [isErc725YLegacy, setIsErc725YLegacy] = useState(false);
 
   const [isERC1271, setIsERC1271] = useState(false);
   const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
@@ -40,10 +38,6 @@ const Home: NextPage = () => {
   const [isLSP9Vault, setIsLSP9Vault] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [notification, setNotification] = useState({
-    text: '',
-    class: '',
-  });
 
   useEffect(() => {
     if (router.query.address) {
@@ -59,8 +53,6 @@ const Home: NextPage = () => {
 
       setIsErc725X(false);
       setIsErc725Y(false);
-      setIsErc725Y_v2(false);
-      setIsErc725YLegacy(false);
       setErrorMessage('');
 
       if (!isAddress(address)) {
@@ -75,8 +67,6 @@ const Home: NextPage = () => {
 
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
-      setIsErc725Y_v2(supportStandards.isErc725Y_v2);
-      setIsErc725YLegacy(supportStandards.isErc725YLegacy);
 
       setIsERC1271(supportStandards.isErc1271);
       setIsLSP0ERC725Account(supportStandards.isLsp0Erc725Account);
@@ -89,36 +79,14 @@ const Home: NextPage = () => {
       setIsLSP9Vault(supportStandards.isLsp9Vault);
 
       setIsLoading(false);
-
-      let notificationText = '';
-      let notificationClass = '';
-
-      if (supportStandards.isErc725Y_v2) {
-        notificationText =
-          '⚠️ 🆙 This Profile was created with version 0.5.0. You are missing out on a lot of new cool features. Consider upgrading! ';
-        notificationClass = 'warning';
-      }
-
-      if (supportStandards.isErc725YLegacy) {
-        notificationText =
-          '😞 ❗ This is a legacy Universal Profile. Most of the features might not be working properly. Consider creating a new one. ';
-        notificationClass = 'danger';
-      }
-
-      setNotification({
-        text: notificationText,
-        class: notificationClass,
-      });
     };
     check();
   }, [address, web3, errorMessage]);
 
-  const isErc725YContract = isErc725Y || isErc725Y_v2 || isErc725YLegacy;
-
   const ERC725InspectResult = () => {
     if (
       !isErc725X &&
-      !isErc725YContract &&
+      !isErc725Y &&
       !isLSP1UniversalReceiver &&
       !isLSP6KeyManager &&
       !isLSP0ERC725Account
@@ -145,15 +113,12 @@ const Home: NextPage = () => {
           ERC725X
         </a>
         <a
-          className={`button is-link mr-2 mt-2 ${
-            !isErc725YContract && 'is-outlined'
-          }`}
+          className={`button is-link mr-2 mt-2 ${!isErc725Y && 'is-outlined'}`}
           href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
           target="_blank"
           rel="noreferrer"
         >
-          ERC725Y {isErc725Y_v2 && '(v2.0)'}
-          {isErc725YLegacy && '(legacy)'}
+          ERC725Y
         </a>
         <a
           className={`button is-link mr-2 mt-2 ${!isERC1271 && 'is-outlined'}`}
@@ -275,13 +240,6 @@ const Home: NextPage = () => {
               </div>
             </div>
           </div>
-          <div className="column is-half">
-            {(isErc725Y_v2 || isErc725YLegacy) && (
-              <div className={'notification is-' + notification.class}>
-                {notification.text}
-              </div>
-            )}
-          </div>
         </div>
 
         <div className="container is-fluid">
@@ -297,12 +255,7 @@ const Home: NextPage = () => {
           {!errorMessage && !isLoading && (
             <>
               {isErc725X && <UPOwner UPAddress={address} />}
-              <DataKeysTable
-                address={address}
-                isErc725YLegacy={isErc725YLegacy}
-                isErc725Y_v2={isErc725Y_v2}
-                isErc725Y={isErc725Y}
-              />
+              <DataKeysTable address={address} isErc725Y={isErc725Y} />
             </>
           )}
         </div>

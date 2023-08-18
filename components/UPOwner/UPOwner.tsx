@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ERC725Account from '../../abis/ERC725Account.json';
+import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import useWeb3 from '../../hooks/useWeb3';
 
 import { supportsInterfaceAbi } from '../../constants';
