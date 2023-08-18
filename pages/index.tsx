@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import packageJson from '../package.json';
 
+const ERC725_JS_VERSION = packageJson.dependencies['@erc725/erc725.js'];
 const LSP_SMART_CONTRACTS_VERSION =
   packageJson.dependencies['@lukso/lsp-smart-contracts'];
 
@@ -27,6 +28,7 @@ const Home: NextPage = () => {
               >
                 erc725.js
               </a>
+              &nbsp;(version: {ERC725_JS_VERSION})
               <li>
                 <a
                   className="has-text-link"
