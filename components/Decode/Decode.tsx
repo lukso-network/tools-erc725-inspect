@@ -58,6 +58,10 @@ const Decode: React.FC<Props> = ({ web3 }) => {
         setTransactionType(TRANSACTION_TYPES.SET_DATA);
         return decodeSetData(payload, web3);
       }
+      case TRANSACTION_SELECTORS.SET_DATA_BATCH: {
+        setTransactionType(TRANSACTION_TYPES.SET_DATA_BATCH);
+        return decodeSetData(payload, web3, true);
+      }
       case TRANSACTION_SELECTORS.EXECUTE: {
         setTransactionType(TRANSACTION_TYPES.EXECUTE);
         return decodeExecute(payload, web3);
@@ -96,6 +100,14 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             label="setData"
             color={
               transactionType === TRANSACTION_TYPES.SET_DATA
+                ? 'primary'
+                : 'default'
+            }
+          />
+          <Chip
+            label="setDataBatch"
+            color={
+              transactionType === TRANSACTION_TYPES.SET_DATA_BATCH
                 ? 'primary'
                 : 'default'
             }
@@ -161,12 +173,14 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
   }
 };
 
-const decodeSetData = (payload: string, web3: Web3) => {
+const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
   try {
-    const result = web3.eth.abi.decodeParameters(
-      ['bytes32[]', 'bytes[]'],
-      payload,
-    );
+    const result = isBatch
+      ? web3.eth.abi.decodeParameters(['bytes32[]', 'bytes[]'], payload)
+      : web3.eth.abi.decodeParameters(['bytes32', 'bytes'], payload);
+
+    const keys = [result[0]];
+    const values = [result[1]];
 
     return (
       <Grid container spacing={2}>
@@ -176,8 +190,8 @@ const decodeSetData = (payload: string, web3: Web3) => {
         <Grid item md={6}>
           Values
         </Grid>
-        {result[0].map((key: string, index: number) => (
-          <>
+        {keys.map((key: string, index: number) => (
+          <React.Fragment key={index}>
             <Grid item md={6}>
               <TextField
                 value={key}
@@ -187,12 +201,12 @@ const decodeSetData = (payload: string, web3: Web3) => {
             </Grid>
             <Grid item md={6}>
               <TextField
-                value={result[1][index]}
+                value={values[1][index]}
                 fullWidth
                 InputProps={{ readOnly: true }}
               />
             </Grid>
-          </>
+          </React.Fragment>
         ))}
       </Grid>
     );

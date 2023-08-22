@@ -42,6 +42,11 @@ const Encode: React.FC<Props> = ({ web3 }) => {
                 label="setData"
               />
               <FormControlLabel
+                value={TRANSACTION_TYPES.SET_DATA_BATCH}
+                control={<Radio />}
+                label="setDataBatch"
+              />
+              <FormControlLabel
                 value={TRANSACTION_TYPES.EXECUTE}
                 control={<Radio />}
                 label="execute"
@@ -59,7 +64,10 @@ const Encode: React.FC<Props> = ({ web3 }) => {
       <div className="columns">
         <div className="column">
           {mode === TRANSACTION_TYPES.SET_DATA ? (
-            <EncodeSetData web3={web3} />
+            <EncodeSetData web3={web3} isBatch={false} />
+          ) : null}
+          {mode === TRANSACTION_TYPES.SET_DATA_BATCH ? (
+            <EncodeSetData web3={web3} isBatch={true} />
           ) : null}
           {mode === TRANSACTION_TYPES.EXECUTE ? (
             <EncodeExecute web3={web3} />

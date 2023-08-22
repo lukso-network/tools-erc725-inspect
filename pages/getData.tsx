@@ -11,8 +11,10 @@ import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
 
-import { checkInterface, getData, getDataLegacy } from '../utils/web3';
+import { checkInterface, getData } from '../utils/web3';
 import useWeb3 from '../hooks/useWeb3';
+
+import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -22,15 +24,6 @@ const dataKeyList = [
   ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
   ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
 ];
-
-const addressPermissionIndex = LSP6DataKeys.findIndex((key) =>
-  key.name.startsWith('AddressPermissions:Permissions:'),
-);
-
-const ADDDRESS_PERMISSIONS_PERMISSION_PREFIX =
-  addressPermissionIndex !== -1
-    ? LSP6DataKeys[addressPermissionIndex].key.replace('<address>', '')
-    : ''; // Hopefully we never end in the false case...
 
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
@@ -44,7 +37,6 @@ const GetData: NextPage = () => {
   const [interfaces, setInterfaces] = useState({
     isErc725X: false,
     isErc725Y: false,
-    isErc725YLegacy: false,
   });
 
   const web3 = useWeb3();
@@ -57,7 +49,6 @@ const GetData: NextPage = () => {
       setInterfaces({
         isErc725X: false,
         isErc725Y: false,
-        isErc725YLegacy: false,
       });
       return;
     }
@@ -100,52 +91,15 @@ const GetData: NextPage = () => {
       return;
     }
 
-    if (!interfaces.isErc725Y || !interfaces.isErc725YLegacy) {
+    if (!interfaces.isErc725Y) {
       console.log('Contract not compatible with ERC725');
+
+      return;
     }
 
-    let data;
+    const data = await getData(address, dataKey, web3);
 
-    if (interfaces.isErc725Y) {
-      data = await getData(address, [dataKey], web3);
-    } else {
-      data = await getDataLegacy(address, web3, dataKey);
-    }
-
-    setData(data);
-  };
-
-  const decodePermissionsData = (data: string) => {
-    const permissionsArray: string[] = [
-      'CHANGEOWNER',
-      'CHANGEPERMISSIONS',
-      'ADDPERMISSIONS',
-      'ENCRYPT',
-      'SETDATA',
-      'CALL',
-      'STATICCALL',
-      'DELEGATECALL',
-      'DEPLOY',
-      'TRANSFERVALUE',
-      'SIGN',
-      'SUPER_SETDATA',
-      'SUPER_TRANSFERVALUE',
-      'SUPER_CALL',
-      'SUPER_STATICCALL',
-      'SUPER_DELEGATECALL',
-    ];
-    const decodedPermissionsData: string[] = [];
-    const erc752DecodePermissions = ERC725.decodePermissions(data[0]);
-    for (let i = 0; i < permissionsArray.length; i++) {
-      if (
-        erc752DecodePermissions[
-          permissionsArray[i] as keyof typeof erc752DecodePermissions
-        ]
-      ) {
-        decodedPermissionsData.push(permissionsArray[i]);
-      }
-    }
-    return decodedPermissionsData;
+    setData(data || '0x');
   };
 
   return (
@@ -181,15 +135,10 @@ const GetData: NextPage = () => {
               {addressError !== '' && (
                 <p className="help is-danger">{addressError}</p>
               )}
-              {(interfaces.isErc725X ||
-                interfaces.isErc725Y ||
-                interfaces.isErc725YLegacy) && (
+              {(interfaces.isErc725X || interfaces.isErc725Y) && (
                 <p className="help is-success">
-                  ERC725X: {interfaces.isErc725X ? '✅' : '❌'} - ERC725Y
-                  {interfaces.isErc725YLegacy ? ' (legacy)' : ''}:{' '}
-                  {interfaces.isErc725Y || interfaces.isErc725YLegacy
-                    ? '✅'
-                    : '❌'}
+                  ERC725X: {interfaces.isErc725X ? '✅' : '❌'} - ERC725Y{' '}
+                  {interfaces.isErc725Y ? '✅' : '❌'}
                 </p>
               )}
             </div>
@@ -226,11 +175,11 @@ const GetData: NextPage = () => {
               className="button is-primary"
               type="button"
               disabled={
-                (address === '' ||
-                  dataKey === '' ||
-                  addressError !== '' ||
-                  dataKeyError !== '') &&
-                (interfaces.isErc725Y || interfaces.isErc725YLegacy)
+                address === '' ||
+                dataKey === '' ||
+                addressError !== '' ||
+                dataKeyError !== '' ||
+                !interfaces.isErc725Y
               }
               onClick={onGetDataClick}
             >
@@ -255,13 +204,10 @@ const GetData: NextPage = () => {
                 </div>
               </article>
               <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                {dataKey.substring(0, 26) ==
-                ADDDRESS_PERMISSIONS_PERMISSION_PREFIX
-                  ? JSON.stringify(
-                      ERC725.decodePermissions(data[0]),
-                      undefined,
-                      2,
-                    )
+                {dataKey.startsWith(
+                  ERC725YDataKeys.LSP6['AddressPermissions:Permissions'],
+                )
+                  ? JSON.stringify(ERC725.decodePermissions(data), undefined, 2)
                   : data}
               </pre>
             </div>

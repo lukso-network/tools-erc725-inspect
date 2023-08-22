@@ -70,7 +70,7 @@ const KeyManagerPermissions: React.FC = () => {
       <div className="columns">
         <div className="column">
           <PermissionsBtns
-            permissions={['CHANGEOWNER', 'ADDCONTROLLER', 'CHANGEPERMISSIONS']}
+            permissions={['CHANGEOWNER', 'ADDCONTROLLER', 'EDITPERMISSIONS']}
             color={'is-orange-dark'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}

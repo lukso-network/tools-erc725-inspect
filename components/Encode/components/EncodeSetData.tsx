@@ -2,14 +2,16 @@ import { TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
-import ERC725Account from '../../../abis/ERC725Account.json';
+import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '../../ErrorMessage';
+import { AbiItem } from 'web3-utils';
 
 interface Props {
   web3: Web3;
+  isBatch: boolean;
 }
 
-const EncodeSetData: React.FC<Props> = ({ web3 }) => {
+const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
   const [encodedPayload, setEncodedPayload] = useState('');
   const [keyValuePairs, setKeyValuePairs] = useState<
     { key: string; value: string }[]
@@ -23,15 +25,19 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
     return keyValuePairs.map(
       (keyValuePair: { key: string; value: string }, index) => {
         return (
-          <div className="columns is-vcentered" key={keyValuePair.key}>
-            <div className="column is-1">
-              <button
-                className="delete is-large"
-                onClick={removeKeyValue.bind(this, index)}
-              >
-                Remove
-              </button>
-            </div>
+          <div className="columns is-vcentered" key={index}>
+            {isBatch ? (
+              <div className="column is-1">
+                <button
+                  className="delete is-large"
+                  onClick={removeKeyValue.bind(this, index)}
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="column">
               <TextField
                 label="Key"
@@ -78,15 +84,13 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
       return;
     }
 
-    // eslint-disable-next-line
-    // @ts-ignore
     newKeyValuePairs[index][id] = event.target.value;
 
     setKeyValuePairs(newKeyValuePairs);
   };
 
   const encodeABI = () => {
-    const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
+    const erc725Account = new web3.eth.Contract(ERC725Account.abi as AbiItem[]);
 
     const keys = keyValuePairs.map((keyValuePair) => {
       return keyValuePair.key;
@@ -98,7 +102,9 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
 
     try {
       setEncodedPayload(
-        erc725Account.methods.setData(keys, values).encodeABI(),
+        isBatch
+          ? erc725Account.methods.setDataBatch(keys, values).encodeABI()
+          : erc725Account.methods.setData(keys[0], values[0]).encodeABI(),
       );
 
       setEncodingError({ isError: false, message: '' });
@@ -110,11 +116,15 @@ const EncodeSetData: React.FC<Props> = ({ web3 }) => {
   return (
     <>
       {createInputs(keyValuePairs)}
-      <div className="columns">
-        <div className="column">
-          <Button onClick={addKeyValue}>Add Key</Button>
+      {isBatch ? (
+        <div className="columns">
+          <div className="column">
+            <Button onClick={addKeyValue}>Add Key</Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        ''
+      )}
 
       <div className="columns">
         <div className="column">

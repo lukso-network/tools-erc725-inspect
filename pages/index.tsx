@@ -35,7 +35,7 @@ const Home: NextPage = () => {
                 className="has-text-link"
                 href="https://docs.lukso.tech/tools/lsp-smart-contracts/getting-started"
               >
-                lsp-smart-contracts&nbsp;
+                lsp-smart-contracts{' '}
               </a>
               (version: {LSP_SMART_CONTRACTS_VERSION})
             </li>
