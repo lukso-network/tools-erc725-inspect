@@ -179,8 +179,8 @@ const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
       ? web3.eth.abi.decodeParameters(['bytes32[]', 'bytes[]'], payload)
       : web3.eth.abi.decodeParameters(['bytes32', 'bytes'], payload);
 
-    const keys = [result[0]];
-    const values = [result[1]];
+    const keys = isBatch ? result[0] : [result[0]];
+    const values = isBatch ? result[1] : [result[1]];
 
     return (
       <Grid container spacing={2}>
@@ -201,7 +201,7 @@ const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
             </Grid>
             <Grid item md={6}>
               <TextField
-                value={values[1][index]}
+                value={values[index]}
                 fullWidth
                 InputProps={{ readOnly: true }}
               />
