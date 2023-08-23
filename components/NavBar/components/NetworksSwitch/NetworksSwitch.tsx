@@ -1,18 +1,11 @@
 import React, { useContext } from 'react';
 import { INetwork, NetworkContext } from '../../../../contexts/NetworksContext';
 
-import {
-  RPC_URL_L14,
-  RPC_URL_L16,
-  RPC_URL_MAINNET,
-  RPC_URL_TESTNET,
-} from '../../../../globals';
+import { RPC_URL_MAINNET, RPC_URL_TESTNET } from '../../../../globals';
 
 const luksoChains: INetwork[] = [
   { name: 'MAINNET', rpc: RPC_URL_MAINNET, imgUrl: '/lukso.png' },
   { name: 'TESTNET', rpc: RPC_URL_TESTNET, imgUrl: '/lukso.png' },
-  { name: 'L16', rpc: RPC_URL_L16, imgUrl: '/lukso.png' },
-  { name: 'L14', rpc: RPC_URL_L14, imgUrl: '/lukso.png' },
 ];
 
 const NetworkSwitch: React.FC = () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ERC725Account from '../../abis/ERC725Account.json';
+import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import useWeb3 from '../../hooks/useWeb3';
 
 import { supportsInterfaceAbi } from '../../constants';
@@ -33,9 +33,14 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
       ownerAddress,
     );
 
-    const isKeyManager = await OwnerContract.methods
-      .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
-      .call();
+    let isKeyManager = false;
+    try {
+      isKeyManager = await OwnerContract.methods
+        .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
+        .call();
+    } catch (err: any) {
+      console.warn(err.message);
+    }
 
     //if not key manager then it is a smart contract (could be UP or anything else)
     if (isKeyManager) {
@@ -71,17 +76,22 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
       ERC725Account.abi as AbiItem[],
       UPAddress,
     );
-    try {
-      universalProfile.methods
-        .owner()
-        .call()
-        .then((owner: string) => {
-          setUPowner(owner);
-          findOwnerType(owner);
-        });
-    } catch (error) {
-      console.log(error);
-    }
+
+    const setOwner = async () => {
+      try {
+        await universalProfile.methods
+          .owner()
+          .call()
+          .then((owner: string) => {
+            setUPowner(owner);
+            findOwnerType(owner);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    setOwner();
   }, [UPAddress, web3]);
 
   return (
