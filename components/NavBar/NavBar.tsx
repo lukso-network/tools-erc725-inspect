@@ -23,19 +23,19 @@ const NavBar: React.FC = () => {
           >
             🎯 Test dApp
           </a>
-          <Link href="/inspect">
+          <Link href="/inspector">
             <a
               className={`navbar-item ${
-                router.pathname === '/inspect' && 'has-text-link'
+                router.pathname === '/inspector' && 'has-text-link'
               }`}
             >
               🔎 Inspector
             </a>
           </Link>
-          <Link href="/getData">
+          <Link href="/data-fetcher">
             <a
               className={`navbar-item ${
-                router.pathname === '/getData' && 'has-text-link'
+                router.pathname === '/data-fetcher' && 'has-text-link'
               }`}
             >
               💽 Data Fetcher
@@ -50,19 +50,19 @@ const NavBar: React.FC = () => {
               🔐 Key Manager
             </a>
           </Link>
-          <Link href="/abi-coder">
+          <Link href="/abi-encoder">
             <a
               className={`navbar-item ${
-                router.pathname === '/abi-coder' && 'has-text-link'
+                router.pathname === '/abi-encoder' && 'has-text-link'
               }`}
             >
               📜 ABI Encoder
             </a>
           </Link>
-          <Link href="/lsp2-coder">
+          <Link href="/lsp2-encoder">
             <a
               className={`navbar-item ${
-                router.pathname === '/lsp2-coder' && 'has-text-link'
+                router.pathname === '/lsp2-encoder' && 'has-text-link'
               }`}
             >
               📖 LSP2 Encoder
