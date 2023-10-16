@@ -16,22 +16,29 @@ const NavBar: React.FC = () => {
           <Link href="/">
             <a className="navbar-item">🛠 ERC725 Tools</a>
           </Link>
+          <a
+            href="https://up-test-dapp.lukso.tech/"
+            rel="noreferrer"
+            className="navbar-item"
+          >
+            🎯 Test dApp
+          </a>
           <Link href="/inspect">
             <a
               className={`navbar-item ${
                 router.pathname === '/inspect' && 'has-text-link'
               }`}
             >
-              🔎 Inspect
+              🔎 Inspector
             </a>
           </Link>
-          <Link href="/abi-coder">
+          <Link href="/getData">
             <a
               className={`navbar-item ${
-                router.pathname === '/abi-coder' && 'has-text-link'
+                router.pathname === '/getData' && 'has-text-link'
               }`}
             >
-              📜 ABI Coder
+              💽 Data Fetcher
             </a>
           </Link>
           <Link href="/key-manager">
@@ -43,13 +50,13 @@ const NavBar: React.FC = () => {
               🔐 Key Manager
             </a>
           </Link>
-          <Link href="/getData">
+          <Link href="/abi-coder">
             <a
               className={`navbar-item ${
-                router.pathname === '/getData' && 'has-text-link'
+                router.pathname === '/abi-coder' && 'has-text-link'
               }`}
             >
-              💽 getData
+              📜 ABI Encoder
             </a>
           </Link>
           <Link href="/lsp2-coder">
@@ -58,16 +65,9 @@ const NavBar: React.FC = () => {
                 router.pathname === '/lsp2-coder' && 'has-text-link'
               }`}
             >
-              📖 LSP2 coder
+              📖 LSP2 Encoder
             </a>
           </Link>
-          <a
-            href="https://up-test-dapp.lukso.tech/"
-            rel="noreferrer"
-            className="navbar-item"
-          >
-            🎯 Test dApp
-          </a>
         </div>
 
         <div className="navbar-end">
