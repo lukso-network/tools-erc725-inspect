@@ -16,22 +16,29 @@ const NavBar: React.FC = () => {
           <Link href="/">
             <a className="navbar-item">🛠 ERC725 Tools</a>
           </Link>
-          <Link href="/inspect">
+          <a
+            href="https://up-test-dapp.lukso.tech/"
+            rel="noreferrer"
+            className="navbar-item"
+          >
+            🎯 Test dApp
+          </a>
+          <Link href="/inspector">
             <a
               className={`navbar-item ${
-                router.pathname === '/inspect' && 'has-text-link'
+                router.pathname === '/inspector' && 'has-text-link'
               }`}
             >
-              🔎 Inspect
+              🔎 Inspector
             </a>
           </Link>
-          <Link href="/abi-coder">
+          <Link href="/data-fetcher">
             <a
               className={`navbar-item ${
-                router.pathname === '/abi-coder' && 'has-text-link'
+                router.pathname === '/data-fetcher' && 'has-text-link'
               }`}
             >
-              📜 ABI Coder
+              💽 Data Fetcher
             </a>
           </Link>
           <Link href="/key-manager">
@@ -43,31 +50,24 @@ const NavBar: React.FC = () => {
               🔐 Key Manager
             </a>
           </Link>
-          <Link href="/getData">
+          <Link href="/abi-encoder">
             <a
               className={`navbar-item ${
-                router.pathname === '/getData' && 'has-text-link'
+                router.pathname === '/abi-encoder' && 'has-text-link'
               }`}
             >
-              💽 getData
+              📜 ABI Encoder
             </a>
           </Link>
-          <Link href="/lsp2-coder">
+          <Link href="/lsp2-encoder">
             <a
               className={`navbar-item ${
-                router.pathname === '/lsp2-coder' && 'has-text-link'
+                router.pathname === '/lsp2-encoder' && 'has-text-link'
               }`}
             >
-              📖 LSP2 coder
+              📖 LSP2 Encoder
             </a>
           </Link>
-          <a
-            href="https://up-test-dapp.lukso.tech/"
-            rel="noreferrer"
-            className="navbar-item"
-          >
-            🎯 Test dApp
-          </a>
         </div>
 
         <div className="navbar-end">
