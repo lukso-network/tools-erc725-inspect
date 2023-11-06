@@ -16,13 +16,6 @@ const NavBar: React.FC = () => {
           <Link href="/">
             <a className="navbar-item">🛠 ERC725 Tools</a>
           </Link>
-          <a
-            href="https://up-test-dapp.lukso.tech/"
-            rel="noreferrer"
-            className="navbar-item"
-          >
-            🎯 Test dApp
-          </a>
           <Link href="/inspector">
             <a
               className={`navbar-item ${
