@@ -6,14 +6,33 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
 const HomeCard = ({ title, description, link, isExternal, version }) => {
-  const fullTitle = isExternal ? `${title} ↗` : title;
-
+  if (isExternal) {
+    const fullTitle = isExternal ? `` : title;
+    return (
+      <a href={link} target="_blank" rel="noopener noreferrer">
+        <Card className="styledCard">
+          <CardContent>
+            <Typography variant="h5" component="div" fontWeight={600}>
+              {fullTitle}
+            </Typography>
+            <Typography className="description">{description}</Typography>
+            {version && (
+              <Typography component="p">
+                <code>version: {version}</code>
+              </Typography>
+            )}
+          </CardContent>
+          <CardActions></CardActions>
+        </Card>
+      </a>
+    );
+  }
   return (
     <Link href={link} passHref>
       <Card className="styledCard">
         <CardContent>
           <Typography variant="h5" component="div" fontWeight={600}>
-            {fullTitle}
+            {title}
           </Typography>
           <Typography className="description">{description}</Typography>
           {version && (
