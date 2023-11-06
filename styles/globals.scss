@@ -61,3 +61,54 @@ code {
 .navbar-link {
   min-width: 160px;
 }
+
+.home-container {
+  text-align: center;
+}
+
+// CARD CONTAINER + HOME CARD
+
+@keyframes fadeInUp {
+  from {
+    transform: translate3d(0, 40px, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+.styledCard {
+  box-shadow: 0 8px 15px 2px #565b731a;
+  padding: 1rem;
+  border-radius: 1rem;
+  transition: transform 0.3s ease-in-out, box-shadow 0.1s ease-in-out;
+  height: 100%;
+
+  .description {
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    margin-top: 0.5rem;
+  }
+
+  &:hover {
+    transform: translateY(-0.5rem);
+    box-shadow: 0 12px 20px 2px #565b731a;
+    cursor: pointer;
+
+    .description {
+      color: #6c6c6c;
+    }
+  }
+
+  .description {
+    transition: color 0.3s ease-in-out;
+  }
+}
+
+.styledContainer {
+  max-width: 1200px;
+  margin: auto;
+}

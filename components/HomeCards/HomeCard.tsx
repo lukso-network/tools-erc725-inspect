@@ -1,0 +1,31 @@
+import * as React from 'react';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Link from 'next/link';
+
+const HomeCard = ({ title, description, link, isExternal, version }) => {
+  const fullTitle = isExternal ? `${title} ↗` : title;
+
+  return (
+    <Link href={link} passHref>
+      <Card className="styledCard">
+        <CardContent>
+          <Typography variant="h5" component="div" fontWeight={600}>
+            {fullTitle}
+          </Typography>
+          <Typography className="description">{description}</Typography>
+          {version && (
+            <Typography component="p">
+              <code>version: {version}</code>
+            </Typography>
+          )}
+        </CardContent>
+        <CardActions></CardActions>
+      </Card>
+    </Link>
+  );
+};
+
+export default HomeCard;
