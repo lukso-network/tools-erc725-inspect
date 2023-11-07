@@ -10,7 +10,7 @@ const NavBar: React.FC = () => {
   const router = useRouter();
 
   return (
-    <nav className="navbar is-light">
+    <nav className="navbar is-light sticky">
       <div className="navbar-menu is-active">
         <div className="navbar-start">
           <Link href="/">
