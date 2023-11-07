@@ -1,20 +1,11 @@
-@keyframes fadeInUp {
-  from {
-    transform: translate3d(0, 40px, 0);
-    opacity: 0;
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
-  }
-}
-
 .card {
   box-shadow: 0 8px 15px 2px #565b731a;
-  padding: 1rem;
+  padding: 2rem;
   border-radius: 1rem;
+  overflow: hidden;
   transition: transform 0.3s ease-in-out, box-shadow 0.1s ease-in-out;
   height: 100%;
+  max-width: 370px;
 
   .description {
     font-size: 16px;
@@ -36,4 +27,12 @@
   .description {
     transition: color 0.3s ease-in-out;
   }
+}
+
+.cardContent {
+  font-weight: 600;
+}
+
+.versionTag {
+  margin-top: 1rem;
 }
