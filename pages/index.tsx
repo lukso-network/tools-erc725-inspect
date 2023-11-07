@@ -57,23 +57,22 @@ const Home: NextPage = () => {
           ></CardContainer>
           <h3 className="title is-4">External Developer Resources</h3>
           <p>
-            Start integrating ERC725 smart contracts into your own projects by
-            diving into the following apps and libraries:
+            Start integrating ERC725 and LSP smart contracts into your own
+            projects by diving into the following apps and libraries:
           </p>
           <CardContainer
             cardData={[
               {
-                title: 'Test dApp',
+                title: 'up-test-dapp',
                 description:
-                  'The test dApp demonstrates the deployment and interaction with Universal Profiles in the browser environment.',
+                  'The UP Test dApp demonstrates the deployment and interactions with Universal Profiles and LSPs. You can create token, upload assets, edit profile storage, or build transactions.',
                 link: 'https://up-test-dapp.lukso.tech/',
                 isExternal: true,
-                version: '1.0.0',
               },
               {
                 title: 'erc-725.js',
                 description:
-                  'The ERC725 library allows seamless interaction of smart contract schemas and contracts to simpify integration.',
+                  'The ERC725 library allows seamless interaction of smart contract schemas and contracts to simpify ERC725 integration.',
                 link: 'https://docs.lukso.tech/tools/erc725js/getting-started',
                 isExternal: true,
                 version: ERC725_JS_VERSION,
@@ -81,7 +80,7 @@ const Home: NextPage = () => {
               {
                 title: 'lsp-smart-contracts',
                 description:
-                  'The LSP library includes Solidity code, JSON ABIs, and constants, to streamline your smart contract development.',
+                  'The LSP library includes Solidity code, JSON ABIs, and constants, to streamline your LSP smart contract development.',
                 link: 'https://docs.lukso.tech/tools/lsp-smart-contracts/getting-started',
                 isExternal: true,
                 version: LSP_SMART_CONTRACTS_VERSION,
