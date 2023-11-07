@@ -55,7 +55,7 @@ const Home: NextPage = () => {
               },
             ]}
           ></CardContainer>
-          <h3 className="title is-4">External Developer Resources</h3>
+          <h3 className="title is-3">External Developer Resources</h3>
           <p>
             Start integrating ERC725 and LSP smart contracts into your own
             projects by diving into the following apps and libraries:
@@ -65,7 +65,7 @@ const Home: NextPage = () => {
               {
                 title: 'up-test-dapp',
                 description:
-                  'The UP Test dApp demonstrates the deployment and interactions with Universal Profiles and LSPs. You can create token, upload assets, edit profile storage, or build transactions.',
+                  'The UP Test dApp demonstrates the deployment and interactions with Universal Profiles and LSPs. You can create token, edit profile storage, connect and sign messages, or build transactions.',
                 link: 'https://up-test-dapp.lukso.tech/',
                 isExternal: true,
               },
