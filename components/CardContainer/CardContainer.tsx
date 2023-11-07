@@ -1,5 +1,6 @@
 import { Grid } from '@mui/material';
 import HomeCard from './components/HomeCard';
+import styles from './CardContainer.module.scss';
 
 const CardContainer = ({ cardData }) => {
   return (
@@ -7,7 +8,7 @@ const CardContainer = ({ cardData }) => {
       container
       spacing={4}
       justifyContent="center"
-      className="styledContainer"
+      className={styles.container}
     >
       {cardData.map((card, index) => (
         <Grid item xs={12} sm={6} md={4} key={index}>

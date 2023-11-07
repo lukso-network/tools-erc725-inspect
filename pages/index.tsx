@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import packageJson from '../package.json';
-import CardContainer from '../components/HomeCards/CardContainer';
+import CardContainer from '../components/CardContainer';
 
 const ERC725_JS_VERSION = packageJson.dependencies['@erc725/erc725.js'];
 const LSP_SMART_CONTRACTS_VERSION =
@@ -17,8 +17,16 @@ const Home: NextPage = () => {
         <div className="content">
           <h1 className="title is-1">Welcome to ERC725 Tools</h1>
           <p>
-            This website provides debugging tools to interact with ERC725 smart
-            contracts.
+            This website provides debugging tools to interact with{' '}
+            <a
+              href="https://docs.lukso.tech/standards/lsp-background/erc725"
+              target="_blank"
+              rel="noreferrer"
+              className="home-link"
+            >
+              ERC725
+            </a>{' '}
+            smart contracts.
           </p>
           <CardContainer
             cardData={[
@@ -51,14 +59,32 @@ const Home: NextPage = () => {
                 title: '📖 LSP2 Encoder ',
                 description:
                   'Encode and decode storage information based on the JSON schema.',
-                link: 'lsp2-encoder',
+                link: '/lsp2-encoder',
               },
             ]}
           ></CardContainer>
           <h3 className="title is-3">External Developer Resources</h3>
           <p>
-            Start integrating ERC725 and LSP smart contracts into your own
-            projects by diving into the following apps and libraries:
+            Start integrating{' '}
+            <a
+              href="https://docs.lukso.tech/standards/lsp-background/erc725"
+              target="_blank"
+              rel="noreferrer"
+              className="home-link"
+            >
+              ERC725
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://docs.lukso.tech/standards/introduction"
+              target="_blank"
+              rel="noreferrer"
+              className="home-link"
+            >
+              LSP
+            </a>{' '}
+            smart contracts into your own projects by diving into the following
+            apps and libraries:
           </p>
           <CardContainer
             cardData={[
