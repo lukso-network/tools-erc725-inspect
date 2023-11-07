@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 const HomeCard = ({ title, description, link, isExternal, version }) => {
   if (isExternal) {
-    const fullTitle = isExternal ? `` : title;
+    const fullTitle = isExternal ? `${title} ↗` : title;
     return (
       <a href={link} target="_blank" rel="noopener noreferrer">
         <Card className="styledCard">
