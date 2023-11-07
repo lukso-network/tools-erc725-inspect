@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import HomeCard from './HomeCard';
+import HomeCard from './components/HomeCard';
 
 const CardContainer = ({ cardData }) => {
   return (
