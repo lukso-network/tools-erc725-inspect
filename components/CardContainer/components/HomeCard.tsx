@@ -1,7 +1,4 @@
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import styles from './HomeCard.module.scss';
 
@@ -39,19 +36,17 @@ const HomeCard: React.FC<CardProps> = ({
 
   return (
     <LinkWrapper>
-      <Card className={styles.card}>
-        <CardContent>
-          <Typography variant="h5" component="div" fontWeight={600}>
-            {fullTitle}
-          </Typography>
-          <Typography className={styles.description}>{description}</Typography>
+      <div className={styles.card}>
+        <div>
+          <h3 className={styles.cardContent}>{fullTitle}</h3>
+          <div className={styles.description}>{description}</div>
           {version && (
-            <Typography component="p">
+            <p className={styles.versionTag}>
               <code>version: {version}</code>
-            </Typography>
+            </p>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </LinkWrapper>
   );
 };
