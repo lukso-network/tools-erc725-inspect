@@ -1,4 +1,3 @@
-import { TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
@@ -39,22 +38,26 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
               ''
             )}
             <div className="column">
-              <TextField
-                label="Key"
-                value={keyValuePair.key}
-                fullWidth
-                id="key"
-                onChange={handleChange.bind(this, index)}
-              />
-            </div>
-            <div className="column">
-              <TextField
-                label="Value"
-                value={keyValuePair.value}
-                fullWidth
-                id="value"
-                onChange={handleChange.bind(this, index)}
-              />
+              <div>
+                <label>Key</label>
+                <input
+                  type="text"
+                  id="key"
+                  className="input mb-2 is-fullwidth"
+                  value={keyValuePair.key}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div>
+                <label>Value</label>
+                <input
+                  type="text"
+                  id="value"
+                  className="input mb-2 is-fullwidth"
+                  value={keyValuePair.value}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
             </div>
           </div>
         );
@@ -119,7 +122,9 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
       {isBatch ? (
         <div className="columns">
           <div className="column">
-            <Button onClick={addKeyValue}>Add Key</Button>
+            <button className="button is-link" onClick={addKeyValue}>
+              Add Key
+            </button>
           </div>
         </div>
       ) : (
@@ -128,21 +133,16 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
 
       <div className="columns">
         <div className="column">
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={encodeABI}
-          >
+          <button className="button is-primary" onClick={encodeABI}>
             Encode ABI
-          </Button>
+          </button>
 
           {encodedPayload && !encodingError.isError ? (
             <EncodedPayload encodedPayload={encodedPayload} />
           ) : null}
           {encodingError.isError ? (
             <ErrorMessage
-              header="ABI Encoding Error!"
+              header="ABI Encoding Error"
               message={encodingError.message}
             />
           ) : null}
