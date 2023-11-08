@@ -3,7 +3,6 @@
  * @author Jean Cavallera <git@jeanc.abc>
  */
 import React, { useEffect, useState } from 'react';
-import Chip from '@mui/material/Chip';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 
 import AddressButtons from '../AddressButtons';
@@ -81,12 +80,9 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
             <div className="content py-5">
               <h4 className="title is-4">
                 {data.schema.name}{' '}
-                <Chip
-                  label={data.schema.keyType}
-                  color="success"
-                  variant="outlined"
-                  size="small"
-                />
+                <span className="tag is-medium m-2 is-success">
+                  {data.schema.keyType}
+                </span>
               </h4>
               <ul>
                 <li>
@@ -94,14 +90,14 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                 </li>
                 <li>
                   Raw value{' '}
-                  <span className="tag is-link is-light">
+                  <span className="tag is-medium m-2 is-link is-light">
                     {data.schema.valueType}
                   </span>
                   : <code>{data.value}</code>
                 </li>
                 <li>
                   Decoded value{' '}
-                  <span className="tag is-link is-light">
+                  <span className="tag is-medium m-2 is-link is-light">
                     {data.schema.valueContent}
                   </span>
                   :{' '}
