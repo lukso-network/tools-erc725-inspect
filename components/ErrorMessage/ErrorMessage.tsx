@@ -1,5 +1,3 @@
-import { Alert } from '@mui/material';
-
 interface Props {
   header: string;
   message: string;
@@ -7,11 +5,12 @@ interface Props {
 
 const ErrorMessage: React.FC<Props> = ({ header, message }) => {
   return (
-    <Alert severity="error">
-      <b>{header}</b>
-      <br />
-      {message}
-    </Alert>
+    <article className="message is-danger mt-4 mb-4">
+      <div className="message-header">
+        <p>{header}</p>
+      </div>
+      <div className="message-body">{message}</div>
+    </article>
   );
 };
 
