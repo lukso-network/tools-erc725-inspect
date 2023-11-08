@@ -1,4 +1,3 @@
-import { TextField } from '@mui/material';
 import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
@@ -41,12 +40,15 @@ const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
 
   return (
     <>
-      <TextField
-        label="New owner"
-        value={newOwner}
-        fullWidth
-        onChange={(event) => handleChange(event.target.value)}
-      />
+      <div>
+        <label>New Owner</label>
+        <input
+          type="text"
+          className="input mb-2 is-fullwidth"
+          value={newOwner}
+          onChange={(event) => handleChange(event.target.value)}
+        />
+      </div>
       <div
         style={{ height: 300, width: '100%', marginBottom: 10, marginTop: 10 }}
       >
@@ -55,7 +57,7 @@ const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
         ) : null}
         {encodingError.isError ? (
           <ErrorMessage
-            header="ABI Encoding Error!"
+            header="ABI Encoding Error"
             message={encodingError.message}
           />
         ) : null}
