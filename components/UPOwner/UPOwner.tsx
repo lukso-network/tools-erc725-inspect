@@ -102,7 +102,7 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
           <ul>
             <li>
               Owner address{' '}
-              <span className="tag is-link is-light">address</span>:{' '}
+              <span className="tag is-medium is-link is-light">address</span>:{' '}
               <code>{UPOwner}</code>
             </li>
             <li>
