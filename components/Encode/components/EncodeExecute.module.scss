@@ -1,0 +1,10 @@
+.gridContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.gridItem {
+  margin-bottom: 0.5rem;
+  flex-basis: 100%;
+}
