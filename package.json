@@ -19,8 +19,6 @@
     "@erc725/erc725.js": "^0.18.0",
     "@lukso/lsp-factory.js": "^2.5.0",
     "@lukso/lsp-smart-contracts": "^0.11.1",
-    "@mui/icons-material": "^5.2.5",
-    "@mui/material": "^5.2.6",
     "i": "^0.3.7",
     "next": "^12.1.6",
     "npm": "^9.6.0",
