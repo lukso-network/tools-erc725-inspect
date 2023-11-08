@@ -43,24 +43,26 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
     <>
       <div className={styles.gridContainer}>
         <div className={styles.gridItem}>
-          <label>Operation</label>
-          <br></br>
-          <div className="select">
-            <select
-              value={operation}
-              onChange={(event) => setOperation(event.target.value)}
-            >
-              <option value="0">CALL</option>
-              <option value="1">CREATE</option>
-              <option value="2">CREATE2</option>
-              <option value="3">STATICCALL</option>
-              <option value="4">DELEGATECALL</option>
-            </select>
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Operation</label>
+            <br></br>
+            <div className="select mb-2">
+              <select
+                value={operation}
+                onChange={(event) => setOperation(event.target.value)}
+              >
+                <option value="0">CALL</option>
+                <option value="1">CREATE</option>
+                <option value="2">CREATE2</option>
+                <option value="3">STATICCALL</option>
+                <option value="4">DELEGATECALL</option>
+              </select>
+            </div>
           </div>
         </div>
         <div className={styles.gridItem}>
-          <div>
-            <label>Recipient</label>
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Recipient</label>
             <input
               type="text"
               className="input mb-2 is-fullwidth"
@@ -73,8 +75,8 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
           </div>
         </div>
         <div className={styles.gridItem}>
-          <div>
-            <label>Amount</label>
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Amount</label>
             <input
               type="text"
               className="input mb-2 is-fullwidth"
@@ -87,8 +89,8 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
           </div>
         </div>
         <div className={styles.gridItem}>
-          <div>
-            <label>Data</label>
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Data</label>
             <input
               type="text"
               className="input mb-2 is-fullwidth"

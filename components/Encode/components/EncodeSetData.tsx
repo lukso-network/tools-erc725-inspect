@@ -4,6 +4,7 @@ import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '../../ErrorMessage';
 import { AbiItem } from 'web3-utils';
+import styles from './EncodeSetData.module.scss';
 
 interface Props {
   web3: Web3;
@@ -24,11 +25,14 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
     return keyValuePairs.map(
       (keyValuePair: { key: string; value: string }, index) => {
         return (
-          <div className="columns is-vcentered" key={index}>
+          <div
+            className={`columns is-vcentered ${styles.keyValueBox}`}
+            key={index}
+          >
             {isBatch ? (
               <div className="column is-1">
                 <button
-                  className="delete is-large"
+                  className={`delete is-large ${styles.closeButton}`}
                   onClick={removeKeyValue.bind(this, index)}
                 >
                   Remove
@@ -38,8 +42,8 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
               ''
             )}
             <div className="column">
-              <div>
-                <label>Key</label>
+              <div className={styles.inputContainer}>
+                <label className={styles.inputDescription}>Key</label>
                 <input
                   type="text"
                   id="key"
@@ -48,8 +52,8 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
                   onChange={(event) => handleChange(index, event)}
                 />
               </div>
-              <div>
-                <label>Value</label>
+              <div className={styles.inputContainer}>
+                <label className={styles.inputDescription}>Value</label>
                 <input
                   type="text"
                   id="value"
@@ -122,7 +126,10 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
       {isBatch ? (
         <div className="columns">
           <div className="column">
-            <button className="button is-link" onClick={addKeyValue}>
+            <button
+              className={`button is-link ${styles.buttonWidth}`}
+              onClick={addKeyValue}
+            >
               Add Key
             </button>
           </div>
@@ -133,7 +140,10 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
 
       <div className="columns">
         <div className="column">
-          <button className="button is-primary" onClick={encodeABI}>
+          <button
+            className={`button is-primary ${styles.buttonWidth}`}
+            onClick={encodeABI}
+          >
             Encode ABI
           </button>
 

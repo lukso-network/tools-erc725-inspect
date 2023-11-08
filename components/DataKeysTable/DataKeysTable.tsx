@@ -80,7 +80,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
             <div className="content py-5">
               <h4 className="title is-4">
                 {data.schema.name}{' '}
-                <span className="tag is-medium m-2 is-success">
+                <span className="tag is-medium mu-2 mb-2 mr-2 is-success">
                   {data.schema.keyType}
                 </span>
               </h4>
@@ -90,14 +90,14 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                 </li>
                 <li>
                   Raw value{' '}
-                  <span className="tag is-medium m-2 is-link is-light">
+                  <span className="tag is-medium mu-2 mb-2 mr-2 is-link is-light">
                     {data.schema.valueType}
                   </span>
                   : <code>{data.value}</code>
                 </li>
                 <li>
                   Decoded value{' '}
-                  <span className="tag is-medium m-2 is-link is-light">
+                  <span className="tag is-medium mu-2 mb-2 mr-2 is-link is-light">
                     {data.schema.valueContent}
                   </span>
                   :{' '}

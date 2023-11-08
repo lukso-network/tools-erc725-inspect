@@ -98,14 +98,14 @@ const Decode: React.FC<Props> = ({ web3 }) => {
 
         <div className={styles.gridItem}>
           <span
-            className={`tag is-medium m-2 ${
+            className={`tag is-medium mu-2 mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.SET_DATA ? 'is-primary' : ''
             }`}
           >
             setData
           </span>
           <span
-            className={`tag is-medium m-2 ${
+            className={`tag is-medium mu-2 mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.SET_DATA_BATCH
                 ? 'is-primary'
                 : ''
@@ -114,14 +114,14 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             setDataBatch
           </span>
           <span
-            className={`tag is-medium m-2 ${
+            className={`tag is-medium mu-2 mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.EXECUTE ? 'is-primary' : ''
             }`}
           >
             execute
           </span>
           <span
-            className={`tag is-medium m-2 ${
+            className={`tag is-medium mu-2 mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.TRANSFER_OWNERSHIP
                 ? 'is-primary'
                 : ''
@@ -155,8 +155,8 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
           </div>
         </div>
         <div className={styles.gridItem}>
-          <div>
-            <label>New Owner</label>
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>New Owner</label>
             <input
               type="text"
               className="input m-2"
@@ -225,19 +225,19 @@ const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
     return (
       <div className={styles.gridContainer}>
         <div className={styles.gridItem}>
-          <label>Operation</label>
+          <label className={styles.inputDescription}>Operation</label>
           <input type="text" className="input m-2" value={result[0]} readOnly />
         </div>
-        <div className={styles.gridItem}>
-          <label>Recipient</label>
+        <div className={`${styles.gridItem} ${styles.inputContainer}`}>
+          <label className={styles.inputDescription}>Recipient</label>
           <input type="text" className="input m-2" value={result[1]} readOnly />
         </div>
-        <div className={styles.gridItem}>
-          <label>Amount</label>
+        <div className={`${styles.gridItem} ${styles.inputContainer}`}>
+          <label className={styles.inputDescription}>Amount</label>
           <input type="text" className="input m-2" value={result[2]} readOnly />
         </div>
-        <div className={styles.gridItem}>
-          <label>Data</label>
+        <div className={`${styles.gridItem} ${styles.inputContainer}`}>
+          <label className={styles.inputDescription}>Data</label>
           <input
             type="text"
             className="input m-2"

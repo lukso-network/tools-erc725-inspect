@@ -4,7 +4,7 @@ import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '../../ErrorMessage';
 import { Contract } from 'web3-eth-contract';
-
+import styles from './EncodeTransferOwnership.module.scss';
 interface Props {
   web3: Web3;
 }
@@ -40,8 +40,8 @@ const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
 
   return (
     <>
-      <div>
-        <label>New Owner</label>
+      <div className={styles.inputContainer}>
+        <label className={styles.inputDescription}>New Owner</label>
         <input
           type="text"
           className="input mb-2 is-fullwidth"
