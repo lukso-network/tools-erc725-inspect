@@ -31,7 +31,7 @@ const AddressButtons: React.FC<Props> = ({
         View on UP as Asset 👗
       </a>
       <a
-        className="button is-link is-light"
+        className="button is-primary is-light"
         target="_blank"
         rel="noreferrer"
         href={`https://blockscout.com/lukso/l14/address/${address}`}
@@ -40,7 +40,7 @@ const AddressButtons: React.FC<Props> = ({
       </a>
       {showInspectButton && (
         <a
-          className="button is-link is-light"
+          className="button is-primary is-light"
           href={`${window.location.href.split('?')[0]}?address=${address}`}
         >
           ERC725 Inspect 🔍

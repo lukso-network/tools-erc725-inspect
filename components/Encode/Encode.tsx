@@ -1,16 +1,10 @@
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from '@mui/material';
 import React, { useState } from 'react';
 import Web3 from 'web3';
 
 import EncodeExecute from './components/EncodeExecute';
 import EncodeSetData from './components/EncodeSetData';
 import EncodeTransferOwnership from './components/EncodeTransferOwnership';
+import styles from './Encode.module.scss';
 
 import { TRANSACTION_TYPES } from '../../interfaces/transaction';
 
@@ -27,37 +21,52 @@ const Encode: React.FC<Props> = ({ web3 }) => {
     <>
       <div className="columns">
         <div className="column">
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Transaction Type</FormLabel>
-            <RadioGroup
-              row
-              aria-label="mode"
-              name="row-radio-buttons-group"
-              defaultValue={DEFAULT_TRANSACTION_TYPE}
-              onChange={(e) => setMode(e.target.value as TRANSACTION_TYPES)}
-            >
-              <FormControlLabel
+          <p className="mb-2">Transaction Type</p>
+          <div className="control">
+            <label className={`radio ${styles.radioLabel}`}>
+              <input
+                type="radio"
+                className={styles.radioInput}
                 value={TRANSACTION_TYPES.SET_DATA}
-                control={<Radio />}
-                label="setData"
+                checked={mode === TRANSACTION_TYPES.SET_DATA}
+                onChange={() => setMode(TRANSACTION_TYPES.SET_DATA)}
               />
-              <FormControlLabel
+              setData
+            </label>
+
+            <label className={`radio ${styles.radioLabel}`}>
+              <input
+                type="radio"
+                className={styles.radioInput}
                 value={TRANSACTION_TYPES.SET_DATA_BATCH}
-                control={<Radio />}
-                label="setDataBatch"
+                checked={mode === TRANSACTION_TYPES.SET_DATA_BATCH}
+                onChange={() => setMode(TRANSACTION_TYPES.SET_DATA_BATCH)}
               />
-              <FormControlLabel
+              setDataBatch
+            </label>
+
+            <label className={`radio ${styles.radioLabel}`}>
+              <input
+                type="radio"
+                className={styles.radioInput}
                 value={TRANSACTION_TYPES.EXECUTE}
-                control={<Radio />}
-                label="execute"
+                checked={mode === TRANSACTION_TYPES.EXECUTE}
+                onChange={() => setMode(TRANSACTION_TYPES.EXECUTE)}
               />
-              <FormControlLabel
+              execute
+            </label>
+
+            <label className={`radio ${styles.radioLabel}`}>
+              <input
+                type="radio"
+                className={styles.radioInput}
                 value={TRANSACTION_TYPES.TRANSFER_OWNERSHIP}
-                control={<Radio />}
-                label="transferOwnership"
+                checked={mode === TRANSACTION_TYPES.TRANSFER_OWNERSHIP}
+                onChange={() => setMode(TRANSACTION_TYPES.TRANSFER_OWNERSHIP)}
               />
-            </RadioGroup>
-          </FormControl>
+              transferOwnership
+            </label>
+          </div>
         </div>
       </div>
 

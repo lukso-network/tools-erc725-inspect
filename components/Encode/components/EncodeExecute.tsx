@@ -1,16 +1,9 @@
-import {
-  Grid,
-  MenuItem,
-  InputLabel,
-  Select,
-  TextField,
-  Button,
-} from '@mui/material';
 import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '../../ErrorMessage';
+import styles from './EncodeExecute.module.scss';
 
 interface Props {
   web3: Web3;
@@ -48,73 +41,81 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
 
   return (
     <>
-      <Grid container justifyContent="center" spacing={2}>
-        <Grid item md={12}>
-          <InputLabel id="demo-simple-select-label">Operation</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={operation}
-            onChange={(event) => setOperation(event.target.value)}
-          >
-            <MenuItem value={'0'}>CALL</MenuItem>
-            <MenuItem value={'1'}>CREATE</MenuItem>
-            <MenuItem value={'2'}>CREATE2</MenuItem>
-            <MenuItem value={'3'}>STATICCALL</MenuItem>
-            <MenuItem value={'4'}>DELEGATECALL</MenuItem>
-          </Select>
-        </Grid>
-        <Grid item md={12}>
-          <TextField
-            label="Recipient"
-            value={recipient}
-            fullWidth
-            onChange={(event) => {
-              const input = event.target.value;
-              setRecipient(input);
-            }}
-          />
-        </Grid>
-        <Grid item md={12}>
-          <TextField
-            label="Amount"
-            value={amount}
-            fullWidth
-            onChange={(event) => {
-              const input = event.target.value;
-              setAmount(input);
-            }}
-          />
-        </Grid>
-        <Grid item md={12}>
-          <TextField
-            label="Data"
-            value={data}
-            fullWidth
-            onChange={(event) => {
-              const input = event.target.value;
-              setData(input);
-            }}
-          />
-        </Grid>
-      </Grid>
+      <div>
+        <div className="mb-2">
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Operation</label>
+            <br></br>
+            <div className="select mb-2">
+              <select
+                value={operation}
+                onChange={(event) => setOperation(event.target.value)}
+              >
+                <option value="0">CALL</option>
+                <option value="1">CREATE</option>
+                <option value="2">CREATE2</option>
+                <option value="3">STATICCALL</option>
+                <option value="4">DELEGATECALL</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div className="mb-2">
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Recipient</label>
+            <input
+              type="text"
+              className="input mb-2 is-fullwidth"
+              value={recipient}
+              onChange={(event) => {
+                const input = event.target.value;
+                setRecipient(input);
+              }}
+            />
+          </div>
+        </div>
+        <div className="mb-2">
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Amount</label>
+            <input
+              type="text"
+              className="input mb-2 is-fullwidth"
+              value={amount}
+              onChange={(event) => {
+                const input = event.target.value;
+                setAmount(input);
+              }}
+            />
+          </div>
+        </div>
+        <div className="mb-2">
+          <div className={styles.inputContainer}>
+            <label className={styles.inputDescription}>Data</label>
+            <input
+              type="text"
+              className="input mb-2 is-fullwidth"
+              value={data}
+              onChange={(event) => {
+                const input = event.target.value;
+                setData(input);
+              }}
+            />
+          </div>
+        </div>
+      </div>
       <div
         style={{ height: 300, width: '100%', marginBottom: 10, marginTop: 10 }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={encodeABI}
-        >
+        <button className="button is-primary" onClick={encodeABI}>
           Encode ABI
-        </Button>
+        </button>
+
         {encodedPayload ? (
           <EncodedPayload encodedPayload={encodedPayload} />
         ) : null}
         {encodingError.isError ? (
           <ErrorMessage
-            header="ABI Encoding Error!"
+            header="ABI Encoding Error"
             message={encodingError.message}
           />
         ) : null}

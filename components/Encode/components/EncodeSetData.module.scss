@@ -1,0 +1,29 @@
+.inputContainer {
+  display: flex;
+}
+
+.inputDescription {
+  margin-top: 6px;
+  margin-right: 0.3rem;
+  min-width: 45px;
+}
+
+.buttonWidth {
+  min-width: 120px;
+}
+
+.keyValueBox {
+  background-color: #eff5fb;
+  border-radius: 0.5rem;
+  margin-left: 0px;
+  padding-top: 7px;
+}
+
+.closeButton {
+  margin-bottom: 7px;
+  margin-left: 20px;
+}
+
+.keyValueBox + .keyValueBox {
+  margin-top: 1rem;
+}

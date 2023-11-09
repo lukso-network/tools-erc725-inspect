@@ -1,10 +1,3 @@
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from '@mui/material';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
@@ -12,6 +5,7 @@ import { useState } from 'react';
 import Decode from '../components/Decode';
 import Encode from '../components/Encode';
 import useWeb3 from '../hooks/useWeb3';
+import styles from './abi-endoder.module.scss';
 
 enum TX_PARSER_MODES {
   ENCODE = 'ENCODE',
@@ -42,27 +36,31 @@ const Home: NextPage = () => {
         </article>
         <div className="columns">
           <div className="column">
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Mode</FormLabel>
-              <RadioGroup
-                row
-                aria-label="mode"
-                name="row-radio-buttons-group"
-                defaultValue={DEFAULT_MODE}
-                onChange={(e) => setMode(e.target.value as TX_PARSER_MODES)}
-              >
-                <FormControlLabel
-                  value={TX_PARSER_MODES.ENCODE}
-                  control={<Radio />}
-                  label="Encode"
-                />
-                <FormControlLabel
-                  value={TX_PARSER_MODES.DECODE}
-                  control={<Radio />}
-                  label="Decode"
-                />
-              </RadioGroup>
-            </FormControl>
+            <div className="mb-2">
+              <p className="mb-2">Mode</p>
+              <div className="control">
+                <label className={`radio ${styles.radioLabel}`}>
+                  <input
+                    type="radio"
+                    className={styles.radioInput}
+                    value={TX_PARSER_MODES.ENCODE}
+                    checked={mode === TX_PARSER_MODES.ENCODE}
+                    onChange={() => setMode(TX_PARSER_MODES.ENCODE)}
+                  />
+                  Encode
+                </label>
+                <label className={`radio ${styles.radioLabel}`}>
+                  <input
+                    type="radio"
+                    className={styles.radioInput}
+                    value={TX_PARSER_MODES.DECODE}
+                    checked={mode === TX_PARSER_MODES.DECODE}
+                    onChange={() => setMode(TX_PARSER_MODES.DECODE)}
+                  />
+                  Decode
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,10 +1,10 @@
-import { TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '../../ErrorMessage';
 import { AbiItem } from 'web3-utils';
+import styles from './EncodeSetData.module.scss';
 
 interface Props {
   web3: Web3;
@@ -25,11 +25,14 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
     return keyValuePairs.map(
       (keyValuePair: { key: string; value: string }, index) => {
         return (
-          <div className="columns is-vcentered" key={index}>
+          <div
+            className={`columns is-vcentered ${styles.keyValueBox}`}
+            key={index}
+          >
             {isBatch ? (
               <div className="column is-1">
                 <button
-                  className="delete is-large"
+                  className={`delete is-large ${styles.closeButton}`}
                   onClick={removeKeyValue.bind(this, index)}
                 >
                   Remove
@@ -39,22 +42,26 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
               ''
             )}
             <div className="column">
-              <TextField
-                label="Key"
-                value={keyValuePair.key}
-                fullWidth
-                id="key"
-                onChange={handleChange.bind(this, index)}
-              />
-            </div>
-            <div className="column">
-              <TextField
-                label="Value"
-                value={keyValuePair.value}
-                fullWidth
-                id="value"
-                onChange={handleChange.bind(this, index)}
-              />
+              <div className={styles.inputContainer}>
+                <label className={styles.inputDescription}>Key</label>
+                <input
+                  type="text"
+                  id="key"
+                  className="input mb-2 is-fullwidth"
+                  value={keyValuePair.key}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <label className={styles.inputDescription}>Value</label>
+                <input
+                  type="text"
+                  id="value"
+                  className="input mb-2 is-fullwidth"
+                  value={keyValuePair.value}
+                  onChange={(event) => handleChange(index, event)}
+                />
+              </div>
             </div>
           </div>
         );
@@ -119,7 +126,12 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
       {isBatch ? (
         <div className="columns">
           <div className="column">
-            <Button onClick={addKeyValue}>Add Key</Button>
+            <button
+              className={`button is-link ${styles.buttonWidth}`}
+              onClick={addKeyValue}
+            >
+              Add Key
+            </button>
           </div>
         </div>
       ) : (
@@ -128,21 +140,19 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
 
       <div className="columns">
         <div className="column">
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
+          <button
+            className={`button is-primary ${styles.buttonWidth}`}
             onClick={encodeABI}
           >
             Encode ABI
-          </Button>
+          </button>
 
           {encodedPayload && !encodingError.isError ? (
             <EncodedPayload encodedPayload={encodedPayload} />
           ) : null}
           {encodingError.isError ? (
             <ErrorMessage
-              header="ABI Encoding Error!"
+              header="ABI Encoding Error"
               message={encodingError.message}
             />
           ) : null}
