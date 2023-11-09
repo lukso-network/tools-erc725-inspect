@@ -5,9 +5,12 @@ import { ERC725 } from '@erc725/erc725.js';
 import errorsDict from './utils/errorsDict';
 
 interface IJSONURLEncode {
-  hash: string;
+  verification: {
+    method: string;
+    data: string;
+    source: string;
+  };
   url: string;
-  hashFunction: string;
 }
 
 const Lsp2Coder: React.FC = () => {
@@ -16,9 +19,12 @@ const Lsp2Coder: React.FC = () => {
   const [decodedValue, setDecodedValue] = useState<string | IJSONURLEncode>('');
   const [jsonUrlDecodedValue, setJsonUrlDecodedValue] =
     useState<IJSONURLEncode>({
+      verification: {
+        method: '',
+        data: '',
+        source: '',
+      },
       url: '',
-      hash: '',
-      hashFunction: 'keccak256(utf8)',
     });
   const [encodingError, setEncodingError] = useState<boolean>(false);
   const [decodingError, setDecodingError] = useState<boolean>(false);
@@ -37,12 +43,15 @@ const Lsp2Coder: React.FC = () => {
                 <textarea
                   className="p-1 textarea"
                   placeholder="hash"
-                  value={jsonUrlDecodedValue.hash}
+                  value={jsonUrlDecodedValue.verification.data}
                   rows={6}
                   onChange={(e) => {
                     setJsonUrlDecodedValue({
                       ...jsonUrlDecodedValue,
-                      hash: e.target.value,
+                      verification: {
+                        ...jsonUrlDecodedValue.verification,
+                        method: e.target.value,
+                      },
                     });
                   }}
                 />
@@ -105,7 +114,7 @@ const Lsp2Coder: React.FC = () => {
   };
 
   useEffect(() => {
-    if (jsonUrlDecodedValue.hash && jsonUrlDecodedValue.url) {
+    if (jsonUrlDecodedValue.verification.data && jsonUrlDecodedValue.url) {
       encode(jsonUrlDecodedValue);
     }
   }, [jsonUrlDecodedValue]);
@@ -144,15 +153,17 @@ const Lsp2Coder: React.FC = () => {
         ? setDecodedValue(decoded[0].value)
         : setJsonUrlDecodedValue({
             url: decoded[0].value.url,
-            hash: decoded[0].value.hash,
-            hashFunction: 'keccak256(utf8)',
+            verification: decoded[0].value.verification,
           });
     } catch (error) {
       setDecodedValue('');
       setJsonUrlDecodedValue({
         url: '',
-        hash: '',
-        hashFunction: 'keccak256(utf8)',
+        verification: {
+          method: 'keccak256(utf8)',
+          data: '',
+          source: '',
+        },
       });
       setDecodingError(true);
     }
@@ -163,8 +174,11 @@ const Lsp2Coder: React.FC = () => {
     setEncodedValue('');
     setJsonUrlDecodedValue({
       url: '',
-      hash: '',
-      hashFunction: 'keccak256(utf8)',
+      verification: {
+        method: 'keccak256(utf8)',
+        data: '',
+        source: '',
+      },
     });
   };
 
