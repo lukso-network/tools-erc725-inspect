@@ -16,6 +16,7 @@ import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
 import UPOwner from '../components/UPOwner';
 import useWeb3 from '../hooks/useWeb3';
+import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -221,12 +222,17 @@ const Home: NextPage = () => {
               <div className="control mb-0">
                 <input
                   className="input"
+                  id="inspectorAddressInput"
                   type="text"
                   placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
                   value={address}
                   onChange={(e) => {
                     setAddress(e.target.value);
                   }}
+                />
+                <SampleAddressInput
+                  inputId="inspectorAddressInput"
+                  onChangeFunction={(e) => setAddress(e.target.value)}
                 />
               </div>
               <div className="columns">

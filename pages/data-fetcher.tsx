@@ -15,6 +15,7 @@ import { checkInterface, getData } from '../utils/web3';
 import useWeb3 from '../hooks/useWeb3';
 
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
+import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -125,11 +126,17 @@ const GetData: NextPage = () => {
               <div className="control">
                 <input
                   className="input"
+                  id="dataFetcherAddressInput"
                   type="text"
-                  placeholder=""
-                  //   placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
+                  placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
+                />
+                <SampleAddressInput
+                  inputId="dataFetcherAddressInput"
+                  onChangeFunction={(e) =>
+                    onContractAddressChange(e.target.value)
+                  }
                 />
               </div>
               {addressError !== '' && (
