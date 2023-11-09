@@ -76,8 +76,8 @@ const Decode: React.FC<Props> = ({ web3 }) => {
 
   return (
     <div className="container">
-      <div className={styles.gridContainer}>
-        <div className={styles.gridItem}>
+      <div>
+        <div className="mb-2">
           <textarea
             className="textarea"
             placeholder="Paste your ABI here..."
@@ -96,7 +96,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
           )}
         </div>
 
-        <div className={styles.gridItem}>
+        <div className="mb-2">
           <span
             className={`tag is-medium mu-2 mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.SET_DATA ? 'is-primary' : ''
@@ -131,7 +131,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
           </span>
         </div>
 
-        <div className={styles.gridItem}>
+        <div className="mb-2">
           {!abiError.isError && payload.length > 0 ? (
             <ShowDecoder selector={selector} payload={payload} web3={web3} />
           ) : (
@@ -147,14 +147,14 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
   try {
     const result = web3.eth.abi.decodeParameters(['address'], payload);
     return (
-      <div className={styles.gridContainer}>
-        <div className={styles.gridItem}>
+      <div>
+        <div className="mb-2">
           <div className="notification is-danger m-2">
             This payload will transfer ownership to {result[0]}.<br /> Be
             cautious!
           </div>
         </div>
-        <div className={styles.gridItem}>
+        <div className="mb-2">
           <div className={styles.inputContainer}>
             <label className={styles.inputDescription}>New Owner</label>
             <input
@@ -170,7 +170,7 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
     );
   } catch (error: any) {
     return (
-      <div className={styles.gridItem}>
+      <div className="mb-2">
         <ErrorMessage header="ABI Decoder Error!" message={error.message} />
       </div>
     );
@@ -187,15 +187,15 @@ const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
     const values = isBatch ? result[1] : [result[1]];
 
     return (
-      <div className={styles.gridContainer}>
-        <div className={styles.gridItem}>Keys</div>
-        <div className={styles.gridItem}>Values</div>
+      <div>
+        <div className="mb-2">Keys</div>
+        <div className="mb-2">Values</div>
         {keys.map((key: string, index: number) => (
           <React.Fragment key={index}>
-            <div className={styles.gridItem}>
+            <div className="mb-2">
               <input type="text" className="input m-2" value={key} readOnly />
             </div>
-            <div className={styles.gridItem}>
+            <div className="mb-2">
               <input
                 type="text"
                 className="input m-2"
@@ -209,7 +209,7 @@ const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
     );
   } catch (error: any) {
     return (
-      <div className={styles.gridItem}>
+      <div className="mb-2">
         <ErrorMessage header="ABI Decoder Error!" message={error.message} />
       </div>
     );
@@ -223,20 +223,20 @@ const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
       payload,
     );
     return (
-      <div className={styles.gridContainer}>
-        <div className={styles.gridItem}>
+      <div>
+        <div className="mb-2">
           <label className={styles.inputDescription}>Operation</label>
           <input type="text" className="input m-2" value={result[0]} readOnly />
         </div>
-        <div className={`${styles.gridItem} ${styles.inputContainer}`}>
+        <div className={`mb-2 ${styles.inputContainer}`}>
           <label className={styles.inputDescription}>Recipient</label>
           <input type="text" className="input m-2" value={result[1]} readOnly />
         </div>
-        <div className={`${styles.gridItem} ${styles.inputContainer}`}>
+        <div className={`mb-2 ${styles.inputContainer}`}>
           <label className={styles.inputDescription}>Amount</label>
           <input type="text" className="input m-2" value={result[2]} readOnly />
         </div>
-        <div className={`${styles.gridItem} ${styles.inputContainer}`}>
+        <div className={`mb-2 ${styles.inputContainer}`}>
           <label className={styles.inputDescription}>Data</label>
           <input
             type="text"
@@ -250,7 +250,7 @@ const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
     );
   } catch (error: any) {
     return (
-      <div className={styles.gridItem}>
+      <div className="mb-2">
         <ErrorMessage header="ABI Decoder Error!" message={error.message} />
       </div>
     );

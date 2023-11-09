@@ -41,8 +41,8 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
 
   return (
     <>
-      <div className={styles.gridContainer}>
-        <div className={styles.gridItem}>
+      <div>
+        <div className="mb-2">
           <div className={styles.inputContainer}>
             <label className={styles.inputDescription}>Operation</label>
             <br></br>
@@ -60,7 +60,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
             </div>
           </div>
         </div>
-        <div className={styles.gridItem}>
+        <div className="mb-2">
           <div className={styles.inputContainer}>
             <label className={styles.inputDescription}>Recipient</label>
             <input
@@ -74,7 +74,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
             />
           </div>
         </div>
-        <div className={styles.gridItem}>
+        <div className="mb-2">
           <div className={styles.inputContainer}>
             <label className={styles.inputDescription}>Amount</label>
             <input
@@ -88,7 +88,7 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
             />
           </div>
         </div>
-        <div className={styles.gridItem}>
+        <div className="mb-2">
           <div className={styles.inputContainer}>
             <label className={styles.inputDescription}>Data</label>
             <input
