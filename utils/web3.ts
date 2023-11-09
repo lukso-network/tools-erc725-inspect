@@ -6,6 +6,7 @@ import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Accoun
 import Web3 from 'web3';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import { AbiItem } from 'web3-utils';
+import { eip165ABI } from '../constants';
 
 export const getDataBatch = async (
   address: string,
@@ -48,30 +49,7 @@ export const getData = async (
 };
 
 export const checkInterface = async (address: string, web3: Web3) => {
-  const Contract = new web3.eth.Contract(
-    [
-      {
-        type: 'function',
-        stateMutability: 'view',
-        outputs: [
-          {
-            type: 'bool',
-            name: '',
-            internalType: 'bool',
-          },
-        ],
-        name: 'supportsInterface',
-        inputs: [
-          {
-            type: 'bytes4',
-            name: 'interfaceId',
-            internalType: 'bytes4',
-          },
-        ],
-      },
-    ],
-    address,
-  );
+  const Contract = new web3.eth.Contract(eip165ABI as any, address);
 
   let isErc725X = false;
   try {

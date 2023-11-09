@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import useWeb3 from '../../hooks/useWeb3';
 
-import { supportsInterfaceAbi } from '../../constants';
+import { eip165ABI } from '../../constants';
 import { AbiItem, isAddress } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 
@@ -28,10 +28,7 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
       return;
     }
 
-    const OwnerContract = new web3.eth.Contract(
-      supportsInterfaceAbi as any,
-      ownerAddress,
-    );
+    const OwnerContract = new web3.eth.Contract(eip165ABI as any, ownerAddress);
 
     let isKeyManager = false;
     try {
