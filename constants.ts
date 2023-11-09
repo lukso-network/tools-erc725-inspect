@@ -1,4 +1,4 @@
-export const supportsInterfaceAbi = [
+export const eip165ABI = [
   {
     inputs: [
       {
