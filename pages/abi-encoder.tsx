@@ -25,13 +25,51 @@ const Home: NextPage = () => {
         <title>ABI Coder - ERC725 Tools</title>
       </Head>
       <div className="container">
+        <h2 className="title is-2">ABI Encoder</h2>
         <article className="message is-info">
           <div className="message-body">
-            This tool lets you encode and decode{' '}
-            <a href="https://docs.lukso.tech/standards/smart-contracts/lsp0-erc725-account">
-              LSP0 ERC725 Account
-            </a>{' '}
-            transactions.
+            This tool will encode and decode transaction data of
+            <a
+              className="ml-1 mr-1"
+              href="https://docs.lukso.tech/standards/smart-contracts/lsp0-erc725-account"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LSP0 ERC725Account
+            </a>
+            smart contracts based on its
+            <a
+              className="ml-1"
+              target="_blank"
+              rel="noreferrer"
+              href="https://docs.lukso.tech/contracts/contracts/LSP0ERC725Account/#parameters-2"
+            >
+              execution parameters
+            </a>
+            .
+          </div>
+        </article>
+        <article className="message">
+          <div className="message-body">
+            Its using the
+            <a
+              href="https://docs.web3js.org/api/web3-eth-abi/function/decodeParameters/"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-1 mr-1"
+            >
+              decodeParameters
+            </a>
+            function of the
+            <a
+              href="https://www.npmjs.com/package/web3"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-1 mr-1"
+            >
+              web3
+            </a>
+            library.
           </div>
         </article>
         <div className="columns">
