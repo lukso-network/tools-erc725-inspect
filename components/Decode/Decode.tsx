@@ -103,6 +103,14 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             }`}
           >
             setData
+            <a
+              href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#setdata"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-2 has-text-info-dark"
+            >
+              ↗
+            </a>
           </span>
           <span
             className={`tag is-medium mu-2 mb-2 mr-2 ${
@@ -112,6 +120,14 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             }`}
           >
             setDataBatch
+            <a
+              href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#setdatabatch"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-2 has-text-info-dark"
+            >
+              ↗
+            </a>
           </span>
           <span
             className={`tag is-medium mu-2 mb-2 mr-2 ${
@@ -119,6 +135,14 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             }`}
           >
             execute
+            <a
+              href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#execute"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-2 has-text-info-dark"
+            >
+              ↗
+            </a>
           </span>
           <span
             className={`tag is-medium mu-2 mb-2 mr-2 ${
@@ -128,6 +152,14 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             }`}
           >
             transferOwnership
+            <a
+              href="https://eips.ethereum.org/EIPS/eip-173"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-2 has-text-info-dark"
+            >
+              ↗
+            </a>
           </span>
         </div>
 
