@@ -22,10 +22,10 @@ const Home: NextPage = () => {
               href="https://docs.lukso.tech/standards/lsp-background/erc725"
               target="_blank"
               rel="noreferrer"
-              className="home-link"
+              className="home-link mr-1"
             >
               ERC725
-            </a>{' '}
+            </a>
             smart contracts.
           </p>
           <CardContainer
@@ -70,19 +70,19 @@ const Home: NextPage = () => {
               href="https://docs.lukso.tech/standards/lsp-background/erc725"
               target="_blank"
               rel="noreferrer"
-              className="home-link"
+              className="home-link mr-1"
             >
               ERC725
-            </a>{' '}
-            and{' '}
+            </a>
+            and
             <a
               href="https://docs.lukso.tech/standards/introduction"
               target="_blank"
               rel="noreferrer"
-              className="home-link"
+              className="home-link ml-1 mr-1"
             >
               LSP
-            </a>{' '}
+            </a>
             smart contracts into your own projects by diving into the following
             apps and libraries:
           </p>

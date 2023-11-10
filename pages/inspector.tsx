@@ -207,10 +207,13 @@ const Home: NextPage = () => {
               LSP2 ERC725YJSONSchema
             </a>
             .<br />
-            The erc725.js lib provides a{' '}
-            <a href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#getschema">
+            The erc725.js lib provides a
+            <a
+              href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#getschema"
+              className="ml-1 mr-1"
+            >
               getSchema
-            </a>{' '}
+            </a>
             method to decode the keys.
           </div>
         </article>

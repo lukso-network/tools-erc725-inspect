@@ -111,9 +111,12 @@ const GetData: NextPage = () => {
         <article className="message is-info">
           <div className="message-body">
             This tool calls <code>getData</code> on a{' '}
-            <a href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store">
+            <a
+              href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
+              className="mr-1"
+            >
               ERC725Y
-            </a>{' '}
+            </a>
             compatible smart contract.
           </div>
         </article>
