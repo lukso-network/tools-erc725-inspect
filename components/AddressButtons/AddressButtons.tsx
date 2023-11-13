@@ -15,7 +15,7 @@ const AddressButtons: React.FC<Props> = ({
   return (
     <div className="buttons is-centered are-small pt-2">
       <a
-        className="button is-primary is-light"
+        className="button is-success is-normal"
         target="_blank"
         rel="noreferrer"
         href={`https://universalprofile.cloud/${address}`}
@@ -23,7 +23,7 @@ const AddressButtons: React.FC<Props> = ({
         View on UP as Profile 🧑‍🎤
       </a>
       <a
-        className="button is-info is-light"
+        className="button is-success is-normal"
         target="_blank"
         rel="noreferrer"
         href={`https://universalprofile.cloud/asset/${address}`}
@@ -31,7 +31,7 @@ const AddressButtons: React.FC<Props> = ({
         View on UP as Asset 👗
       </a>
       <a
-        className="button is-primary is-light"
+        className="button is-success is-normal"
         target="_blank"
         rel="noreferrer"
         href={`https://blockscout.com/lukso/l14/address/${address}`}
@@ -40,11 +40,19 @@ const AddressButtons: React.FC<Props> = ({
       </a>
       {showInspectButton && (
         <a
-          className="button is-primary is-light"
+          className="button is-success is-normal"
           href={`${window.location.href.split('?')[0]}?address=${address}`}
         >
           ERC725 Inspect 🔍
         </a>
+      )}
+      {!showInspectButton && (
+        <button
+          disabled
+          className="disabled button is-success disabled is-normal"
+        >
+          ERC725 Inspect 🔍
+        </button>
       )}
     </div>
   );
