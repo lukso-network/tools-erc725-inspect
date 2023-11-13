@@ -74,11 +74,11 @@ const KeyManagerNonceChecker: React.FC = () => {
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
-            className="ml-1"
+            className="ml-1 mr-1"
           >
             LSP6 KeyManager
           </a>
-          .
+          smart contract.
         </div>
       </article>
       <article className="message">
