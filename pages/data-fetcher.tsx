@@ -10,6 +10,7 @@ import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
 import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
+import styles from './data-fetcher.module.scss';
 
 import { checkInterface, getData } from '../utils/web3';
 import useWeb3 from '../hooks/useWeb3';
@@ -44,7 +45,7 @@ const GetData: NextPage = () => {
   const onContractAddressChange = async (address: string) => {
     setAddress(address);
     setData('');
-    if (!isAddress(address)) {
+    if (!isAddress(address) && address.length !== 0) {
       setAddressError('The address is not valid');
       setInterfaces({
         isErc725X: false,
@@ -53,7 +54,7 @@ const GetData: NextPage = () => {
       return;
     }
 
-    if (address.slice(0, 2) !== '0x') {
+    if (address.slice(0, 2) !== '0x' && address.length !== 0) {
       setAddress(`0x${address}`);
     }
 
@@ -64,6 +65,9 @@ const GetData: NextPage = () => {
     }
 
     const result = await checkInterface(address, web3);
+
+    // Set first menu element as default
+    onDataKeyChange(ERC725YDataKeys.LSP1.LSP1UniversalReceiverDelegate);
     setInterfaces(result);
   };
 
@@ -108,29 +112,54 @@ const GetData: NextPage = () => {
         <title>getData - ERC725 Tools</title>
       </Head>
       <div className="container">
+        <h2 className="title is-2">Data Fetcher</h2>
         <article className="message is-info">
           <div className="message-body">
-            This tool calls <code>getData</code> on a{' '}
+            This tool will retrieve the encoded storage of a
             <a
               href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-              className="mr-1"
+              target="_blank"
+              rel="noreferrer"
+              className="mr-1 ml-1"
             >
               ERC725Y
             </a>
-            compatible smart contract.
+            data key.
+          </div>
+        </article>
+        <article className="message">
+          <div className="message-body">
+            Its calling the
+            <a
+              href="https://github.com/ERC725Alliance/ERC725/blob/develop/docs/ERC-725.md#getdata"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-1 mr-1"
+            >
+              getData
+            </a>
+            function of the
+            <a
+              href="https://docs.lukso.tech/standards/lsp-background/erc725#erc725y-generic-data-keyvalue-store"
+              target="_blank"
+              rel="noreferrer"
+              className="ml-1 mr-1"
+            >
+              ERC725Y
+            </a>
+            smart contract.
           </div>
         </article>
 
         <div className="columns">
           <div className="column is-half">
             <div className="field">
-              <label className="label">Contract address</label>
+              <label className="label">Contract Address</label>
               <div className="control">
                 <input
                   className="input"
                   type="text"
-                  placeholder=""
-                  //   placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
+                  placeholder="0x9139def55c73c12bcda9c44f12326686e3948634"
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
                 />
@@ -139,7 +168,7 @@ const GetData: NextPage = () => {
                 <p className="help is-danger">{addressError}</p>
               )}
               {(interfaces.isErc725X || interfaces.isErc725Y) && (
-                <p className="help is-success">
+                <p className="help is-success mt-3">
                   ERC725X: {interfaces.isErc725X ? '✅' : '❌'} - ERC725Y{' '}
                   {interfaces.isErc725Y ? '✅' : '❌'}
                 </p>
@@ -147,28 +176,32 @@ const GetData: NextPage = () => {
             </div>
 
             <div className="field">
-              <label className="label">Data key</label>
+              <label className="label">Data Key</label>
+
+              <div className={`select mb-4 ${styles.dataKeyInput}`}>
+                <select
+                  onChange={(e) => onDataKeyChange(e.target.value)}
+                  className={`${styles.dataKeyInput}`}
+                >
+                  {dataKeyList.map((dataKey, index) => {
+                    return (
+                      <option key={index} value={dataKey.key}>
+                        {dataKey.icon} &nbsp;
+                        {dataKey.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+              <br />
               <div className="control">
                 <input
                   className="input"
                   type="text"
-                  placeholder="0xeafec4d89fa9619884b6b89135626455000000000000000000000000afdeb5d6"
+                  placeholder="0x0cfc51aec37c55a4d0b1a65c6255c4bf2fbdf6277f3cc0730c45b828b6db8b47"
                   value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />
-                <br />
-                <div className="select">
-                  <select onChange={(e) => onDataKeyChange(e.target.value)}>
-                    {dataKeyList.map((dataKey, index) => {
-                      return (
-                        <option key={index} value={dataKey.key}>
-                          {dataKey.icon} &nbsp;
-                          {dataKey.name} - {dataKey.key}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
               </div>
               {dataKeyError !== '' && (
                 <p className="help is-danger">{dataKeyError}</p>
@@ -195,15 +228,16 @@ const GetData: NextPage = () => {
             <div className="column">
               <article className="message is-info">
                 <div className="message-body">
-                  To decode this value, you can refer to the{' '}
+                  You can decode this value using the
                   <a
                     target="_blank"
                     rel="noreferrer"
                     href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md#valueContent"
+                    className="ml-1 mr-1"
                   >
-                    LSP-2-ERC725YJSONSchema spec
+                    LSP-2 ERC725YJSONSchema
                   </a>
-                  .
+                  specification.
                 </div>
               </article>
               <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
