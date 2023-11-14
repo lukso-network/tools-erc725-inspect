@@ -1,7 +1,8 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import React from 'react';
+import React, { useContext } from 'react';
+import { NetworkContext } from '../../contexts/NetworksContext';
 
 interface Props {
   address: string;
@@ -12,39 +13,56 @@ const AddressButtons: React.FC<Props> = ({
   address,
   showInspectButton = true,
 }) => {
+  const { network } = useContext(NetworkContext);
+
+  const networkType = network.name === 'MAINNET' ? 'mainnet' : 'testnet';
+
+  const openProfileExplorer = () => {
+    window.open(
+      `https://universalprofile.cloud/${address}?network=${networkType}`,
+      '_blank',
+    );
+  };
+
+  const openAssetExplorer = () => {
+    window.open(
+      `https://universalprofile.cloud/asset/${address}?network=${networkType}`,
+      '_blank',
+    );
+  };
+
+  const openBlockscout = () => {
+    const url =
+      network.name === 'MAINNET'
+        ? `https://explorer.execution.mainnet.lukso.network/address/${address}`
+        : `https://explorer.execution.testnet.lukso.network/address/${address}`;
+    window.open(url, '_blank');
+  };
+
+  const openInspector = () => {
+    window.location.href = `${
+      window.location.href.split('?')[0]
+    }?address=${address}`;
+  };
+
   return (
     <div className="buttons is-centered are-small pt-2">
-      <a
+      <button
         className="button is-primary is-light"
-        target="_blank"
-        rel="noreferrer"
-        href={`https://universalprofile.cloud/${address}`}
+        onClick={openProfileExplorer}
       >
-        View on UP as Profile 🧑‍🎤
-      </a>
-      <a
-        className="button is-info is-light"
-        target="_blank"
-        rel="noreferrer"
-        href={`https://universalprofile.cloud/asset/${address}`}
-      >
-        View on UP as Asset 👗
-      </a>
-      <a
-        className="button is-primary is-light"
-        target="_blank"
-        rel="noreferrer"
-        href={`https://blockscout.com/lukso/l14/address/${address}`}
-      >
+        View as Profile 🧑‍🎤
+      </button>
+      <button className="button is-info is-light" onClick={openAssetExplorer}>
+        View as Asset 👗
+      </button>
+      <button className="button is-primary is-light" onClick={openBlockscout}>
         View on Blockscout ⛓
-      </a>
+      </button>
       {showInspectButton && (
-        <a
-          className="button is-primary is-light"
-          href={`${window.location.href.split('?')[0]}?address=${address}`}
-        >
-          ERC725 Inspect 🔍
-        </a>
+        <button className="button is-primary is-light" onClick={openInspector}>
+          Open in ERC725 Inspect 🔍
+        </button>
       )}
     </div>
   );
