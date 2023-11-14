@@ -1,5 +1,6 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Felix Hildebrandt <fhildeb>
  */
 import React, { useContext } from 'react';
 import { NetworkContext } from '../../contexts/NetworksContext';
@@ -19,14 +20,14 @@ const AddressButtons: React.FC<Props> = ({
 
   const openProfileExplorer = () => {
     window.open(
-      `https://universalprofile.cloud/${address}?network=${networkType}`,
+      `https://wallet.universalprofile.cloud/${address}?network=${networkType}`,
       '_blank',
     );
   };
 
   const openAssetExplorer = () => {
     window.open(
-      `https://universalprofile.cloud/asset/${address}?network=${networkType}`,
+      `https://wallet.universalprofile.cloud/asset/${address}?network=${networkType}`,
       '_blank',
     );
   };
