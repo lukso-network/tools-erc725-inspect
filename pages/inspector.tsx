@@ -99,7 +99,8 @@ const Home: NextPage = () => {
       !isLSP1UniversalReceiver &&
       !isLSP6KeyManager &&
       !isLSP0ERC725Account &&
-      !isEmptyInput
+      !isEmptyInput &&
+      !isLoading
     ) {
       return (
         <div className="help is-danger inspect-result">
@@ -109,7 +110,7 @@ const Home: NextPage = () => {
       );
     }
 
-    if (!isEmptyInput) {
+    if (!isEmptyInput && !isLoading) {
       return (
         <div className="help is-success inspect-result mt-4">
           <label className="label">Supported Standards</label>
