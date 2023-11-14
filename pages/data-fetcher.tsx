@@ -129,7 +129,7 @@ const GetData: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            Its calling the
+            It&lsquo;s calling the
             <a
               href="https://github.com/ERC725Alliance/ERC725/blob/develop/docs/ERC-725.md#getdata"
               target="_blank"

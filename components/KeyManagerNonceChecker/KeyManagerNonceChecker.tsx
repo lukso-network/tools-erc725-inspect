@@ -83,7 +83,7 @@ const KeyManagerNonceChecker: React.FC = () => {
       </article>
       <article className="message">
         <div className="message-body">
-          Its calling the
+          It&lsquo;s calling the
           <a
             href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md#getnonce"
             target="_blank"

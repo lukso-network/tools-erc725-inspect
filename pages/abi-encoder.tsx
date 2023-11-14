@@ -51,7 +51,7 @@ const Home: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            Its using the
+            It&lsquo;s using the
             <a
               href="https://docs.web3js.org/api/web3-eth-abi/function/decodeParameters/"
               target="_blank"
