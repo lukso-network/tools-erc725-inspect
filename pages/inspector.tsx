@@ -232,7 +232,7 @@ const Home: NextPage = () => {
                 />
                 <SampleAddressInput
                   inputId="inspectorAddressInput"
-                  onChangeFunction={(e) => setAddress(e.target.value)}
+                  onChange={(e) => setAddress(e.target.value)}
                 />
               </div>
               <div className="columns">

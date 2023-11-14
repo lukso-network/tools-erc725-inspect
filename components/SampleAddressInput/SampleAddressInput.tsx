@@ -1,3 +1,7 @@
+/**
+ * @author Felix Hildebrandt <fhildeb>
+ */
+
 import { useContext } from 'react';
 import { NetworkContext } from '../../contexts/NetworksContext';
 
@@ -8,10 +12,10 @@ enum AddressType {
 
 interface Props {
   inputId: string;
-  onChangeFunction: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SampleAddressInput: React.FC<Props> = ({ inputId, onChangeFunction }) => {
+const SampleAddressInput: React.FC<Props> = ({ inputId, onChange }) => {
   const { network } = useContext(NetworkContext);
 
   const changeInputAddress = (type: AddressType) => {
@@ -36,7 +40,7 @@ const SampleAddressInput: React.FC<Props> = ({ inputId, onChangeFunction }) => {
       const inputElement = document.getElementById(inputId) as HTMLInputElement;
       if (inputElement) {
         inputElement.value = address;
-        onChangeFunction({
+        onChange({
           target: { value: address },
         } as React.ChangeEvent<HTMLInputElement>);
       }

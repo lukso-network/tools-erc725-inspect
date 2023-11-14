@@ -134,9 +134,7 @@ const GetData: NextPage = () => {
                 />
                 <SampleAddressInput
                   inputId="dataFetcherAddressInput"
-                  onChangeFunction={(e) =>
-                    onContractAddressChange(e.target.value)
-                  }
+                  onChange={(e) => onContractAddressChange(e.target.value)}
                 />
               </div>
               {addressError !== '' && (
