@@ -5,7 +5,7 @@ import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
-import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
+import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
 import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
