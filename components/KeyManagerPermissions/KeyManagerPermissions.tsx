@@ -105,7 +105,7 @@ const KeyManagerPermissions: React.FC = () => {
         </div>
       </div>
       <div className="columns">
-        <div className="column">
+        <div className="column is-half">
           <h2 className="mb-2 subtitle is-5">
             Manage Contract Ownership
             <a
