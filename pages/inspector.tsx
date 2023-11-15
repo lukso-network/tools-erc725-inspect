@@ -17,6 +17,7 @@ import AddressButtons from '../components/AddressButtons';
 import UPOwner from '../components/UPOwner';
 import useWeb3 from '../hooks/useWeb3';
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
+import { SAMPLE_ADDRESS } from '../constants';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -225,7 +226,7 @@ const Home: NextPage = () => {
                   className="input"
                   ref={inputRef}
                   type="text"
-                  placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
+                  placeholder={SAMPLE_ADDRESS.TESTNET_UP}
                   value={address}
                   onChange={(e) => {
                     setAddress(e.target.value);

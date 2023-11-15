@@ -16,6 +16,7 @@ import useWeb3 from '../hooks/useWeb3';
 
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
+import { SAMPLE_ADDRESS } from '../constants';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -129,7 +130,7 @@ const GetData: NextPage = () => {
                   className="input"
                   ref={inputRef}
                   type="text"
-                  placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
+                  placeholder={SAMPLE_ADDRESS.TESTNET_UP}
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
                 />
@@ -155,7 +156,7 @@ const GetData: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder="0xeafec4d89fa9619884b6b89135626455000000000000000000000000afdeb5d6"
+                  placeholder={LSP1DataKeys[0].key}
                   value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />
