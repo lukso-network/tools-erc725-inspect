@@ -1,6 +1,7 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Jean Cavallera <git@jeanc.abc>
+ * @author Felix Hildebrandt <fhildeb>
  */
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';

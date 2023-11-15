@@ -1,13 +1,13 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Jean Cavallera <git@jeanc.abc>
+ * @author Felix Hildebrandt <fhildeb>
  */
 import React, { useEffect, useState } from 'react';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
-import styles from './DataKeysTable.module.scss';
 
 import Schema from './Schema.json';
 import SchemaLinks from './SchemaLinks.json';
@@ -20,6 +20,15 @@ interface Props {
   address: string;
   isErc725Y: boolean;
 }
+
+type SchemaName =
+  | 'LSP1UniversalReceiverDelegate'
+  | 'SupportedStandards:LSP3UniversalProfile'
+  | 'LSP3Profile'
+  | 'LSP5ReceivedAssets[]'
+  | 'AddressPermissions[]'
+  | 'LSP10Vaults[]'
+  | 'LSP12IssuedAssets[]';
 
 const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
   const [data, setData] = useState<
@@ -74,7 +83,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
     return <p>⬆️ enter the address of your UP</p>;
   }
 
-  const findLinkForSchemaName = (schemaName) => {
+  const findLinkForSchemaName = (schemaName: SchemaName) => {
     const linkObj = SchemaLinks.find(
       (linkItem) => linkItem.name === schemaName,
     );
@@ -84,7 +93,9 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
   return (
     <div className="columns is-multiline">
       {data.map((data) => {
-        const schemaLink = findLinkForSchemaName(data.schema.name);
+        const schemaLink = findLinkForSchemaName(
+          data.schema.name as SchemaName,
+        );
         return (
           <div className="column is-full mt-4 dataKeyBox" key={data.key}>
             <div className="content py-5">
