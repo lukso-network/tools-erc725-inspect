@@ -46,14 +46,6 @@ const AddressButtons: React.FC<Props> = ({
           ERC725 Inspect 🔍
         </a>
       )}
-      {!showInspectButton && (
-        <button
-          disabled
-          className="disabled button is-success disabled is-normal"
-        >
-          ERC725 Inspect 🔍
-        </button>
-      )}
     </div>
   );
 };
