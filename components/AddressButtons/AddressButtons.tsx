@@ -16,54 +16,41 @@ const AddressButtons: React.FC<Props> = ({
 }) => {
   const { network } = useContext(NetworkContext);
 
-  const networkType = network.name === 'MAINNET' ? 'mainnet' : 'testnet';
-
-  const openProfileExplorer = () => {
-    window.open(
-      `https://wallet.universalprofile.cloud/${address}?network=${networkType}`,
-      '_blank',
-    );
-  };
-
-  const openAssetExplorer = () => {
-    window.open(
-      `https://wallet.universalprofile.cloud/asset/${address}?network=${networkType}`,
-      '_blank',
-    );
-  };
-
-  const openBlockscout = () => {
-    const url =
-      network.name === 'MAINNET'
-        ? `https://explorer.execution.mainnet.lukso.network/address/${address}`
-        : `https://explorer.execution.testnet.lukso.network/address/${address}`;
-    window.open(url, '_blank');
-  };
-
-  const openInspector = () => {
-    window.location.href = `${
-      window.location.href.split('?')[0]
-    }?address=${address}`;
-  };
+  const networkType = network.name.toLocaleLowerCase();
 
   return (
     <div className="buttons is-centered are-small pt-2">
-      <button
+      <a
         className="button is-primary is-light"
-        onClick={openProfileExplorer}
+        target="_blank"
+        rel="noreferrer"
+        href={`https://wallet.universalprofile.cloud/${address}?network=${networkType}`}
       >
-        View as Profile 🧑‍🎤
-      </button>
-      <button className="button is-info is-light" onClick={openAssetExplorer}>
-        View as Asset 👗
-      </button>
-      <button className="button is-primary is-light" onClick={openBlockscout}>
+        View on UP as Profile 🧑‍🎤
+      </a>
+      <a
+        className="button is-info is-light"
+        target="_blank"
+        rel="noreferrer"
+        href={`https://wallet.universalprofile.cloud/asset/${address}?network=${networkType}`}
+      >
+        View on UP as Asset 👗
+      </a>
+      <a
+        className="button is-primary is-light"
+        target="_blank"
+        rel="noreferrer"
+        href={`https://explorer.execution.${networkType}.lukso.network/address/${address}`}
+      >
         View on Blockscout ⛓
-      </button>
+      </a>
       {showInspectButton && (
-        <button className="button is-primary is-light" onClick={openInspector}>
-          Open in ERC725 Inspect 🔍
-        </button>
+        <a
+          className="button is-primary is-light"
+          href={`${window.location.href.split('?')[0]}?address=${address}`}
+        >
+          ERC725 Inspect 🔍
+        </a>
       )}
     </div>
   );
