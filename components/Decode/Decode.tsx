@@ -98,7 +98,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
 
         <div className="mb-2">
           <span
-            className={`tag is-medium mu-2 mb-2 mr-2 ${
+            className={`tag is-medium mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.SET_DATA ? 'is-primary' : ''
             }`}
           >
@@ -113,7 +113,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             </a>
           </span>
           <span
-            className={`tag is-medium mu-2 mb-2 mr-2 ${
+            className={`tag is-medium mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.SET_DATA_BATCH
                 ? 'is-primary'
                 : ''
@@ -130,7 +130,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             </a>
           </span>
           <span
-            className={`tag is-medium mu-2 mb-2 mr-2 ${
+            className={`tag is-medium mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.EXECUTE ? 'is-primary' : ''
             }`}
           >
@@ -145,7 +145,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             </a>
           </span>
           <span
-            className={`tag is-medium mu-2 mb-2 mr-2 ${
+            className={`tag is-medium mb-2 mr-2 ${
               transactionType === TRANSACTION_TYPES.TRANSFER_OWNERSHIP
                 ? 'is-primary'
                 : ''

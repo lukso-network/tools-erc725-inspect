@@ -10,7 +10,6 @@ import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
 import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
-import styles from './data-fetcher.module.scss';
 
 import { checkInterface, getData } from '../utils/web3';
 import useWeb3 from '../hooks/useWeb3';
@@ -178,10 +177,10 @@ const GetData: NextPage = () => {
             <div className="field">
               <label className="label">Data Key</label>
 
-              <div className={`select mb-4 ${styles.dataKeyInput}`}>
+              <div className="select mb-4 dataKeyInput">
                 <select
                   onChange={(e) => onDataKeyChange(e.target.value)}
-                  className={`${styles.dataKeyInput}`}
+                  className="dataKeyInput"
                 >
                   {dataKeyList.map((dataKey, index) => {
                     return (

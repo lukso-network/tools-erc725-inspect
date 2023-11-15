@@ -93,3 +93,19 @@ code {
   border-radius: 0.5rem;
   margin: 0 0.5rem 0 0.5rem;
 }
+
+// ABI Encoder
+
+.radioInput {
+  margin-right: 0.5rem;
+}
+
+.radioLabel + .radioLabel {
+  margin-left: 1.2rem;
+}
+
+// Data Fetcher
+
+.dataKeyInput {
+  width: 100%;
+}

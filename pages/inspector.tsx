@@ -317,7 +317,7 @@ const Home: NextPage = () => {
                         <ul>
                           <li>
                             <strong>Contract address:</strong>
-                            <span className="tag is-small mu-2 mb-2 mr-2 ml-2 is-link is-light">
+                            <span className="tag is-small mb-2 mx-2 is-link is-light">
                               address
                             </span>
                             <code>{address}</code>

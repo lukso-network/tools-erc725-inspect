@@ -92,7 +92,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                 <a href={schemaLink} target="_blank" rel="noopener noreferrer">
                   {data.schema.name} ↗️
                 </a>
-                <span className="tag is-small mu-2 mb-2 mr-2 ml-2 is-info">
+                <span className="tag is-small mb-2 mx-2 is-info">
                   {data.schema.keyType}
                 </span>
               </div>
@@ -100,16 +100,16 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                 <li className="mt-2">
                   <strong>Key:</strong> <code>{data.schema.key}</code>
                 </li>
-                <li className="mt-4">
+                <li className="mt-4 mt-4">
                   <strong>Raw value: </strong>
-                  <span className="tag is-small mu-2 mb-2 mr-2 ml-2 is-link is-light">
+                  <span className="tag is-small mx-2 is-link is-light">
                     {data.schema.valueType}
                   </span>
                   <code>{data.value}</code>
                 </li>
-                <li className="mt-2">
+                <li className="mt-4">
                   <strong>Value Content: </strong>
-                  <span className="tag is-small mu-2 mb-2 mr-2 is-link is-light">
+                  <span className="tag is-small mb-2 mr-2 is-link is-light">
                     {data.schema.valueContent.toLowerCase()}
                   </span>
                 </li>

@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Decode from '../components/Decode';
 import Encode from '../components/Encode';
 import useWeb3 from '../hooks/useWeb3';
-import styles from './abi-endoder.module.scss';
 
 enum TX_PARSER_MODES {
   ENCODE = 'ENCODE',
@@ -77,20 +76,20 @@ const Home: NextPage = () => {
             <div className="mb-2">
               <p className="mb-2">Mode</p>
               <div className="control">
-                <label className={`radio ${styles.radioLabel}`}>
+                <label className="radio radioLabel">
                   <input
                     type="radio"
-                    className={styles.radioInput}
+                    className="radioInput"
                     value={TX_PARSER_MODES.ENCODE}
                     checked={mode === TX_PARSER_MODES.ENCODE}
                     onChange={() => setMode(TX_PARSER_MODES.ENCODE)}
                   />
                   Encode
                 </label>
-                <label className={`radio ${styles.radioLabel}`}>
+                <label className="radio radioLabel">
                   <input
                     type="radio"
-                    className={styles.radioInput}
+                    className="radioInput"
                     value={TX_PARSER_MODES.DECODE}
                     checked={mode === TX_PARSER_MODES.DECODE}
                     onChange={() => setMode(TX_PARSER_MODES.DECODE)}
