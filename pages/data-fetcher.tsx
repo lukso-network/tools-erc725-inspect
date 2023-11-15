@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
 
@@ -29,6 +29,7 @@ const dataKeyList = [
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
   const [addressError, setAddressError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [dataKey, setDataKey] = useState('');
   const [dataKeyError, setDataKeyError] = useState('');
@@ -126,14 +127,14 @@ const GetData: NextPage = () => {
               <div className="control">
                 <input
                   className="input"
-                  id="dataFetcherAddressInput"
+                  ref={inputRef}
                   type="text"
                   placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
                 />
                 <SampleAddressInput
-                  inputId="dataFetcherAddressInput"
+                  inputRef={inputRef}
                   onChange={(e) => onContractAddressChange(e.target.value)}
                 />
               </div>

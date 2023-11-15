@@ -6,7 +6,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { isAddress } from 'web3-utils';
 
 import '../styles/Inspect.module.css';
@@ -26,6 +26,7 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [address, setAddress] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
 
@@ -222,7 +223,7 @@ const Home: NextPage = () => {
               <div className="control mb-0">
                 <input
                   className="input"
-                  id="inspectorAddressInput"
+                  ref={inputRef}
                   type="text"
                   placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
                   value={address}
@@ -231,7 +232,7 @@ const Home: NextPage = () => {
                   }}
                 />
                 <SampleAddressInput
-                  inputId="inspectorAddressInput"
+                  inputRef={inputRef}
                   onChange={(e) => setAddress(e.target.value)}
                 />
               </div>

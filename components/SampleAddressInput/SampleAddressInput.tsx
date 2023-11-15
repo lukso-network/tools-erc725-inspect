@@ -4,46 +4,52 @@
 
 import { useContext } from 'react';
 import { NetworkContext } from '../../contexts/NetworksContext';
-
+import { SAMPLE_ADDRESS } from '../../constants';
 enum AddressType {
   UP = 'UP',
   Asset = 'Asset',
 }
 
 interface Props {
-  inputId: string;
+  inputRef: React.RefObject<HTMLInputElement>;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SampleAddressInput: React.FC<Props> = ({ inputId, onChange }) => {
+const SampleAddressInput: React.FC<Props> = ({ inputRef, onChange }) => {
   const { network } = useContext(NetworkContext);
 
   const changeInputAddress = (type: AddressType) => {
-    let address;
-    if (type === AddressType.UP) {
-      if (network.name === 'MAINNET') {
-        // TODO: Update to Mainnet Profile
-        address = '0x9139def55c73c12bcda9c44f12326686e3948634';
-      } else if (network.name === 'TESTNET') {
-        address = '0x9139def55c73c12bcda9c44f12326686e3948634';
-      }
-    } else if (type === AddressType.Asset) {
-      if (network.name === 'MAINNET') {
-        // TODO: Update to Mainnet Asset
-        address = '0x6395b330F063F96579aA8F7b59f2584fb9b6c3a5';
-      } else if (network.name === 'TESTNET') {
-        address = '0x6395b330F063F96579aA8F7b59f2584fb9b6c3a5';
-      }
+    let address: string | null = null;
+
+    switch (type) {
+      case AddressType.UP:
+        switch (network.name) {
+          case 'MAINNET':
+            address = SAMPLE_ADDRESS.MAINNET_UP;
+            break;
+          case 'TESTNET':
+            address = SAMPLE_ADDRESS.TESTNET_UP;
+            break;
+        }
+        break;
+
+      case AddressType.Asset:
+        switch (network.name) {
+          case 'MAINNET':
+            address = SAMPLE_ADDRESS.MAINNET_LSP7;
+            break;
+          case 'TESTNET':
+            address = SAMPLE_ADDRESS.TESTNET_LS7;
+            break;
+        }
+        break;
     }
 
-    if (address) {
-      const inputElement = document.getElementById(inputId) as HTMLInputElement;
-      if (inputElement) {
-        inputElement.value = address;
-        onChange({
-          target: { value: address },
-        } as React.ChangeEvent<HTMLInputElement>);
-      }
+    if (address && inputRef.current) {
+      inputRef.current.value = address;
+      onChange({
+        target: { value: address },
+      } as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
