@@ -1,8 +1,9 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
+import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
 import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
@@ -14,7 +15,6 @@ import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
 import { checkInterface, getData } from '../utils/web3';
 import useWeb3 from '../hooks/useWeb3';
 
-import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 import { SAMPLE_ADDRESS } from '../constants';
 
@@ -30,13 +30,9 @@ const dataKeyList = [
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
   const [addressError, setAddressError] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const [dataKey, setDataKey] = useState('');
   const [dataKeyError, setDataKeyError] = useState('');
-
   const [data, setData] = useState('');
-
   const [interfaces, setInterfaces] = useState({
     isErc725X: false,
     isErc725Y: false,
@@ -128,15 +124,13 @@ const GetData: NextPage = () => {
               <div className="control">
                 <input
                   className="input"
-                  ref={inputRef}
                   type="text"
                   placeholder={SAMPLE_ADDRESS.TESTNET_UP}
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
                 />
                 <SampleAddressInput
-                  inputRef={inputRef}
-                  onChange={(e) => onContractAddressChange(e.target.value)}
+                  onClick={(newAddress) => onContractAddressChange(newAddress)}
                 />
               </div>
               {addressError !== '' && (

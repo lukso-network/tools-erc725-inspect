@@ -1,25 +1,22 @@
-/**
- * @author Felix Hildebrandt <fhildeb>
- */
-
 import { useContext } from 'react';
+
 import { NetworkContext } from '../../contexts/NetworksContext';
 import { SAMPLE_ADDRESS } from '../../constants';
+
 enum AddressType {
   UP = 'UP',
   Asset = 'Asset',
 }
 
 interface Props {
-  inputRef: React.RefObject<HTMLInputElement>;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick: (newAddress: string) => void;
 }
 
-const SampleAddressInput: React.FC<Props> = ({ inputRef, onChange }) => {
+const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
   const { network } = useContext(NetworkContext);
 
   const changeInputAddress = (type: AddressType) => {
-    let address: string | null = null;
+    let address = '';
 
     switch (type) {
       case AddressType.UP:
@@ -45,12 +42,7 @@ const SampleAddressInput: React.FC<Props> = ({ inputRef, onChange }) => {
         break;
     }
 
-    if (address && inputRef.current) {
-      inputRef.current.value = address;
-      onChange({
-        target: { value: address },
-      } as React.ChangeEvent<HTMLInputElement>);
-    }
+    onClick(address);
   };
 
   return (
@@ -59,13 +51,13 @@ const SampleAddressInput: React.FC<Props> = ({ inputRef, onChange }) => {
         className="button is-light is-small mt-2 mb-2"
         onClick={() => changeInputAddress(AddressType.UP)}
       >
-        Use Universal Profile Sample Address
+        Try with a Universal Profile Sample Address
       </button>
       <button
         className="button is-light is-small mt-2 mb-2 ml-2"
         onClick={() => changeInputAddress(AddressType.Asset)}
       >
-        Use Digital Asset Sample Address
+        Try with a Digital Asset Sample Address
       </button>
     </div>
   );

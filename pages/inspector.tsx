@@ -2,11 +2,12 @@
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Jean Cavallera <git@jeanc.abc>
  */
+
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 
 import '../styles/Inspect.module.css';
@@ -14,9 +15,10 @@ import { checkInterface } from '../utils/web3';
 
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
+import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
+
 import UPOwner from '../components/UPOwner';
 import useWeb3 from '../hooks/useWeb3';
-import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 import { SAMPLE_ADDRESS } from '../constants';
 
 const Home: NextPage = () => {
@@ -27,7 +29,6 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [address, setAddress] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
 
@@ -224,7 +225,6 @@ const Home: NextPage = () => {
               <div className="control mb-0">
                 <input
                   className="input"
-                  ref={inputRef}
                   type="text"
                   placeholder={SAMPLE_ADDRESS.TESTNET_UP}
                   value={address}
@@ -233,8 +233,7 @@ const Home: NextPage = () => {
                   }}
                 />
                 <SampleAddressInput
-                  inputRef={inputRef}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onClick={(newAddress) => setAddress(newAddress)}
                 />
               </div>
               <div className="columns">
