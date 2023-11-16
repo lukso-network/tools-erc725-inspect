@@ -3,9 +3,10 @@ import Head from 'next/head';
 import { useState } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
+import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
-import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3UniversalProfileMetadata.json';
+import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
 import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
@@ -14,7 +15,8 @@ import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
 import { checkInterface, getData } from '../utils/web3';
 import useWeb3 from '../hooks/useWeb3';
 
-import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
+import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
+import { SAMPLE_ADDRESS } from '../constants';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -28,12 +30,9 @@ const dataKeyList = [
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
   const [addressError, setAddressError] = useState('');
-
   const [dataKey, setDataKey] = useState('');
   const [dataKeyError, setDataKeyError] = useState('');
-
   const [data, setData] = useState('');
-
   const [interfaces, setInterfaces] = useState({
     isErc725X: false,
     isErc725Y: false,
@@ -158,9 +157,12 @@ const GetData: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder="0x9139def55c73c12bcda9c44f12326686e3948634"
+                  placeholder={SAMPLE_ADDRESS.TESTNET_UP}
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
+                />
+                <SampleAddressInput
+                  onClick={(newAddress) => onContractAddressChange(newAddress)}
                 />
               </div>
               {addressError !== '' && (
@@ -197,7 +199,7 @@ const GetData: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder="0x0cfc51aec37c55a4d0b1a65c6255c4bf2fbdf6277f3cc0730c45b828b6db8b47"
+                  placeholder={LSP1DataKeys[0].key}
                   value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />

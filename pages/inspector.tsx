@@ -3,6 +3,7 @@
  * @author Jean Cavallera <git@jeanc.abc>
  * @author Felix Hildebrandt <fhildeb>
  */
+
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -15,8 +16,11 @@ import { checkInterface } from '../utils/web3';
 
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
+import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
+
 import UPOwner from '../components/UPOwner';
 import useWeb3 from '../hooks/useWeb3';
+import { SAMPLE_ADDRESS } from '../constants';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -273,11 +277,14 @@ const Home: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder="0xb8E120e7e5EAe7bfA629Db5CEFfA69C834F74e99"
+                  placeholder={SAMPLE_ADDRESS.TESTNET_UP}
                   value={address}
                   onChange={(e) => {
                     setAddress(e.target.value);
                   }}
+                />
+                <SampleAddressInput
+                  onClick={(newAddress) => setAddress(newAddress)}
                 />
               </div>
               <div className="columns">
