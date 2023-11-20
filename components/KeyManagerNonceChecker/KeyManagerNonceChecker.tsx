@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 import { useState } from 'react';
 
 import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
@@ -51,7 +53,7 @@ const KeyManagerNonceChecker: React.FC = () => {
       <h2 className="title is-2">Nonce</h2>
       <article className="message is-info">
         <div className="message-body">
-          This tool will retrieve the nonce of a
+          Retrieve the nonce of a{' '}
           <a
             href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account"
             target="_blank"
@@ -60,56 +62,48 @@ const KeyManagerNonceChecker: React.FC = () => {
           >
             LSP0 ERC725Account
           </a>
-          `s
+          's{' '}
           <a
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager#introduction"
             target="_blank"
             rel="noreferrer"
-            className="mx-1"
           >
             controller address
-          </a>
-          for a specific
+          </a>{' '}
+          for a specific{' '}
           <a
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
-            className="mx-1"
           >
             LSP6 KeyManager
-          </a>
+          </a>{' '}
           smart contract.
-        </div>
-      </article>
-      <article className="message">
-        <div className="message-body">
-          It`s calling the
+          <br />
+          It's calling the{' '}
           <a
             href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md#getnonce"
             target="_blank"
             rel="noreferrer"
-            className="mx-1"
           >
             getNonce
-          </a>
-          function of the
+          </a>{' '}
+          function of the{' '}
           <a
             href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md"
             target="_blank"
             rel="noreferrer"
-            className="mx-1"
           >
             LSP25 ExecuteRelayCall
-          </a>
-          standardization that every
+          </a>{' '}
+          standardization that every{' '}
           <a
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
-            className="mx-1"
           >
             LSP6 KeyManager
-          </a>
+          </a>{' '}
           inherits.
         </div>
       </article>
