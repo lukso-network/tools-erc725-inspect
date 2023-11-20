@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 import { useState } from 'react';
 
 import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
@@ -23,10 +25,12 @@ const KeyManagerNonceChecker: React.FC = () => {
     );
 
     const isKeyManagerV05 = await keyManagerInstance.methods
+      // Caution: Fixed Interface ID
       .supportsInterface('0x6f4df48b')
       .call();
 
     const isKeyManagerV06 = await keyManagerInstance.methods
+      // Caution: Fixed Interface ID
       .supportsInterface('0xc403d48f')
       .call();
 
@@ -47,10 +51,63 @@ const KeyManagerNonceChecker: React.FC = () => {
   return (
     <div className="container mt-5">
       <h2 className="title is-2">Nonce</h2>
-      <p>
-        Retrieve the nonce of an <code>address</code> for a specific Key
-        Manager.
-      </p>
+      <article className="message is-info">
+        <div className="message-body">
+          Retrieve the nonce of a{' '}
+          <a
+            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account"
+            target="_blank"
+            rel="noreferrer"
+            className="ml-1"
+          >
+            LSP0 ERC725Account
+          </a>
+          's{' '}
+          <a
+            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager#introduction"
+            target="_blank"
+            rel="noreferrer"
+          >
+            controller address
+          </a>{' '}
+          for a specific{' '}
+          <a
+            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+            target="_blank"
+            rel="noreferrer"
+          >
+            LSP6 KeyManager
+          </a>{' '}
+          smart contract.
+          <br />
+          It's calling the{' '}
+          <a
+            href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md#getnonce"
+            target="_blank"
+            rel="noreferrer"
+          >
+            getNonce
+          </a>{' '}
+          function of the{' '}
+          <a
+            href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            LSP25 ExecuteRelayCall
+          </a>{' '}
+          standardization that every{' '}
+          <a
+            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+            target="_blank"
+            rel="noreferrer"
+          >
+            LSP6 KeyManager
+          </a>{' '}
+          inherits.
+        </div>
+      </article>
+
       <div className="columns mt-2">
         <div className="column">
           <div className="field">
@@ -58,7 +115,7 @@ const KeyManagerNonceChecker: React.FC = () => {
               <input
                 className="input"
                 type="text"
-                placeholder="Key Manager address"
+                placeholder="Key Manager Address"
                 onChange={(e) => {
                   setKeyManagerAddress(e.target.value);
                 }}
@@ -73,7 +130,7 @@ const KeyManagerNonceChecker: React.FC = () => {
               <input
                 className="input"
                 type="text"
-                placeholder="Caller address"
+                placeholder="Controller Address"
                 onChange={(e) => setCallerAddress(e.target.value)}
               />
               <span className="icon is-small is-left">➡️ </span>
