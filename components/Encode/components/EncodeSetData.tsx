@@ -127,7 +127,7 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
         <div className="columns">
           <div className="column">
             <button
-              className={`button is-link ${styles.buttonWidth}`}
+              className={`button is-info ${styles.buttonWidth}`}
               onClick={addKeyValue}
             >
               Add Key

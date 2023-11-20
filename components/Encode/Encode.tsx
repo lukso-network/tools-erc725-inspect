@@ -32,6 +32,14 @@ const Encode: React.FC<Props> = ({ web3 }) => {
                 onChange={() => setMode(TRANSACTION_TYPES.SET_DATA)}
               />
               setData
+              <a
+                href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 has-text-info-dark"
+              >
+                ↗
+              </a>
             </label>
 
             <label className={`radio ${styles.radioLabel}`}>
@@ -43,6 +51,14 @@ const Encode: React.FC<Props> = ({ web3 }) => {
                 onChange={() => setMode(TRANSACTION_TYPES.SET_DATA_BATCH)}
               />
               setDataBatch
+              <a
+                href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 has-text-info-dark"
+              >
+                ↗
+              </a>
             </label>
 
             <label className={`radio ${styles.radioLabel}`}>
@@ -54,6 +70,14 @@ const Encode: React.FC<Props> = ({ web3 }) => {
                 onChange={() => setMode(TRANSACTION_TYPES.EXECUTE)}
               />
               execute
+              <a
+                href="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 has-text-info-dark"
+              >
+                ↗
+              </a>
             </label>
 
             <label className={`radio ${styles.radioLabel}`}>
@@ -65,6 +89,14 @@ const Encode: React.FC<Props> = ({ web3 }) => {
                 onChange={() => setMode(TRANSACTION_TYPES.TRANSFER_OWNERSHIP)}
               />
               transferOwnership
+              <a
+                href="https://eips.ethereum.org/EIPS/eip-173"
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 has-text-info-dark"
+              >
+                ↗
+              </a>
             </label>
           </div>
         </div>

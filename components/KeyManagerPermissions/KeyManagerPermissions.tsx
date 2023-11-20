@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+
 import { useState } from 'react';
 import ERC725 from '@erc725/erc725.js';
 import PermissionsBtns from '../PermissionsBtns';
@@ -39,20 +41,41 @@ const KeyManagerPermissions: React.FC = () => {
       <h2 className="title is-2">Permissions</h2>
       <article className="message is-info">
         <div className="message-body">
-          This tool will encode/decode permissions according to{' '}
-          <a href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager">
-            LSP6 KeyManager Standard
+          Encode and decode{' '}
+          <a
+            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager/#address-permissions"
+            target="_blank"
+            rel="noreferrer"
+          >
+            permissions
           </a>{' '}
-          smart contract and attempt to match them with their{' '}
-          <a href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md">
-            LSP2 ERC725YJSONSchema
-          </a>
-          .<br />
-          The erc725.js lib provides a{' '}
-          <a href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions">
-            decodePermissions
+          based on the{' '}
+          <a
+            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+            target="_blank"
+            rel="noreferrer"
+          >
+            LSP6 KeyManager
           </a>{' '}
-          method to decode the permissions.
+          standard.
+          <br />
+          It's using the{' '}
+          <a
+            href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
+            target="_blank"
+            rel="noreferrer"
+          >
+            encodePermissions
+          </a>{' '}
+          function of the{' '}
+          <a
+            href="https://www.npmjs.com/package/@erc725/erc725.js"
+            target="_blank"
+            rel="noreferrer"
+          >
+            erc725.js
+          </a>{' '}
+          library.
         </div>
       </article>
 
@@ -68,19 +91,22 @@ const KeyManagerPermissions: React.FC = () => {
         </div>
       </div>
       <div className="columns">
-        <div className="column">
+        <div className="column is-half">
+          <h5 className="mb-2 title is-5">Contract Ownership</h5>
           <PermissionsBtns
             permissions={['CHANGEOWNER', 'ADDCONTROLLER', 'EDITPERMISSIONS']}
             color={'is-orange-dark'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
+          <h5 className="mb-2 title is-5">Extensions</h5>
           <PermissionsBtns
             permissions={['ADDEXTENSIONS', 'CHANGEEXTENSIONS']}
             color={'is-orange'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
+          <h5 className="mb-2 title is-5">Universal Receivers</h5>
           <PermissionsBtns
             permissions={[
               'ADDUNIVERSALRECEIVERDELEGATE',
@@ -90,12 +116,14 @@ const KeyManagerPermissions: React.FC = () => {
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
+          <h5 className="mb-2 title is-5">Payload Execution</h5>
           <PermissionsBtns
             permissions={['REENTRANCY']}
             color={'is-danger'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
+          <h5 className="mb-2 title is-5">Contract Interactions</h5>
           <PermissionsBtns
             permissions={[
               'SUPER_TRANSFERVALUE',
@@ -112,12 +140,14 @@ const KeyManagerPermissions: React.FC = () => {
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
+          <h5 className="mb-2 title is-5">Contract Storage</h5>
           <PermissionsBtns
             permissions={['SUPER_SETDATA', 'SETDATA']}
             color={'is-success'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
+          <h5 className="mb-2 title is-5">Signing Verification</h5>
           <PermissionsBtns
             permissions={['ENCRYPT', 'DECRYPT', 'SIGN']}
             color={'is-purple'}
@@ -125,9 +155,7 @@ const KeyManagerPermissions: React.FC = () => {
             handlePermissionClick={handlePermissionClick}
           />
         </div>
-      </div>
-      <div className="columns">
-        <div className="column">
+        <div className="column is-half">
           <pre>{JSON.stringify(decodedPermissions, undefined, 2)}</pre>
         </div>
       </div>
