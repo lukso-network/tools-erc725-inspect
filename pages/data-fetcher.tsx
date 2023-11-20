@@ -179,10 +179,10 @@ const GetData: NextPage = () => {
             <div className="field">
               <label className="label">Data Key</label>
 
-              <div className="select mb-4 dataKeyInput">
+              <div className="select mb-4 is-fullwidth">
                 <select
                   onChange={(e) => onDataKeyChange(e.target.value)}
-                  className="dataKeyInput"
+                  className="is-fullwidth"
                 >
                   {dataKeyList.map((dataKey, index) => {
                     return (
