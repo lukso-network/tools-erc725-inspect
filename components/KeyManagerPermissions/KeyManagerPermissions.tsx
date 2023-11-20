@@ -59,7 +59,7 @@ const KeyManagerPermissions: React.FC = () => {
           </a>
           standardization to match them with their
           <a
-            href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
+            href="https://docs.lukso.tech/standards/generic-standards/lsp2-json-schema"
             target="_blank"
             rel="noreferrer"
             className="ml-1"
