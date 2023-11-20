@@ -79,7 +79,7 @@ const Home: NextPage = () => {
               href="https://docs.lukso.tech/standards/introduction"
               target="_blank"
               rel="noreferrer"
-              className="home-link ml-1 mr-1"
+              className="home-link mx-1"
             >
               LSP
             </a>

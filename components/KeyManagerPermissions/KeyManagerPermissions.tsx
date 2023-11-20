@@ -44,7 +44,7 @@ const KeyManagerPermissions: React.FC = () => {
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager/#address-permissions"
             target="_blank"
             rel="noreferrer"
-            className="mr-1 ml-1"
+            className="mx-1"
           >
             permissions
           </a>
@@ -53,7 +53,7 @@ const KeyManagerPermissions: React.FC = () => {
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
-            className="mr-1 ml-1"
+            className="mx-1"
           >
             LSP6 KeyManager
           </a>
@@ -71,12 +71,12 @@ const KeyManagerPermissions: React.FC = () => {
       </article>
       <article className="message">
         <div className="message-body">
-          It&lsquo;s using the
+          It`s using the
           <a
             href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             encodePermissions
           </a>
@@ -85,7 +85,7 @@ const KeyManagerPermissions: React.FC = () => {
             href="https://www.npmjs.com/package/@erc725/erc725.js"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             erc725.js
           </a>

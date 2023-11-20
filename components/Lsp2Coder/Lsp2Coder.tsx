@@ -197,7 +197,7 @@ const Lsp2Coder: React.FC = () => {
           This tool will encode or decode the values of
           <a
             href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#erc725y"
-            className="ml-1 mr-1"
+            className="mx-1"
             target="_blank"
             rel="noreferrer"
           >
@@ -206,7 +206,7 @@ const Lsp2Coder: React.FC = () => {
           data keys following the
           <a
             href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
-            className="ml-1 mr-1"
+            className="mx-1"
             target="_blank"
             rel="noreferrer"
           >
@@ -217,12 +217,12 @@ const Lsp2Coder: React.FC = () => {
       </article>
       <article className="message mx-3">
         <div className="message-body">
-          It&lsquo;s using the
+          It`s using the
           <a
             href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodedata"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             encodeData
           </a>
@@ -231,7 +231,7 @@ const Lsp2Coder: React.FC = () => {
             href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#decodedata"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             decodeData
           </a>
@@ -240,7 +240,7 @@ const Lsp2Coder: React.FC = () => {
             href="https://www.npmjs.com/package/@erc725/erc725.js"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             erc725.js
           </a>

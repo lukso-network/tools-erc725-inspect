@@ -29,7 +29,7 @@ const Home: NextPage = () => {
           <div className="message-body">
             This tool will encode and decode transaction data of
             <a
-              className="ml-1 mr-1"
+              className="mx-1"
               href="https://docs.lukso.tech/standards/smart-contracts/lsp0-erc725-account"
               target="_blank"
               rel="noreferrer"
@@ -50,12 +50,12 @@ const Home: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            It&lsquo;s using the
+            It`s using the
             <a
               href="https://docs.web3js.org/api/web3-eth-abi/function/decodeParameters/"
               target="_blank"
               rel="noreferrer"
-              className="ml-1 mr-1"
+              className="mx-1"
             >
               decodeParameters
             </a>
@@ -64,7 +64,7 @@ const Home: NextPage = () => {
               href="https://www.npmjs.com/package/web3"
               target="_blank"
               rel="noreferrer"
-              className="ml-1 mr-1"
+              className="mx-1"
             >
               web3
             </a>

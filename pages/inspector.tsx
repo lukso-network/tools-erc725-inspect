@@ -229,7 +229,7 @@ const Home: NextPage = () => {
               href="https://github.com/ERC725Alliance/ERC725"
               target="_blank"
               rel="noreferrer"
-              className="mr-1 ml-1"
+              className="mx-1"
             >
               ERC725Y
             </a>
@@ -238,7 +238,7 @@ const Home: NextPage = () => {
               href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
               target="_blank"
               rel="noreferrer"
-              className="mr-1 ml-1"
+              className="mx-1"
             >
               LSP2 ERC725YJSONSchema
             </a>
@@ -247,12 +247,12 @@ const Home: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            It&lsquo;s using the
+            It`s using the
             <a
               href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
               target="_blank"
               rel="noreferrer"
-              className="ml-1 mr-1"
+              className="mx-1"
             >
               getData
             </a>
@@ -261,7 +261,7 @@ const Home: NextPage = () => {
               href="https://www.npmjs.com/package/@erc725/erc725.js"
               target="_blank"
               rel="noreferrer"
-              className="ml-1 mr-1"
+              className="mx-1"
             >
               erc725.js
             </a>

@@ -118,7 +118,7 @@ const GetData: NextPage = () => {
               href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
               target="_blank"
               rel="noreferrer"
-              className="mr-1 ml-1"
+              className="mx-1"
             >
               ERC725Y
             </a>
@@ -127,12 +127,12 @@ const GetData: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            It&lsquo;s calling the
+            It`s calling the
             <a
               href="https://github.com/ERC725Alliance/ERC725/blob/develop/docs/ERC-725.md#getdata"
               target="_blank"
               rel="noreferrer"
-              className="ml-1 mr-1"
+              className="mx-1"
             >
               getData
             </a>
@@ -141,7 +141,7 @@ const GetData: NextPage = () => {
               href="https://docs.lukso.tech/standards/lsp-background/erc725#erc725y-generic-data-keyvalue-store"
               target="_blank"
               rel="noreferrer"
-              className="ml-1 mr-1"
+              className="mx-1"
             >
               ERC725Y
             </a>
@@ -234,7 +234,7 @@ const GetData: NextPage = () => {
                     target="_blank"
                     rel="noreferrer"
                     href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md#valueContent"
-                    className="ml-1 mr-1"
+                    className="mx-1"
                   >
                     LSP-2 ERC725YJSONSchema
                   </a>

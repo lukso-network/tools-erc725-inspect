@@ -60,12 +60,12 @@ const KeyManagerNonceChecker: React.FC = () => {
           >
             LSP0 ERC725Account
           </a>
-          &lsquo;s
+          `s
           <a
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager#introduction"
             target="_blank"
             rel="noreferrer"
-            className="mr-1 ml-1"
+            className="mx-1"
           >
             controller address
           </a>
@@ -74,7 +74,7 @@ const KeyManagerNonceChecker: React.FC = () => {
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             LSP6 KeyManager
           </a>
@@ -83,12 +83,12 @@ const KeyManagerNonceChecker: React.FC = () => {
       </article>
       <article className="message">
         <div className="message-body">
-          It&lsquo;s calling the
+          It`s calling the
           <a
             href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md#getnonce"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             getNonce
           </a>
@@ -97,7 +97,7 @@ const KeyManagerNonceChecker: React.FC = () => {
             href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             LSP25 ExecuteRelayCall
           </a>
@@ -106,7 +106,7 @@ const KeyManagerNonceChecker: React.FC = () => {
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
-            className="ml-1 mr-1"
+            className="mx-1"
           >
             LSP6 KeyManager
           </a>
