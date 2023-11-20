@@ -1,6 +1,7 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Jean Cavallera <git@jeanc.abc>
+ * @author Felix Hildebrandt <fhildeb>
  */
 import React, { useEffect, useState } from 'react';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
@@ -9,6 +10,7 @@ import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
 
 import Schema from './Schema.json';
+import SchemaLinks from './SchemaLinks.json';
 
 import { getDataBatch } from '../../utils/web3';
 
@@ -18,6 +20,15 @@ interface Props {
   address: string;
   isErc725Y: boolean;
 }
+
+type SchemaName =
+  | 'LSP1UniversalReceiverDelegate'
+  | 'SupportedStandards:LSP3UniversalProfile'
+  | 'LSP3Profile'
+  | 'LSP5ReceivedAssets[]'
+  | 'AddressPermissions[]'
+  | 'LSP10Vaults[]'
+  | 'LSP12IssuedAssets[]';
 
 const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
   const [data, setData] = useState<
@@ -72,40 +83,56 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
     return <p>⬆️ enter the address of your UP</p>;
   }
 
+  const findLinkForSchemaName = (schemaName: SchemaName) => {
+    const linkObj = SchemaLinks.find(
+      (linkItem) => linkItem.name === schemaName,
+    );
+    return linkObj ? linkObj.link : '#';
+  };
+
   return (
     <div className="columns is-multiline">
       {data.map((data) => {
+        const schemaLink = findLinkForSchemaName(
+          data.schema.name as SchemaName,
+        );
         return (
-          <div className="column is-full" key={data.key}>
+          <div className="column is-full mt-4 dataKeyBox" key={data.key}>
             <div className="content py-5">
-              <h4 className="title is-4">
-                {data.schema.name}{' '}
-                <span className="tag is-medium mu-2 mb-2 mr-2 is-success">
+              <div className="title is-4 home-link">
+                <a href={schemaLink} target="_blank" rel="noopener noreferrer">
+                  {data.schema.name} ↗️
+                </a>
+                <span className="tag is-small mb-2 mx-2 is-info">
                   {data.schema.keyType}
                 </span>
-              </h4>
+              </div>
               <ul>
-                <li>
-                  Key: <code>{data.schema.key}</code>
+                <li className="mt-2">
+                  <strong>Key:</strong> <code>{data.schema.key}</code>
                 </li>
-                <li>
-                  Raw value{' '}
-                  <span className="tag is-medium mu-2 mb-2 mr-2 is-link is-light">
+                <li className="mt-4 mt-4">
+                  <strong>Raw value: </strong>
+                  <span className="tag is-small mx-2 is-link is-light">
                     {data.schema.valueType}
                   </span>
-                  : <code>{data.value}</code>
+                  <code>{data.value}</code>
                 </li>
-                <li>
-                  Decoded value{' '}
-                  <span className="tag is-medium mu-2 mb-2 mr-2 is-link is-light">
-                    {data.schema.valueContent}
+                <li className="mt-4">
+                  <strong>Value Content: </strong>
+                  <span className="tag is-small mb-2 mr-2 is-link is-light">
+                    {data.schema.valueContent.toLowerCase()}
                   </span>
-                  :{' '}
-                  <ValueTypeDecoder
-                    address={address}
-                    erc725JSONSchema={data.schema}
-                    value={data.value}
-                  />
+                </li>
+                <li className="mt-2">
+                  <strong>Decoded value: </strong>
+                  <div className="mt-3 mb-3">
+                    <ValueTypeDecoder
+                      address={address}
+                      erc725JSONSchema={data.schema}
+                      value={data.value}
+                    />
+                  </div>
                 </li>
                 {data.schema.keyType === 'MappingWithGrouping' && (
                   <li>
