@@ -33,7 +33,7 @@ const Encode: React.FC<Props> = ({ web3 }) => {
               />
               setData
               <a
-                href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#setdata"
+                href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
                 target="_blank"
                 rel="noreferrer"
                 className="ml-2 has-text-info-dark"
@@ -52,7 +52,7 @@ const Encode: React.FC<Props> = ({ web3 }) => {
               />
               setDataBatch
               <a
-                href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#setdatabatch"
+                href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
                 target="_blank"
                 rel="noreferrer"
                 className="ml-2 has-text-info-dark"
@@ -71,7 +71,7 @@ const Encode: React.FC<Props> = ({ web3 }) => {
               />
               execute
               <a
-                href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#execute"
+                href="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
                 target="_blank"
                 rel="noreferrer"
                 className="ml-2 has-text-info-dark"
