@@ -82,3 +82,13 @@ code {
     text-decoration: underline;
   }
 }
+
+// ABI Encoder
+
+.radioInput {
+  margin-right: 0.5rem;
+}
+
+.radioLabel + .radioLabel {
+  margin-left: 1.2rem;
+}
