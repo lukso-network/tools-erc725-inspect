@@ -1,7 +1,7 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '../AddressButtons';
 import { LUKSO_IPFS_BASE_URL } from '../../globals';
@@ -67,6 +67,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
         return (
           <>
             <code>{value}</code>
+            <div className="mt-4"></div>
             <AddressButtons address={decodedDataOneKey[0].value} />
           </>
         );
@@ -99,13 +100,15 @@ const ValueTypeDecoder: React.FC<Props> = ({
       return (
         <>
           <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
-          <div>
-            <span>URL: {decodedDataOneKey[0].value.url}</span> -{' '}
+          <li>
+            <span>
+              URL:
+              <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
+            </span>
             {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
               <>
-                [
                 <a
-                  className="has-text-link"
+                  className="has-text-link button is-small is-light is-info"
                   target="_blank"
                   rel="noreferrer"
                   href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
@@ -113,12 +116,11 @@ const ValueTypeDecoder: React.FC<Props> = ({
                     '',
                   )}`}
                 >
-                  LUKSO IPFS
+                  Retrieve IPFS File ↗️
                 </a>
-                ]
               </>
             )}
-          </div>
+          </li>
         </>
       );
     }

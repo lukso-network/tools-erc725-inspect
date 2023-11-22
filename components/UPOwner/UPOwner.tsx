@@ -5,6 +5,7 @@ import useWeb3 from '../../hooks/useWeb3';
 import { eip165ABI } from '../../constants';
 import { AbiItem, isAddress } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import AddressButtons from '../AddressButtons';
 
 type Props = {
   UPAddress: string;
@@ -92,20 +93,31 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
   }, [UPAddress, web3]);
 
   return (
-    <div className="columns is-multiline">
-      <div className="column is-full">
-        <div className="content pt-5">
-          <h4 className="title is-4">Owner</h4>
+    <div className="columns is-multiline mt-3">
+      <div className="column is-full dataKeyBox">
+        <div className="content">
+          <div className="title is-4 home-link">
+            <a
+              href="https://docs.lukso.tech/standards/lsp-background/erc725/#ownership"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Owner ↗️
+            </a>
+          </div>
           <ul>
             <li>
-              Owner address{' '}
-              <span className="tag is-medium is-link is-light">address</span>:{' '}
+              <strong>Owner address:</strong>
+              <span className="tag is-small mb-2 mx-2 is-link is-light">
+                address
+              </span>
               <code>{UPOwner}</code>
             </li>
             <li>
-              Owner type: <strong>{ownerType}</strong>
+              <strong>Owner type:</strong> <code>{ownerType}</code>
             </li>
           </ul>
+          <AddressButtons address={UPOwner}></AddressButtons>
         </div>
       </div>
     </div>

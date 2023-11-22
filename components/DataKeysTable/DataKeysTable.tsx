@@ -1,7 +1,3 @@
-/**
- * @author Hugo Masclet <git@hugom.xyz>
- * @author Jean Cavallera <git@jeanc.abc>
- */
 import React, { useEffect, useState } from 'react';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 
@@ -9,6 +5,7 @@ import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
 
 import Schema from './Schema.json';
+import { SCHEMA_DOCS_LINKS, SchemaName } from './schemas';
 
 import { getDataBatch } from '../../utils/web3';
 
@@ -76,36 +73,51 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
     <div className="columns is-multiline">
       {data.map((data) => {
         return (
-          <div className="column is-full" key={data.key}>
-            <div className="content py-5">
-              <h4 className="title is-4">
-                {data.schema.name}{' '}
-                <span className="tag is-medium mu-2 mb-2 mr-2 is-success">
+          <div className="column is-full mt-4 dataKeyBox" key={data.key}>
+            <div className="content">
+              <div className="title is-4">
+                {data.schema.name in SchemaName ? (
+                  <a
+                    href={SCHEMA_DOCS_LINKS[data.schema.name]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="home-link"
+                  >
+                    {data.schema.name} ↗️
+                  </a>
+                ) : (
+                  data.schema.name
+                )}
+                <span className="tag is-small mb-2 mx-2 is-info">
                   {data.schema.keyType}
                 </span>
-              </h4>
+              </div>
               <ul>
                 <li>
-                  Key: <code>{data.schema.key}</code>
+                  <strong>Key:</strong> <code>{data.schema.key}</code>
                 </li>
                 <li>
-                  Raw value{' '}
-                  <span className="tag is-medium mu-2 mb-2 mr-2 is-link is-light">
+                  <strong>Raw value: </strong>
+                  <span className="tag is-small mx-2 is-link is-light">
                     {data.schema.valueType}
                   </span>
-                  : <code>{data.value}</code>
+                  <code>{data.value}</code>
                 </li>
                 <li>
-                  Decoded value{' '}
-                  <span className="tag is-medium mu-2 mb-2 mr-2 is-link is-light">
-                    {data.schema.valueContent}
+                  <strong>Value Content: </strong>
+                  <span className="tag is-small is-link is-light">
+                    {data.schema.valueContent.toLowerCase()}
                   </span>
-                  :{' '}
-                  <ValueTypeDecoder
-                    address={address}
-                    erc725JSONSchema={data.schema}
-                    value={data.value}
-                  />
+                </li>
+                <li>
+                  <strong>Decoded value: </strong>
+                  <div className="mt-3 mb-3">
+                    <ValueTypeDecoder
+                      address={address}
+                      erc725JSONSchema={data.schema}
+                      value={data.value}
+                    />
+                  </div>
                 </li>
                 {data.schema.keyType === 'MappingWithGrouping' && (
                   <li>
