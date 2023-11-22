@@ -1,8 +1,4 @@
-/**
- * @author Hugo Masclet <git@hugom.xyz>
- * @author Jean Cavallera <git@jeanc.abc>
- * @author Felix Hildebrandt <fhildeb>
- */
+/* eslint-disable react/no-unescaped-entities */
 
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -118,7 +114,7 @@ const Home: NextPage = () => {
     if (!isEmptyInput && !isLoading) {
       return (
         <div className="help is-success inspect-result mt-4">
-          <label className="label">Supported Standards</label>
+          <h3 className="title is-3">Supported Standards</h3>
           <a
             className={`button is-info mr-2 mt-2 ${
               !isErc725X && 'is-outlined'
@@ -212,7 +208,8 @@ const Home: NextPage = () => {
         </div>
       );
     }
-    return <div></div>;
+
+    return null;
   };
 
   return (
@@ -247,7 +244,7 @@ const Home: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            It`s using the
+            It's using the
             <a
               href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
               target="_blank"
@@ -272,7 +269,7 @@ const Home: NextPage = () => {
         <div className="columns">
           <div className="column is-half">
             <div className="field">
-              <label className="label">Contract Address</label>
+              <h3 className="title is-3">Contract Address</h3>
               <div className="control mb-0">
                 <input
                   className="input"
@@ -309,15 +306,16 @@ const Home: NextPage = () => {
               isLSP0ERC725Account) && (
               <>
                 <>
-                  <label className="label">Instance and Ownership</label>{' '}
+                  <h3 className="title is-3">Instance and Ownership</h3>
                   <div className="columns is-multiline mt-3">
                     <div className="column is-full dataKeyBox">
-                      <div className="content pt-5 pb-5">
-                        <div className="title is-4 home-link">
+                      <div className="content">
+                        <div className="title is-4">
                           <a
                             href="https://docs.lukso.tech/standards/lsp-background/erc725"
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="home-link"
                           >
                             Contract ↗️
                           </a>
@@ -344,7 +342,7 @@ const Home: NextPage = () => {
                   </div>
                 </>
                 {isErc725X && <UPOwner UPAddress={address} />}
-                <label className="label">Data Keys</label>
+                <h3 className="title is-3">Data Keys</h3>
                 <DataKeysTable address={address} isErc725Y={isErc725Y} />
               </>
             )}

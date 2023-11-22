@@ -95,7 +95,7 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
   return (
     <div className="columns is-multiline mt-3">
       <div className="column is-full dataKeyBox">
-        <div className="content pt-5 pb-5">
+        <div className="content">
           <div className="title is-4 home-link">
             <a
               href="https://docs.lukso.tech/standards/lsp-background/erc725/#ownership"
