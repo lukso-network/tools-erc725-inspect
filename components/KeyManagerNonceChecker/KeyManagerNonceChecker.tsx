@@ -79,7 +79,11 @@ const KeyManagerNonceChecker: React.FC = () => {
             LSP6 KeyManager
           </a>{' '}
           smart contract.
-          <br />
+        </div>
+      </article>
+
+      <article className="message">
+        <div className="message-body">
           It's calling the{' '}
           <a
             href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md#getnonce"

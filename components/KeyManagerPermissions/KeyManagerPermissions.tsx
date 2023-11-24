@@ -41,7 +41,7 @@ const KeyManagerPermissions: React.FC = () => {
       <h2 className="title is-2">Permissions</h2>
       <article className="message is-info">
         <div className="message-body">
-          Encode and decode{' '}
+          This tool will encode and decode{' '}
           <a
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager/#address-permissions"
             target="_blank"
@@ -58,8 +58,11 @@ const KeyManagerPermissions: React.FC = () => {
             LSP6 KeyManager
           </a>{' '}
           standard.
-          <br />
-          It's using the{' '}
+        </div>
+      </article>
+      <article className="message">
+        <div className="message-body">
+          It&lsquo;s using the{' '}
           <a
             href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
             target="_blank"
