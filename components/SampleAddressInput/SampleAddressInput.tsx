@@ -48,13 +48,13 @@ const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
   return (
     <div>
       <button
-        className="button is-light is-small mt-2 mb-2"
+        className="button is-light is-small my-4"
         onClick={() => changeInputAddress(AddressType.UP)}
       >
         Try with a Universal Profile Sample Address
       </button>
       <button
-        className="button is-light is-small mt-2 mb-2 ml-2"
+        className="button is-light is-small my-4 ml-2"
         onClick={() => changeInputAddress(AddressType.Asset)}
       >
         Try with a Digital Asset Sample Address

@@ -111,7 +111,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
                 </li>
                 <li>
                   <strong>Decoded value: </strong>
-                  <div className="mt-3 mb-3">
+                  <div className="my-3 mr-3">
                     <ValueTypeDecoder
                       address={address}
                       erc725JSONSchema={data.schema}
