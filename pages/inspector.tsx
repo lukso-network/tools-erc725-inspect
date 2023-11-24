@@ -244,7 +244,7 @@ const Home: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            It's using the
+            It&lsquo;s using the
             <a
               href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
               target="_blank"
