@@ -73,7 +73,6 @@ const GetData: NextPage = () => {
     const result = await checkInterface(address, web3);
 
     // Set first menu element as default
-    onDataKeyChange(ERC725YDataKeys.LSP1.LSP1UniversalReceiverDelegate);
     setInterfaces(result);
   };
 
