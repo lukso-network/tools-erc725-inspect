@@ -10,7 +10,11 @@ import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
 import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
 import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
+import LSP8DataKeys from '@erc725/erc725.js/schemas/LSP8IdentifiableDigitalAsset.json';
 import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
+import LSP10DataKeys from '@erc725/erc725.js/schemas/LSP10ReceivedVaults.json';
+import LSP12DataKeys from '@erc725/erc725.js/schemas/LSP12IssuedAssets.json';
+import LSP17DataKeys from '@erc725/erc725.js/schemas/LSP17ContractExtension.json';
 
 import { checkInterface, getData } from '../utils/web3';
 import useWeb3 from '../hooks/useWeb3';
@@ -24,7 +28,11 @@ const dataKeyList = [
   ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
   ...LSP5DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💰' })),
   ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
+  ...LSP8DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
   ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
+  ...LSP10DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
+  ...LSP12DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
+  ...LSP17DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💎' })),
 ];
 
 const GetData: NextPage = () => {
