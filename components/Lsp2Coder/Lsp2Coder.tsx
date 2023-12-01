@@ -194,7 +194,7 @@ const Lsp2Coder: React.FC = () => {
       <h2 className="title is-2">LSP2 Encoder</h2>
       <article className="message is-info">
         <div className="message-body">
-          This tool will encode or decode the values of
+          Encode or decode the values of
           <a
             href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#erc725y"
             className="mx-1"

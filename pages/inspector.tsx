@@ -221,7 +221,7 @@ const Home: NextPage = () => {
         <h2 className="title is-2">Inspector</h2>
         <article className="message is-info">
           <div className="message-body">
-            This tool will retrieve and decode all
+            Retrieve and decode all
             <a
               href="https://github.com/ERC725Alliance/ERC725"
               target="_blank"

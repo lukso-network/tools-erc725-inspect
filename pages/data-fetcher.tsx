@@ -113,7 +113,7 @@ const GetData: NextPage = () => {
         <h2 className="title is-2">Data Fetcher</h2>
         <article className="message is-info">
           <div className="message-body">
-            This tool will retrieve the encoded storage of a
+            Retrieve the encoded storage of a
             <a
               href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
               target="_blank"

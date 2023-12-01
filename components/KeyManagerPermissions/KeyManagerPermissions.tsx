@@ -41,7 +41,7 @@ const KeyManagerPermissions: React.FC = () => {
       <h2 className="title is-2">Permissions</h2>
       <article className="message is-info">
         <div className="message-body">
-          This tool will encode and decode{' '}
+          Encode and decode{' '}
           <a
             href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager/#address-permissions"
             target="_blank"

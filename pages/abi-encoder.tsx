@@ -27,7 +27,7 @@ const Home: NextPage = () => {
         <h2 className="title is-2">ABI Encoder</h2>
         <article className="message is-info">
           <div className="message-body">
-            This tool will encode and decode transaction data of
+            Encode and decode transaction data of
             <a
               className="mx-1"
               href="https://docs.lukso.tech/standards/smart-contracts/lsp0-erc725-account"
