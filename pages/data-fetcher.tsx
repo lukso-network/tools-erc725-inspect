@@ -120,7 +120,7 @@ const GetData: NextPage = () => {
         <h2 className="title is-2">Data Fetcher</h2>
         <article className="message is-info">
           <div className="message-body">
-            This tool will retrieve the encoded storage of a
+            Retrieve the encoded storage of a
             <a
               href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
               target="_blank"
@@ -134,7 +134,7 @@ const GetData: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            It`s calling the
+            It&lsquo;s calling the
             <a
               href="https://github.com/ERC725Alliance/ERC725/blob/develop/docs/ERC-725.md#getdata"
               target="_blank"
@@ -156,8 +156,8 @@ const GetData: NextPage = () => {
           </div>
         </article>
 
-        <div className="columns">
-          <div className="column is-half">
+        <div className="is-flex">
+          <div className="is-half">
             <div className="field">
               <label className="label">Contract Address</label>
               <div className="control">
@@ -231,9 +231,9 @@ const GetData: NextPage = () => {
             </button>
           </div>
         </div>
-        <div className="columns">
+        <div>
           {data && (
-            <div className="column">
+            <div className="is-full-width my-4">
               <article className="message is-info">
                 <div className="message-body">
                   You can decode this value using the

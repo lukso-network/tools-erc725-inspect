@@ -58,8 +58,11 @@ const KeyManagerPermissions: React.FC = () => {
             LSP6 KeyManager
           </a>{' '}
           standard.
-          <br />
-          It's using the{' '}
+        </div>
+      </article>
+      <article className="message">
+        <div className="message-body">
+          It&lsquo;s using the{' '}
           <a
             href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
             target="_blank"

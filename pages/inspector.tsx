@@ -221,7 +221,7 @@ const Home: NextPage = () => {
         <h2 className="title is-2">Inspector</h2>
         <article className="message is-info">
           <div className="message-body">
-            This tool will retrieve and decode all
+            Retrieve and decode all
             <a
               href="https://github.com/ERC725Alliance/ERC725"
               target="_blank"
@@ -244,7 +244,7 @@ const Home: NextPage = () => {
         </article>
         <article className="message">
           <div className="message-body">
-            It's using the
+            It&lsquo;s using the
             <a
               href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
               target="_blank"

@@ -26,7 +26,7 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
       (keyValuePair: { key: string; value: string }, index) => {
         return (
           <div
-            className={`columns is-vcentered ${styles.keyValueBox}`}
+            className={`is-flex is-align-items-center is-vcentered ${styles.keyValueBox}`}
             key={index}
           >
             {isBatch ? (
@@ -124,8 +124,8 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
     <>
       {createInputs(keyValuePairs)}
       {isBatch ? (
-        <div className="columns">
-          <div className="column">
+        <div>
+          <div className="my-4 mr-4">
             <button
               className={`button is-info ${styles.buttonWidth}`}
               onClick={addKeyValue}
@@ -138,8 +138,8 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
         ''
       )}
 
-      <div className="columns">
-        <div className="column">
+      <div>
+        <div className="my-4 mr-4">
           <button
             className={`button is-primary ${styles.buttonWidth}`}
             onClick={encodeABI}

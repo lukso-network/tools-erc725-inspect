@@ -35,13 +35,13 @@ const Lsp2Coder: React.FC = () => {
   const renderEncoderFields = () => {
     if (valueContent === 'JSONURL') {
       return (
-        <div className="field">
+        <div className="field mt-2">
           <div className="label">Encoded value</div>
           <div className="control">
             <div className="columns">
-              <div className="column is-half">
+              <div className="is-half">
                 <textarea
-                  className="p-1 textarea"
+                  className="textarea"
                   placeholder="hash"
                   value={jsonUrlDecodedValue.verification.data}
                   rows={6}
@@ -56,9 +56,9 @@ const Lsp2Coder: React.FC = () => {
                   }}
                 />
               </div>
-              <div className="column is half">
+              <div className="is-half">
                 <textarea
-                  className="p-1 textarea"
+                  className="textarea"
                   placeholder="url"
                   value={jsonUrlDecodedValue.url}
                   rows={6}
@@ -76,13 +76,13 @@ const Lsp2Coder: React.FC = () => {
       );
     } else {
       return (
-        <div className="field">
+        <div className="field mt-2">
           <div className="label">Encoded value</div>
           <div className="control">
             <textarea
               placeholder="value"
               value={decodedValue as string}
-              className="p-1 textarea is-fullwidth"
+              className="textarea is-fullwidth"
               onChange={(e) => encode(e.target.value)}
               rows={6}
             />
@@ -94,11 +94,11 @@ const Lsp2Coder: React.FC = () => {
 
   const renderDecoderField = () => {
     return (
-      <div className="field">
+      <div className="field mt-2">
         <div className="label">Decoded value</div>
         <div className="control">
           <textarea
-            className="p-1 textarea"
+            className="textarea"
             rows={6}
             onChange={(e) => decode(e.target.value)}
             value={encodedValue}
@@ -191,10 +191,10 @@ const Lsp2Coder: React.FC = () => {
 
   return (
     <div className="container">
-      <h2 className="title is-2 mx-3">LSP2 Encoder</h2>
-      <article className="message is-info mx-3">
+      <h2 className="title is-2">LSP2 Encoder</h2>
+      <article className="message is-info">
         <div className="message-body">
-          This tool will encode or decode the values of
+          Encode or decode the values of
           <a
             href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#erc725y"
             className="mx-1"
@@ -215,9 +215,9 @@ const Lsp2Coder: React.FC = () => {
           standardization.
         </div>
       </article>
-      <article className="message mx-3">
+      <article className="message">
         <div className="message-body">
-          It`s using the
+          It&lsquo;s using the
           <a
             href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodedata"
             target="_blank"
@@ -247,7 +247,7 @@ const Lsp2Coder: React.FC = () => {
           library.
         </div>
       </article>
-      <div className="field px-3">
+      <div className="field">
         <div className="label">Select valueContent</div>
         <div className="control">
           <div className="select mb-2">
@@ -261,7 +261,7 @@ const Lsp2Coder: React.FC = () => {
       </div>
       {valueContent && (
         <div className="is-two-thirds-desktop is-half-widescreen ">
-          <div className="column">
+          <div>
             <div className=" is-fullwidth">
               {renderEncoderFields()}
               {encodingError && (
@@ -269,7 +269,7 @@ const Lsp2Coder: React.FC = () => {
               )}
             </div>
           </div>
-          <div className="column">
+          <div>
             {renderDecoderField()}
             {decodingError && (
               <div className="my-2 has-text-danger">Could not decode</div>
