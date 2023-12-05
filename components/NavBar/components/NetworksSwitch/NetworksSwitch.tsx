@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { INetwork, NetworkContext } from '../../../../contexts/NetworksContext';
 
 import { RPC_URL_MAINNET, RPC_URL_TESTNET } from '../../../../globals';
@@ -10,18 +10,38 @@ const luksoChains: INetwork[] = [
 
 const NetworkSwitch: React.FC = () => {
   const { network, setNetwork } = useContext(NetworkContext);
+  const [isDropdownActive, setIsDropdownActive] = useState(false);
 
   return (
-    <div className="navbar-item has-dropdown is-hoverable">
-      <div>
-        <a className="navbar-link">
-          {network.imgUrl ? (
-            <img src={network.imgUrl} alt={network.name} className="mr-1" />
-          ) : null}
-          <span>{network.name}</span>
-        </a>
-      </div>
-      <div className="navbar-dropdown">
+    <div
+      className={`navbar-item has-dropdown ${
+        isDropdownActive ? 'is-active' : ''
+      } is-hoverable`}
+      onClick={() => setIsDropdownActive(!isDropdownActive)}
+    >
+      <a className="navbar-link is-flex" style={{ alignItems: 'center' }}>
+        {network.imgUrl && (
+          <img
+            src={network.imgUrl}
+            alt={network.name}
+            className="mr-2"
+            style={{ height: '1em' }}
+          />
+        )}
+        <span style={{ flexGrow: 1 }}>{network.name}</span>
+        <span className="icon is-small is-hidden-touch">
+          <i
+            className={`fas fa-chevron-down ${
+              isDropdownActive ? 'is-active' : ''
+            }`}
+          ></i>
+        </span>
+      </a>
+      <div
+        className={`navbar-dropdown ${
+          isDropdownActive ? 'is-block' : 'is-hidden-touch'
+        }`}
+      >
         {luksoChains.map((chain) => {
           if (chain.rpc === network.rpc) {
             return null;
@@ -30,10 +50,18 @@ const NetworkSwitch: React.FC = () => {
           return (
             <a
               className="navbar-item"
-              onClick={() => setNetwork(chain)}
+              onClick={() => {
+                setNetwork(chain);
+                setIsDropdownActive(false);
+              }}
               key={chain.rpc}
             >
-              <img src={chain.imgUrl} alt={chain.name} className="mr-1" />
+              <img
+                className="mr-2"
+                src={chain.imgUrl}
+                alt={chain.name}
+                style={{ height: '1em' }}
+              />
               <span>{chain.name}</span>
             </a>
           );
