@@ -38,7 +38,7 @@ const dataKeyList = [
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
   const [addressError, setAddressError] = useState('');
-  const [dataKey, setDataKey] = useState('');
+  const [dataKey, setDataKey] = useState(dataKeyList[0].key);
   const [dataKeyError, setDataKeyError] = useState('');
   const [data, setData] = useState('');
   const [interfaces, setInterfaces] = useState({
@@ -71,8 +71,6 @@ const GetData: NextPage = () => {
     }
 
     const result = await checkInterface(address, web3);
-
-    // Set first menu element as default
     setInterfaces(result);
   };
 
