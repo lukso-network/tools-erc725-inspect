@@ -1,20 +1,46 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Felix Hildebrandt <fhildeb>
  */
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import NetworkSwitch from './components/NetworksSwitch';
+import styles from './NvaBar.module.scss';
 
 const NavBar: React.FC = () => {
+  const [isActive, setIsActive] = useState(false);
   const router = useRouter();
+
+  const toggleNavbar = () => {
+    setIsActive(!isActive);
+  };
 
   return (
     <nav className="navbar is-light sticky">
-      <div className="navbar-menu is-active">
-        <div className="navbar-start">
+      <div className={`navbar-brand ${styles.navbarHeight}`}>
+        <Link href="/">
+          <a className="navbar-item is-hidden-desktop">🛠 ERC725 Tools</a>
+        </Link>
+        <a
+          role="button"
+          className={`navbar-burger burger ${isActive ? 'is-active' : ''}`}
+          aria-label="menu"
+          aria-expanded="false"
+          onClick={toggleNavbar}
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div className={`navbar-menu ${isActive ? 'is-active' : ''}`}>
+        <div className="navbar-start ml-3">
           <Link href="/">
-            <a className="navbar-item">🛠 ERC725 Tools</a>
+            <a className={`navbar-item is-hidden-touch ${styles.navbarHeight}`}>
+              🛠 ERC725 Tools
+            </a>
           </Link>
           <Link href="/inspector">
             <a
@@ -69,22 +95,28 @@ const NavBar: React.FC = () => {
           </div>
           <div className="navbar-item">
             <div className="buttons">
-              <a href="https://docs.lukso.tech/" className="button is-light">
-                DOCS
+              <a
+                href="https://docs.lukso.tech/"
+                className="button"
+                target="_blank"
+                rel="noreferrer"
+              >
+                DOCS ↗
+              </a>
+              <a
+                className="button"
+                href="https://github.com/lukso-network/tools-erc725-inspect"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GITHUB ↗
               </a>
             </div>
           </div>
 
           <div className="navbar-item">
             <div className="field is-grouped">
-              <p className="control">
-                <a
-                  className="button is-primary"
-                  href="https://github.com/lukso-network/tools-erc725-inspect"
-                >
-                  <span>GitHub</span>
-                </a>
-              </p>
+              <p className="control"></p>
             </div>
           </div>
         </div>
