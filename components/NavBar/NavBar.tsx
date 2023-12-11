@@ -1,10 +1,12 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Felix Hildebrandt <fhildeb>
  */
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import NetworkSwitch from './components/NetworksSwitch';
+import styles from './NvaBar.module.scss';
 
 const NavBar: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
@@ -16,7 +18,7 @@ const NavBar: React.FC = () => {
 
   return (
     <nav className="navbar is-light sticky">
-      <div className="navbar-brand navbar-height">
+      <div className={`navbar-brand ${styles.navbarHeight}`}>
         <Link href="/">
           <a className="navbar-item is-hidden-desktop">🛠 ERC725 Tools</a>
         </Link>
@@ -36,7 +38,7 @@ const NavBar: React.FC = () => {
       <div className={`navbar-menu ${isActive ? 'is-active' : ''}`}>
         <div className="navbar-start ml-3">
           <Link href="/">
-            <a className="navbar-item is-hidden-touch navbar-height">
+            <a className={`navbar-item is-hidden-touch ${styles.navbarHeight}`}>
               🛠 ERC725 Tools
             </a>
           </Link>
