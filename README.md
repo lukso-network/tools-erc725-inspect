@@ -1,8 +1,23 @@
-# ERC725 Tools
+# 📝 ERC725 Tools
 
-This repo is a [NextJS](https://nextjs.org/) project which provides debugging tools for ERC725 related smart contracts.
+This project provides a debugging frontend for smart contract based on [ERC725](https://docs.lukso.tech/standards/lsp-background/erc725) standard on the [LUKSO network](https://docs.lukso.tech/networks/mainnet/parameters).
 
-You can check the [LUKSO Docs](https://docs.lukso.tech/) for tutorials and guides.
+If you are a developer, check out the [LUKSO Technical Documentation](https://docs.lukso.tech/).
+
+## 🚀 Deployments
+
+This project is deployed via [GitHub Pages](https://pages.github.com/).
+
+### Production
+
+Branch: `main`
+
+- <https://erc725-inspect.lukso.tech/>
+
+## 🧑🏻‍💻 Getting Started
+
+- `npm install`
+- `npm run dev`
 
 ### License
 
