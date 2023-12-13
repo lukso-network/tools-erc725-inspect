@@ -96,7 +96,7 @@ const Home: NextPage = () => {
                 isExternal: true,
               },
               {
-                title: 'erc-725.js',
+                title: 'erc725.js',
                 description:
                   'The ERC725 library allows seamless interaction of smart contract schemas and contracts to simpify ERC725 integration.',
                 link: 'https://docs.lukso.tech/tools/erc725js/getting-started',
