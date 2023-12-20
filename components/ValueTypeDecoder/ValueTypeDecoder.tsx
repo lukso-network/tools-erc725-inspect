@@ -96,7 +96,10 @@ const ValueTypeDecoder: React.FC<Props> = ({
       }
     }
 
-    if (erc725JSONSchema.valueContent === 'JSONURL') {
+    if (
+      erc725JSONSchema.valueContent === 'VerifiableURI' ||
+      erc725JSONSchema.valueContent === 'JSONURL'
+    ) {
       return (
         <>
           <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
