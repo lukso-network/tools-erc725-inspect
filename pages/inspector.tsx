@@ -4,7 +4,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 
 import '../styles/Inspect.module.css';
@@ -13,10 +13,12 @@ import { checkInterface } from '../utils/web3';
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
+import { NetworkContext, INetwork } from '../contexts/NetworksContext';
 
 import UPOwner from '../components/UPOwner';
 import useWeb3 from '../hooks/useWeb3';
 import { SAMPLE_ADDRESS } from '../constants';
+import { RPC_URL_MAINNET, RPC_URL_TESTNET } from '../globals';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -26,6 +28,7 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [address, setAddress] = useState('');
+  const { network, setNetwork } = useContext(NetworkContext);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
 
@@ -42,10 +45,37 @@ const Home: NextPage = () => {
   const [isEmptyInput, setIsEmptyInput] = useState(true);
 
   useEffect(() => {
+    const TESTNET = 'TESTNET';
+    const MAINNET = 'MAINNET';
+
+    const updateNetworkFromURL = () => {
+      const urlNetworkName = router.query.network?.toString().toUpperCase();
+
+      if (urlNetworkName && urlNetworkName !== network.name) {
+        switch (urlNetworkName) {
+          case TESTNET:
+            setNetwork({
+              name: TESTNET,
+              rpc: RPC_URL_TESTNET,
+              imgUrl: '/lukso.png',
+            });
+            break;
+          case MAINNET:
+            setNetwork({
+              name: MAINNET,
+              rpc: RPC_URL_MAINNET,
+              imgUrl: '/lukso.png',
+            });
+            break;
+        }
+      }
+    };
+
     if (router.query.address) {
-      setAddress(router.query.address as string);
+      setAddress(router.query.address.toString());
+      updateNetworkFromURL();
     }
-  }, [router.query.address]);
+  }, [router.query, network.name, setNetwork]);
 
   useEffect(() => {
     const check = async () => {
@@ -70,7 +100,9 @@ const Home: NextPage = () => {
         return;
       }
 
-      router.push(`/inspector?address=${address}`);
+      router.push(
+        `/inspector?address=${address}&network=${network.name.toLowerCase()}`,
+      );
 
       setIsLoading(true);
       const supportStandards = await checkInterface(address, web3);
