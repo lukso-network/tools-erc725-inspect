@@ -18,7 +18,7 @@ const NetworkSwitch: React.FC = () => {
     setIsDropdownActive(!isDropdownActive);
   };
 
-  const handleNetworkChange = (chain) => {
+  const handleNetworkChange = (chain: INetwork) => {
     setNetwork(chain);
     setIsDropdownActive(false);
 
@@ -30,7 +30,9 @@ const NetworkSwitch: React.FC = () => {
     }
   };
 
-  const handleDropdownBlur = (event) => {
+  const handleDropdownBlur = (
+    event: React.FocusEvent<HTMLDivElement, Element>,
+  ) => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
       setIsDropdownActive(false);
     }

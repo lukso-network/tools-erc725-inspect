@@ -13,7 +13,7 @@ import { checkInterface } from '../utils/web3';
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
-import { NetworkContext, INetwork } from '../contexts/NetworksContext';
+import { NetworkContext } from '../contexts/NetworksContext';
 
 import UPOwner from '../components/UPOwner';
 import useWeb3 from '../hooks/useWeb3';
@@ -44,30 +44,33 @@ const Home: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
 
-  useEffect(() => {
-    const TESTNET = 'TESTNET';
-    const MAINNET = 'MAINNET';
+  // Would prob be better in a const file
+  const TESTNET = 'TESTNET';
+  const MAINNET = 'MAINNET';
 
+  useEffect(() => {
     const updateNetworkFromURL = () => {
       const urlNetworkName = router.query.network?.toString().toUpperCase();
 
-      if (urlNetworkName && urlNetworkName !== network.name) {
-        switch (urlNetworkName) {
-          case TESTNET:
-            setNetwork({
-              name: TESTNET,
-              rpc: RPC_URL_TESTNET,
-              imgUrl: '/lukso.png',
-            });
-            break;
-          case MAINNET:
-            setNetwork({
-              name: MAINNET,
-              rpc: RPC_URL_MAINNET,
-              imgUrl: '/lukso.png',
-            });
-            break;
-        }
+      if (!urlNetworkName || urlNetworkName === network.name) {
+        return;
+      }
+
+      switch (urlNetworkName) {
+        case TESTNET:
+          setNetwork({
+            name: TESTNET,
+            rpc: RPC_URL_TESTNET,
+            imgUrl: '/lukso.png',
+          });
+          break;
+        case MAINNET:
+          setNetwork({
+            name: MAINNET,
+            rpc: RPC_URL_MAINNET,
+            imgUrl: '/lukso.png',
+          });
+          break;
       }
     };
 
