@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { useRouter } from 'next/router';
 import { INetwork, NetworkContext } from '../../../../contexts/NetworksContext';
 
 import { RPC_URL_MAINNET, RPC_URL_TESTNET } from '../../../../globals';
@@ -9,15 +10,41 @@ const luksoChains: INetwork[] = [
 ];
 
 const NetworkSwitch: React.FC = () => {
+  const router = useRouter();
   const { network, setNetwork } = useContext(NetworkContext);
   const [isDropdownActive, setIsDropdownActive] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownActive(!isDropdownActive);
+  };
+
+  const handleNetworkChange = (chain: INetwork) => {
+    setNetwork(chain);
+    setIsDropdownActive(false);
+
+    if (router.pathname === '/inspector' && router.query.address) {
+      const updatedUrl = `/inspector?address=${
+        router.query.address
+      }&network=${chain.name.toLowerCase()}`;
+      router.push(updatedUrl, undefined, { shallow: true });
+    }
+  };
+
+  const handleDropdownBlur = (
+    event: React.FocusEvent<HTMLDivElement, Element>,
+  ) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setIsDropdownActive(false);
+    }
+  };
 
   return (
     <div
       className={`navbar-item has-dropdown ${
         isDropdownActive ? 'is-active' : ''
-      } is-hoverable`}
-      onClick={() => setIsDropdownActive(!isDropdownActive)}
+      }`}
+      onClick={toggleDropdown}
+      onBlur={handleDropdownBlur} // Add onBlur event handler
     >
       <a className="navbar-link is-flex" style={{ alignItems: 'center' }}>
         {network.imgUrl && (
@@ -50,9 +77,9 @@ const NetworkSwitch: React.FC = () => {
           return (
             <a
               className="navbar-item"
-              onClick={() => {
-                setNetwork(chain);
-                setIsDropdownActive(false);
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNetworkChange(chain);
               }}
               key={chain.rpc}
             >
