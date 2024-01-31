@@ -121,7 +121,7 @@ const KeyManagerPermissions: React.FC = () => {
           />
           <h5 className="mb-2 title is-5">Payload Execution</h5>
           <PermissionsBtns
-            permissions={['REENTRANCY']}
+            permissions={['REENTRANCY', 'ERC4337_PERMISSION']}
             color={'is-danger'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
