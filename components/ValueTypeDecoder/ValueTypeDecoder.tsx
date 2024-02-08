@@ -9,6 +9,7 @@ import { LUKSO_IPFS_BASE_URL } from '../../globals';
 import useWeb3 from '../../hooks/useWeb3';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
+import AddressInfos from '../AddressInfos';
 
 interface Props {
   address: string;
@@ -51,6 +52,8 @@ const ValueTypeDecoder: React.FC<Props> = ({
 
           if (erc725JSONSchema.keyType === 'Array') {
             const result = await erc725.getData(erc725JSONSchema.name);
+            console.log(result.value);
+            console.log(erc725JSONSchema.name);
             setDecodedDataArray(result);
           }
         }
@@ -88,7 +91,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
           <ul>
             {decodedDataArray.value.map((item, index) => (
               <li key={index}>
-                <code>{item}</code>
+                <AddressInfos address={item} />
               </li>
             ))}
           </ul>

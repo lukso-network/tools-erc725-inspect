@@ -1,4 +1,6 @@
 import '../styles/globals.scss';
+import 'react-loading-skeleton/dist/skeleton.css';
+
 import type { AppProps } from 'next/app';
 
 import NavBar from '../components/NavBar';
