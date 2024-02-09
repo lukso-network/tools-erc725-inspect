@@ -130,13 +130,13 @@ const DataKeysTable: React.FC<Props> = ({
                 </li>
                 <li>
                   <strong>Decoded value: </strong>
-                  <div className="my-3 mr-3">
+                  <span className="my-3 mr-3">
                     <ValueTypeDecoder
                       address={address}
                       erc725JSONSchema={data.schema}
                       value={data.value}
                     />
-                  </div>
+                  </span>
                 </li>
                 {data.schema.keyType === 'MappingWithGrouping' && (
                   <li>

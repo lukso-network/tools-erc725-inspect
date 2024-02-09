@@ -63,7 +63,10 @@ const ValueTypeDecoder: React.FC<Props> = ({
   }, [address, web3]);
 
   try {
-    if (typeof decodedDataOneKey[0].value === 'string') {
+    if (
+      typeof decodedDataOneKey[0].value === 'string' ||
+      typeof decodedDataOneKey[0].value === 'number'
+    ) {
       if (erc725JSONSchema.valueContent === 'Address') {
         return (
           <>
@@ -74,7 +77,14 @@ const ValueTypeDecoder: React.FC<Props> = ({
         );
       }
 
-      return <code>{value}</code>;
+      return (
+        <>
+          <code>{value}</code>
+          <span className="tag is-medium is-info is-light">
+            {decodedDataOneKey[0].value}
+          </span>
+        </>
+      );
     }
 
     if (
