@@ -89,9 +89,9 @@ const ValueTypeDecoder: React.FC<Props> = ({
       } else {
         return (
           <ul>
-            {decodedDataArray.value.map((item, index) => (
+            {decodedDataArray.value.map((eoaOrContract, index) => (
               <li key={index}>
-                <AddressInfos address={item} />
+                <AddressInfos address={eoaOrContract} />
               </li>
             ))}
           </ul>
