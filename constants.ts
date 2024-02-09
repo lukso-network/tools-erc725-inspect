@@ -21,6 +21,50 @@ export const eip165ABI = [
   },
 ];
 
+export const getDataABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'dataKey',
+        type: 'bytes32',
+      },
+    ],
+    name: 'getData',
+    outputs: [
+      {
+        internalType: 'bytes',
+        name: 'dataValue',
+        type: 'bytes',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
+
+export const getDataBatchABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32[]',
+        name: 'dataKeys',
+        type: 'bytes32[]',
+      },
+    ],
+    name: 'getDataBatch',
+    outputs: [
+      {
+        internalType: 'bytes[]',
+        name: 'dataValues',
+        type: 'bytes[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
+
 // Sample Address Inputs
 export enum SAMPLE_ADDRESS {
   MAINNET_UP = '0x0F4180da178ed1C71398a57ca8Cb177F69591f1f',

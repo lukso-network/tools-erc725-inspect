@@ -3,9 +3,7 @@
  */
 import React, { useState, useContext, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import LSP4ABI from '@lukso/lsp-smart-contracts/artifacts/LSP4DigitalAssetMetadata.json';
-import { INTERFACE_IDS, ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
-import { AbiItem } from 'web3-utils';
+import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 import { NetworkContext } from '../../contexts/NetworksContext';
 import useWeb3 from '../../hooks/useWeb3';
@@ -14,6 +12,7 @@ import {
   LSP1_DELEGATE_ADDRESS,
   UP_RECOVERY_ADDRESSES,
 } from '../../globals';
+import { checkInterface, getData } from '../../utils/web3';
 
 interface Props {
   address: string;
@@ -73,57 +72,49 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
       return;
     }
 
-    setIsLoading(true);
     const bytecode = await web3.eth.getCode(_address);
 
     if (!bytecode || bytecode === '0x') {
       setIsEOA(true);
-      setIsLoading(false);
       return;
     }
 
     setIsEOA(false);
 
-    const assetContract = new web3.eth.Contract(
-      LSP4ABI.abi as AbiItem[],
+    const { isLsp7DigitalAsset, isLsp8IdentifiableDigitalAsset } =
+      await checkInterface(_address, web3);
+
+    setIsLSP7(isLsp7DigitalAsset);
+    setIsLSP8(isLsp8IdentifiableDigitalAsset);
+
+    const nameBytesValue = await getData(
       address,
+      ERC725YDataKeys.LSP4.LSP4TokenName,
+      web3,
     );
 
-    setIsLSP7(
-      await assetContract.methods
-        .supportsInterface(INTERFACE_IDS.LSP7DigitalAsset)
-        .call(),
+    if (nameBytesValue) {
+      setAssetName(web3.utils.toUtf8(nameBytesValue));
+    }
+
+    const symbolBytesValue = await getData(
+      address,
+      ERC725YDataKeys.LSP4.LSP4TokenSymbol,
+      web3,
     );
-    setIsLSP8(
-      await assetContract.methods
-        .supportsInterface(INTERFACE_IDS.LSP8IdentifiableDigitalAsset)
-        .call(),
-    );
 
-    const nameBytesValue = await assetContract.methods
-      .getData(ERC725YDataKeys.LSP4.LSP4TokenName)
-      .call();
-    setAssetName(web3.utils.toUtf8(nameBytesValue));
-
-    const symbolBytesValue = await assetContract.methods
-      .getData(ERC725YDataKeys.LSP4.LSP4TokenSymbol)
-      .call();
-    setAssetSymbol(web3.utils.toUtf8(symbolBytesValue));
-
-    setIsLoading(false);
+    if (symbolBytesValue) {
+      setAssetSymbol(web3.utils.toUtf8(symbolBytesValue));
+    }
   };
 
   useEffect(() => {
     if (!address) return;
     setIsLoading(true);
+
     checkAddressInterface(address)
-      .then(() => {
-        setIsLoading(false);
-        setIsEOA;
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
+      .then(() => setIsLoading(false))
+      .catch(() => setIsLoading(false));
   }, [address, web3]);
 
   const isUPRecovery = recoveryAddresses.includes(address);
