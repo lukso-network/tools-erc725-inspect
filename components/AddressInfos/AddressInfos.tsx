@@ -36,13 +36,13 @@ const AddressTypeBadge: React.FC<BadgeProps> = ({
 }) => {
   let classText = colorClass;
   classText += isLight ? ' is-light' : '';
-  return <span className={`tag ${classText}`}>{text}</span>;
+  return <span className={`tag mr-2 ${classText}`}>{text}</span>;
 };
 
 const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol }) => {
   return (
     <>
-      <div className="tags has-addons" style={{ display: 'inline' }}>
+      <div className="tags has-addons mr-2" style={{ display: 'inline' }}>
         <span className="tag is-info">name:</span>
         <span className="tag is-light">{name}</span>
       </div>

@@ -52,8 +52,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
 
           if (erc725JSONSchema.keyType === 'Array') {
             const result = await erc725.getData(erc725JSONSchema.name);
-            console.log(result.value);
-            console.log(erc725JSONSchema.name);
             setDecodedDataArray(result);
           }
         }
@@ -89,11 +87,14 @@ const ValueTypeDecoder: React.FC<Props> = ({
       } else {
         return (
           <ul>
-            {decodedDataArray.value.map((eoaOrContract, index) => (
-              <li key={index}>
-                <AddressInfos address={eoaOrContract} />
-              </li>
-            ))}
+            {decodedDataArray.value.map(
+              (item, index) =>
+                item && (
+                  <li key={index}>
+                    <AddressInfos address={item.toString()} />
+                  </li>
+                ),
+            )}
           </ul>
         );
       }
@@ -106,27 +107,26 @@ const ValueTypeDecoder: React.FC<Props> = ({
       return (
         <>
           <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
-          <li>
-            <span>
-              URL:
-              <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
-            </span>
-            {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
-              <>
-                <a
-                  className="has-text-link button is-small is-light is-info"
-                  target="_blank"
-                  rel="noreferrer"
-                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
-                    'ipfs://',
-                    '',
-                  )}`}
-                >
-                  Retrieve IPFS File ↗️
-                </a>
-              </>
-            )}
-          </li>
+
+          <span>
+            URL:
+            <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
+          </span>
+          {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
+            <>
+              <a
+                className="has-text-link button is-small is-light is-info"
+                target="_blank"
+                rel="noreferrer"
+                href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
+                  'ipfs://',
+                  '',
+                )}`}
+              >
+                Retrieve IPFS File ↗️
+              </a>
+            </>
+          )}
         </>
       );
     }
