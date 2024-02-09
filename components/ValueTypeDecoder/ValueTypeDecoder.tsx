@@ -79,7 +79,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
 
       return (
         <>
-          <code>{value}</code>
           <span className="tag is-medium is-info is-light">
             {decodedDataOneKey[0].value}
           </span>
