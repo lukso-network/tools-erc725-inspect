@@ -375,7 +375,12 @@ const Home: NextPage = () => {
                 </>
                 {isErc725X && <UPOwner UPAddress={address} />}
                 <h3 className="title is-3">Data Keys</h3>
-                <DataKeysTable address={address} isErc725Y={isErc725Y} />
+                <DataKeysTable
+                  address={address}
+                  isErc725Y={isErc725Y}
+                  isAsset={isLSP7DigitalAsset || isLSP8IdentifiableDigitalAsset}
+                  isLSP8={isLSP8IdentifiableDigitalAsset}
+                />
               </>
             )}
         </div>

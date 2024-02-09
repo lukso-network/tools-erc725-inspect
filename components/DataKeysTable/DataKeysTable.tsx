@@ -4,7 +4,10 @@ import { ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '../AddressButtons';
 import ValueTypeDecoder from '../ValueTypeDecoder';
 
-import Schema from './Schema.json';
+import ProfileSchema from './ProfileSchema.json';
+import AssetSchema from './AssetSchema.json';
+import LSP8Schema from './LSP8Schema.json';
+
 import { SCHEMA_DOCS_LINKS, SchemaName } from './schemas';
 
 import { getDataBatch } from '../../utils/web3';
@@ -14,9 +17,16 @@ import useWeb3 from '../../hooks/useWeb3';
 interface Props {
   address: string;
   isErc725Y: boolean;
+  isAsset: boolean;
+  isLSP8: boolean;
 }
 
-const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
+const DataKeysTable: React.FC<Props> = ({
+  address,
+  isErc725Y,
+  isAsset,
+  isLSP8,
+}) => {
   const [data, setData] = useState<
     {
       key: string;
@@ -41,7 +51,16 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
 
       try {
         if (isErc725Y) {
-          const dataKeys = Schema.map((schema) => schema.key);
+          let schemaToLoad = ProfileSchema;
+
+          if (isAsset) {
+            schemaToLoad = AssetSchema;
+
+            if (isLSP8) {
+              schemaToLoad = schemaToLoad.concat(LSP8Schema);
+            }
+          }
+          const dataKeys = schemaToLoad.map((schema) => schema.key);
 
           const result = await getDataBatch(address, dataKeys, web3);
 
@@ -49,7 +68,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
             dataResult.push({
               key: dataKeys[i],
               value: result[i],
-              schema: Schema[i] as ERC725JSONSchema,
+              schema: schemaToLoad[i] as ERC725JSONSchema,
             });
           });
         }
@@ -61,7 +80,7 @@ const DataKeysTable: React.FC<Props> = ({ address, isErc725Y }) => {
     };
 
     fetch();
-  }, [address, web3, isErc725Y]);
+  }, [address, web3, isErc725Y, isAsset, isLSP8]);
 
   if (!web3) return <p>error: could not load provider</p>;
 
