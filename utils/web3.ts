@@ -1,22 +1,17 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
-
 import Web3 from 'web3';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import { eip165ABI, getDataBatchABI, getDataABI } from '../constants';
 import { AbiItem } from 'web3-utils';
-import { eip165ABI } from '../constants';
 
 export const getDataBatch = async (
   address: string,
   keys: string[],
   web3: Web3,
 ) => {
-  const Contract = new web3.eth.Contract(
-    ERC725Account.abi as AbiItem[],
-    address,
-  );
+  const Contract = new web3.eth.Contract(getDataBatchABI as AbiItem[], address);
 
   let data: string[] = [];
   try {
@@ -33,10 +28,7 @@ export const getData = async (
   key: string,
   web3: Web3,
 ): Promise<string | null> => {
-  const Contract = new web3.eth.Contract(
-    ERC725Account.abi as AbiItem[],
-    address,
-  );
+  const Contract = new web3.eth.Contract(getDataABI as AbiItem[], address);
 
   let data: string | null = null;
   try {

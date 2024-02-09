@@ -9,6 +9,7 @@ import { LUKSO_IPFS_BASE_URL } from '../../globals';
 import useWeb3 from '../../hooks/useWeb3';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
+import AddressInfos from '../AddressInfos';
 
 interface Props {
   address: string;
@@ -86,11 +87,14 @@ const ValueTypeDecoder: React.FC<Props> = ({
       } else {
         return (
           <ul>
-            {decodedDataArray.value.map((item, index) => (
-              <li key={index}>
-                <code>{item}</code>
-              </li>
-            ))}
+            {decodedDataArray.value.map(
+              (item, index) =>
+                item && (
+                  <li key={index}>
+                    <AddressInfos address={item.toString()} />
+                  </li>
+                ),
+            )}
           </ul>
         );
       }
@@ -103,27 +107,26 @@ const ValueTypeDecoder: React.FC<Props> = ({
       return (
         <>
           <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
-          <li>
-            <span>
-              URL:
-              <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
-            </span>
-            {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
-              <>
-                <a
-                  className="has-text-link button is-small is-light is-info"
-                  target="_blank"
-                  rel="noreferrer"
-                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
-                    'ipfs://',
-                    '',
-                  )}`}
-                >
-                  Retrieve IPFS File ↗️
-                </a>
-              </>
-            )}
-          </li>
+
+          <span>
+            URL:
+            <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
+          </span>
+          {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
+            <>
+              <a
+                className="has-text-link button is-small is-light is-info"
+                target="_blank"
+                rel="noreferrer"
+                href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
+                  'ipfs://',
+                  '',
+                )}`}
+              >
+                Retrieve IPFS File ↗️
+              </a>
+            </>
+          )}
         </>
       );
     }
