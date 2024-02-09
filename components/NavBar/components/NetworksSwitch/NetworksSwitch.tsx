@@ -2,11 +2,20 @@ import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { INetwork, NetworkContext } from '../../../../contexts/NetworksContext';
 
-import { RPC_URL_MAINNET, RPC_URL_TESTNET } from '../../../../globals';
+import { RPC_URL } from '../../../../globals';
+import { NetworkName } from '../../../../types/network';
 
 const luksoChains: INetwork[] = [
-  { name: 'MAINNET', rpc: RPC_URL_MAINNET, imgUrl: '/lukso.png' },
-  { name: 'TESTNET', rpc: RPC_URL_TESTNET, imgUrl: '/lukso.png' },
+  {
+    name: NetworkName.MAINNET,
+    rpc: RPC_URL[NetworkName.MAINNET],
+    imgUrl: '/lukso.png',
+  },
+  {
+    name: NetworkName.TESTNET,
+    rpc: RPC_URL[NetworkName.TESTNET],
+    imgUrl: '/lukso.png',
+  },
 ];
 
 const NetworkSwitch: React.FC = () => {

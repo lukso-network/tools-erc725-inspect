@@ -18,7 +18,8 @@ import { NetworkContext } from '../contexts/NetworksContext';
 import UPOwner from '../components/UPOwner';
 import useWeb3 from '../hooks/useWeb3';
 import { SAMPLE_ADDRESS } from '../constants';
-import { RPC_URL_MAINNET, RPC_URL_TESTNET } from '../globals';
+import { RPC_URL } from '../globals';
+import { NetworkName } from '../types/network';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -44,10 +45,6 @@ const Home: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
 
-  // Would prob be better in a const file
-  const TESTNET = 'TESTNET';
-  const MAINNET = 'MAINNET';
-
   useEffect(() => {
     const updateNetworkFromURL = () => {
       const urlNetworkName = router.query.network?.toString().toUpperCase();
@@ -57,17 +54,17 @@ const Home: NextPage = () => {
       }
 
       switch (urlNetworkName) {
-        case TESTNET:
+        case NetworkName.TESTNET:
           setNetwork({
-            name: TESTNET,
-            rpc: RPC_URL_TESTNET,
+            name: NetworkName.TESTNET,
+            rpc: RPC_URL[NetworkName.TESTNET],
             imgUrl: '/lukso.png',
           });
           break;
-        case MAINNET:
+        case NetworkName.MAINNET:
           setNetwork({
-            name: MAINNET,
-            rpc: RPC_URL_MAINNET,
+            name: NetworkName.MAINNET,
+            rpc: RPC_URL[NetworkName.MAINNET],
             imgUrl: '/lukso.png',
           });
           break;

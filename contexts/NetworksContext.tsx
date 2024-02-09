@@ -1,7 +1,8 @@
 import { createContext, useState } from 'react';
-import { RPC_URL_TESTNET } from '../globals';
+import { RPC_URL } from '../globals';
+import { NetworkName } from '../types/network';
 export interface INetwork {
-  name: string;
+  name: NetworkName;
   rpc: string;
   imgUrl?: string;
 }
@@ -12,15 +13,15 @@ export interface INetworksContext {
 }
 
 export const NetworkContext = createContext<INetworksContext>({
-  network: { name: '', rpc: '' },
+  network: { name: NetworkName.MAINNET, rpc: '' },
   setNetwork: () => null,
 });
 
 const NetworksProvider = ({ children }: { children: React.ReactNode }) => {
   const [network, setNetwork] = useState<INetwork>({
     // Default Network
-    name: 'TESTNET',
-    rpc: RPC_URL_TESTNET,
+    name: NetworkName.MAINNET,
+    rpc: RPC_URL[NetworkName.MAINNET],
     imgUrl: '/lukso.png',
   });
 
