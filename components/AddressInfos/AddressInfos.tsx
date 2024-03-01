@@ -9,7 +9,7 @@ import { NetworkContext } from '../../contexts/NetworksContext';
 import useWeb3 from '../../hooks/useWeb3';
 import {
   EXPLORER_BASE_URL,
-  LSP1_DELEGATE_ADDRESS,
+  LSP1_DELEGATE_VERSIONS,
   UP_RECOVERY_ADDRESSES,
 } from '../../globals';
 import { checkInterface, getData } from '../../utils/web3';
@@ -22,6 +22,7 @@ interface BadgeProps {
   text: string;
   isLight: boolean;
   colorClass?: string;
+  contractVersion?: string;
 }
 
 interface AssetProps {
@@ -33,10 +34,23 @@ const AddressTypeBadge: React.FC<BadgeProps> = ({
   text,
   isLight,
   colorClass,
+  contractVersion,
 }) => {
   let classText = colorClass;
   classText += isLight ? ' is-light' : '';
-  return <span className={`tag mr-2 ${classText}`}>{text}</span>;
+
+  const addressSpan = <span className={`tag mr-2 ${classText}`}>{text}</span>;
+
+  if (!contractVersion) {
+    return addressSpan;
+  }
+
+  return (
+    <div className="tags has-addons mr-2" style={{ display: 'inline' }}>
+      {addressSpan}
+      <span className="tag is-dark">{contractVersion}</span>
+    </div>
+  );
 };
 
 const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol }) => {
@@ -118,7 +132,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
   }, [address, web3]);
 
   const isUPRecovery = recoveryAddresses.includes(address);
-  const isLSP1Delegate = address === LSP1_DELEGATE_ADDRESS;
+  const isLSP1Delegate = Object.keys(LSP1_DELEGATE_VERSIONS).includes(address);
 
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
@@ -144,6 +158,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
             text="📢 - LSP1 Delegate"
             colorClass="is-link"
             isLight={false}
+            contractVersion={LSP1_DELEGATE_VERSIONS[address]}
           />
         )}
 
