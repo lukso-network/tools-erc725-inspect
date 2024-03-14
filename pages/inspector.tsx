@@ -8,7 +8,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 
 import '../styles/Inspect.module.css';
-import { checkInterface } from '../utils/web3';
+import { checkInterface, getVersion } from '../utils/web3';
 
 import DataKeysTable from '../components/DataKeysTable';
 import AddressButtons from '../components/AddressButtons';
@@ -44,6 +44,8 @@ const Home: NextPage = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
+
+  const [contractVersion, setContractVersion] = useState('');
 
   useEffect(() => {
     const updateNetworkFromURL = () => {
@@ -105,6 +107,10 @@ const Home: NextPage = () => {
       );
 
       setIsLoading(true);
+
+      const fetchedContractVersion = await getVersion(address, web3);
+      setContractVersion(fetchedContractVersion);
+
       const supportStandards = await checkInterface(address, web3);
 
       setIsErc725X(supportStandards.isErc725X);
@@ -146,6 +152,10 @@ const Home: NextPage = () => {
     if (!isEmptyInput && !isLoading) {
       return (
         <div className="help is-success inspect-result mt-4">
+          <div className="tags has-addons">
+            <span className="tag is-dark">Version</span>
+            <span className="tag is-info">{contractVersion}</span>
+          </div>
           <h3 className="title is-3">Supported Standards</h3>
           <a
             className={`button is-info mr-2 mt-2 ${
@@ -318,6 +328,7 @@ const Home: NextPage = () => {
               </div>
               <div className="columns">
                 <div className="column is-one-half">
+                  <div className="control"></div>
                   {errorMessage && !isEmptyInput ? (
                     <div className="help is-danger">{errorMessage}</div>
                   ) : (

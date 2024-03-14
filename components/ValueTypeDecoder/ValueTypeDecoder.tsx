@@ -64,13 +64,13 @@ const ValueTypeDecoder: React.FC<Props> = ({
     startDecoding();
   }, [address, web3]);
 
-  let badgeContent = decodedDataOneKey[0].value;
-
   try {
     if (
       typeof decodedDataOneKey[0].value === 'string' ||
       typeof decodedDataOneKey[0].value === 'number'
     ) {
+      let badgeContent = decodedDataOneKey[0].value;
+
       if (erc725JSONSchema.valueContent === 'Address') {
         return (
           <>
@@ -124,19 +124,19 @@ const ValueTypeDecoder: React.FC<Props> = ({
     ) {
       return (
         <>
-          <pre>{JSON.stringify(badgeContent, null, 4)}</pre>
+          <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
 
           <span>
             URL:
-            <code className="ml-2">{badgeContent.url}</code>
+            <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
           </span>
-          {badgeContent.url.indexOf('ipfs://') !== -1 && (
+          {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
             <>
               <a
                 className="has-text-link button is-small is-light is-info"
                 target="_blank"
                 rel="noreferrer"
-                href={`${LUKSO_IPFS_BASE_URL}/${badgeContent.url.replace(
+                href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
                   'ipfs://',
                   '',
                 )}`}
