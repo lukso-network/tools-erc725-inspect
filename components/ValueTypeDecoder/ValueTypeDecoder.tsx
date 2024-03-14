@@ -11,6 +11,8 @@ import useWeb3 from '../../hooks/useWeb3';
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
 import AddressInfos from '../AddressInfos';
 
+import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';
+
 interface Props {
   address: string;
   erc725JSONSchema: ERC725JSONSchema;
@@ -62,6 +64,8 @@ const ValueTypeDecoder: React.FC<Props> = ({
     startDecoding();
   }, [address, web3]);
 
+  let badgeContent = decodedDataOneKey[0].value;
+
   try {
     if (
       typeof decodedDataOneKey[0].value === 'string' ||
@@ -72,16 +76,21 @@ const ValueTypeDecoder: React.FC<Props> = ({
           <>
             <code>{value}</code>
             <div className="mt-4"></div>
-            <AddressButtons address={decodedDataOneKey[0].value} />
+            <AddressButtons address={badgeContent} />
           </>
         );
       }
 
+      if (erc725JSONSchema.name == 'LSP4TokenType') {
+        const tokenTypeName = Object.keys(LSP4_TOKEN_TYPES).filter((key) =>
+          LSP4_TOKEN_TYPES[key].toString().includes(badgeContent),
+        );
+        badgeContent += ` - ${tokenTypeName}`;
+      }
+
       return (
         <>
-          <span className="tag is-medium is-info is-light">
-            {decodedDataOneKey[0].value}
-          </span>
+          <span className="tag is-medium is-info is-light">{badgeContent}</span>
         </>
       );
     }
@@ -115,19 +124,19 @@ const ValueTypeDecoder: React.FC<Props> = ({
     ) {
       return (
         <>
-          <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
+          <pre>{JSON.stringify(badgeContent, null, 4)}</pre>
 
           <span>
             URL:
-            <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
+            <code className="ml-2">{badgeContent.url}</code>
           </span>
-          {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
+          {badgeContent.url.indexOf('ipfs://') !== -1 && (
             <>
               <a
                 className="has-text-link button is-small is-light is-info"
                 target="_blank"
                 rel="noreferrer"
-                href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
+                href={`${LUKSO_IPFS_BASE_URL}/${badgeContent.url.replace(
                   'ipfs://',
                   '',
                 )}`}
