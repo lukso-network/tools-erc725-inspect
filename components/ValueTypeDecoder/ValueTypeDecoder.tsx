@@ -11,6 +11,8 @@ import useWeb3 from '../../hooks/useWeb3';
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
 import AddressInfos from '../AddressInfos';
 
+import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';
+
 interface Props {
   address: string;
   erc725JSONSchema: ERC725JSONSchema;
@@ -67,21 +69,28 @@ const ValueTypeDecoder: React.FC<Props> = ({
       typeof decodedDataOneKey[0].value === 'string' ||
       typeof decodedDataOneKey[0].value === 'number'
     ) {
+      let badgeContent = decodedDataOneKey[0].value;
+
       if (erc725JSONSchema.valueContent === 'Address') {
         return (
           <>
             <code>{value}</code>
             <div className="mt-4"></div>
-            <AddressButtons address={decodedDataOneKey[0].value} />
+            <AddressButtons address={badgeContent} />
           </>
         );
       }
 
+      if (erc725JSONSchema.name == 'LSP4TokenType') {
+        const tokenTypeName = Object.keys(LSP4_TOKEN_TYPES).filter((key) =>
+          LSP4_TOKEN_TYPES[key].toString().includes(badgeContent),
+        );
+        badgeContent += ` - ${tokenTypeName}`;
+      }
+
       return (
         <>
-          <span className="tag is-medium is-info is-light">
-            {decodedDataOneKey[0].value}
-          </span>
+          <span className="tag is-medium is-info is-light">{badgeContent}</span>
         </>
       );
     }

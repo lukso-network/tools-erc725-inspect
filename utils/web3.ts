@@ -136,3 +136,41 @@ export const checkInterface = async (address: string, web3: Web3) => {
     isLsp9Vault,
   };
 };
+
+export const getVersion = async (
+  address: string,
+  web3: Web3,
+): Promise<string> => {
+  const Contract = new web3.eth.Contract(
+    [
+      {
+        inputs: [],
+        name: 'VERSION',
+        outputs: [
+          {
+            internalType: 'string',
+            name: '',
+            type: 'string',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ],
+    address,
+  );
+
+  try {
+    const result = await Contract.methods.VERSION().call();
+    if (result == '') {
+      return 'unknown';
+    }
+    return result;
+  } catch (error) {
+    console.warn(
+      'Could not fetch smart contract version for contract at address ',
+      address,
+    );
+    return 'unknown';
+  }
+};
