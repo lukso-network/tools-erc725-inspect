@@ -105,6 +105,9 @@ const ValueTypeDecoder: React.FC<Props> = ({
       } else {
         return (
           <ul>
+            <li style={{ listStyleType: 'none' }}>
+              {decodedDataArray.value.length} elements in Array
+            </li>
             {decodedDataArray.value.map(
               (item, index) =>
                 item && (
