@@ -5,11 +5,13 @@ import { NetworkName } from './types/network';
 export const RPC_URL: Record<NetworkName, string> = {
   [NetworkName.MAINNET]: 'https://rpc.lukso.gateway.fm',
   [NetworkName.TESTNET]: 'https://rpc.testnet.lukso.gateway.fm',
+  [NetworkName.LOCALHOST]: 'http://localhost:8545',
 };
 
 export const EXPLORER_BASE_URL: Record<NetworkName, string> = {
   [NetworkName.MAINNET]: 'https://explorer.execution.mainnet.lukso.network',
   [NetworkName.TESTNET]: 'https://explorer.execution.testnet.lukso.network',
+  [NetworkName.LOCALHOST]: 'http://localhost:3000',
 };
 
 // Data Source
@@ -32,6 +34,7 @@ export const UP_RECOVERY_ADDRESSES: Record<NetworkName, string[]> = {
     '0xb13B12848dbE8dDf87027Fa2c26aBeF0118a5EB7',
     '0x08019bf6606367d4D5f74082634d3eA0692adf93',
   ],
+  [NetworkName.LOCALHOST]: [],
 };
 
 // Mainnet AND Testnet

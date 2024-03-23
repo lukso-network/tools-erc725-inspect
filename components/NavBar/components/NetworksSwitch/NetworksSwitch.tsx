@@ -16,6 +16,11 @@ const luksoChains: INetwork[] = [
     rpc: RPC_URL[NetworkName.TESTNET],
     imgUrl: '/lukso.png',
   },
+  {
+    name: NetworkName.LOCALHOST,
+    rpc: RPC_URL[NetworkName.LOCALHOST],
+    imgUrl: '/lukso.png',
+  },
 ];
 
 const NetworkSwitch: React.FC = () => {

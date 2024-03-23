@@ -70,6 +70,13 @@ const Home: NextPage = () => {
             imgUrl: '/lukso.png',
           });
           break;
+        case NetworkName.LOCALHOST:
+          setNetwork({
+            name: NetworkName.LOCALHOST,
+            rpc: RPC_URL[NetworkName.LOCALHOST],
+            imgUrl: '/lukso.png',
+          });
+          break;
       }
     };
 
