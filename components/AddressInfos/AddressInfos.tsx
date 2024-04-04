@@ -81,6 +81,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
   const [isLSP8, setIsLSP8] = useState(false);
   const [assetName, setAssetName] = useState('');
   const [assetSymbol, setAssetSymbol] = useState('');
+  const [isLSP1GraveForwarder, setIsLSP1GraveForwarder] = useState(false);
 
   const checkAddressInterface = async (_address: string) => {
     if (!web3 || !_address) {
@@ -126,6 +127,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
   useEffect(() => {
     if (!address) return;
     setIsLoading(true);
+    setIsLSP1GraveForwarder(address === LSP1_GRAVE_FORWARDER);
 
     checkAddressInterface(address)
       .then(() => setIsLoading(false))
@@ -134,8 +136,6 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
 
   const isUPRecovery = recoveryAddresses.includes(address);
   const isLSP1Delegate = Object.keys(LSP1_DELEGATE_VERSIONS).includes(address);
-  const isLSP1GraveForwarder = address == LSP1_GRAVE_FORWARDER;
-
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
   const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
