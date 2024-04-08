@@ -10,6 +10,7 @@ import useWeb3 from '../../hooks/useWeb3';
 import {
   EXPLORER_BASE_URL,
   LSP1_DELEGATE_VERSIONS,
+  LSP1_GRAVE_FORWARDER,
   UP_RECOVERY_ADDRESSES,
 } from '../../globals';
 import { checkInterface, getData } from '../../utils/web3';
@@ -80,6 +81,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
   const [isLSP8, setIsLSP8] = useState(false);
   const [assetName, setAssetName] = useState('');
   const [assetSymbol, setAssetSymbol] = useState('');
+  const [isLSP1GraveForwarder, setIsLSP1GraveForwarder] = useState(false);
 
   const checkAddressInterface = async (_address: string) => {
     if (!web3 || !_address) {
@@ -125,6 +127,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
   useEffect(() => {
     if (!address) return;
     setIsLoading(true);
+    setIsLSP1GraveForwarder(address === LSP1_GRAVE_FORWARDER);
 
     checkAddressInterface(address)
       .then(() => setIsLoading(false))
@@ -133,7 +136,6 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
 
   const isUPRecovery = recoveryAddresses.includes(address);
   const isLSP1Delegate = Object.keys(LSP1_DELEGATE_VERSIONS).includes(address);
-
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
   const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
@@ -159,6 +161,15 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
             colorClass="is-link"
             isLight={false}
             contractVersion={LSP1_DELEGATE_VERSIONS[address]}
+          />
+        )}
+
+        {isLSP1GraveForwarder && (
+          <AddressTypeBadge
+            text="👻 - LSP1 Grave Forwarder"
+            colorClass="is-danger"
+            isLight={true}
+            contractVersion="0.14.0"
           />
         )}
 
