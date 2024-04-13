@@ -1,6 +1,7 @@
 {
   "name": "erc725-tools",
   "private": false,
+  "packageManager": "npm",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,7 +17,7 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@erc725/erc725.js": "^0.23.0",
+    "@erc725/erc725.js": "^0.24.2",
     "@lukso/lsp-factory.js": "^3.2.1",
     "@lukso/lsp-smart-contracts": "^0.14.0",
     "i": "^0.3.7",
