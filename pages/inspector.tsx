@@ -391,7 +391,7 @@ const Home: NextPage = () => {
                     </div>
                   </div>
                 </>
-                {isErc725X && <UPOwner UPAddress={address} />}
+                {(isErc725X || isErc725Y) && <UPOwner UPAddress={address} />}
                 <h3 className="title is-3">Data Keys</h3>
                 <DataKeysTable
                   address={address}
