@@ -12,9 +12,10 @@ type Props = {
 };
 
 enum ownerTypeEnum {
-  KeyManager = 'Key Manager',
-  SmartContract = 'Smart Contract',
-  EOA = 'EOA',
+  EOA = '🗝️ EOA',
+  SmartContract = '📄 Smart Contract',
+  ERC725Account = '🆙 ERC725 Account',
+  KeyManager = '🔐 Key Manager',
 }
 
 const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
@@ -23,7 +24,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
 
   const web3 = useWeb3();
 
-  const checkIsKeyManager = async (ownerAddress: string) => {
+  const checkIsKeyManagerOrUP = async (ownerAddress: string) => {
     if (!web3) {
       console.error('Web3 is not initialized');
       return;
@@ -31,21 +32,27 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
 
     const OwnerContract = new web3.eth.Contract(eip165ABI as any, ownerAddress);
 
-    let isKeyManager = false;
     try {
-      isKeyManager = await OwnerContract.methods
-        .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
-        .call();
+      if (
+        await OwnerContract.methods
+          .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
+          .call()
+      ) {
+        return setOwnerType(ownerTypeEnum.KeyManager);
+      }
+      if (
+        await OwnerContract.methods
+          .supportsInterface(INTERFACE_IDS.LSP0ERC725Account)
+          .call()
+      ) {
+        return setOwnerType(ownerTypeEnum.ERC725Account);
+      }
     } catch (err: any) {
       console.warn(err.message);
     }
 
-    // if not key manager then it is a smart contract (could be UP or anything else)
-    if (isKeyManager) {
-      setOwnerType(ownerTypeEnum.KeyManager);
-    } else {
-      setOwnerType(ownerTypeEnum.SmartContract);
-    }
+    // if not key manager or UP then it is a generic smart contract
+    setOwnerType(ownerTypeEnum.SmartContract);
   };
 
   const findOwnerType = async (ownerAddress: string) => {
@@ -60,7 +67,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
         setOwnerType(ownerTypeEnum.EOA);
         return;
       }
-      await checkIsKeyManager(ownerAddress);
+      await checkIsKeyManagerOrUP(ownerAddress);
     } catch (error) {
       console.log(error);
     }
