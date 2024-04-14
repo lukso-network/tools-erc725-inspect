@@ -15,7 +15,7 @@ import AddressButtons from '../components/AddressButtons';
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 import { NetworkContext } from '../contexts/NetworksContext';
 
-import UPOwner from '../components/UPOwner';
+import ContractOwner from '../components/ContractOwner';
 import useWeb3 from '../hooks/useWeb3';
 import { SAMPLE_ADDRESS } from '../constants';
 import { RPC_URL } from '../globals';
@@ -391,7 +391,9 @@ const Home: NextPage = () => {
                     </div>
                   </div>
                 </>
-                {(isErc725X || isErc725Y) && <UPOwner UPAddress={address} />}
+                {(isErc725X || isErc725Y) && (
+                  <ContractOwner contractAddress={address} />
+                )}
                 <h3 className="title is-3">Data Keys</h3>
                 <DataKeysTable
                   address={address}
