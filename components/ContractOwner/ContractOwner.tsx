@@ -8,22 +8,23 @@ import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import AddressButtons from '../AddressButtons';
 
 type Props = {
-  UPAddress: string;
+  contractAddress: string;
 };
 
 enum ownerTypeEnum {
-  KeyManager = 'Key Manager',
-  SmartContract = 'Smart Contract',
-  EOA = 'EOA',
+  EOA = '🗝️ EOA',
+  SmartContract = '📄 Smart Contract',
+  ERC725Account = '🆙 ERC725 Account',
+  KeyManager = '🔐 Key Manager',
 }
 
-const UPOwner: React.FC<Props> = ({ UPAddress }) => {
-  const [UPOwner, setUPowner] = useState('');
+const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
+  const [contractOwner, setContractOwner] = useState('');
   const [ownerType, setOwnerType] = useState<ownerTypeEnum>();
 
   const web3 = useWeb3();
 
-  const checkIsKeyManager = async (ownerAddress: string) => {
+  const checkIsKeyManagerOrUP = async (ownerAddress: string) => {
     if (!web3) {
       console.error('Web3 is not initialized');
       return;
@@ -31,21 +32,27 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
 
     const OwnerContract = new web3.eth.Contract(eip165ABI as any, ownerAddress);
 
-    let isKeyManager = false;
     try {
-      isKeyManager = await OwnerContract.methods
-        .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
-        .call();
+      if (
+        await OwnerContract.methods
+          .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
+          .call()
+      ) {
+        return setOwnerType(ownerTypeEnum.KeyManager);
+      }
+      if (
+        await OwnerContract.methods
+          .supportsInterface(INTERFACE_IDS.LSP0ERC725Account)
+          .call()
+      ) {
+        return setOwnerType(ownerTypeEnum.ERC725Account);
+      }
     } catch (err: any) {
       console.warn(err.message);
     }
 
-    //if not key manager then it is a smart contract (could be UP or anything else)
-    if (isKeyManager) {
-      setOwnerType(ownerTypeEnum.KeyManager);
-    } else {
-      setOwnerType(ownerTypeEnum.SmartContract);
-    }
+    // if not key manager or UP then it is a generic smart contract
+    setOwnerType(ownerTypeEnum.SmartContract);
   };
 
   const findOwnerType = async (ownerAddress: string) => {
@@ -60,19 +67,19 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
         setOwnerType(ownerTypeEnum.EOA);
         return;
       }
-      await checkIsKeyManager(ownerAddress);
+      await checkIsKeyManagerOrUP(ownerAddress);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    if (!web3 || !UPAddress) return;
-    if (!isAddress(UPAddress)) return;
+    if (!web3 || !contractAddress) return;
+    if (!isAddress(contractAddress)) return;
 
     const universalProfile = new web3.eth.Contract(
       ERC725Account.abi as AbiItem[],
-      UPAddress,
+      contractAddress,
     );
 
     const setOwner = async () => {
@@ -81,7 +88,7 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
           .owner()
           .call()
           .then((owner: string) => {
-            setUPowner(owner);
+            setContractOwner(owner);
             findOwnerType(owner);
           });
       } catch (error) {
@@ -90,7 +97,7 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
     };
 
     setOwner();
-  }, [UPAddress, web3]);
+  }, [contractAddress, web3]);
 
   return (
     <div className="columns is-multiline mt-3">
@@ -111,17 +118,17 @@ const UPOwner: React.FC<Props> = ({ UPAddress }) => {
               <span className="tag is-small mb-2 mx-2 is-link is-light">
                 address
               </span>
-              <code>{UPOwner}</code>
+              <code>{contractOwner}</code>
             </li>
             <li>
               <strong>Owner type:</strong> <code>{ownerType}</code>
             </li>
           </ul>
-          <AddressButtons address={UPOwner}></AddressButtons>
+          <AddressButtons address={contractOwner}></AddressButtons>
         </div>
       </div>
     </div>
   );
 };
 
-export default UPOwner;
+export default ContractOwner;
