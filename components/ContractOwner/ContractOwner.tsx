@@ -124,7 +124,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
               <strong>Owner type:</strong> <code>{ownerType}</code>
             </li>
           </ul>
-          <AddressButtons address={ContractOwner}></AddressButtons>
+          <AddressButtons address={contractOwner}></AddressButtons>
         </div>
       </div>
     </div>
