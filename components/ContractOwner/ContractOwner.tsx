@@ -118,7 +118,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
               <span className="tag is-small mb-2 mx-2 is-link is-light">
                 address
               </span>
-              <code>{ContractOwner}</code>
+              <code>{contractOwner}</code>
             </li>
             <li>
               <strong>Owner type:</strong> <code>{ownerType}</code>
