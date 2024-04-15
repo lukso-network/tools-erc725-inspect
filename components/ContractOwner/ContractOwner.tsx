@@ -19,7 +19,7 @@ enum ownerTypeEnum {
 }
 
 const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
-  const [ContractOwner, setContractOwner] = useState('');
+  const [contractOwner, setContractOwner] = useState('');
   const [ownerType, setOwnerType] = useState<ownerTypeEnum>();
 
   const web3 = useWeb3();
