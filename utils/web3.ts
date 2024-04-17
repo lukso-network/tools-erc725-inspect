@@ -57,118 +57,51 @@ export const getData = async (
 };
 
 export const checkInterface = async (address: string, web3: Web3) => {
-  const Contract = new web3.eth.Contract(eip165ABI, address);
-
-  let isErc725X = false;
-  try {
-    isErc725X = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.ERC725X)
-      .call();
-  } catch (err: any) {
-    console.log(err.message);
-  }
-
-  let isErc725Y = false;
-  try {
-    isErc725Y = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.ERC725Y)
-      .call();
-  } catch (err: any) {
-    console.warn(err.message);
-  }
-
-  let isErc1271 = false;
-  try {
-    isErc1271 = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.ERC1271)
-      .call();
-  } catch (err: any) {
-    console.warn(err.message);
-  }
-
-  let isLsp0Erc725Account = false;
-  try {
-    isLsp0Erc725Account = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.LSP0ERC725Account)
-      .call();
-  } catch (err: any) {
-    console.warn(err.message);
-  }
-
-  let isLsp1UniversalReceiver = false;
-  try {
-    isLsp1UniversalReceiver = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.LSP1UniversalReceiver)
-      .call();
-  } catch (err: any) {
-    console.warn(err.message);
-  }
-
-  let isLsp6KeyManager = false;
-  try {
-    isLsp6KeyManager = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
-      .call();
-  } catch (err: any) {
-    console.warn(err.message);
-  }
-
-  let isLsp9Vault = false;
-  try {
-    isLsp9Vault = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.LSP9Vault)
-      .call();
-  } catch (err: any) {
-    console.warn(err.message);
-  }
+  // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
+  const supportsContractInterface = await checkSupportedInterfaces(
+    address,
+    [
+      INTERFACE_IDS.ERC725X,
+      INTERFACE_IDS.ERC725Y,
+      INTERFACE_IDS.ERC1271,
+      INTERFACE_IDS.LSP0ERC725Account,
+      INTERFACE_IDS.LSP1UniversalReceiver,
+      INTERFACE_IDS.LSP6KeyManager,
+      INTERFACE_IDS.LSP9Vault,
+    ],
+    web3,
+  );
 
   // digital assets need to be checked against multiple interface IDs
-  // aggregate 3 x supportsInterface call in a batch for efficiency
-
-  let isLsp7DigitalAsset = false;
-  try {
-    const supportedInterfaces = await checkSupportedInterfaces(
-      address,
-      [
-        INTERFACE_ID_LSP7_PREVIOUS['v0.12.0'],
-        INTERFACE_ID_LSP7_PREVIOUS['v0.14.0'],
-        INTERFACE_ID_LSP7,
-      ],
-      web3,
-    );
-
-    isLsp7DigitalAsset = supportedInterfaces.includes(true);
-  } catch (err: any) {
-    console.warn(err.message);
-  }
-
-  let isLsp8IdentifiableDigitalAsset = false;
-  try {
-    const supportedInterfaces = await checkSupportedInterfaces(
-      address,
-      [
-        INTERFACE_ID_LSP8_PREVIOUS['v0.12.0'],
-        INTERFACE_ID_LSP8_PREVIOUS['v0.14.0'],
-        INTERFACE_ID_LSP8,
-      ],
-      web3,
-    );
-
-    isLsp8IdentifiableDigitalAsset = supportedInterfaces.includes(true);
-  } catch (err: any) {
-    console.warn(err.message);
-  }
+  const supportsAssetInterface = await checkSupportedInterfaces(
+    address,
+    [
+      INTERFACE_ID_LSP7_PREVIOUS['v0.12.0'],
+      INTERFACE_ID_LSP7_PREVIOUS['v0.14.0'],
+      INTERFACE_ID_LSP7,
+      INTERFACE_ID_LSP8_PREVIOUS['v0.12.0'],
+      INTERFACE_ID_LSP8_PREVIOUS['v0.14.0'],
+      INTERFACE_ID_LSP8,
+    ],
+    web3,
+  );
 
   return {
-    isErc725X,
-    isErc725Y,
-    isErc1271,
-    isLsp0Erc725Account,
-    isLsp1UniversalReceiver,
-    isLsp6KeyManager,
-    isLsp7DigitalAsset,
-    isLsp8IdentifiableDigitalAsset,
-    isLsp9Vault,
+    isErc725X: supportsContractInterface[0],
+    isErc725Y: supportsContractInterface[1],
+    isErc1271: supportsContractInterface[2],
+    isLsp0Erc725Account: supportsContractInterface[3],
+    isLsp1UniversalReceiver: supportsContractInterface[4],
+    isLsp6KeyManager: supportsContractInterface[5],
+    isLsp7DigitalAsset:
+      supportsAssetInterface[0] ||
+      supportsAssetInterface[1] ||
+      supportsAssetInterface[2],
+    isLsp8IdentifiableDigitalAsset:
+      supportsAssetInterface[3] ||
+      supportsAssetInterface[4] ||
+      supportsAssetInterface[5],
+    isLsp9Vault: supportsContractInterface[6],
   };
 };
 
