@@ -123,22 +123,38 @@ export const checkInterface = async (address: string, web3: Web3) => {
   }
 
   // digital assets need to be checked against multiple interface IDs
+  // aggregate 3 x supportsInterface call in a batch for efficiency
 
   let isLsp7DigitalAsset = false;
   try {
-    const supportedInterface = await getLSP7SupportedInterface(address, web3);
+    const supportedInterfaces = await checkSupportedInterfaces(
+      address,
+      [
+        INTERFACE_ID_LSP7_PREVIOUS['v0.12.0'],
+        INTERFACE_ID_LSP7_PREVIOUS['v0.14.0'],
+        INTERFACE_ID_LSP7,
+      ],
+      web3,
+    );
 
-    isLsp7DigitalAsset = Object.values(supportedInterface).includes(true);
+    isLsp7DigitalAsset = supportedInterfaces.includes(true);
   } catch (err: any) {
     console.warn(err.message);
   }
 
   let isLsp8IdentifiableDigitalAsset = false;
   try {
-    const supportedInterface = await getLSP8SupportedInterface(address, web3);
+    const supportedInterfaces = await checkSupportedInterfaces(
+      address,
+      [
+        INTERFACE_ID_LSP8_PREVIOUS['v0.12.0'],
+        INTERFACE_ID_LSP8_PREVIOUS['v0.14.0'],
+        INTERFACE_ID_LSP8,
+      ],
+      web3,
+    );
 
-    isLsp8IdentifiableDigitalAsset =
-      Object.values(supportedInterface).includes(true);
+    isLsp8IdentifiableDigitalAsset = supportedInterfaces.includes(true);
   } catch (err: any) {
     console.warn(err.message);
   }
@@ -174,34 +190,27 @@ export const aggregateCalls = async (
   }
 };
 
-async function getLSP7SupportedInterface(assetAddress: string, web3: Web3) {
-  // aggregate 3 x supportsInterface call in a batch for efficiency
+async function checkSupportedInterfaces(
+  assetAddress: string,
+  interfaceIds: string[],
+  web3: Web3,
+): Promise<boolean[]> {
   const eip165Instance = new web3.eth.Contract(eip165ABI);
 
-  const supportsInterfaceCalls: [string, string][] = [
-    [
-      assetAddress,
-      eip165Instance.methods
-        .supportsInterface(INTERFACE_ID_LSP7_PREVIOUS['v0.12.0'])
-        .encodeABI(),
-    ],
-    [
-      assetAddress,
-      eip165Instance.methods
-        .supportsInterface(INTERFACE_ID_LSP7_PREVIOUS['v0.14.0'])
-        .encodeABI(),
-    ],
-    [
-      assetAddress,
-      eip165Instance.methods.supportsInterface(INTERFACE_ID_LSP7).encodeABI(),
-    ],
-  ];
-
+  const supportsInterfaceCalls: [string, string][] = interfaceIds.map(
+    (interfaceId) => {
+      const result: [string, string] = [
+        assetAddress,
+        eip165Instance.methods.supportsInterface(interfaceId).encodeABI(),
+      ];
+      return result;
+    },
+  );
   const response = await aggregateCalls(supportsInterfaceCalls, web3);
 
-  const results = response.map((entry) => {
+  return response.map((entry) => {
     try {
-      return web3.eth.abi.decodeParameter('bool', entry);
+      return web3.eth.abi.decodeParameter('bool', entry) as unknown as boolean;
     } catch (decodingError) {
       console.warn(
         'Could not decode `supportsInterface` return data from aggregate call as `boolean`: ',
@@ -210,56 +219,6 @@ async function getLSP7SupportedInterface(assetAddress: string, web3: Web3) {
       return false;
     }
   });
-
-  return {
-    '0.12.0': results[0],
-    '0.14.0': results[1],
-    latest: results[2],
-  };
-}
-
-async function getLSP8SupportedInterface(assetAddress: string, web3: Web3) {
-  // aggregate 3 x supportsInterface call in a batch for efficiency
-  const eip165Instance = new web3.eth.Contract(eip165ABI);
-
-  const supportsInterfaceCalls: [string, string][] = [
-    [
-      assetAddress,
-      eip165Instance.methods
-        .supportsInterface(INTERFACE_ID_LSP8_PREVIOUS['v0.12.0'])
-        .encodeABI(),
-    ],
-    [
-      assetAddress,
-      eip165Instance.methods
-        .supportsInterface(INTERFACE_ID_LSP8_PREVIOUS['v0.14.0'])
-        .encodeABI(),
-    ],
-    [
-      assetAddress,
-      eip165Instance.methods.supportsInterface(INTERFACE_ID_LSP8).encodeABI(),
-    ],
-  ];
-
-  const response = await aggregateCalls(supportsInterfaceCalls, web3);
-
-  const results = response.map((entry) => {
-    try {
-      return web3.eth.abi.decodeParameter('bool', entry);
-    } catch (decodingError) {
-      console.warn(
-        'Could not decode `supportsInterface` return data from aggregate call as `boolean`: ',
-        decodingError,
-      );
-      return false;
-    }
-  });
-
-  return {
-    '0.12.0': results[0],
-    '0.14.0': results[1],
-    latest: results[2],
-  };
 }
 
 export const getVersion = async (
