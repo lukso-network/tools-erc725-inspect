@@ -3,7 +3,23 @@
  */
 import Web3 from 'web3';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
-import { eip165ABI, getDataBatchABI, getDataABI } from '../constants';
+import {
+  INTERFACE_ID_LSP7,
+  INTERFACE_ID_LSP7_PREVIOUS,
+} from '@lukso/lsp7-contracts';
+
+import {
+  INTERFACE_ID_LSP8_PREVIOUS,
+  INTERFACE_ID_LSP8,
+} from '@lukso/lsp8-contracts';
+import {
+  eip165ABI,
+  getDataBatchABI,
+  getDataABI,
+  VersionABI,
+  MULTICALL_CONTRACT_ADDRESS,
+  aggregateABI,
+} from '../constants';
 import { AbiItem } from 'web3-utils';
 
 export const getDataBatch = async (
@@ -28,7 +44,7 @@ export const getData = async (
   key: string,
   web3: Web3,
 ): Promise<string | null> => {
-  const Contract = new web3.eth.Contract(getDataABI as AbiItem[], address);
+  const Contract = new web3.eth.Contract(getDataABI, address);
 
   let data: string | null = null;
   try {
@@ -41,7 +57,7 @@ export const getData = async (
 };
 
 export const checkInterface = async (address: string, web3: Web3) => {
-  const Contract = new web3.eth.Contract(eip165ABI as any, address);
+  const Contract = new web3.eth.Contract(eip165ABI, address);
 
   let isErc725X = false;
   try {
@@ -97,29 +113,32 @@ export const checkInterface = async (address: string, web3: Web3) => {
     console.warn(err.message);
   }
 
+  let isLsp9Vault = false;
+  try {
+    isLsp9Vault = await Contract.methods
+      .supportsInterface(INTERFACE_IDS.LSP9Vault)
+      .call();
+  } catch (err: any) {
+    console.warn(err.message);
+  }
+
+  // digital assets need to be checked against multiple interface IDs
+
   let isLsp7DigitalAsset = false;
   try {
-    isLsp7DigitalAsset = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.LSP7DigitalAsset)
-      .call();
+    const supportedInterface = await getLSP7SupportedInterface(address, web3);
+
+    isLsp7DigitalAsset = Object.values(supportedInterface).includes(true);
   } catch (err: any) {
     console.warn(err.message);
   }
 
   let isLsp8IdentifiableDigitalAsset = false;
   try {
-    isLsp8IdentifiableDigitalAsset = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.LSP8IdentifiableDigitalAsset)
-      .call();
-  } catch (err: any) {
-    console.warn(err.message);
-  }
+    const supportedInterface = await getLSP8SupportedInterface(address, web3);
 
-  let isLsp9Vault = false;
-  try {
-    isLsp9Vault = await Contract.methods
-      .supportsInterface(INTERFACE_IDS.LSP9Vault)
-      .call();
+    isLsp8IdentifiableDigitalAsset =
+      Object.values(supportedInterface).includes(true);
   } catch (err: any) {
     console.warn(err.message);
   }
@@ -137,28 +156,117 @@ export const checkInterface = async (address: string, web3: Web3) => {
   };
 };
 
+export const aggregateCalls = async (
+  calls: [string, string][],
+  web3: Web3,
+): Promise<string[]> => {
+  try {
+    const multiCallContract = new web3.eth.Contract(
+      aggregateABI,
+      MULTICALL_CONTRACT_ADDRESS,
+    );
+
+    const result = await multiCallContract.methods.aggregate(calls).call();
+    return result.returnData;
+  } catch (error) {
+    console.warn('could not aggregate results: ', error);
+    return ['', ''];
+  }
+};
+
+async function getLSP7SupportedInterface(assetAddress: string, web3: Web3) {
+  // aggregate 3 x supportsInterface call in a batch for efficiency
+  const eip165Instance = new web3.eth.Contract(eip165ABI);
+
+  const supportsInterfaceCalls: [string, string][] = [
+    [
+      assetAddress,
+      eip165Instance.methods
+        .supportsInterface(INTERFACE_ID_LSP7_PREVIOUS['v0.12.0'])
+        .encodeABI(),
+    ],
+    [
+      assetAddress,
+      eip165Instance.methods
+        .supportsInterface(INTERFACE_ID_LSP7_PREVIOUS['v0.14.0'])
+        .encodeABI(),
+    ],
+    [
+      assetAddress,
+      eip165Instance.methods.supportsInterface(INTERFACE_ID_LSP7).encodeABI(),
+    ],
+  ];
+
+  const response = await aggregateCalls(supportsInterfaceCalls, web3);
+
+  const results = response.map((entry) => {
+    try {
+      return web3.eth.abi.decodeParameter('bool', entry);
+    } catch (decodingError) {
+      console.warn(
+        'Could not decode `supportsInterface` return data from aggregate call as `boolean`: ',
+        decodingError,
+      );
+      return false;
+    }
+  });
+
+  return {
+    '0.12.0': results[0],
+    '0.14.0': results[1],
+    latest: results[2],
+  };
+}
+
+async function getLSP8SupportedInterface(assetAddress: string, web3: Web3) {
+  // aggregate 3 x supportsInterface call in a batch for efficiency
+  const eip165Instance = new web3.eth.Contract(eip165ABI);
+
+  const supportsInterfaceCalls: [string, string][] = [
+    [
+      assetAddress,
+      eip165Instance.methods
+        .supportsInterface(INTERFACE_ID_LSP8_PREVIOUS['v0.12.0'])
+        .encodeABI(),
+    ],
+    [
+      assetAddress,
+      eip165Instance.methods
+        .supportsInterface(INTERFACE_ID_LSP8_PREVIOUS['v0.14.0'])
+        .encodeABI(),
+    ],
+    [
+      assetAddress,
+      eip165Instance.methods.supportsInterface(INTERFACE_ID_LSP8).encodeABI(),
+    ],
+  ];
+
+  const response = await aggregateCalls(supportsInterfaceCalls, web3);
+
+  const results = response.map((entry) => {
+    try {
+      return web3.eth.abi.decodeParameter('bool', entry);
+    } catch (decodingError) {
+      console.warn(
+        'Could not decode `supportsInterface` return data from aggregate call as `boolean`: ',
+        decodingError,
+      );
+      return false;
+    }
+  });
+
+  return {
+    '0.12.0': results[0],
+    '0.14.0': results[1],
+    latest: results[2],
+  };
+}
+
 export const getVersion = async (
   address: string,
   web3: Web3,
 ): Promise<string> => {
-  const Contract = new web3.eth.Contract(
-    [
-      {
-        inputs: [],
-        name: 'VERSION',
-        outputs: [
-          {
-            internalType: 'string',
-            name: '',
-            type: 'string',
-          },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-      },
-    ],
-    address,
-  );
+  const Contract = new web3.eth.Contract(VersionABI, address);
 
   try {
     const result = await Contract.methods.VERSION().call();

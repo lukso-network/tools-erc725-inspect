@@ -1,5 +1,7 @@
+import { AbiItem } from 'web3-utils';
+
 // ABI for Interface Detection
-export const eip165ABI = [
+export const eip165ABI: AbiItem[] = [
   {
     inputs: [
       {
@@ -21,7 +23,7 @@ export const eip165ABI = [
   },
 ];
 
-export const getDataABI = [
+export const getDataABI: AbiItem[] = [
   {
     inputs: [
       {
@@ -64,6 +66,65 @@ export const getDataBatchABI = [
     type: 'function',
   },
 ];
+
+export const VersionABI: AbiItem[] = [
+  {
+    inputs: [],
+    name: 'VERSION',
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+];
+
+export const aggregateABI: AbiItem[] = [
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'target',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes',
+            name: 'callData',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct Multicall3.Call[]',
+        name: 'calls',
+        type: 'tuple[]',
+      },
+    ],
+    name: 'aggregate',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'blockNumber',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes[]',
+        name: 'returnData',
+        type: 'bytes[]',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+];
+
+// Deployed at the same address on both Testnet + Mainnet
+export const MULTICALL_CONTRACT_ADDRESS =
+  '0xcA11bde05977b3631167028862bE2a173976CA11';
 
 // Sample Address Inputs
 export enum SAMPLE_ADDRESS {
