@@ -39,9 +39,9 @@ const Lsp2Coder: React.FC = () => {
           <div className="label">Encoded value</div>
           <div className="control">
             <div className="columns">
-              <div className="is-half">
+              <div className="column is-half">
                 <textarea
-                  className="textarea"
+                  className="textarea is-fullwidth"
                   placeholder="hash"
                   value={jsonUrlDecodedValue.verification.data}
                   rows={6}
@@ -56,9 +56,9 @@ const Lsp2Coder: React.FC = () => {
                   }}
                 />
               </div>
-              <div className="is-half">
+              <div className="column is-half">
                 <textarea
-                  className="textarea"
+                  className="textarea is-fullwidth"
                   placeholder="url"
                   value={jsonUrlDecodedValue.url}
                   rows={6}
