@@ -16,6 +16,7 @@ const valueContents = [
   'JSONURL',
   // 'Markdown',
   // 'Literal',
+  'VerifiableURI',
 ];
 
 export default valueContents;
