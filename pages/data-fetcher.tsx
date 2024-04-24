@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
@@ -21,6 +21,7 @@ import useWeb3 from '../hooks/useWeb3';
 
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 import { SAMPLE_ADDRESS } from '../constants';
+import { NetworkContext } from '../contexts/NetworksContext';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -45,6 +46,7 @@ const GetData: NextPage = () => {
     isErc725X: false,
     isErc725Y: false,
   });
+  const { network } = useContext(NetworkContext);
 
   const web3 = useWeb3();
 
@@ -116,6 +118,10 @@ const GetData: NextPage = () => {
       </Head>
       <div className="container">
         <h2 className="title is-2">Data Fetcher</h2>
+        <div className="tags has-addons">
+          <span className="tag is-dark">Network</span>
+          <span className="tag is-warning">{network.name}</span>
+        </div>
         <article className="message is-info">
           <div className="message-body">
             Retrieve the encoded storage of a

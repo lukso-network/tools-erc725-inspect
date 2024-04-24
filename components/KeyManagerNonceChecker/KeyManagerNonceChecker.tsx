@@ -1,9 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
 import useWeb3 from '../../hooks/useWeb3';
+import { NetworkContext } from '../../contexts/NetworksContext';
 
 const KeyManagerNonceChecker: React.FC = () => {
   const web3 = useWeb3();
@@ -12,6 +13,7 @@ const KeyManagerNonceChecker: React.FC = () => {
   const [callerAddress, setCallerAddress] = useState('');
   const [channelId, setChannelId] = useState('');
   const [nonce, setNonce] = useState('');
+  const { network } = useContext(NetworkContext);
 
   const [showNonce, setShowNonce] = useState(false);
   const [error, showError] = useState(false);
@@ -51,6 +53,10 @@ const KeyManagerNonceChecker: React.FC = () => {
   return (
     <div className="container mt-5">
       <h2 className="title is-2">Nonce</h2>
+      <div className="tags has-addons">
+        <span className="tag is-dark">Network</span>
+        <span className="tag is-warning">{network.name}</span>
+      </div>
       <article className="message is-info">
         <div className="message-body">
           Retrieve the nonce of a{' '}

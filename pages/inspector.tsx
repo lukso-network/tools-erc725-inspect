@@ -95,7 +95,7 @@ const Home: NextPage = () => {
       setIsLoading(false);
     };
     check();
-  }, [address, web3, errorMessage]);
+  }, [address, web3, errorMessage, network.name, router]);
 
   const ERC725InspectResult = () => {
     if (
@@ -227,6 +227,10 @@ const Home: NextPage = () => {
       </Head>
       <div className="container">
         <h2 className="title is-2">Inspector</h2>
+        <div className="tags has-addons">
+          <span className="tag is-dark">Network</span>
+          <span className="tag is-warning">{network.name}</span>
+        </div>
         <article className="message is-info">
           <div className="message-body">
             Retrieve and decode all
