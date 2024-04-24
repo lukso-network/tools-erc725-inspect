@@ -39,16 +39,33 @@ export const NetworkContext = createContext<INetworksContext>({
 const NetworksProvider = ({ children }) => {
   const router = useRouter();
 
+  const getNetworkFromLocalStorage = (): INetwork => {
+    if (typeof window !== 'undefined') {
+      const storedNetworkName = localStorage.getItem('erc725InspectNetwork');
+      if (storedNetworkName) {
+        return (
+          luksoChains.find(
+            (network) =>
+              network.name.toLowerCase() === storedNetworkName.toLowerCase(),
+          ) || luksoChains[0]
+        );
+      }
+    }
+    // Return default if nothing is in local storage
+    return luksoChains[0];
+  };
+
   // Get network from URL or switch to default chain
   const getNetworkFromUrlOrDefault = useCallback(() => {
     const networkParam = router.query.network;
     if (typeof networkParam !== 'string') {
-      return luksoChains[0]; // Fallback to default if not a string
+      // Fallback to local storage or default network
+      return getNetworkFromLocalStorage();
     }
     return (
       luksoChains.find(
         (network) => network.name.toLowerCase() === networkParam?.toLowerCase(),
-      ) || luksoChains[0]
+      ) || getNetworkFromLocalStorage()
     );
   }, [router.query.network]);
 
@@ -83,6 +100,13 @@ const NetworksProvider = ({ children }) => {
     getNetworkFromUrlOrDefault,
     updateUrlWithNetwork,
   ]);
+
+  useEffect(() => {
+    // Save to local storage whenever the network changes
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('erc725InspectNetwork', network.name);
+    }
+  }, [network]);
 
   return (
     <NetworkContext.Provider value={{ network, setNetwork }}>
