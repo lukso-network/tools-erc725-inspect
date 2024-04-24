@@ -41,9 +41,9 @@ const NetworksProvider = ({ children }) => {
 
   // Get network from URL or switch to default chain
   const getNetworkFromUrlOrDefault = useCallback(() => {
-    let networkParam = router.query.network;
-    if (Array.isArray(networkParam)) {
-      networkParam = networkParam[0];
+    const networkParam = router.query.network;
+    if (typeof networkParam !== 'string') {
+      return luksoChains[0]; // Fallback to default if not a string
     }
     return (
       luksoChains.find(
