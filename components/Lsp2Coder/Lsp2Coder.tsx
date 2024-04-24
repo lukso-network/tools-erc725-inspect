@@ -1,6 +1,6 @@
 import schemas from './utils/schemas';
 import valueContents from './utils/valueContents';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ERC725 } from '@erc725/erc725.js';
 import errorsDict from './utils/errorsDict';
 
@@ -30,7 +30,9 @@ const Lsp2Coder: React.FC = () => {
   const [decodingError, setDecodingError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const erc725 = new ERC725(schemas);
+  const erc725 = useMemo(() => {
+    return new ERC725(schemas);
+  }, []);
 
   const renderEncoderFields = () => {
     if (valueContent === 'JSONURL') {
@@ -50,7 +52,7 @@ const Lsp2Coder: React.FC = () => {
                       ...jsonUrlDecodedValue,
                       verification: {
                         ...jsonUrlDecodedValue.verification,
-                        method: e.target.value,
+                        data: e.target.value,
                       },
                     });
                   }}
@@ -113,34 +115,37 @@ const Lsp2Coder: React.FC = () => {
     setEncodingError(false);
   };
 
+  const encode = useCallback(
+    (val: string | IJSONURLEncode) => {
+      resetErrors();
+      try {
+        setDecodedValue(val);
+        const encoded = erc725.encodeData([
+          { keyName: valueContent, value: val },
+        ]);
+        encoded.values[0] === '0x'
+          ? setEncodedValue('')
+          : setEncodedValue(encoded.values[0]);
+      } catch (error) {
+        setEncodingError(true);
+        setEncodedValue('');
+      }
+    },
+    [erc725, valueContent],
+  );
+
   useEffect(() => {
     if (jsonUrlDecodedValue.verification.data && jsonUrlDecodedValue.url) {
       encode(jsonUrlDecodedValue);
     }
-  }, [jsonUrlDecodedValue]);
+  }, [jsonUrlDecodedValue, encode]);
 
   useEffect(() => {
     if (encodingError) {
       const message = `${decodedValue} ${errorsDict[valueContent]}`;
       setErrorMessage(message);
     }
-  }, [decodedValue, encodingError]);
-
-  const encode = (val: string | IJSONURLEncode) => {
-    resetErrors();
-    try {
-      setDecodedValue(val);
-      const encoded = erc725.encodeData([
-        { keyName: valueContent, value: val },
-      ]);
-      encoded.values[0] === '0x'
-        ? setEncodedValue('')
-        : setEncodedValue(encoded.values[0]);
-    } catch (error) {
-      setEncodingError(true);
-      setEncodedValue('');
-    }
-  };
+  }, [decodedValue, encodingError, valueContent]);
 
   const decode = (val: string) => {
     resetErrors();
