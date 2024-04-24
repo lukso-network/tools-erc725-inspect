@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ERC725 } from '@erc725/erc725.js';
 import errorsDict from './utils/errorsDict';
 
-interface IJSONURLEncode {
+interface IVerifiableURIEncode {
   verification: {
     method: string;
     data: string;
@@ -16,9 +16,11 @@ interface IJSONURLEncode {
 const Lsp2Coder: React.FC = () => {
   const [valueContent, setValueContent] = useState<string>('String');
   const [encodedValue, setEncodedValue] = useState<string>('');
-  const [decodedValue, setDecodedValue] = useState<string | IJSONURLEncode>('');
-  const [jsonUrlDecodedValue, setJsonUrlDecodedValue] =
-    useState<IJSONURLEncode>({
+  const [decodedValue, setDecodedValue] = useState<
+    string | IVerifiableURIEncode
+  >('');
+  const [verifiableUriDecodedValue, setverifiableUriDecodedValue] =
+    useState<IVerifiableURIEncode>({
       verification: {
         method: '',
         data: '',
@@ -35,7 +37,7 @@ const Lsp2Coder: React.FC = () => {
   }, []);
 
   const renderEncoderFields = () => {
-    if (valueContent === 'JSONURL') {
+    if (valueContent === 'VerifiableURI') {
       return (
         <div className="field mt-2">
           <div className="label">Encoded value</div>
@@ -45,13 +47,13 @@ const Lsp2Coder: React.FC = () => {
                 <textarea
                   className="textarea is-fullwidth"
                   placeholder="hash"
-                  value={jsonUrlDecodedValue.verification.data}
+                  value={verifiableUriDecodedValue.verification.data}
                   rows={6}
                   onChange={(e) => {
-                    setJsonUrlDecodedValue({
-                      ...jsonUrlDecodedValue,
+                    setverifiableUriDecodedValue({
+                      ...verifiableUriDecodedValue,
                       verification: {
-                        ...jsonUrlDecodedValue.verification,
+                        ...verifiableUriDecodedValue.verification,
                         data: e.target.value,
                       },
                     });
@@ -62,11 +64,11 @@ const Lsp2Coder: React.FC = () => {
                 <textarea
                   className="textarea is-fullwidth"
                   placeholder="url"
-                  value={jsonUrlDecodedValue.url}
+                  value={verifiableUriDecodedValue.url}
                   rows={6}
                   onChange={(e) => {
-                    setJsonUrlDecodedValue({
-                      ...jsonUrlDecodedValue,
+                    setverifiableUriDecodedValue({
+                      ...verifiableUriDecodedValue,
                       url: e.target.value,
                     });
                   }}
@@ -116,7 +118,7 @@ const Lsp2Coder: React.FC = () => {
   };
 
   const encode = useCallback(
-    (val: string | IJSONURLEncode) => {
+    (val: string | IVerifiableURIEncode) => {
       resetErrors();
       try {
         setDecodedValue(val);
@@ -135,10 +137,13 @@ const Lsp2Coder: React.FC = () => {
   );
 
   useEffect(() => {
-    if (jsonUrlDecodedValue.verification.data && jsonUrlDecodedValue.url) {
-      encode(jsonUrlDecodedValue);
+    if (
+      verifiableUriDecodedValue.verification.data &&
+      verifiableUriDecodedValue.url
+    ) {
+      encode(verifiableUriDecodedValue);
     }
-  }, [jsonUrlDecodedValue, encode]);
+  }, [verifiableUriDecodedValue, encode]);
 
   useEffect(() => {
     if (encodingError) {
@@ -154,15 +159,15 @@ const Lsp2Coder: React.FC = () => {
       const decoded = erc725.decodeData([
         { keyName: valueContent, value: val },
       ]);
-      valueContent != 'JSONURL'
+      valueContent != 'VerifiableURI'
         ? setDecodedValue(decoded[0].value)
-        : setJsonUrlDecodedValue({
+        : setverifiableUriDecodedValue({
             url: decoded[0].value.url,
             verification: decoded[0].value.verification,
           });
     } catch (error) {
       setDecodedValue('');
-      setJsonUrlDecodedValue({
+      setverifiableUriDecodedValue({
         url: '',
         verification: {
           method: 'keccak256(utf8)',
@@ -177,7 +182,7 @@ const Lsp2Coder: React.FC = () => {
   const resetValues = () => {
     setDecodedValue('');
     setEncodedValue('');
-    setJsonUrlDecodedValue({
+    setverifiableUriDecodedValue({
       url: '',
       verification: {
         method: 'keccak256(utf8)',

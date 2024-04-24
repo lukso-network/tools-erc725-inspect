@@ -3,7 +3,7 @@ const valueContents = [
   'String',
   'Address',
   'Number',
-  // 'BytesN', //will use bytes for the momment
+  // 'BytesN', will use bytes for the momment
   'Bytes',
   'Bytes4',
   'Bytes8',
@@ -13,7 +13,7 @@ const valueContents = [
   'BitArray',
   'URL',
   // 'AssetURL', not used anymore
-  'JSONURL',
+  // 'JSONURL', deprecated
   // 'Markdown',
   // 'Literal',
   'VerifiableURI',
