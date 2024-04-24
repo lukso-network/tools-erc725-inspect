@@ -2,17 +2,15 @@
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Felix Hildebrandt <fhildeb>
  */
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import NetworkSwitch from './components/NetworksSwitch';
 import styles from './NavBar.module.scss';
-import { NetworkContext } from '../../contexts/NetworksContext';
 
 const NavBar: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   const router = useRouter();
-  const { network } = useContext(NetworkContext);
 
   const toggleNavbar = () => {
     setIsActive(!isActive);
@@ -22,10 +20,7 @@ const NavBar: React.FC = () => {
     if (typeof window === 'undefined') {
       return path;
     }
-    // Append URL with network parameter
-    const networkParam = network.name.toLowerCase();
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('network', networkParam);
     // Remove page-specific properties
     urlParams.delete('address');
     return `${path}?${urlParams.toString()}`;

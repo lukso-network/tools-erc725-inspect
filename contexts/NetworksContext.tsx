@@ -85,18 +85,20 @@ const NetworksProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    if (!router.isReady) return;
+    const networkFromUrl = getNetworkFromUrlOrDefault();
+    if (networkFromUrl.name !== network.name) {
+      setNetwork(networkFromUrl);
+    }
 
-    const initializedNetwork = getNetworkFromUrlOrDefault();
-    setNetwork(initializedNetwork);
+    const networkParam = router.query.network;
 
-    // Update the URL with the network parameter if missing
-    if (!router.query.network) {
-      updateUrlWithNetwork(initializedNetwork.name.toLowerCase());
+    if (networkParam === undefined) {
+      // Update the URL with the network parameter if missing
+      updateUrlWithNetwork(network.name.toLowerCase());
     }
   }, [
-    router.isReady,
     router.query.network,
+    network.name,
     getNetworkFromUrlOrDefault,
     updateUrlWithNetwork,
   ]);

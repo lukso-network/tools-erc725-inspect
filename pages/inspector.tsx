@@ -46,6 +46,13 @@ const Home: NextPage = () => {
   const [contractVersion, setContractVersion] = useState('');
 
   useEffect(() => {
+    if (router.query.address) {
+      setAddress(router.query.address.toString());
+      console.log('adresse gefunden');
+    }
+  }, [router.query]);
+
+  useEffect(() => {
     const check = async () => {
       if (!web3) {
         return;
@@ -68,9 +75,11 @@ const Home: NextPage = () => {
         return;
       }
 
-      router.push(
-        `/inspector?address=${address}&network=${network.name.toLowerCase()}`,
-      );
+      if (typeof window !== 'undefined' && router.query.address !== address) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('address', address);
+        router.replace(currentUrl.href, undefined, { shallow: true });
+      }
 
       setIsLoading(true);
 
