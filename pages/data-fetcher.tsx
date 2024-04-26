@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
@@ -22,6 +22,7 @@ import useWeb3 from '../hooks/useWeb3';
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 import { SAMPLE_ADDRESS } from '../constants';
 import { NetworkContext } from '../contexts/NetworksContext';
+import { useRouter } from 'next/router';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -47,12 +48,35 @@ const GetData: NextPage = () => {
     isErc725Y: false,
   });
   const { network } = useContext(NetworkContext);
+  const router = useRouter();
 
   const web3 = useWeb3();
+
+  useEffect(() => {
+    const queryAddress = router.query.address;
+    const queryDataKey = router.query.dataKey;
+
+    if (queryAddress && typeof queryAddress === 'string') {
+      setAddress(queryAddress);
+    }
+    if (queryDataKey && typeof queryDataKey === 'string') {
+      setDataKey(queryDataKey);
+    }
+  }, [router.query]);
+
+  const updateURLParams = (address: string, dataKey: string) => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('address', address);
+    currentUrl.searchParams.set('datakey', dataKey);
+    router.replace(currentUrl.href, undefined, { shallow: true });
+  };
 
   const onContractAddressChange = async (address: string) => {
     setAddress(address);
     setData('');
+
+    updateURLParams(address, dataKey);
+
     if (!isAddress(address) && address.length !== 0) {
       setAddressError('The address is not valid');
       setInterfaces({
@@ -79,6 +103,8 @@ const GetData: NextPage = () => {
   const onDataKeyChange = (dataKey: string) => {
     setDataKey(dataKey);
     setData('');
+
+    updateURLParams(address, dataKey);
 
     if (
       (dataKey.length !== 64 && dataKey.length !== 66) ||
@@ -192,6 +218,7 @@ const GetData: NextPage = () => {
 
               <div className="select mb-4 is-fullwidth">
                 <select
+                  value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                   className="is-fullwidth"
                 >

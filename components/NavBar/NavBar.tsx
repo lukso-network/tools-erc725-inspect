@@ -21,8 +21,16 @@ const NavBar: React.FC = () => {
       return path;
     }
     const urlParams = new URLSearchParams(window.location.search);
-    // Remove page-specific properties
-    urlParams.delete('address');
+
+    const keys = Array.from(urlParams.keys());
+
+    // Remove all page-specific parameters
+    for (const key of keys) {
+      if (key !== 'network') {
+        urlParams.delete(key);
+      }
+    }
+
     return `${path}?${urlParams.toString()}`;
   };
 
