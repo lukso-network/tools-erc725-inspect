@@ -57,9 +57,15 @@ const AddressTypeBadge: React.FC<BadgeProps> = ({
 
 const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol, address }) => {
   const web3 = useWeb3();
+  const [balance, setBalance] = useState<string | undefined>();
 
   useEffect(() => {
-    // ...
+    async function getAssetBalance(address: string) {
+      const assetBalance = await web3?.eth.getBalance(address);
+      setBalance(assetBalance);
+    }
+
+    getAssetBalance(address);
   }, [address, web3]);
 
   return (
@@ -73,8 +79,8 @@ const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol, address }) => {
         <span className="tag is-light">{symbol}</span>
       </div>
       <div className="tags has-addons" style={{ display: 'inline' }}>
-        <span className="tag is-info">balance:</span>
-        <span className="tag is-light">{symbol}</span>
+        <span className="tag is-info">quantity:</span>
+        <span className="tag is-light">{balance}</span>
       </div>
     </>
   );
@@ -100,7 +106,6 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
     }
 
     const bytecode = await web3.eth.getCode(_address);
-
     if (!bytecode || bytecode === '0x') {
       setIsEOA(true);
       return;
