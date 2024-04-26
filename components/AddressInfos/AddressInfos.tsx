@@ -29,6 +29,7 @@ interface BadgeProps {
 interface AssetProps {
   name: string;
   symbol: string;
+  address: string;
 }
 
 const AddressTypeBadge: React.FC<BadgeProps> = ({
@@ -54,7 +55,13 @@ const AddressTypeBadge: React.FC<BadgeProps> = ({
   );
 };
 
-const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol }) => {
+const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol, address }) => {
+  const web3 = useWeb3();
+
+  useEffect(() => {
+    // ...
+  }, [address, web3]);
+
   return (
     <>
       <div className="tags has-addons mr-2" style={{ display: 'inline' }}>
@@ -63,6 +70,10 @@ const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol }) => {
       </div>
       <div className="tags has-addons" style={{ display: 'inline' }}>
         <span className="tag is-info">symbol:</span>
+        <span className="tag is-light">{symbol}</span>
+      </div>
+      <div className="tags has-addons" style={{ display: 'inline' }}>
+        <span className="tag is-info">balance:</span>
         <span className="tag is-light">{symbol}</span>
       </div>
     </>
@@ -180,7 +191,11 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
               colorClass="is-warning"
               isLight={true}
             />
-            <AssetInfosBadge name={assetName} symbol={assetSymbol} />
+            <AssetInfosBadge
+              name={assetName}
+              symbol={assetSymbol}
+              address={address}
+            />
           </>
         )}
 
@@ -191,7 +206,11 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
               colorClass="is-link"
               isLight={true}
             />
-            <AssetInfosBadge name={assetName} symbol={assetSymbol} />
+            <AssetInfosBadge
+              name={assetName}
+              symbol={assetSymbol}
+              address={address}
+            />
           </>
         )}
       </>
