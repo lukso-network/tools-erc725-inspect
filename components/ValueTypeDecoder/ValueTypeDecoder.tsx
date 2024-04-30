@@ -122,7 +122,10 @@ const ValueTypeDecoder: React.FC<Props> = ({
               (item, index) =>
                 item && (
                   <li key={index}>
-                    <AddressInfos address={item.toString()} />
+                    <AddressInfos
+                      assetAddress={item.toString()}
+                      userAddress={address}
+                    />
                   </li>
                 ),
             )}

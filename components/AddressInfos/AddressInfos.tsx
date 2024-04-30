@@ -15,8 +15,12 @@ import {
 } from '../../globals';
 import { checkInterface, getData } from '../../utils/web3';
 
+import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.json';
+import { AbiItem } from 'web3-utils';
+
 interface Props {
-  address: string;
+  assetAddress: string;
+  userAddress?: string;
 }
 
 interface BadgeProps {
@@ -29,7 +33,9 @@ interface BadgeProps {
 interface AssetProps {
   name: string;
   symbol: string;
-  address: string;
+  assetAddress: string;
+  userAddress: string;
+  isLSP7: boolean;
 }
 
 const AddressTypeBadge: React.FC<BadgeProps> = ({
@@ -55,18 +61,38 @@ const AddressTypeBadge: React.FC<BadgeProps> = ({
   );
 };
 
-const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol, address }) => {
+const AssetInfosBadge: React.FC<AssetProps> = ({
+  name,
+  symbol,
+  assetAddress,
+  userAddress,
+  isLSP7,
+}) => {
   const web3 = useWeb3();
   const [balance, setBalance] = useState<string | undefined>();
 
   useEffect(() => {
-    async function getAssetBalance(address: string) {
-      const assetBalance = await web3?.eth.getBalance(address);
-      setBalance(assetBalance);
+    async function getAssetBalance(assetAddress: string) {
+      if (!web3 || !userAddress) return;
+      const tokenContract = new web3.eth.Contract(
+        LSP7Artifact.abi as AbiItem[],
+        assetAddress,
+      );
+
+      const assetBalance = await tokenContract.methods
+        .balanceOf(userAddress)
+        .call();
+
+      // balance is returned in Wei with 1e18 decimals. Format to ether/LYX unit for LSP7 fungible tokens
+      const formattedBalance = isLSP7
+        ? parseFloat(web3.utils.fromWei(assetBalance, 'ether')).toFixed(2)
+        : assetBalance;
+
+      setBalance(formattedBalance);
     }
 
-    getAssetBalance(address);
-  }, [address, web3]);
+    getAssetBalance(assetAddress);
+  }, [assetAddress, web3, userAddress]);
 
   return (
     <>
@@ -79,14 +105,14 @@ const AssetInfosBadge: React.FC<AssetProps> = ({ name, symbol, address }) => {
         <span className="tag is-light">{symbol}</span>
       </div>
       <div className="tags has-addons" style={{ display: 'inline' }}>
-        <span className="tag is-info">quantity:</span>
+        <span className="tag is-info">balance:</span>
         <span className="tag is-light">{balance}</span>
       </div>
     </>
   );
 };
 
-const AddressInfos: React.FC<Props> = ({ address }) => {
+const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
   const web3 = useWeb3();
   const { network } = useContext(NetworkContext);
 
@@ -120,7 +146,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
     setIsLSP8(isLsp8IdentifiableDigitalAsset);
 
     const nameBytesValue = await getData(
-      address,
+      assetAddress,
       ERC725YDataKeys.LSP4.LSP4TokenName,
       web3,
     );
@@ -130,7 +156,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
     }
 
     const symbolBytesValue = await getData(
-      address,
+      assetAddress,
       ERC725YDataKeys.LSP4.LSP4TokenSymbol,
       web3,
     );
@@ -141,20 +167,24 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
   };
 
   useEffect(() => {
-    if (!address) return;
+    if (!assetAddress) return;
     setIsLoading(true);
-    setIsLSP1GraveForwarder(address === LSP1_GRAVE_FORWARDER);
+    setIsLSP1GraveForwarder(assetAddress === LSP1_GRAVE_FORWARDER);
 
-    checkAddressInterface(address)
+    checkAddressInterface(assetAddress)
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
-  }, [address, web3]);
+  }, [assetAddress, web3]);
 
-  const isUPRecovery = recoveryAddresses.includes(address);
-  const isLSP1Delegate = Object.keys(LSP1_DELEGATE_VERSIONS).includes(address);
+  const isUPRecovery = recoveryAddresses.includes(assetAddress);
+  const isLSP1Delegate = Object.keys(LSP1_DELEGATE_VERSIONS).includes(
+    assetAddress,
+  );
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
-  const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
+  const explorerLink = `${
+    EXPLORER_BASE_URL[network.name]
+  }/assetAddress/${assetAddress}`;
 
   const renderTags = () => {
     if (isLoading) {
@@ -176,7 +206,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
             text="📢 - LSP1 Delegate"
             colorClass="is-link"
             isLight={false}
-            contractVersion={LSP1_DELEGATE_VERSIONS[address]}
+            contractVersion={LSP1_DELEGATE_VERSIONS[assetAddress]}
           />
         )}
 
@@ -199,7 +229,9 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
             <AssetInfosBadge
               name={assetName}
               symbol={assetSymbol}
-              address={address}
+              assetAddress={assetAddress}
+              userAddress={userAddress}
+              isLSP7={isLSP7}
             />
           </>
         )}
@@ -214,7 +246,9 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
             <AssetInfosBadge
               name={assetName}
               symbol={assetSymbol}
-              address={address}
+              assetAddress={assetAddress}
+              userAddress={userAddress}
+              isLSP7={isLSP7}
             />
           </>
         )}
@@ -226,7 +260,7 @@ const AddressInfos: React.FC<Props> = ({ address }) => {
     <div>
       <code className="mr-2">
         <a target="_blank" rel="noreferrer" href={explorerLink}>
-          {address}
+          {assetAddress}
         </a>
       </code>
       <AddressTypeBadge text={addressTypeText} isLight={true} />
