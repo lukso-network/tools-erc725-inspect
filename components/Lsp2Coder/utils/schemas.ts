@@ -93,11 +93,11 @@ const schemas: ERC725JSONSchema[] = [
     valueContent: 'URL',
   },
   {
-    name: 'JSONURL',
-    key: '0x2782700556cb782590d66cc4e1a7158dd2ac8459c70d8bcc62ef1009246381f1',
+    name: 'VerifiableURI',
+    key: '0xf151b34e13f85596eba0554fc00d3919b0052a6522221c372ebc9ed85e4ca3e9',
     keyType: 'Singleton',
     valueType: 'bytes',
-    valueContent: 'JSONURL',
+    valueContent: 'VerifiableURI',
   },
   {
     name: 'Boolean',
