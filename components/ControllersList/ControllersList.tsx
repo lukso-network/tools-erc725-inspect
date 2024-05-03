@@ -55,7 +55,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                 <div className="columns">
                   <div className="column">
                     <p>Controller Infos:</p>
-                    <AddressInfos address={item.toString()} />
+                    <AddressInfos assetAddress={item.toString()} />
                   </div>
                   <div className="column">
                     <p>Permissions:</p>
