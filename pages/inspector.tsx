@@ -48,7 +48,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (router.query.address) {
       setAddress(router.query.address.toString());
-      console.log('adresse gefunden');
     }
   }, [router.query]);
 
