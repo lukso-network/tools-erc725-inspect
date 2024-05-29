@@ -15,6 +15,8 @@ import SampleAddressInput from '../components/SampleAddressInput';
 import useWeb3 from '../hooks/useWeb3';
 import { checkInterface, getDataBatch } from '../utils/web3';
 import { isAddress, keccak256, stripHexPrefix } from 'web3-utils';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { isProfileMetadata } = require('@lukso/lsp-utils');
 
 enum Status {
