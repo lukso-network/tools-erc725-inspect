@@ -69,6 +69,15 @@ const NavBar: React.FC = () => {
               🔎 Inspector
             </a>
           </Link>
+          <Link href={createLink('/lsp-checker')}>
+            <a
+              className={`navbar-item ${
+                router.pathname === '/lsp-checker' && 'has-text-link'
+              }`}
+            >
+              ✅ LSP Checker
+            </a>
+          </Link>
           <Link href={createLink('/data-fetcher')}>
             <a
               className={`navbar-item ${

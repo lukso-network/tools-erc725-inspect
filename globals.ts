@@ -3,8 +3,8 @@
 import { NetworkName } from './types/network';
 
 export const RPC_URL: Record<NetworkName, string> = {
-  [NetworkName.MAINNET]: 'https://rpc.lukso.gateway.fm',
-  [NetworkName.TESTNET]: 'https://rpc.testnet.lukso.gateway.fm',
+  [NetworkName.MAINNET]: 'https://rpc1.mainnet.lukso.dev',
+  [NetworkName.TESTNET]: 'https://rpc.testnet.lukso.network',
   [NetworkName.LOCALHOST]: 'http://localhost:8545',
 };
 

@@ -17,9 +17,10 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@erc725/erc725.js": "^0.24.2",
+    "@erc725/erc725.js": "^0.27.0",
     "@lukso/lsp-factory.js": "^3.2.1",
     "@lukso/lsp-smart-contracts": "^0.15.0",
+    "@lukso/lsp-utils": "^0.2.0",
     "i": "^0.3.7",
     "next": "^12.1.6",
     "npm": "^9.6.0",

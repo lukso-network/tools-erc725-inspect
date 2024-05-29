@@ -63,12 +63,13 @@ const ValueTypeDecoder: React.FC<Props> = ({
       }
     };
     startDecoding();
-  }, [address, web3]);
+  }, [address, web3, erc725JSONSchema, value]);
 
   try {
     if (
-      typeof decodedDataOneKey[0].value === 'string' ||
-      typeof decodedDataOneKey[0].value === 'number'
+      decodedDataOneKey[0].name.endsWith('[]') &&
+      (typeof decodedDataOneKey[0].value === 'string' ||
+        typeof decodedDataOneKey[0].value === 'number')
     ) {
       let badgeContent = decodedDataOneKey[0].value;
 
@@ -96,6 +97,8 @@ const ValueTypeDecoder: React.FC<Props> = ({
       );
     }
 
+    console.log('decodedDataArray', decodedDataArray);
+
     if (
       decodedDataArray !== undefined &&
       Array.isArray(decodedDataArray.value) &&
@@ -122,7 +125,10 @@ const ValueTypeDecoder: React.FC<Props> = ({
               (item, index) =>
                 item && (
                   <li key={index}>
-                    <AddressInfos address={item.toString()} />
+                    <AddressInfos
+                      assetAddress={item.toString()}
+                      userAddress={address}
+                    />
                   </li>
                 ),
             )}

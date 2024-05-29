@@ -38,6 +38,13 @@ const Home: NextPage = () => {
                 isExternal: false,
               },
               {
+                title: '✅ LSP Checker',
+                description:
+                  'Check that your 🆙, Token or NFT is compliant with the LSP Standards.',
+                link: '/lsp-checker',
+                isExternal: false,
+              },
+              {
                 title: '💽 Data Fetcher',
                 description:
                   'Retrieve the contents of the smart contract data keys.',

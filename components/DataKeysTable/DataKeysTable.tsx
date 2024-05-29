@@ -68,7 +68,7 @@ const DataKeysTable: React.FC<Props> = ({
             dataResult.push({
               key: dataKeys[i],
               value: result[i],
-              schema: schemaToLoad[i] as ERC725JSONSchema,
+              schema: schemaToLoad[i],
             });
           });
         }
