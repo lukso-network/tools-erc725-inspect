@@ -12,9 +12,18 @@ interface Props {
 }
 
 const ControllersList: React.FC<Props> = ({ address, controllers }) => {
-  const [controllersPermissions, setControllersPermissions] = useState<{
-    [key: string]: any;
-  }>([]);
+  const [controllersPermissions, setControllersPermissions] = useState<
+    {
+      bitArray: string;
+      permissions: { [key: string]: any };
+    }[]
+  >([
+    {
+      bitArray:
+        '0x0000000000000000000000000000000000000000000000000000000000000000',
+      permissions: [],
+    },
+  ]);
 
   const web3 = useWeb3();
 
@@ -33,9 +42,12 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
 
           const result = await getDataBatch(address, permissionsDataKeys, web3);
 
-          const decodedPermissions = result.map((value) =>
-            ERC725.decodePermissions(value),
-          );
+          const decodedPermissions = result.map((value) => {
+            return {
+              bitArray: value,
+              permissions: ERC725.decodePermissions(value),
+            };
+          });
           setControllersPermissions(decodedPermissions);
         }
       } catch (error: any) {
@@ -51,7 +63,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
         {controllers.length} controllers found
       </p>
 
-      {controllers.find((controller) => controller === null) !== undefined && (
+      {controllers.find((controller) => controller === null) && (
         <div className="notification is-warning is-light mt-3">
           <p>
             ⚠️ It looks like at some indexes inside your{' '}
@@ -104,24 +116,38 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                   </p>
                 </td>
                 <td style={{ width: '50%' }}>
-                  <p>Controller Infos:</p>
-                  {controller ? (
-                    <AddressInfos assetAddress={controller.toString()} />
-                  ) : (
-                    <i>No controller found at index {index}</i>
-                  )}
-
-                  {controller && <p>Permissions:</p>}
-                  {controllersPermissions[index] &&
-                    Object.entries(controllersPermissions[index]).map(
-                      ([permission, isSet]) =>
-                        isSet &&
-                        permission !== '0x' && (
-                          <span key={permission} className="tag is-primary m-1">
-                            {permission}
-                          </span>
-                        ),
+                  <div className="mb-3">
+                    <p>Controller Infos:</p>
+                    {controller ? (
+                      <AddressInfos assetAddress={controller.toString()} />
+                    ) : (
+                      <i>No controller found at index {index}</i>
                     )}
+                  </div>
+
+                  <div className="mb-3">
+                    {controller && <p>Permissions:</p>}
+                    {controllersPermissions[index] && (
+                      <p>
+                        <code>{controllersPermissions[index].bitArray}</code>
+                      </p>
+                    )}
+                    {controllersPermissions[index] &&
+                      Object.entries(
+                        controllersPermissions[index].permissions,
+                      ).map(
+                        ([permission, isSet]) =>
+                          isSet &&
+                          permission !== '0x' && (
+                            <span
+                              key={permission}
+                              className="tag is-primary m-1"
+                            >
+                              {permission}
+                            </span>
+                          ),
+                      )}
+                  </div>
                 </td>
               </tr>
             ))}
