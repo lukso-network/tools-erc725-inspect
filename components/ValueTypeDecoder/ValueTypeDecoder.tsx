@@ -67,7 +67,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
 
   try {
     if (
-      decodedDataOneKey[0].name.endsWith('[]') &&
+      !decodedDataOneKey[0].name.endsWith('[]') &&
       (typeof decodedDataOneKey[0].value === 'string' ||
         typeof decodedDataOneKey[0].value === 'number')
     ) {
@@ -96,8 +96,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
         </>
       );
     }
-
-    console.log('decodedDataArray', decodedDataArray);
 
     if (
       decodedDataArray !== undefined &&
