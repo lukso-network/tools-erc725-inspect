@@ -6,9 +6,30 @@ import {
 } from '../../interfaces/transaction';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import styles from './Decode.module.scss';
+
 interface Props {
   web3: Web3;
 }
+
+interface MethodProps {
+  text: string;
+  link: string;
+  focus: boolean;
+}
+
+const Method: React.FC<MethodProps> = ({ focus, link, text }) => (
+  <span className={`tag is-medium mb-2 mr-2 ${focus ? 'is-primary' : ''}`}>
+    {text}
+    <a
+      href={link}
+      target="_blank"
+      rel="noreferrer"
+      className="ml-2 has-text-info-dark"
+    >
+      ↗
+    </a>
+  </span>
+);
 
 const Decode: React.FC<Props> = ({ web3 }) => {
   const [abiError, setABIError] = useState({ isError: false, message: '' });
@@ -97,70 +118,26 @@ const Decode: React.FC<Props> = ({ web3 }) => {
         </div>
 
         <div className="mb-2">
-          <span
-            className={`tag is-medium mb-2 mr-2 ${
-              transactionType === TRANSACTION_TYPES.SET_DATA ? 'is-primary' : ''
-            }`}
-          >
-            setData
-            <a
-              href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
-              target="_blank"
-              rel="noreferrer"
-              className="ml-2 has-text-info-dark"
-            >
-              ↗
-            </a>
-          </span>
-          <span
-            className={`tag is-medium mb-2 mr-2 ${
-              transactionType === TRANSACTION_TYPES.SET_DATA_BATCH
-                ? 'is-primary'
-                : ''
-            }`}
-          >
-            setDataBatch
-            <a
-              href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
-              target="_blank"
-              rel="noreferrer"
-              className="ml-2 has-text-info-dark"
-            >
-              ↗
-            </a>
-          </span>
-          <span
-            className={`tag is-medium mb-2 mr-2 ${
-              transactionType === TRANSACTION_TYPES.EXECUTE ? 'is-primary' : ''
-            }`}
-          >
-            execute
-            <a
-              href="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
-              target="_blank"
-              rel="noreferrer"
-              className="ml-2 has-text-info-dark"
-            >
-              ↗
-            </a>
-          </span>
-          <span
-            className={`tag is-medium mb-2 mr-2 ${
-              transactionType === TRANSACTION_TYPES.TRANSFER_OWNERSHIP
-                ? 'is-primary'
-                : ''
-            }`}
-          >
-            transferOwnership
-            <a
-              href="https://eips.ethereum.org/EIPS/eip-173"
-              target="_blank"
-              rel="noreferrer"
-              className="ml-2 has-text-info-dark"
-            >
-              ↗
-            </a>
-          </span>
+          <Method
+            text="setData"
+            focus={transactionType == TRANSACTION_TYPES.SET_DATA}
+            link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
+          />
+          <Method
+            text="setDataBatch"
+            focus={transactionType == TRANSACTION_TYPES.SET_DATA_BATCH}
+            link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
+          />
+          <Method
+            text="execute"
+            focus={transactionType == TRANSACTION_TYPES.EXECUTE}
+            link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
+          />
+          <Method
+            text="transferOwnership"
+            focus={transactionType == TRANSACTION_TYPES.TRANSFER_OWNERSHIP}
+            link="https://eips.ethereum.org/EIPS/eip-173"
+          />
         </div>
 
         <div className="mb-2">
