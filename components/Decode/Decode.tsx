@@ -109,9 +109,20 @@ const Decode: React.FC<Props> = ({ web3 }) => {
       case TRANSACTION_SELECTORS.EXECUTE_BATCH: {
         setTransactionType(TRANSACTION_TYPES.EXECUTE_BATCH);
       }
+      case TRANSACTION_SELECTORS.EXECUTE_BATCH: {
+        setTransactionType(TRANSACTION_TYPES.EXECUTE_BATCH);
+      }
       case TRANSACTION_SELECTORS.TRANSFER_OWNERSHIP: {
         setTransactionType(TRANSACTION_TYPES.TRANSFER_OWNERSHIP);
         return decodeTransferOwnership(payload, web3);
+      }
+      case TRANSACTION_SELECTORS.ACCEPT_OWNERSHIP: {
+        setTransactionType(TRANSACTION_TYPES.ACCEPT_OWNERSHIP);
+        return decodeAcceptOwnership();
+      }
+      case TRANSACTION_SELECTORS.RENOUNCE_OWNERSHIP: {
+        setTransactionType(TRANSACTION_TYPES.RENOUNCE_OWNERSHIP);
+        return decodeRenounceOwnership();
       }
       case TRANSACTION_SELECTORS.ACCEPT_OWNERSHIP: {
         setTransactionType(TRANSACTION_TYPES.ACCEPT_OWNERSHIP);
@@ -148,70 +159,26 @@ const Decode: React.FC<Props> = ({ web3 }) => {
       </div>
 
       <div className="mb-2">
-        <span
-          className={`tag is-medium mb-2 mr-2 ${
-            transactionType === TRANSACTION_TYPES.SET_DATA ? 'is-primary' : ''
-          }`}
-        >
-          setData
-          <a
-            href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
-            target="_blank"
-            rel="noreferrer"
-            className="ml-2 has-text-info-dark"
-          >
-            ↗
-          </a>
-        </span>
-        <span
-          className={`tag is-medium mb-2 mr-2 ${
-            transactionType === TRANSACTION_TYPES.SET_DATA_BATCH
-              ? 'is-primary'
-              : ''
-          }`}
-        >
-          setDataBatch
-          <a
-            href="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
-            target="_blank"
-            rel="noreferrer"
-            className="ml-2 has-text-info-dark"
-          >
-            ↗
-          </a>
-        </span>
-        <span
-          className={`tag is-medium mb-2 mr-2 ${
-            transactionType === TRANSACTION_TYPES.EXECUTE ? 'is-primary' : ''
-          }`}
-        >
-          execute
-          <a
-            href="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
-            target="_blank"
-            rel="noreferrer"
-            className="ml-2 has-text-info-dark"
-          >
-            ↗
-          </a>
-        </span>
-        <span
-          className={`tag is-medium mb-2 mr-2 ${
-            transactionType === TRANSACTION_TYPES.TRANSFER_OWNERSHIP
-              ? 'is-primary'
-              : ''
-          }`}
-        >
-          transferOwnership
-          <a
-            href="https://eips.ethereum.org/EIPS/eip-173"
-            target="_blank"
-            rel="noreferrer"
-            className="ml-2 has-text-info-dark"
-          >
-            ↗
-          </a>
-        </span>
+        <Method
+          text="setData"
+          focus={transactionType == TRANSACTION_TYPES.SET_DATA}
+          link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
+        />
+        <Method
+          text="setDataBatch"
+          focus={transactionType == TRANSACTION_TYPES.SET_DATA_BATCH}
+          link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
+        />
+        <Method
+          text="execute"
+          focus={transactionType == TRANSACTION_TYPES.EXECUTE}
+          link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
+        />
+        <Method
+          text="transferOwnership"
+          focus={transactionType == TRANSACTION_TYPES.TRANSFER_OWNERSHIP}
+          link="https://eips.ethereum.org/EIPS/eip-173"
+        />
       </div>
 
       <div className="mb-2">
@@ -261,10 +228,12 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
 
 const decodeAcceptOwnership = () => {
   return (
-    <div className="mb-2">
-      <div className="notification is-danger m-2">
-        This payload is for the function <code>acceptOwnership()</code>. The
-        caller address will become the contract <code>owner()</code>
+    <div>
+      <div className="mb-2">
+        <div className="notification is-danger m-2">
+          This payload is for the function <code>acceptOwnership()</code>. The
+          caller address will become the contract <code>owner()</code>
+        </div>
       </div>
     </div>
   );
@@ -272,9 +241,11 @@ const decodeAcceptOwnership = () => {
 
 const decodeRenounceOwnership = () => {
   return (
-    <div className="mb-2">
-      <div className="notification is-danger m-2">
-        This payload is for the function <code>renouceOwnership()</code>.
+    <div>
+      <div className="mb-2">
+        <div className="notification is-danger m-2">
+          This payload is for the function <code>renouceOwnership()</code>.
+        </div>
       </div>
     </div>
   );
