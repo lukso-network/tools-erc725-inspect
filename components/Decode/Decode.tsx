@@ -86,9 +86,20 @@ const Decode: React.FC<Props> = ({ web3 }) => {
         setTransactionType(TRANSACTION_TYPES.EXECUTE);
         return decodeExecute(payload, web3);
       }
+      case TRANSACTION_SELECTORS.EXECUTE_BATCH: {
+        setTransactionType(TRANSACTION_TYPES.EXECUTE_BATCH);
+      }
       case TRANSACTION_SELECTORS.TRANSFER_OWNERSHIP: {
         setTransactionType(TRANSACTION_TYPES.TRANSFER_OWNERSHIP);
         return decodeTransferOwnership(payload, web3);
+      }
+      case TRANSACTION_SELECTORS.ACCEPT_OWNERSHIP: {
+        setTransactionType(TRANSACTION_TYPES.ACCEPT_OWNERSHIP);
+        return decodeAcceptOwnership();
+      }
+      case TRANSACTION_SELECTORS.RENOUNCE_OWNERSHIP: {
+        setTransactionType(TRANSACTION_TYPES.RENOUNCE_OWNERSHIP);
+        return decodeRenounceOwnership();
       }
     }
 
@@ -134,9 +145,24 @@ const Decode: React.FC<Props> = ({ web3 }) => {
             link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
           />
           <Method
+            text="executeBatch"
+            focus={transactionType == TRANSACTION_TYPES.EXECUTE}
+            link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
+          />
+          <Method
             text="transferOwnership"
             focus={transactionType == TRANSACTION_TYPES.TRANSFER_OWNERSHIP}
             link="https://eips.ethereum.org/EIPS/eip-173"
+          />
+          <Method
+            text="acceptOwnership"
+            focus={transactionType == TRANSACTION_TYPES.ACCEPT_OWNERSHIP}
+            link="#"
+          />
+          <Method
+            text="renounceOwnership"
+            focus={transactionType == TRANSACTION_TYPES.RENOUNCE_OWNERSHIP}
+            link="#"
           />
         </div>
 
@@ -184,6 +210,31 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
       </div>
     );
   }
+};
+
+const decodeAcceptOwnership = () => {
+  return (
+    <div>
+      <div className="mb-2">
+        <div className="notification is-danger m-2">
+          This payload is for the function <code>acceptOwnership()</code>. The
+          caller address will become the contract <code>owner()</code>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const decodeRenounceOwnership = () => {
+  return (
+    <div>
+      <div className="mb-2">
+        <div className="notification is-danger m-2">
+          This payload is for the function <code>renouceOwnership()</code>.
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
