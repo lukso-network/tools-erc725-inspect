@@ -74,7 +74,7 @@ const Home: NextPage = () => {
         <div className="columns">
           <div className="column">
             <div className="mb-2">
-              <p className="mb-2">Mode</p>
+              <h2 className="mb-2">Mode</h2>
               <div className="control">
                 <label className="radio radioLabel">
                   <input

@@ -31,26 +31,6 @@ const Method: React.FC<MethodProps> = ({ focus, link, text }) => (
   </span>
 );
 
-interface MethodProps {
-  text: string;
-  link: string;
-  focus: boolean;
-}
-
-const Method: React.FC<MethodProps> = ({ focus, link, text }) => (
-  <span className={`tag is-medium mb-2 mr-2 ${focus ? 'is-primary' : ''}`}>
-    {text}
-    <a
-      href={link}
-      target="_blank"
-      rel="noreferrer"
-      className="ml-2 has-text-info-dark"
-    >
-      ↗
-    </a>
-  </span>
-);
-
 const Decode: React.FC<Props> = ({ web3 }) => {
   const [abiError, setABIError] = useState({ isError: false, message: '' });
   const [selector, setSelector] = useState('');

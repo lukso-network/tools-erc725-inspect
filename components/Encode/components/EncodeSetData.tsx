@@ -11,6 +11,8 @@ interface Props {
   isBatch: boolean;
 }
 
+type KeyValuePair = { key: string; value: string };
+
 const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
   const [encodedPayload, setEncodedPayload] = useState('');
   const [keyValuePairs, setKeyValuePairs] = useState<
@@ -21,52 +23,50 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
     message: '',
   });
 
-  const createInputs = (keyValuePairs: { key: string; value: string }[]) => {
-    return keyValuePairs.map(
-      (keyValuePair: { key: string; value: string }, index) => {
-        return (
-          <div
-            className={`is-flex is-align-items-center is-vcentered ${styles.keyValueBox}`}
-            key={index}
-          >
-            {isBatch ? (
-              <div className="column is-1">
-                <button
-                  className={`delete is-large ${styles.closeButton}`}
-                  onClick={removeKeyValue.bind(this, index)}
-                >
-                  Remove
-                </button>
-              </div>
-            ) : (
-              ''
-            )}
-            <div className="column">
-              <div className={styles.inputContainer}>
-                <label className={styles.inputDescription}>Key</label>
-                <input
-                  type="text"
-                  id="key"
-                  className="input mb-2 is-fullwidth"
-                  value={keyValuePair.key}
-                  onChange={(event) => handleChange(index, event)}
-                />
-              </div>
-              <div className={styles.inputContainer}>
-                <label className={styles.inputDescription}>Value</label>
-                <input
-                  type="text"
-                  id="value"
-                  className="input mb-2 is-fullwidth"
-                  value={keyValuePair.value}
-                  onChange={(event) => handleChange(index, event)}
-                />
-              </div>
+  const createInputs = (keyValuePairs: KeyValuePair[]) => {
+    return keyValuePairs.map((keyValuePair: KeyValuePair, index) => {
+      return (
+        <div
+          className={`is-flex is-align-items-center is-vcentered ${styles.keyValueBox}`}
+          key={index}
+        >
+          {isBatch ? (
+            <div className="column is-1">
+              <button
+                className={`delete is-large ${styles.closeButton}`}
+                onClick={removeKeyValue.bind(this, index)}
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            ''
+          )}
+          <div className="column">
+            <div className={styles.inputContainer}>
+              <label className={styles.inputDescription}>Key</label>
+              <input
+                type="text"
+                id="key"
+                className="input mb-2 is-fullwidth"
+                value={keyValuePair.key}
+                onChange={(event) => handleChange(index, event)}
+              />
+            </div>
+            <div className={styles.inputContainer}>
+              <label className={styles.inputDescription}>Value</label>
+              <input
+                type="text"
+                id="value"
+                className="input mb-2 is-fullwidth"
+                value={keyValuePair.value}
+                onChange={(event) => handleChange(index, event)}
+              />
             </div>
           </div>
-        );
-      },
-    );
+        </div>
+      );
+    });
   };
 
   const addKeyValue = () => {
