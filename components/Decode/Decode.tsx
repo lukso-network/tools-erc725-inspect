@@ -108,71 +108,69 @@ const Decode: React.FC<Props> = ({ web3 }) => {
 
   return (
     <div className="container">
+      <div className="mb-2">
+        <textarea
+          className="textarea"
+          placeholder="Paste your ABI here..."
+          onChange={(e) => handleChange(e.target.value as string)}
+        />
+      </div>
+
       <div>
-        <div className="mb-2">
-          <textarea
-            className="textarea"
-            placeholder="Paste your ABI here..."
-            onChange={(e) => handleChange(e.target.value as string)}
-          />
-        </div>
+        {abiError.isError ? (
+          <ErrorMessage
+            header="Input Error"
+            message={abiError.message}
+          ></ErrorMessage>
+        ) : (
+          ''
+        )}
+      </div>
 
-        <div>
-          {abiError.isError ? (
-            <ErrorMessage
-              header="Input Error"
-              message={abiError.message}
-            ></ErrorMessage>
-          ) : (
-            ''
-          )}
-        </div>
+      <div className="mb-2">
+        <Method
+          text="setData"
+          focus={transactionType == TRANSACTION_TYPES.SET_DATA}
+          link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
+        />
+        <Method
+          text="setDataBatch"
+          focus={transactionType == TRANSACTION_TYPES.SET_DATA_BATCH}
+          link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
+        />
+        <Method
+          text="execute"
+          focus={transactionType == TRANSACTION_TYPES.EXECUTE}
+          link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
+        />
+        <Method
+          text="executeBatch"
+          focus={transactionType == TRANSACTION_TYPES.EXECUTE}
+          link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
+        />
+        <Method
+          text="transferOwnership"
+          focus={transactionType == TRANSACTION_TYPES.TRANSFER_OWNERSHIP}
+          link="https://eips.ethereum.org/EIPS/eip-173"
+        />
+        <Method
+          text="acceptOwnership"
+          focus={transactionType == TRANSACTION_TYPES.ACCEPT_OWNERSHIP}
+          link="#"
+        />
+        <Method
+          text="renounceOwnership"
+          focus={transactionType == TRANSACTION_TYPES.RENOUNCE_OWNERSHIP}
+          link="#"
+        />
+      </div>
 
-        <div className="mb-2">
-          <Method
-            text="setData"
-            focus={transactionType == TRANSACTION_TYPES.SET_DATA}
-            link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdata"
-          />
-          <Method
-            text="setDataBatch"
-            focus={transactionType == TRANSACTION_TYPES.SET_DATA_BATCH}
-            link="https://docs.lukso.tech/contracts/contracts/ERC725/#setdatabatch"
-          />
-          <Method
-            text="execute"
-            focus={transactionType == TRANSACTION_TYPES.EXECUTE}
-            link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
-          />
-          <Method
-            text="executeBatch"
-            focus={transactionType == TRANSACTION_TYPES.EXECUTE}
-            link="https://docs.lukso.tech/contracts/contracts/ERC725/#execute"
-          />
-          <Method
-            text="transferOwnership"
-            focus={transactionType == TRANSACTION_TYPES.TRANSFER_OWNERSHIP}
-            link="https://eips.ethereum.org/EIPS/eip-173"
-          />
-          <Method
-            text="acceptOwnership"
-            focus={transactionType == TRANSACTION_TYPES.ACCEPT_OWNERSHIP}
-            link="#"
-          />
-          <Method
-            text="renounceOwnership"
-            focus={transactionType == TRANSACTION_TYPES.RENOUNCE_OWNERSHIP}
-            link="#"
-          />
-        </div>
-
-        <div className="mb-2">
-          {!abiError.isError && payload.length > 0 ? (
-            <ShowDecoder selector={selector} payload={payload} web3={web3} />
-          ) : (
-            ''
-          )}
-        </div>
+      <div className="mb-2">
+        {!abiError.isError && payload.length > 0 ? (
+          <ShowDecoder selector={selector} payload={payload} web3={web3} />
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );
@@ -214,12 +212,10 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
 
 const decodeAcceptOwnership = () => {
   return (
-    <div>
-      <div className="mb-2">
-        <div className="notification is-danger m-2">
-          This payload is for the function <code>acceptOwnership()</code>. The
-          caller address will become the contract <code>owner()</code>
-        </div>
+    <div className="mb-2">
+      <div className="notification is-danger m-2">
+        This payload is for the function <code>acceptOwnership()</code>. The
+        caller address will become the contract <code>owner()</code>
       </div>
     </div>
   );
@@ -227,11 +223,9 @@ const decodeAcceptOwnership = () => {
 
 const decodeRenounceOwnership = () => {
   return (
-    <div>
-      <div className="mb-2">
-        <div className="notification is-danger m-2">
-          This payload is for the function <code>renouceOwnership()</code>.
-        </div>
+    <div className="mb-2">
+      <div className="notification is-danger m-2">
+        This payload is for the function <code>renouceOwnership()</code>.
       </div>
     </div>
   );
