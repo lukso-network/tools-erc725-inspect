@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
@@ -12,126 +12,124 @@ interface Props {
   isBatch: boolean;
 }
 
-type ExecuteParams = {
+interface ExecuteParams {
   operationType: number;
   target: string;
   value: string;
   data: string;
+}
+
+const interactionPlaceholder = {
+  operationType: 0,
+  target: '0xcafecafecafecafecafecafecafecafecafecafe',
+  value: '0',
+  data: '0x',
 };
+
+const ExecuteField: React.FC<ExecuteParams> = (
+  { operationType, target, value, data },
+  setParams?: SetStateAction<ExecuteParams>,
+) => (
+  <div className="column">
+    <div className="mb-2">
+      <div className={styles.inputContainer}>
+        <label className={styles.inputDescription}>Operation</label>
+        <br></br>
+        <div className="select mb-2">
+          <select value={operationType}>
+            {Object.entries(OPERATION_TYPES).map(
+              ([operationName, operationNumber]) => {
+                return (
+                  <option key={operationNumber} value={operationNumber}>
+                    {operationName}
+                  </option>
+                );
+              },
+            )}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div className="mb-2">
+      <div className={styles.inputContainer}>
+        <label className={styles.inputDescription}>Recipient</label>
+        <input
+          type="text"
+          className="input mb-2 is-fullwidth"
+          value={target}
+          onChange={(event) => {
+            const input = event.target.value;
+          }}
+        />
+      </div>
+    </div>
+    <div className="mb-2">
+      <div className={styles.inputContainer}>
+        <label className={styles.inputDescription}>Amount</label>
+        <input
+          type="text"
+          className="input mb-2 is-fullwidth"
+          value={value}
+          onChange={(event) => {
+            const input = event.target.value;
+          }}
+        />
+      </div>
+    </div>
+    <div className="mb-2">
+      <div className={styles.inputContainer}>
+        <label className={styles.inputDescription}>Data</label>
+        <input
+          type="text"
+          className="input mb-2 is-fullwidth"
+          value={data}
+          onChange={(event) => {
+            const input = event.target.value;
+          }}
+        />
+      </div>
+    </div>
+  </div>
+);
 
 const EncodeExecute: React.FC<Props> = ({ web3, isBatch }) => {
   const [encodedPayload, setEncodedPayload] = useState('');
-  const [executeParams, setExecuteParams] = useState<ExecuteParams>({
-    operationType: 0,
-    target: '0x',
-    value: '0',
-    data: '0x',
-  });
-  const [operation, setOperation] = useState('0');
-  const [recipient, setRecipient] = useState('');
-  const [amount, setAmount] = useState('');
-  const [data, setData] = useState('');
+
+  const [executeParams, setExecuteParams] = useState<ExecuteParams[]>([
+    interactionPlaceholder,
+  ]);
+
   const [encodingError, setEncodingError] = useState({
     isError: false,
     message: '',
   });
 
-  const createInputs = (interationArguments: ExecuteParams[]) => {
-    return interationArguments.map((interaction: ExecuteParams, index) => (
-      <div
-        className={`is-flex is-align-items-center is-vcentered ${styles.executeBox}`}
-        key={index}
-      >
-        {isBatch ? (
-          <div className="column is-1">
-            <button className={`delete is-large ${styles.closeButton}`}>
-              Remove
-            </button>
-          </div>
-        ) : (
-          ''
-        )}
-        <div className="column">
-          <div className="mb-2">
-            <div className={styles.inputContainer}>
-              <label className={styles.inputDescription}>Operation</label>
-              <br></br>
-              <div className="select mb-2">
-                <select
-                  value={operation}
-                  onChange={(event) => setOperation(event.target.value)}
-                >
-                  {Object.entries(OPERATION_TYPES).map(
-                    ([operationName, operationNumber]) => {
-                      console.log('operationName', operationName);
-                      console.log('operationNumber', operationNumber);
-                      return (
-                        <option key={operationNumber} value={operationNumber}>
-                          {operationName}
-                        </option>
-                      );
-                    },
-                  )}
-                </select>
-              </div>
-            </div>
-          </div>
-          <div className="mb-2">
-            <div className={styles.inputContainer}>
-              <label className={styles.inputDescription}>Recipient</label>
-              <input
-                type="text"
-                className="input mb-2 is-fullwidth"
-                value={recipient}
-                onChange={(event) => {
-                  const input = event.target.value;
-                  setRecipient(input);
-                }}
-              />
-            </div>
-          </div>
-          <div className="mb-2">
-            <div className={styles.inputContainer}>
-              <label className={styles.inputDescription}>Amount</label>
-              <input
-                type="text"
-                className="input mb-2 is-fullwidth"
-                value={amount}
-                onChange={(event) => {
-                  const input = event.target.value;
-                  setAmount(input);
-                }}
-              />
-            </div>
-          </div>
-          <div className="mb-2">
-            <div className={styles.inputContainer}>
-              <label className={styles.inputDescription}>Data</label>
-              <input
-                type="text"
-                className="input mb-2 is-fullwidth"
-                value={data}
-                onChange={(event) => {
-                  const input = event.target.value;
-                  setData(input);
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    ));
+  const addInteraction = () => {
+    setExecuteParams([...executeParams, interactionPlaceholder]);
+  };
+
+  const removeInteraction = (index: number) => {
+    const values = [...executeParams];
+    values.splice(index, 1);
+    setExecuteParams(values);
   };
 
   const encodeABI = () => {
     const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
 
     try {
-      const weiAmount = web3.utils.toWei(amount);
-
       setEncodedPayload(
         erc725Account.methods
-          .execute(operation, recipient, weiAmount, data)
+          .executeBatch(
+            executeParams.map((param) => {
+              return (
+                param.operationType,
+                param.target,
+                web3.utils.toWei(param.value),
+                param.data
+              );
+            }),
+          )
           .encodeABI(),
       );
 
@@ -143,38 +141,81 @@ const EncodeExecute: React.FC<Props> = ({ web3, isBatch }) => {
   };
 
   return (
-    <>
-      {createInputs([executeParams])}
-
+    <div>
       {isBatch ? (
-        <div>
-          <div className="my-4 mr-4">
-            <button className={`button is-info ${styles.buttonWidth}`}>
-              Add new interaction
-            </button>
+        <div className="executeBatch-inputs">
+          {executeParams.map(
+            ({ operationType, target, value, data }, index) => (
+              <div
+                key={index}
+                className={`is-flex is-align-items-center is-vcentered ${styles.executeCard}`}
+              >
+                <div className="column is-1">
+                  <button
+                    className={`delete is-large ${styles.closeButton}`}
+                    onClick={removeInteraction.bind(this, index)}
+                  >
+                    Remove
+                  </button>
+                </div>
+                <ExecuteField
+                  key={index}
+                  operationType={operationType}
+                  target={target}
+                  value={value}
+                  data={data}
+                />
+              </div>
+            ),
+          )}
+
+          <div>
+            <div className="my-4 mr-4">
+              <button
+                className={`button is-info ${styles.buttonWidth}`}
+                onClick={addInteraction}
+              >
+                Add new interaction
+              </button>
+            </div>
           </div>
         </div>
       ) : (
-        ''
-      )}
-      <div
-        style={{ height: 300, width: '100%', marginBottom: 10, marginTop: 10 }}
-      >
-        <button className="button is-primary" onClick={encodeABI}>
-          Encode ABI
-        </button>
-
-        {encodedPayload ? (
-          <EncodedPayload encodedPayload={encodedPayload} />
-        ) : null}
-        {encodingError.isError ? (
-          <ErrorMessage
-            header="ABI Encoding Error"
-            message={encodingError.message}
+        <div className={styles.executeCard}>
+          <ExecuteField
+            operationType={executeParams[0] && executeParams[0].operationType}
+            target={executeParams[0] && executeParams[0].target}
+            value={executeParams[0] && executeParams[0].value}
+            data={executeParams[0] && executeParams[0].data}
           />
-        ) : null}
+        </div>
+      )}
+
+      <div className="actions">
+        <div
+          style={{
+            height: 300,
+            width: '100%',
+            marginBottom: 10,
+            marginTop: 10,
+          }}
+        >
+          <button className="button is-primary" onClick={encodeABI}>
+            Encode ABI
+          </button>
+
+          {encodedPayload ? (
+            <EncodedPayload encodedPayload={encodedPayload} />
+          ) : null}
+          {encodingError.isError ? (
+            <ErrorMessage
+              header="ABI Encoding Error"
+              message={encodingError.message}
+            />
+          ) : null}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
