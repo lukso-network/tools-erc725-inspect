@@ -1,5 +1,6 @@
 .codeBox {
+  white-space: pre-wrap;
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  cursor: 'pointer';
-  min-height: 1500px;
+  cursor: pointer;
 }
