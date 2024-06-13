@@ -2,7 +2,11 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
-import ERC725 from '@erc725/erc725.js';
+import ERC725, {
+  ERC725JSONSchema,
+  getSchema,
+  isDynamicKeyName,
+} from '@erc725/erc725.js';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
@@ -21,6 +25,7 @@ import useWeb3 from '../hooks/useWeb3';
 
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 import { SAMPLE_ADDRESS } from '../constants';
+import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
 
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
@@ -130,17 +135,39 @@ const GetData: NextPage = () => {
     } else {
       setData(data);
 
-      const keyName = schemas.find(({ key }) => key == dataKey)?.name as string;
-      const decodedResult = erc725js.decodeData([
-        {
-          keyName,
-          value: data,
-        },
-      ]);
+      const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
 
-      console.log('decodedResult: ', decodedResult);
+      if (!foundSchema) {
+        return;
+      }
 
-      setDecodedData(decodedResult[0].value);
+      const { name: keyName, valueType, valueContent } = foundSchema;
+
+      let decodedValue;
+
+      if (isDynamicKeyName(keyName)) {
+        decodedValue = erc725js.decodeData([
+          {
+            keyName,
+            dynamicKeyParts: dataKey.slice(26),
+            value: data,
+          },
+        ]);
+      } else {
+        decodedValue = erc725js.decodeData([
+          {
+            keyName,
+            value: data,
+          },
+        ]);
+      }
+
+      const decodedResult =
+        valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
+          ? JSON.stringify(decodedValue[0].value, null, 4)
+          : decodedValue[0].value;
+
+      setDecodedData(decodedResult);
     }
   };
 
