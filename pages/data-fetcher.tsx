@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725 from '@erc725/erc725.js';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
@@ -40,13 +40,31 @@ const GetData: NextPage = () => {
   const [addressError, setAddressError] = useState('');
   const [dataKey, setDataKey] = useState(dataKeyList[0].key);
   const [dataKeyError, setDataKeyError] = useState('');
+
   const [data, setData] = useState('');
+  const [decodedData, setDecodedData] = useState('');
+
   const [interfaces, setInterfaces] = useState({
     isErc725X: false,
     isErc725Y: false,
   });
 
+  const [erc725js, setERC725JsInstance] = useState<ERC725>();
+
   const web3 = useWeb3();
+
+  const schemas = [
+    ...LSP1DataKeys,
+    ...LSP3DataKeys,
+    ...LSP4DataKeys,
+    ...LSP5DataKeys,
+    ...LSP6DataKeys,
+    ...LSP8DataKeys,
+    ...LSP9DataKeys,
+    ...LSP10DataKeys,
+    ...LSP12DataKeys,
+    ...LSP17DataKeys,
+  ];
 
   const onContractAddressChange = async (address: string) => {
     setAddress(address);
@@ -94,7 +112,7 @@ const GetData: NextPage = () => {
   };
 
   const onGetDataClick = async () => {
-    if (!web3) {
+    if (!web3 || !erc725js) {
       return;
     }
 
@@ -106,8 +124,33 @@ const GetData: NextPage = () => {
 
     const data = await getData(address, dataKey, web3);
 
-    setData(data || '0x');
+    if (!data) {
+      setData('0x');
+      setDecodedData('no data to decode 🤷');
+    } else {
+      setData(data);
+
+      const keyName = schemas.find(({ key }) => key == dataKey)?.name as string;
+      const decodedResult = erc725js.decodeData([
+        {
+          keyName,
+          value: data,
+        },
+      ]);
+
+      console.log('decodedResult: ', decodedResult);
+
+      setDecodedData(decodedResult[0].value);
+    }
   };
+
+  useEffect(() => {
+    setERC725JsInstance(
+      new ERC725(schemas, address, web3?.currentProvider, {
+        ipfsGateway: 'https://api.ipfs.lukso.network/ipfs/',
+      }),
+    );
+  }, [address, web3]);
 
   return (
     <>
@@ -118,16 +161,30 @@ const GetData: NextPage = () => {
         <h2 className="title is-2">Data Fetcher</h2>
         <article className="message is-info">
           <div className="message-body">
-            Retrieve the encoded storage of a
-            <a
-              href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              ERC725Y
-            </a>
-            data key.
+            <p>
+              Retrieve the encoded data stored under an
+              <a
+                href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                ERC725Y
+              </a>
+              data key.
+            </p>
+            <p>
+              See the
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md#valueContent"
+                className="mx-1"
+              >
+                LSP-2 ERC725YJSONSchema
+              </a>
+              specification to know how this value is encoded/decoded.
+            </p>
           </div>
         </article>
         <article className="message">
@@ -229,33 +286,29 @@ const GetData: NextPage = () => {
             </button>
           </div>
         </div>
-        <div>
-          {data && (
-            <div className="is-full-width my-4">
-              <article className="message is-info">
-                <div className="message-body">
-                  You can decode this value using the
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md#valueContent"
-                    className="mx-1"
-                  >
-                    LSP-2 ERC725YJSONSchema
-                  </a>
-                  specification.
-                </div>
-              </article>
+        <hr />
+
+        {data && (
+          <div className="is-full-width">
+            <div className="columns is-vcentered my-2">
+              <span className="mr-3">Encoded Value:</span>
+              <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
+                {data}
+              </pre>
+            </div>
+
+            <div className="columns is-vcentered my-2">
+              <span className="mr-3">Decoded Value</span>
               <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
                 {dataKey.startsWith(
                   ERC725YDataKeys.LSP6['AddressPermissions:Permissions'],
                 )
                   ? JSON.stringify(ERC725.decodePermissions(data), undefined, 2)
-                  : data}
+                  : decodedData}
               </pre>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );
