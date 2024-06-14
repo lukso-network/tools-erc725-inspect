@@ -390,7 +390,10 @@ const Home: NextPage = () => {
                           </li>
                           <li>
                             <strong>Contract type:</strong>{' '}
-                            <code>ERC725-compatible</code>
+                            <code>
+                              {isLSP0ERC725Account && '🆙 Universal Profile'}{' '}
+                              (ERC725-compatible)
+                            </code>
                           </li>
                         </ul>
                         <AddressButtons
