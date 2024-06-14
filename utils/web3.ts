@@ -68,6 +68,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
       INTERFACE_IDS.LSP1UniversalReceiver,
       INTERFACE_IDS.LSP6KeyManager,
       INTERFACE_IDS.LSP9Vault,
+      INTERFACE_IDS.ERC721,
     ],
     web3,
   );
@@ -102,6 +103,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
       supportsAssetInterface[4] ||
       supportsAssetInterface[5],
     isLsp9Vault: supportsContractInterface[6],
+    isERC721: supportsContractInterface[7],
   };
 };
 
