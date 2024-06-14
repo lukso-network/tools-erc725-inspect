@@ -184,7 +184,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
   const explorerLink = `${
     EXPLORER_BASE_URL[network.name]
-  }/assetAddress/${assetAddress}`;
+  }/address/${assetAddress}`;
 
   const renderTags = () => {
     if (isLoading) {
