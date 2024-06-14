@@ -42,6 +42,8 @@ const Home: NextPage = () => {
     useState(false);
   const [isLSP9Vault, setIsLSP9Vault] = useState(false);
 
+  const [isERC721, setIsERC721] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
 
@@ -253,6 +255,14 @@ const Home: NextPage = () => {
             rel="noreferrer"
           >
             LSP9Vault ↗️
+          </a>
+          <a
+            className={`button is-info mr-2 mt-2 ${!isERC721 && 'is-outlined'}`}
+            href="https://eips.ethereum.org/EIPS/eip-721"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ERC721 ↗️
           </a>
         </div>
       );
