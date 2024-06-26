@@ -96,6 +96,15 @@ const NavBar: React.FC = () => {
               📖 LSP2 Encoder
             </a>
           </Link>
+          <Link href="/lsp4-metadata-encoder">
+            <a
+              className={`navbar-item ${
+                router.pathname === '/lsp4-metadata-encoder' && 'has-text-link'
+              }`}
+            >
+              📖 LSP4 Metadata Encoder
+            </a>
+          </Link>
         </div>
 
         <div className="navbar-end">
