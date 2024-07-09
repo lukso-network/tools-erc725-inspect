@@ -21,6 +21,10 @@ import {
   aggregateABI,
 } from '../constants';
 import { AbiItem } from 'web3-utils';
+import {
+  GNOSIS_SAFE_IMPLEMENTATION,
+  GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
+} from '../globals';
 
 export const getDataBatch = async (
   address: string,
@@ -68,6 +72,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
       INTERFACE_IDS.LSP1UniversalReceiver,
       INTERFACE_IDS.LSP6KeyManager,
       INTERFACE_IDS.LSP9Vault,
+      INTERFACE_IDS.ERC721,
     ],
     web3,
   );
@@ -102,6 +107,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
       supportsAssetInterface[4] ||
       supportsAssetInterface[5],
     isLsp9Vault: supportsContractInterface[6],
+    isERC721: supportsContractInterface[7],
   };
 };
 
@@ -174,3 +180,28 @@ export const getVersion = async (
     return 'unknown';
   }
 };
+
+export async function checkIsGnosisSafe(
+  address: string,
+  web3: Web3,
+): Promise<boolean> {
+  const codeAt = await web3.eth.getCode(address);
+
+  if (codeAt != GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE) {
+    return false;
+  }
+
+  // in the Solidity code of the Gnosis Safe proxy, the address of the singleton (= implementation)
+  // is always the first declared variable. This variable is set to `internal` and does not have a getter
+  // to reduce deployment costs.
+  //
+  // example: https://explorer.execution.mainnet.lukso.network/address/0x14C2041eD166e00A8Ed2adad8c9C7389b3Dd87fb?tab=contract
+  const valueAtStorageSlot0 = await web3.eth.getStorageAt(address, 0);
+
+  const { implementationAddress } = web3.eth.abi.decodeParameter(
+    'address',
+    valueAtStorageSlot0,
+  );
+
+  return implementationAddress == GNOSIS_SAFE_IMPLEMENTATION;
+}

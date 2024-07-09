@@ -13,7 +13,7 @@ import {
   LSP1_GRAVE_FORWARDER,
   UP_RECOVERY_ADDRESSES,
 } from '../../globals';
-import { checkInterface, getData } from '../../utils/web3';
+import { checkInterface, getData, checkIsGnosisSafe } from '../../utils/web3';
 
 import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.json';
 import { AbiItem } from 'web3-utils';
@@ -125,6 +125,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
   const [assetName, setAssetName] = useState('');
   const [assetSymbol, setAssetSymbol] = useState('');
   const [isLSP1GraveForwarder, setIsLSP1GraveForwarder] = useState(false);
+  const [isGnosisSafe, setIsGnosisSafe] = useState(false);
 
   const checkAddressInterface = async (_address: string) => {
     if (!web3 || !_address) {
@@ -144,6 +145,9 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
     setIsLSP7(isLsp7DigitalAsset);
     setIsLSP8(isLsp8IdentifiableDigitalAsset);
+
+    const isGnosisSafeContract = await checkIsGnosisSafe(_address, web3);
+    setIsGnosisSafe(isGnosisSafeContract);
 
     const nameBytesValue = await getData(
       assetAddress,
@@ -184,7 +188,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
   const explorerLink = `${
     EXPLORER_BASE_URL[network.name]
-  }/assetAddress/${assetAddress}`;
+  }/address/${assetAddress}`;
 
   const renderTags = () => {
     if (isLoading) {
@@ -215,7 +219,14 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
             text="👻 - LSP1 Grave Forwarder"
             colorClass="is-danger"
             isLight={true}
-            contractVersion="0.14.0"
+          />
+        )}
+
+        {isGnosisSafe && (
+          <AddressTypeBadge
+            text="🥝 - Gnosis Safe"
+            colorClass="is-success"
+            isLight={true}
           />
         )}
 
