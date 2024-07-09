@@ -53,10 +53,6 @@ const KeyManagerNonceChecker: React.FC = () => {
   return (
     <div className="container mt-5">
       <h2 className="title is-2">Nonce</h2>
-      <div className="tags has-addons">
-        <span className="tag is-dark">Network</span>
-        <span className="tag is-warning">{network.name}</span>
-      </div>
       <article className="message is-info">
         <div className="message-body">
           Retrieve the nonce of a{' '}

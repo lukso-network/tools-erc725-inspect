@@ -8,7 +8,7 @@ export interface INetwork {
   imgUrl?: string;
 }
 
-const luksoChains: INetwork[] = [
+const chains: INetwork[] = [
   {
     name: NetworkName.MAINNET,
     rpc: RPC_URL[NetworkName.MAINNET],
@@ -44,15 +44,15 @@ const NetworksProvider = ({ children }) => {
       const storedNetworkName = localStorage.getItem('erc725InspectNetwork');
       if (storedNetworkName) {
         return (
-          luksoChains.find(
+          chains.find(
             (network) =>
               network.name.toLowerCase() === storedNetworkName.toLowerCase(),
-          ) || luksoChains[0]
+          ) || chains[0]
         );
       }
     }
     // Return default if nothing is in local storage
-    return luksoChains[0];
+    return chains[0];
   };
 
   // Get network from URL or switch to default chain
@@ -63,7 +63,7 @@ const NetworksProvider = ({ children }) => {
       return getNetworkFromLocalStorage();
     }
     return (
-      luksoChains.find(
+      chains.find(
         (network) => network.name.toLowerCase() === networkParam?.toLowerCase(),
       ) || getNetworkFromLocalStorage()
     );
