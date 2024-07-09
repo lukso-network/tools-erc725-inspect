@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725, {
   ERC725JSONSchema,
@@ -25,6 +25,8 @@ import useWeb3 from '../hooks/useWeb3';
 
 import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
 import { SAMPLE_ADDRESS } from '../constants';
+import { NetworkContext } from '../contexts/NetworksContext';
+import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
 
 const dataKeyList = [
@@ -55,6 +57,8 @@ const GetData: NextPage = () => {
   });
 
   const [erc725js, setERC725JsInstance] = useState<ERC725>();
+  const { network } = useContext(NetworkContext);
+  const router = useRouter();
 
   const web3 = useWeb3();
 
@@ -71,9 +75,31 @@ const GetData: NextPage = () => {
     ...LSP17DataKeys,
   ];
 
+  useEffect(() => {
+    const queryAddress = router.query.address;
+    const queryDataKey = router.query.dataKey;
+
+    if (queryAddress && typeof queryAddress === 'string') {
+      setAddress(queryAddress);
+    }
+    if (queryDataKey && typeof queryDataKey === 'string') {
+      setDataKey(queryDataKey);
+    }
+  }, [router.query]);
+
+  const updateURLParams = (address: string, dataKey: string) => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('address', address);
+    currentUrl.searchParams.set('datakey', dataKey);
+    router.replace(currentUrl.href, undefined, { shallow: true });
+  };
+
   const onContractAddressChange = async (address: string) => {
     setAddress(address);
     setData('');
+
+    updateURLParams(address, dataKey);
+
     if (!isAddress(address) && address.length !== 0) {
       setAddressError('The address is not valid');
       setInterfaces({
@@ -100,6 +126,8 @@ const GetData: NextPage = () => {
   const onDataKeyChange = (dataKey: string) => {
     setDataKey(dataKey);
     setData('');
+
+    updateURLParams(address, dataKey);
 
     if (
       (dataKey.length !== 64 && dataKey.length !== 66) ||
@@ -186,6 +214,10 @@ const GetData: NextPage = () => {
       </Head>
       <div className="container">
         <h2 className="title is-2">Data Fetcher</h2>
+        <div className="tags has-addons">
+          <span className="tag is-dark">Network</span>
+          <span className="tag is-warning">{network.name}</span>
+        </div>
         <article className="message is-info">
           <div className="message-body">
             <p>
@@ -270,6 +302,7 @@ const GetData: NextPage = () => {
 
               <div className="select mb-4 is-fullwidth">
                 <select
+                  value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                   className="is-fullwidth"
                 >

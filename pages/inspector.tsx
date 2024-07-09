@@ -18,8 +18,6 @@ import { NetworkContext } from '../contexts/NetworksContext';
 import ContractOwner from '../components/ContractOwner';
 import useWeb3 from '../hooks/useWeb3';
 import { SAMPLE_ADDRESS } from '../constants';
-import { RPC_URL } from '../globals';
-import { NetworkName } from '../types/network';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -29,7 +27,7 @@ const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [address, setAddress] = useState('');
-  const { network, setNetwork } = useContext(NetworkContext);
+  const { network } = useContext(NetworkContext);
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
 
@@ -50,43 +48,10 @@ const Home: NextPage = () => {
   const [contractVersion, setContractVersion] = useState('');
 
   useEffect(() => {
-    const updateNetworkFromURL = () => {
-      const urlNetworkName = router.query.network?.toString().toUpperCase();
-
-      if (!urlNetworkName || urlNetworkName === network.name) {
-        return;
-      }
-
-      switch (urlNetworkName) {
-        case NetworkName.TESTNET:
-          setNetwork({
-            name: NetworkName.TESTNET,
-            rpc: RPC_URL[NetworkName.TESTNET],
-            imgUrl: '/lukso.png',
-          });
-          break;
-        case NetworkName.MAINNET:
-          setNetwork({
-            name: NetworkName.MAINNET,
-            rpc: RPC_URL[NetworkName.MAINNET],
-            imgUrl: '/lukso.png',
-          });
-          break;
-        case NetworkName.LOCALHOST:
-          setNetwork({
-            name: NetworkName.LOCALHOST,
-            rpc: RPC_URL[NetworkName.LOCALHOST],
-            imgUrl: '/lukso.png',
-          });
-          break;
-      }
-    };
-
     if (router.query.address) {
       setAddress(router.query.address.toString());
-      updateNetworkFromURL();
     }
-  }, [router.query, network.name, setNetwork]);
+  }, [router.query]);
 
   useEffect(() => {
     const check = async () => {
@@ -111,9 +76,11 @@ const Home: NextPage = () => {
         return;
       }
 
-      router.push(
-        `/inspector?address=${address}&network=${network.name.toLowerCase()}`,
-      );
+      if (typeof window !== 'undefined' && router.query.address !== address) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('address', address);
+        router.replace(currentUrl.href, undefined, { shallow: true });
+      }
 
       setIsLoading(true);
 
@@ -138,7 +105,7 @@ const Home: NextPage = () => {
       setIsLoading(false);
     };
     check();
-  }, [address, web3, errorMessage]);
+  }, [address, web3, errorMessage, network.name, router]);
 
   const ERC725InspectResult = () => {
     if (

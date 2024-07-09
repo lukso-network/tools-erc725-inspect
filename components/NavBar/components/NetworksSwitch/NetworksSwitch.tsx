@@ -36,12 +36,11 @@ const NetworkSwitch: React.FC = () => {
     setNetwork(chain);
     setIsDropdownActive(false);
 
-    if (router.pathname === '/inspector' && router.query.address) {
-      const updatedUrl = `/inspector?address=${
-        router.query.address
-      }&network=${chain.name.toLowerCase()}`;
-      router.push(updatedUrl, undefined, { shallow: true });
-    }
+    // Build the new URL with existing parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('network', chain.name.toLowerCase());
+    const updatedUrl = `${router.pathname}?${urlParams.toString()}`;
+    router.push(updatedUrl, undefined, { shallow: true });
   };
 
   const handleDropdownBlur = (
