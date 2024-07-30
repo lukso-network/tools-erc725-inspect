@@ -2,9 +2,9 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 
-import Decode from '../components/Decode';
-import Encode from '../components/Encode';
-import useWeb3 from '../hooks/useWeb3';
+import Decode from '@/components/Decode';
+import Encode from '@/components/Encode';
+import useWeb3 from '@/hooks/useWeb3';
 
 enum TX_PARSER_MODES {
   ENCODE = 'ENCODE',

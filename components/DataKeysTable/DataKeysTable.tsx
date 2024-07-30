@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 
-import AddressButtons from '../AddressButtons';
-import ValueTypeDecoder from '../ValueTypeDecoder';
+import AddressButtons from '@/components/AddressButtons';
+import ValueTypeDecoder from '@/components/ValueTypeDecoder';
 
 import ProfileSchema from './ProfileSchema.json';
 import AssetSchema from './AssetSchema.json';
@@ -10,9 +10,9 @@ import LSP8Schema from './LSP8Schema.json';
 
 import { SCHEMA_DOCS_LINKS, SchemaName } from './schemas';
 
-import { getDataBatch } from '../../utils/web3';
+import { getDataBatch } from '@/utils/web3';
 
-import useWeb3 from '../../hooks/useWeb3';
+import useWeb3 from '@/hooks/useWeb3';
 
 interface Props {
   address: string;

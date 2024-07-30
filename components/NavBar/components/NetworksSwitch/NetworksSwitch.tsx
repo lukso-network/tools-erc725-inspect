@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
-import { INetwork, NetworkContext } from '../../../../contexts/NetworksContext';
+import { INetwork, NetworkContext } from '@/contexts/NetworksContext';
 
-import { RPC_URL } from '../../../../globals';
-import { NetworkName } from '../../../../types/network';
+import { RPC_URL } from '@/globals';
+import { NetworkName } from '@/types/network';
 
 const luksoChains: INetwork[] = [
   {

@@ -3,14 +3,14 @@
  */
 import React, { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
-import AddressButtons from '../AddressButtons';
-import ControllersList from '../ControllersList';
-import { LUKSO_IPFS_BASE_URL } from '../../globals';
+import AddressButtons from '@/components/AddressButtons';
+import ControllersList from '@/components/ControllersList';
+import { LUKSO_IPFS_BASE_URL } from '@/globals';
 
-import useWeb3 from '../../hooks/useWeb3';
+import useWeb3 from '@/hooks/useWeb3';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
-import AddressInfos from '../AddressInfos';
+import AddressInfos from '@/components/AddressInfos';
 
 import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';
 
