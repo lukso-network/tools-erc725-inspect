@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import ERC725 from '@erc725/erc725.js';
-import PermissionsBtns from '../PermissionsBtns';
+import PermissionsBtns from '@/components/PermissionsBtns';
 
 const KeyManagerPermissions: React.FC = () => {
   const initialEncodedPermissions =

@@ -3,7 +3,7 @@
  */
 import { useState, useEffect, useContext } from 'react';
 import Web3 from 'web3';
-import { NetworkContext } from '../contexts/NetworksContext';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 export default function useWeb3() {
   const [web3Info, setWeb3Info] = useState<Web3>();

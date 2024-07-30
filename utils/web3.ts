@@ -19,12 +19,12 @@ import {
   VersionABI,
   MULTICALL_CONTRACT_ADDRESS,
   aggregateABI,
-} from '../constants';
+} from '@/constants';
 import { AbiItem } from 'web3-utils';
 import {
   GNOSIS_SAFE_IMPLEMENTATION,
   GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
-} from '../globals';
+} from '@/globals';
 
 export const getDataBatch = async (
   address: string,

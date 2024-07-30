@@ -16,7 +16,10 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noImplicitAny": false // error with @lukso/lsp-smart-contracts/constants.js file
+    "noImplicitAny": false, // error with @lukso/lsp-smart-contracts/constants.js file
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

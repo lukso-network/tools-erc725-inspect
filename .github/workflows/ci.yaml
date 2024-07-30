@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  SHARED_KEY: ${{ secrets.SHARED_KEY }}
+
 jobs:
   build-and-lint:
     runs-on: ubuntu-latest

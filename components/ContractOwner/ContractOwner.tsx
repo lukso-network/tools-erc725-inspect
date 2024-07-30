@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
-import useWeb3 from '../../hooks/useWeb3';
+import useWeb3 from '@/hooks/useWeb3';
 
-import { eip165ABI } from '../../constants';
+import { eip165ABI } from '@/constants';
 import { AbiItem, isAddress } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
-import AddressButtons from '../AddressButtons';
+import AddressButtons from '@/components/AddressButtons';
 
 type Props = {
   contractAddress: string;

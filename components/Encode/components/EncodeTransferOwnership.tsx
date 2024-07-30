@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
-import ErrorMessage from '../../ErrorMessage';
+import ErrorMessage from '@/components/ErrorMessage';
 import { Contract } from 'web3-eth-contract';
 import styles from './EncodeTransferOwnership.module.scss';
 interface Props {

@@ -20,12 +20,12 @@ import LSP10DataKeys from '@erc725/erc725.js/schemas/LSP10ReceivedVaults.json';
 import LSP12DataKeys from '@erc725/erc725.js/schemas/LSP12IssuedAssets.json';
 import LSP17DataKeys from '@erc725/erc725.js/schemas/LSP17ContractExtension.json';
 
-import { checkInterface, getData } from '../utils/web3';
-import useWeb3 from '../hooks/useWeb3';
+import { checkInterface, getData } from '@/utils/web3';
+import useWeb3 from '@/hooks/useWeb3';
 
-import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
-import { SAMPLE_ADDRESS } from '../constants';
-import { NetworkContext } from '../contexts/NetworksContext';
+import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
+import { SAMPLE_ADDRESS } from '@/constants';
+import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
 

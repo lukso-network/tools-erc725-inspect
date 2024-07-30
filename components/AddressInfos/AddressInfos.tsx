@@ -5,15 +5,15 @@ import React, { useState, useContext, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
-import { NetworkContext } from '../../contexts/NetworksContext';
-import useWeb3 from '../../hooks/useWeb3';
+import { NetworkContext } from '@/contexts/NetworksContext';
+import useWeb3 from '@/hooks/useWeb3';
 import {
   EXPLORER_BASE_URL,
   LSP1_DELEGATE_VERSIONS,
   LSP1_GRAVE_FORWARDER,
   UP_RECOVERY_ADDRESSES,
-} from '../../globals';
-import { checkInterface, getData, checkIsGnosisSafe } from '../../utils/web3';
+} from '@/globals';
+import { checkInterface, getData, checkIsGnosisSafe } from '@/utils/web3';
 
 import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.json';
 import { AbiItem } from 'web3-utils';

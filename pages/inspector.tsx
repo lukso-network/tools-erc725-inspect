@@ -7,17 +7,17 @@ import Head from 'next/head';
 import React, { useContext, useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 
-import '../styles/Inspect.module.css';
-import { checkInterface, getVersion } from '../utils/web3';
+import '@/styles/Inspect.module.css';
+import { checkInterface, getVersion } from '@/utils/web3';
 
-import DataKeysTable from '../components/DataKeysTable';
-import AddressButtons from '../components/AddressButtons';
-import SampleAddressInput from '../components/SampleAddressInput/SampleAddressInput';
-import { NetworkContext } from '../contexts/NetworksContext';
+import DataKeysTable from '@/components/DataKeysTable';
+import AddressButtons from '@/components/AddressButtons';
+import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
-import ContractOwner from '../components/ContractOwner';
-import useWeb3 from '../hooks/useWeb3';
-import { SAMPLE_ADDRESS } from '../constants';
+import ContractOwner from '@/components/ContractOwner';
+import useWeb3 from '@/hooks/useWeb3';
+import { SAMPLE_ADDRESS } from '@/constants';
 
 const Home: NextPage = () => {
   const router = useRouter();

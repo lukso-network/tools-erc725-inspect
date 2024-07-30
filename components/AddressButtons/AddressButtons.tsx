@@ -3,7 +3,7 @@
  * @author Felix Hildebrandt <fhildeb>
  */
 import React, { useContext } from 'react';
-import { NetworkContext } from '../../contexts/NetworksContext';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 interface Props {
   address: string;

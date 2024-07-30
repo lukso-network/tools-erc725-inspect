@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+env:
+  SHARED_KEY: ${{ secrets.SHARED_KEY }}
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

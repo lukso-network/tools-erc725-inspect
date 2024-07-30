@@ -3,8 +3,8 @@ import Web3 from 'web3';
 import {
   TRANSACTION_SELECTORS,
   TRANSACTION_TYPES,
-} from '../../interfaces/transaction';
-import ErrorMessage from '../ErrorMessage/ErrorMessage';
+} from '@/interfaces/transaction';
+import ErrorMessage from '@/components/ErrorMessage';
 import styles from './Decode.module.scss';
 
 interface Props {

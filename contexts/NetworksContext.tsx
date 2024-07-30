@@ -1,6 +1,6 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
-import { RPC_URL } from '../globals';
-import { NetworkName } from '../types/network';
+import { RPC_URL } from '@/globals';
+import { NetworkName } from '@/types/network';
 import { useRouter } from 'next/router';
 export interface INetwork {
   name: NetworkName;

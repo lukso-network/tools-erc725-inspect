@@ -4,9 +4,116 @@
  */
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
 import NetworkSwitch from './components/NetworksSwitch';
 import styles from './NavBar.module.scss';
+import clsx from 'clsx';
+
+const LinksMenu = ({
+  router,
+  createLink,
+}: {
+  router: NextRouter;
+  createLink: (path: string) => string;
+}) => {
+  const [isActive, setIsActive] = useState(false);
+
+  return (
+    <div className={clsx('navbar-item dropdown', isActive && 'is-active')}>
+      <div className="dropdown-trigger">
+        <a
+          className="navbar-link is-flex"
+          aria-haspopup="true"
+          aria-controls="dropdown-menu"
+          onClick={() => setIsActive(!isActive)}
+        >
+          Menu
+        </a>
+      </div>
+      <div className="dropdown-menu" id="dropdown-menu" role="menu">
+        <div className="dropdown-content" style={{ background: '#F0F0F0' }}>
+          <Link href={createLink('/inspector')}>
+            <a
+              className={clsx(
+                'dropdown-item',
+                router.pathname === '/inspector' && 'has-text-link',
+              )}
+              onClick={() => setIsActive(false)}
+            >
+              🔎 Inspector
+            </a>
+          </Link>
+          <Link href={createLink('/lsp-checker')}>
+            <a
+              className={clsx(
+                'dropdown-item',
+                router.pathname === '/lsp-checker' && 'has-text-link',
+              )}
+              onClick={() => setIsActive(false)}
+            >
+              ✅ LSP Checker
+            </a>
+          </Link>
+          <Link href={createLink('/data-fetcher')}>
+            <a
+              className={clsx(
+                'dropdown-item',
+                router.pathname === '/data-fetcher' && 'has-text-link',
+              )}
+              onClick={() => setIsActive(false)}
+            >
+              💽 Data Fetcher
+            </a>
+          </Link>
+          <Link href={createLink('/key-manager')}>
+            <a
+              className={clsx(
+                'dropdown-item',
+                router.pathname === '/key-manager' && 'has-text-link',
+              )}
+              onClick={() => setIsActive(false)}
+            >
+              🔐 Key Manager
+            </a>
+          </Link>
+          <Link href={createLink('/abi-encoder')}>
+            <a
+              className={clsx(
+                'dropdown-item',
+                router.pathname === '/abi-encoder' && 'has-text-link',
+              )}
+              onClick={() => setIsActive(false)}
+            >
+              📜 ABI Encoder
+            </a>
+          </Link>
+          <Link href={createLink('/lsp2-encoder')}>
+            <a
+              className={clsx(
+                'dropdown-item',
+                router.pathname === '/lsp2-encoder' && 'has-text-link',
+              )}
+              onClick={() => setIsActive(false)}
+            >
+              📖 LSP2 Encoder
+            </a>
+          </Link>
+          <Link href="/lsp4-metadata-encoder">
+            <a
+              className={clsx(
+                'dropdown-item',
+                router.pathname === '/lsp4-metadata-encoder' && 'has-text-link',
+              )}
+              onClick={() => setIsActive(false)}
+            >
+              📖 LSP4 Metadata Encoder
+            </a>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const NavBar: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
@@ -16,7 +123,7 @@ const NavBar: React.FC = () => {
     setIsActive(!isActive);
   };
 
-  const createLink = (path) => {
+  const createLink = (path: string) => {
     if (typeof window === 'undefined') {
       return path;
     }
@@ -42,7 +149,7 @@ const NavBar: React.FC = () => {
         </Link>
         <a
           role="button"
-          className={`navbar-burger burger ${isActive ? 'is-active' : ''}`}
+          className={clsx('navbar-burger burger', isActive && 'is-active')}
           aria-label="menu"
           aria-expanded="false"
           onClick={toggleNavbar}
@@ -60,66 +167,11 @@ const NavBar: React.FC = () => {
               🛠 ERC725 Tools
             </a>
           </Link>
-          <Link href={createLink('/inspector')}>
-            <a
-              className={`navbar-item ${
-                router.pathname === '/inspector' && 'has-text-link'
-              }`}
-            >
-              🔎 Inspector
-            </a>
-          </Link>
-          <Link href={createLink('/lsp-checker')}>
-            <a
-              className={`navbar-item ${
-                router.pathname === '/lsp-checker' && 'has-text-link'
-              }`}
-            >
-              ✅ LSP Checker
-            </a>
-          </Link>
-          <Link href={createLink('/data-fetcher')}>
-            <a
-              className={`navbar-item ${
-                router.pathname === '/data-fetcher' && 'has-text-link'
-              }`}
-            >
-              💽 Data Fetcher
-            </a>
-          </Link>
-          <Link href={createLink('/key-manager')}>
-            <a
-              className={`navbar-item ${
-                router.pathname === '/key-manager' && 'has-text-link'
-              }`}
-            >
-              🔐 Key Manager
-            </a>
-          </Link>
-          <Link href={createLink('/abi-encoder')}>
-            <a
-              className={`navbar-item ${
-                router.pathname === '/abi-encoder' && 'has-text-link'
-              }`}
-            >
-              📜 ABI Encoder
-            </a>
-          </Link>
-          <Link href={createLink('/lsp2-encoder')}>
-            <a
-              className={`navbar-item ${
-                router.pathname === '/lsp2-encoder' && 'has-text-link'
-              }`}
-            >
-              📖 LSP2 Encoder
-            </a>
-          </Link>
         </div>
 
         <div className="navbar-end">
-          <div className="navbar-item">
-            <NetworkSwitch />
-          </div>
+          <LinksMenu router={router} createLink={createLink} />
+          <NetworkSwitch />
           <div className="navbar-item">
             <div className="buttons">
               <a
