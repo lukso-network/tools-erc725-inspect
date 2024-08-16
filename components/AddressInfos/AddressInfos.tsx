@@ -267,6 +267,10 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
     );
   };
 
+  if (assetAddress === null) {
+    return <span>no address set</span>;
+  }
+
   return (
     <div>
       <code className="mr-2">
@@ -275,7 +279,6 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
         </a>
       </code>
       <AddressTypeBadge text={addressTypeText} isLight={true} />
-
       {renderTags()}
     </div>
   );
