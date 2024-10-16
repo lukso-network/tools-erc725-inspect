@@ -176,11 +176,9 @@ const GetData: NextPage = () => {
       setData(data);
 
       const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
-      
       if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
         return;
       }
-      
       let keyName, valueType, valueContent;
 
       if (foundSchema) {
@@ -212,12 +210,10 @@ const GetData: NextPage = () => {
           },
         ]);
       }
-      
       const decodedResult =
         valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
           ? JSON.stringify(decodedValue[0].value, null, 4)
           : decodedValue[0].value;
-      
       setDecodedData(decodedResult);
     }
   };
