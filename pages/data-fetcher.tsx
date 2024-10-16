@@ -193,9 +193,7 @@ const GetData: NextPage = () => {
         console.error('Unknown schema');
         return;
       }
-      console.log('keyName', keyName);
-      console.log('valueType', valueType);
-      console.log('valueContent', valueContent);
+
       let decodedValue;
 
       if (isDynamicKeyName(keyName)) {

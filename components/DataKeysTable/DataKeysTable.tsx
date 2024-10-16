@@ -61,9 +61,8 @@ const DataKeysTable: React.FC<Props> = ({
             }
           }
           const dataKeys = schemaToLoad.map((schema) => schema.key);
-          console.log('dataKeys', dataKeys);
+
           const result = await getDataBatch(address, dataKeys, web3);
-          console.log('result', result);
           result.map((_, i) => {
             dataResult.push({
               key: dataKeys[i],
@@ -75,7 +74,7 @@ const DataKeysTable: React.FC<Props> = ({
       } catch (err) {
         console.error(err);
       }
-      console.log('dataResult', dataResult);
+
       setData(dataResult);
     };
 
