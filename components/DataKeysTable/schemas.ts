@@ -6,6 +6,7 @@ export enum SchemaName {
   'AddressPermissions[]' = 'AddressPermissions[]',
   'LSP10Vaults[]' = 'LSP10Vaults[]',
   'LSP12IssuedAssets[]' = 'LSP12IssuedAssets[]',
+  'LSP28TheGrid' = 'LSP28TheGrid',
 }
 
 export const SCHEMA_DOCS_LINKS: { [key in SchemaName]: string } = {
@@ -23,4 +24,5 @@ export const SCHEMA_DOCS_LINKS: { [key in SchemaName]: string } = {
     'https://docs.lukso.tech/standards/universal-profile/lsp10-received-vaults',
   'LSP12IssuedAssets[]':
     'https://docs.lukso.tech/standards/universal-profile/lsp12-issued-assets',
+  LSP28TheGrid: 'https://docs.lukso.tech/standards/standard-detection', // TODO: update with correct link
 };

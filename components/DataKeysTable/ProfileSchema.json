@@ -21,6 +21,13 @@
     "valueContent": "VerifiableURI"
   },
   {
+    "name": "LSP28TheGrid",
+    "key": "0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff",
+    "keyType": "Singleton",
+    "valueType": "bytes",
+    "valueContent": "VerifiableURI"
+  },
+  {
     "name": "LSP5ReceivedAssets[]",
     "key": "0x6460ee3c0aac563ccbf76d6e1d07bada78e3a9514e6382b736ed3f478ab7b90b",
     "keyType": "Array",
