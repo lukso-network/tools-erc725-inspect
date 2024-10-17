@@ -151,6 +151,14 @@ const ValueTypeDecoder: React.FC<Props> = ({
       erc725JSONSchema.valueContent === 'VerifiableURI' ||
       erc725JSONSchema.valueContent === 'JSONURL'
     ) {
+      if (
+        !decodedDataOneKey ||
+        !decodedDataOneKey[0] ||
+        !decodedDataOneKey[0].value
+      ) {
+        return <span className="help">No data found for this key.</span>;
+      }
+
       return (
         <>
           <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
@@ -159,21 +167,22 @@ const ValueTypeDecoder: React.FC<Props> = ({
             URL:
             <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
           </span>
-          {decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
-            <>
-              <a
-                className="has-text-link button is-small is-light is-info"
-                target="_blank"
-                rel="noreferrer"
-                href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
-                  'ipfs://',
-                  '',
-                )}`}
-              >
-                Retrieve IPFS File ↗️
-              </a>
-            </>
-          )}
+          {decodedDataOneKey[0].value.url &&
+            decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
+              <>
+                <a
+                  className="has-text-link button is-small is-light is-info"
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
+                    'ipfs://',
+                    '',
+                  )}`}
+                >
+                  Retrieve IPFS File ↗️
+                </a>
+              </>
+            )}
         </>
       );
     }

@@ -29,6 +29,10 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
 
+// using local variable for LSP28TheGrid key for now
+const LSP28_THE_GRID_KEY =
+  '0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff';
+
 const dataKeyList = [
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
   ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
@@ -40,6 +44,7 @@ const dataKeyList = [
   ...LSP10DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
   ...LSP12DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
   ...LSP17DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💎' })),
+  { name: 'LSP28TheGrid', key: LSP28_THE_GRID_KEY, icon: '🌐' },
 ];
 
 const GetData: NextPage = () => {
@@ -73,6 +78,13 @@ const GetData: NextPage = () => {
     ...LSP10DataKeys,
     ...LSP12DataKeys,
     ...LSP17DataKeys,
+    {
+      name: 'LSP28TheGrid',
+      key: LSP28_THE_GRID_KEY,
+      keyType: 'Singleton',
+      valueType: 'bytes',
+      valueContent: 'VerifiableURI',
+    },
   ];
 
   useEffect(() => {
@@ -164,12 +176,21 @@ const GetData: NextPage = () => {
       setData(data);
 
       const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
-
-      if (!foundSchema) {
+      if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
         return;
       }
+      let keyName, valueType, valueContent;
 
-      const { name: keyName, valueType, valueContent } = foundSchema;
+      if (foundSchema) {
+        ({ name: keyName, valueType, valueContent } = foundSchema);
+      } else if (dataKey === LSP28_THE_GRID_KEY) {
+        keyName = 'LSP28TheGrid';
+        valueType = 'bytes';
+        valueContent = 'VerifiableURI';
+      } else {
+        console.error('Unknown schema');
+        return;
+      }
 
       let decodedValue;
 
@@ -189,12 +210,10 @@ const GetData: NextPage = () => {
           },
         ]);
       }
-
       const decodedResult =
         valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
           ? JSON.stringify(decodedValue[0].value, null, 4)
           : decodedValue[0].value;
-
       setDecodedData(decodedResult);
     }
   };
