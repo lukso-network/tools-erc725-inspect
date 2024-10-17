@@ -66,6 +66,18 @@ const ValueTypeDecoder: React.FC<Props> = ({
   }, [address, web3, erc725JSONSchema, value]);
 
   try {
+    if (decodedDataOneKey[0].name.startsWith('LSP1UniversalReceiverDelegate')) {
+      const badgeContent = decodedDataOneKey[0].value;
+
+      return (
+        <>
+          <code>{value}</code>
+          <div className="mt-4"></div>
+          <AddressInfos assetAddress={badgeContent} userAddress={address} />
+          <AddressButtons address={badgeContent} />
+        </>
+      );
+    }
     if (
       !decodedDataOneKey[0].name.endsWith('[]') &&
       (typeof decodedDataOneKey[0].value === 'string' ||
