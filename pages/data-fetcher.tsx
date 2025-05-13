@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useCallback } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725, {
   ERC725JSONSchema,
@@ -28,6 +28,7 @@ import { SAMPLE_ADDRESS } from '@/constants';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
+import CustomKeySchemaForm from '@/components/CustomKeySchemaForm/CustomKeySchemaForm';
 
 // using local variable for LSP28TheGrid key for now
 const LSP28_THE_GRID_KEY =
@@ -45,6 +46,7 @@ const dataKeyList = [
   ...LSP12DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
   ...LSP17DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💎' })),
   { name: 'LSP28TheGrid', key: LSP28_THE_GRID_KEY, icon: '🌐' },
+  { name: 'Custom Key', key: '', icon: '🔧' },
 ];
 
 const GetData: NextPage = () => {
@@ -52,6 +54,17 @@ const GetData: NextPage = () => {
   const [addressError, setAddressError] = useState('');
   const [dataKey, setDataKey] = useState(dataKeyList[0].key);
   const [dataKeyError, setDataKeyError] = useState('');
+
+  // New state for controlling the dropdown selection
+  const [selectedDataKeyOption, setSelectedDataKeyOption] = useState(
+    dataKeyList[0].key,
+  );
+  // New state for custom key schema inputs
+  const [customSchemaName, setCustomSchemaName] = useState<string>('');
+  const [customKeyType, setCustomKeyType] = useState<string>('');
+  const [customValueType, setCustomValueType] = useState<string>('');
+  const [customValueContent, setCustomValueContent] =
+    useState<string>('');
 
   const [data, setData] = useState('');
   const [decodedData, setDecodedData] = useState('');
@@ -87,74 +100,152 @@ const GetData: NextPage = () => {
     },
   ];
 
+  // Effect to sync selectedDataKeyOption when dataKey changes (e.g., from URL or programmatically)
   useEffect(() => {
-    const queryAddress = router.query.address;
-    const queryDataKey = router.query.dataKey;
-
-    if (queryAddress && typeof queryAddress === 'string') {
-      setAddress(queryAddress);
+    if (!dataKey) {
+      setSelectedDataKeyOption('');
+      return;
     }
-    if (queryDataKey && typeof queryDataKey === 'string') {
-      setDataKey(queryDataKey);
+    const isPredefined = dataKeyList.some(
+      (item) => item.key === dataKey && item.key !== '',
+    );
+    if (isPredefined) {
+      setSelectedDataKeyOption(dataKey);
+    } else {
+      setSelectedDataKeyOption('');
     }
-  }, [router.query]);
+  }, [dataKey]);
 
-  const updateURLParams = (address: string, dataKey: string) => {
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('address', address);
-    currentUrl.searchParams.set('datakey', dataKey);
-    router.replace(currentUrl.href, undefined, { shallow: true });
-  };
+  const updateURLParams = useCallback(
+    (newAddress: string, newDataKey: string) => {
+      if (typeof window === 'undefined') return;
 
-  const onContractAddressChange = async (address: string) => {
-    setAddress(address);
-    setData('');
+      const currentUrl = new URL(window.location.href);
+      const existingAddress = currentUrl.searchParams.get('address');
+      const existingDatakey = currentUrl.searchParams.get('datakey');
 
-    updateURLParams(address, dataKey);
+      if (
+        newAddress === existingAddress &&
+        newDataKey === existingDatakey
+      ) {
+        return;
+      }
 
-    if (!isAddress(address) && address.length !== 0) {
-      setAddressError('The address is not valid');
-      setInterfaces({
-        isErc725X: false,
-        isErc725Y: false,
-      });
+      currentUrl.searchParams.set('address', newAddress);
+      currentUrl.searchParams.set('datakey', newDataKey);
+      router.replace(currentUrl.toString(), undefined, { shallow: true });
+    },
+    [router], // router is stable
+  );
+
+  const onContractAddressChange = useCallback(
+    async (addr: string) => {
+      let finalAddr = addr;
+      if (addr.slice(0, 2) !== '0x' && addr.length !== 0) {
+        finalAddr = `0x${addr}`;
+      }
+      setAddress(finalAddr);
+      setData('');
+      setAddressError('');
+
+      updateURLParams(finalAddr, dataKey);
+
+      if (!isAddress(finalAddr) && finalAddr.length !== 0) {
+        setAddressError('The address is not valid');
+        setInterfaces({ isErc725X: false, isErc725Y: false });
+        return;
+      }
+
+      if (!web3) {
+        return;
+      }
+
+      try {
+        const result = await checkInterface(finalAddr, web3);
+        setInterfaces(result);
+      } catch (error) {
+        console.error('Error checking interface:', error);
+        setInterfaces({ isErc725X: false, isErc725Y: false });
+      }
+    },
+    [web3, dataKey, updateURLParams, setAddress, setData, setAddressError, setInterfaces],
+  );
+
+  const onDataKeyChange = useCallback(
+    (value: string) => {
+      let inputKey = value;
+      let error = '';
+      setData('');
+
+      if (inputKey.length > 0) {
+        if (
+          (inputKey.length !== 64 && inputKey.length !== 66) ||
+          (inputKey.length === 66 && inputKey.slice(0, 2) !== '0x')
+        ) {
+          error = 'The data key is not valid';
+        } else if (inputKey.length === 64 && !inputKey.startsWith('0x')) {
+          inputKey = `0x${inputKey}`;
+        }
+      }
+
+      setDataKey(inputKey);
+      setDataKeyError(error);
+      updateURLParams(address, inputKey);
+
+      const isPredefined = dataKeyList.some(
+        (item) => item.key === inputKey && item.key !== '',
+      );
+      if (isPredefined) {
+        setSelectedDataKeyOption(inputKey);
+      } else {
+        setSelectedDataKeyOption('');
+      }
+    },
+    [address, updateURLParams, setSelectedDataKeyOption, setData, setDataKey, setDataKeyError],
+  );
+
+  const handleDataKeyDropdownChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedOptionValue = event.target.value;
+      setSelectedDataKeyOption(selectedOptionValue);
+      setData('');
+
+      if (selectedOptionValue !== '') {
+        onDataKeyChange(selectedOptionValue);
+      } else {
+        setDataKey('');
+        setDataKeyError('');
+        updateURLParams(address, '');
+      }
+    },
+    [address, updateURLParams, setSelectedDataKeyOption, setData, setDataKey, setDataKeyError, onDataKeyChange],
+  );
+
+  // Moved this useEffect hook to be after the definitions of its dependencies
+  useEffect(() => {
+    // Wait for the router to be ready to ensure router.query is populated
+    if (!router.isReady) {
       return;
     }
 
-    if (address.slice(0, 2) !== '0x' && address.length !== 0) {
-      setAddress(`0x${address}`);
+    const queryAddress = router.query.address as string | undefined;
+    const queryDatakeyValue = router.query.datakey as string | undefined; // Use 'datakey'
+
+    if (queryAddress !== undefined && queryAddress !== address) {
+      onContractAddressChange(queryAddress);
     }
 
-    setAddressError('');
-
-    if (!web3) {
-      return;
+    if (queryDatakeyValue !== undefined && queryDatakeyValue !== dataKey) {
+      onDataKeyChange(queryDatakeyValue);
     }
-
-    const result = await checkInterface(address, web3);
-    setInterfaces(result);
-  };
-
-  const onDataKeyChange = (dataKey: string) => {
-    setDataKey(dataKey);
-    setData('');
-
-    updateURLParams(address, dataKey);
-
-    if (
-      (dataKey.length !== 64 && dataKey.length !== 66) ||
-      (dataKey.length === 66 && dataKey.slice(0, 2) !== '0x')
-    ) {
-      setDataKeyError('The data key is not valid');
-      return;
-    }
-
-    if (dataKey.slice(0, 2) !== '0x') {
-      setDataKey(`0x${dataKey}`);
-    }
-
-    setDataKeyError('');
-  };
+  }, [
+    router.isReady,
+    router.query,
+    address,
+    dataKey,
+    onContractAddressChange,
+    onDataKeyChange,
+  ]);
 
   const onGetDataClick = async () => {
     if (!web3 || !erc725js) {
@@ -163,58 +254,117 @@ const GetData: NextPage = () => {
 
     if (!interfaces.isErc725Y) {
       console.log('Contract not compatible with ERC725');
-
       return;
     }
 
-    const data = await getData(address, dataKey, web3);
+    if (dataKeyError || !dataKey) {
+        console.log('Invalid data key provided.');
+        setData('0x');
+        setDecodedData('Invalid data key. Please check your input.');
+        return;
+    }
 
-    if (!data) {
+    const dataToDecode = await getData(address, dataKey, web3);
+    
+    if (!dataToDecode) {
       setData('0x');
       setDecodedData('no data to decode 🤷');
     } else {
-      setData(data);
+      setData(dataToDecode);
 
-      const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
-      if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
-        return;
-      }
-      let keyName, valueType, valueContent;
+      const isCustomKeyMode = selectedDataKeyOption === '';
 
-      if (foundSchema) {
-        ({ name: keyName, valueType, valueContent } = foundSchema);
-      } else if (dataKey === LSP28_THE_GRID_KEY) {
-        keyName = 'LSP28TheGrid';
-        valueType = 'bytes';
-        valueContent = 'VerifiableURI';
-      } else {
-        console.error('Unknown schema');
-        return;
-      }
+      if (isCustomKeyMode) {
+        if (
+          !customSchemaName ||
+          !customKeyType ||
+          !customValueType ||
+          !customValueContent
+        ) {
+          setDecodedData(
+            'For custom keys, all schema fields (Schema Name, Key Type, Value Type, Value Content) must be provided.',
+          );
+          return;
+        }
 
-      let decodedValue;
+        const adHocSchema: ERC725JSONSchema = {
+          name: customSchemaName,
+          key: dataKey,
+          keyType: customKeyType,
+          valueType: customValueType,
+          valueContent: customValueContent,
+        };
 
-      if (isDynamicKeyName(keyName)) {
-        decodedValue = erc725js.decodeData([
+        const tempErc725 = new ERC725(
+          [...schemas, adHocSchema],
+          address,
+          web3?.currentProvider,
           {
-            keyName,
-            dynamicKeyParts: dataKey.slice(26),
-            value: data,
+            ipfsGateway: 'https://api.ipfs.lukso.network/ipfs/',
           },
-        ]);
+        );
+
+        try {
+          const decodedPayload = tempErc725.decodeData([
+            { keyName: customSchemaName, value: dataToDecode },
+          ]);
+          
+          const decodedCustomValue = decodedPayload[0]?.value;
+
+          const decodedResult =
+          customValueContent === 'VerifiableURI' || isValidTuple(customValueType, customValueContent)
+            ? JSON.stringify(decodedCustomValue, null, 4)
+            : decodedCustomValue;
+          setDecodedData(String(decodedResult));
+        } catch (error) {
+            console.error('Error decoding custom key:', error);
+            setDecodedData(`Error decoding custom key: ${(error as Error).message}`);
+        }
+
       } else {
-        decodedValue = erc725js.decodeData([
-          {
-            keyName,
-            value: data,
-          },
-        ]);
+        const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
+        if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
+          setDecodedData('Schema not found for this key using standard LSPs. Try \'Custom Key\'.');
+          return;
+        }
+        let keyName, valueType, valueContent;
+
+        if (foundSchema) {
+          ({ name: keyName, valueType, valueContent } = foundSchema);
+        } else if (dataKey === LSP28_THE_GRID_KEY) {
+          keyName = 'LSP28TheGrid';
+          valueType = 'bytes';
+          valueContent = 'VerifiableURI';
+        } else {
+          console.error('Unknown schema error for predefined key');
+           setDecodedData('Could not determine schema for the key.');
+          return;
+        }
+
+        let decodedValue;
+
+        if (isDynamicKeyName(keyName)) {
+          decodedValue = erc725js.decodeData([
+            {
+              keyName,
+              dynamicKeyParts: dataKey.slice(26),
+              value: dataToDecode,
+            },
+          ]);
+        } else {
+          decodedValue = erc725js.decodeData([
+            {
+              keyName,
+              value: dataToDecode,
+            },
+          ]);
+        }
+        const decodedResult =
+          valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
+            ? JSON.stringify(decodedValue[0].value, null, 4)
+            : decodedValue[0].value;
+        setDecodedData(decodedResult);
       }
-      const decodedResult =
-        valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
-          ? JSON.stringify(decodedValue[0].value, null, 4)
-          : decodedValue[0].value;
-      setDecodedData(decodedResult);
     }
   };
 
@@ -321,15 +471,15 @@ const GetData: NextPage = () => {
 
               <div className="select mb-4 is-fullwidth">
                 <select
-                  value={dataKey}
-                  onChange={(e) => onDataKeyChange(e.target.value)}
+                  value={selectedDataKeyOption}
+                  onChange={handleDataKeyDropdownChange}
                   className="is-fullwidth"
                 >
-                  {dataKeyList.map((dataKey, index) => {
+                  {dataKeyList.map((dataKeyItem, index) => {
                     return (
-                      <option key={index} value={dataKey.key}>
-                        {dataKey.icon} &nbsp;
-                        {dataKey.name}
+                      <option key={index} value={dataKeyItem.key}>
+                        {dataKeyItem.icon} &nbsp;
+                        {dataKeyItem.name}
                       </option>
                     );
                   })}
@@ -347,6 +497,19 @@ const GetData: NextPage = () => {
               </div>
               {dataKeyError !== '' && (
                 <p className="help is-danger">{dataKeyError}</p>
+              )}
+
+              {selectedDataKeyOption === '' && (
+                <CustomKeySchemaForm
+                  customSchemaName={customSchemaName}
+                  setCustomSchemaName={setCustomSchemaName}
+                  customKeyType={customKeyType}
+                  setCustomKeyType={setCustomKeyType}
+                  customValueType={customValueType}
+                  setCustomValueType={setCustomValueType}
+                  customValueContent={customValueContent}
+                  setCustomValueContent={setCustomValueContent}
+                />
               )}
             </div>
             <button
