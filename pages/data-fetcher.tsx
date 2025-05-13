@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useContext, useState, useEffect, useCallback } from 'react';
+import { useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725, {
   ERC725JSONSchema,
@@ -28,7 +28,9 @@ import { SAMPLE_ADDRESS } from '@/constants';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
-import CustomKeySchemaForm from '@/components/CustomKeySchemaForm/CustomKeySchemaForm';
+import CustomKeySchemaForm, {
+  CustomKeySchemaFormRef,
+} from '@/components/CustomKeySchemaForm/CustomKeySchemaForm';
 
 // using local variable for LSP28TheGrid key for now
 const LSP28_THE_GRID_KEY =
@@ -59,12 +61,6 @@ const GetData: NextPage = () => {
   const [selectedDataKeyOption, setSelectedDataKeyOption] = useState(
     dataKeyList[0].key,
   );
-  // New state for custom key schema inputs
-  const [customSchemaName, setCustomSchemaName] = useState<string>('');
-  const [customKeyType, setCustomKeyType] = useState<string>('');
-  const [customValueType, setCustomValueType] = useState<string>('');
-  const [customValueContent, setCustomValueContent] =
-    useState<string>('');
 
   const [data, setData] = useState('');
   const [decodedData, setDecodedData] = useState('');
@@ -79,6 +75,8 @@ const GetData: NextPage = () => {
   const router = useRouter();
 
   const web3 = useWeb3();
+
+  const customKeySchemaFormRef = useRef<CustomKeySchemaFormRef>(null);
 
   const schemas = [
     ...LSP1DataKeys,
@@ -248,80 +246,102 @@ const GetData: NextPage = () => {
   ]);
 
   const onGetDataClick = async () => {
-    if (!web3 || !erc725js) {
-      return;
-    }
-
+    if (!web3 || !erc725js) return;
     if (!interfaces.isErc725Y) {
       console.log('Contract not compatible with ERC725');
       return;
     }
 
-    if (dataKeyError || !dataKey) {
-        console.log('Invalid data key provided.');
-        setData('0x');
-        setDecodedData('Invalid data key. Please check your input.');
-        return;
-    }
+    const isCustomKeyMode = selectedDataKeyOption === '';
 
-    const dataToDecode = await getData(address, dataKey, web3);
-    
-    if (!dataToDecode) {
-      setData('0x');
-      setDecodedData('no data to decode 🤷');
-    } else {
+    // --- Proposed Debugging Logs --- 
+    console.log('[onGetDataClick] Selected Data Key Option:', selectedDataKeyOption);
+    console.log('[onGetDataClick] Is Custom Key Mode:', isCustomKeyMode);
+    // --- End Debugging Logs --- 
+
+    if (isCustomKeyMode) {
+      if (!customKeySchemaFormRef.current) {
+        console.error('CustomKeySchemaForm ref not available');
+        setDecodedData('Internal error: Custom key form not ready.');
+        setData('0x');
+        return;
+      }
+
+      const customSchemaResult = customKeySchemaFormRef.current.getCompleteCustomSchema();
+      
+      // --- Proposed Debugging Logs --- 
+      console.log('[onGetDataClick] Custom Schema Result from form:', customSchemaResult);
+      // --- End Debugging Logs --- 
+
+      if (customSchemaResult.error || !customSchemaResult.schema) {
+        setDecodedData(customSchemaResult.error || 'Failed to generate custom schema.');
+        setData('0x');
+        return;
+      }
+
+      const adHocSchema = customSchemaResult.schema; 
+      const keyFromCustomForm = adHocSchema.key;
+      
+      // --- Proposed Debugging Logs --- 
+      console.log('[onGetDataClick] Key retrieved from Custom Form:', keyFromCustomForm);
+      console.log('[onGetDataClick] Full adHocSchema from form:', adHocSchema);
+      // --- End Debugging Logs --- 
+
+      const dataToDecode = await getData(address, keyFromCustomForm, web3);
+
+      if (!dataToDecode) {
+        setData('0x');
+        setDecodedData('no data to decode for the custom key 🤷');
+        return;
+      }
       setData(dataToDecode);
 
-      const isCustomKeyMode = selectedDataKeyOption === '';
+      const tempErc725 = new ERC725(
+        [...schemas, adHocSchema],
+        address,
+        web3?.currentProvider,
+        {
+          ipfsGateway: 'https://api.ipfs.lukso.network/ipfs/',
+        },
+      );
 
-      if (isCustomKeyMode) {
-        if (
-          !customSchemaName ||
-          !customKeyType ||
-          !customValueType ||
-          !customValueContent
-        ) {
-          setDecodedData(
-            'For custom keys, all schema fields (Schema Name, Key Type, Value Type, Value Content) must be provided.',
-          );
+      try {
+        const decodedPayload = tempErc725.decodeData([
+          { keyName: adHocSchema.name, value: dataToDecode },
+        ]);
+        
+        const decodedCustomValue = decodedPayload[0]?.value;
+
+        const decodedResult =
+        adHocSchema.valueContent === 'VerifiableURI' || isValidTuple(adHocSchema.valueType, adHocSchema.valueContent)
+          ? JSON.stringify(decodedCustomValue, null, 4)
+          : decodedCustomValue;
+        setDecodedData(String(decodedResult));
+      } catch (error) {
+          console.error('Error decoding custom key:', error);
+          setDecodedData(`Error decoding custom key: ${(error as Error).message}`);
+      }
+
+    } else {
+      // User added console logs here:
+      console.log('[onGetDataClick - Predefined Path] dataKey state:', dataKey);
+      console.log('[onGetDataClick - Predefined Path] dataKeyError state:', dataKeyError);
+  
+      if (dataKeyError || !dataKey) {
+          console.log('Invalid data key provided.');
+          setData('0x');
+          setDecodedData('Invalid data key. Please check your input.');
           return;
-        }
+      }
 
-        const adHocSchema: ERC725JSONSchema = {
-          name: customSchemaName,
-          key: dataKey,
-          keyType: customKeyType,
-          valueType: customValueType,
-          valueContent: customValueContent,
-        };
-
-        const tempErc725 = new ERC725(
-          [...schemas, adHocSchema],
-          address,
-          web3?.currentProvider,
-          {
-            ipfsGateway: 'https://api.ipfs.lukso.network/ipfs/',
-          },
-        );
-
-        try {
-          const decodedPayload = tempErc725.decodeData([
-            { keyName: customSchemaName, value: dataToDecode },
-          ]);
-          
-          const decodedCustomValue = decodedPayload[0]?.value;
-
-          const decodedResult =
-          customValueContent === 'VerifiableURI' || isValidTuple(customValueType, customValueContent)
-            ? JSON.stringify(decodedCustomValue, null, 4)
-            : decodedCustomValue;
-          setDecodedData(String(decodedResult));
-        } catch (error) {
-            console.error('Error decoding custom key:', error);
-            setDecodedData(`Error decoding custom key: ${(error as Error).message}`);
-        }
-
+      const dataToDecode = await getData(address, dataKey, web3);
+      
+      if (!dataToDecode) {
+        setData('0x');
+        setDecodedData('no data to decode 🤷');
       } else {
+        setData(dataToDecode);
+
         const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
         if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
           setDecodedData('Schema not found for this key using standard LSPs. Try \'Custom Key\'.');
@@ -486,30 +506,24 @@ const GetData: NextPage = () => {
                 </select>
               </div>
               <br />
-              <div className="control">
-                <input
-                  className="input"
-                  type="text"
-                  placeholder={LSP1DataKeys[0].key}
-                  value={dataKey}
-                  onChange={(e) => onDataKeyChange(e.target.value)}
-                />
-              </div>
-              {dataKeyError !== '' && (
+              {selectedDataKeyOption !== '' && (
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder={LSP1DataKeys[0].key}
+                    value={dataKey}
+                    onChange={(e) => onDataKeyChange(e.target.value)}
+                    disabled={!!(selectedDataKeyOption && dataKeyList.find(item => item.key === selectedDataKeyOption && item.key !== ''))}
+                  />
+                </div>
+              )}
+              {selectedDataKeyOption !== '' && dataKeyError !== '' && (
                 <p className="help is-danger">{dataKeyError}</p>
               )}
 
               {selectedDataKeyOption === '' && (
-                <CustomKeySchemaForm
-                  customSchemaName={customSchemaName}
-                  setCustomSchemaName={setCustomSchemaName}
-                  customKeyType={customKeyType}
-                  setCustomKeyType={setCustomKeyType}
-                  customValueType={customValueType}
-                  setCustomValueType={setCustomValueType}
-                  customValueContent={customValueContent}
-                  setCustomValueContent={setCustomValueContent}
-                />
+                <CustomKeySchemaForm ref={customKeySchemaFormRef} />
               )}
             </div>
             <button
@@ -517,10 +531,9 @@ const GetData: NextPage = () => {
               type="button"
               disabled={
                 address === '' ||
-                dataKey === '' ||
                 addressError !== '' ||
-                dataKeyError !== '' ||
-                !interfaces.isErc725Y
+                !interfaces.isErc725Y ||
+                (selectedDataKeyOption !== '' && (dataKey === '' || dataKeyError !== ''))
               }
               onClick={onGetDataClick}
             >
