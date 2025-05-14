@@ -3,23 +3,17 @@ import { ERC725JSONSchema } from '@erc725/erc725.js';
 
 // Define the interface for the methods exposed by the ref
 export interface CustomKeySchemaFormRef {
-  getCompleteCustomSchema: () => { schema: ERC725JSONSchema | null; error?: string };
+  getCompleteCustomSchema: () => {
+    schema: ERC725JSONSchema | null;
+    error?: string;
+  };
 }
 
-// Original props are removed as state is now internal
-// interface CustomKeySchemaFormProps {
-//   customSchemaName: string;
-//   setCustomSchemaName: (value: string) => void;
-//   customKeyType: string;
-//   setCustomKeyType: (value: string) => void;
-//   customValueType: string;
-//   setCustomValueType: (value: string) => void;
-//   customValueContent: string;
-//   setCustomValueContent: (value: string) => void;
-// }
-
-// New props interface (if any needed in the future, for now empty)
-interface CustomKeySchemaFormProps {}
+// New props interface
+interface CustomKeySchemaFormProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any; // Using an index signature to allow any props
+}
 
 const CustomKeySchemaForm = forwardRef<
   CustomKeySchemaFormRef,
@@ -41,13 +35,19 @@ const CustomKeySchemaForm = forwardRef<
         if (inputKey.length === 64 && /^[0-9a-fA-F]+$/.test(inputKey)) {
           inputKey = `0x${inputKey}`;
         } else {
-          error = 'Data Key must be a 66-character hex string (starting with 0x) or a 64-character hex string (0x will be auto-prefixed).';
+          error =
+            'Data Key must be a 66-character hex string (starting with 0x) or a 64-character hex string (0x will be auto-prefixed).';
         }
       } else if (inputKey.length !== 66) {
-        error = 'Data Key must be a 66-character hex string (starting with 0x).';
+        error =
+          'Data Key must be a 66-character hex string (starting with 0x).';
       }
 
-      if (error === '' && inputKey.length === 66 && !/^(0x)[0-9a-fA-F]{64}$/.test(inputKey)) {
+      if (
+        error === '' &&
+        inputKey.length === 66 &&
+        !/^(0x)[0-9a-fA-F]{64}$/.test(inputKey)
+      ) {
         error = 'Invalid hex characters in Data Key.';
       }
     } else {
@@ -61,13 +61,15 @@ const CustomKeySchemaForm = forwardRef<
   useImperativeHandle(ref, () => ({
     getCompleteCustomSchema: () => {
       // Validate Data Key Value first
-      if (!dataKeyValue) { // Check if dataKeyValue is empty first
+      if (!dataKeyValue) {
+        // Check if dataKeyValue is empty first
         return {
           schema: null,
           error: 'Key Value must be provided.',
         };
       }
-      if (dataKeyError) { // Then check if there's a format error
+      if (dataKeyError) {
+        // Then check if there's a format error
         return {
           schema: null,
           error: dataKeyError,
@@ -132,9 +134,9 @@ const CustomKeySchemaForm = forwardRef<
           <p className="help is-danger is-small">{dataKeyError}</p>
         )}
         {!dataKeyError && dataKeyValue === '' && (
-            <p className="help is-info is-small">
-              Enter the specific ERC725Y data key (bytes32 hex string).
-            </p>
+          <p className="help is-info is-small">
+            Enter the specific ERC725Y data key (bytes32 hex string).
+          </p>
         )}
       </div>
 
@@ -150,7 +152,14 @@ const CustomKeySchemaForm = forwardRef<
           />
         </div>
         <p className="help is-info is-small">
-          Refer to LSP2 `keyType` specification.
+          Refer to{' '}
+          <a
+            href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#data-key-types"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>LSP2 `keyType` specification</strong>
+          </a>
         </p>
       </div>
       <div className="field">
@@ -165,7 +174,14 @@ const CustomKeySchemaForm = forwardRef<
           />
         </div>
         <p className="help is-info is-small">
-          Refer to LSP2 `valueType` specification.
+          Refer to{' '}
+          <a
+            href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#valuetype-encoding"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>LSP2 `valueType` specification</strong>
+          </a>
         </p>
       </div>
       <div className="field">
@@ -180,7 +196,14 @@ const CustomKeySchemaForm = forwardRef<
           />
         </div>
         <p className="help is-info is-small">
-          Refer to LSP2 `valueContent` specification.
+          Refer to{' '}
+          <a
+            href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#valuetype-encoding"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong>LSP2 `valueContent` specification</strong>
+          </a>
         </p>
       </div>
     </div>
@@ -189,4 +212,4 @@ const CustomKeySchemaForm = forwardRef<
 
 CustomKeySchemaForm.displayName = 'CustomKeySchemaForm';
 
-export default CustomKeySchemaForm; 
+export default CustomKeySchemaForm;

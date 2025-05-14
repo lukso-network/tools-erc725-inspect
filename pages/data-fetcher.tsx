@@ -122,10 +122,7 @@ const GetData: NextPage = () => {
       const existingAddress = currentUrl.searchParams.get('address');
       const existingDatakey = currentUrl.searchParams.get('datakey');
 
-      if (
-        newAddress === existingAddress &&
-        newDataKey === existingDatakey
-      ) {
+      if (newAddress === existingAddress && newDataKey === existingDatakey) {
         return;
       }
 
@@ -166,7 +163,15 @@ const GetData: NextPage = () => {
         setInterfaces({ isErc725X: false, isErc725Y: false });
       }
     },
-    [web3, dataKey, updateURLParams, setAddress, setData, setAddressError, setInterfaces],
+    [
+      web3,
+      dataKey,
+      updateURLParams,
+      setAddress,
+      setData,
+      setAddressError,
+      setInterfaces,
+    ],
   );
 
   const onDataKeyChange = useCallback(
@@ -199,7 +204,14 @@ const GetData: NextPage = () => {
         setSelectedDataKeyOption('');
       }
     },
-    [address, updateURLParams, setSelectedDataKeyOption, setData, setDataKey, setDataKeyError],
+    [
+      address,
+      updateURLParams,
+      setSelectedDataKeyOption,
+      setData,
+      setDataKey,
+      setDataKeyError,
+    ],
   );
 
   const handleDataKeyDropdownChange = useCallback(
@@ -216,7 +228,15 @@ const GetData: NextPage = () => {
         updateURLParams(address, '');
       }
     },
-    [address, updateURLParams, setSelectedDataKeyOption, setData, setDataKey, setDataKeyError, onDataKeyChange],
+    [
+      address,
+      updateURLParams,
+      setSelectedDataKeyOption,
+      setData,
+      setDataKey,
+      setDataKeyError,
+      onDataKeyChange,
+    ],
   );
 
   // Moved this useEffect hook to be after the definitions of its dependencies
@@ -254,11 +274,6 @@ const GetData: NextPage = () => {
 
     const isCustomKeyMode = selectedDataKeyOption === '';
 
-    // --- Proposed Debugging Logs --- 
-    console.log('[onGetDataClick] Selected Data Key Option:', selectedDataKeyOption);
-    console.log('[onGetDataClick] Is Custom Key Mode:', isCustomKeyMode);
-    // --- End Debugging Logs --- 
-
     if (isCustomKeyMode) {
       if (!customKeySchemaFormRef.current) {
         console.error('CustomKeySchemaForm ref not available');
@@ -267,25 +282,19 @@ const GetData: NextPage = () => {
         return;
       }
 
-      const customSchemaResult = customKeySchemaFormRef.current.getCompleteCustomSchema();
-      
-      // --- Proposed Debugging Logs --- 
-      console.log('[onGetDataClick] Custom Schema Result from form:', customSchemaResult);
-      // --- End Debugging Logs --- 
+      const customSchemaResult =
+        customKeySchemaFormRef.current.getCompleteCustomSchema();
 
       if (customSchemaResult.error || !customSchemaResult.schema) {
-        setDecodedData(customSchemaResult.error || 'Failed to generate custom schema.');
+        setDecodedData(
+          customSchemaResult.error || 'Failed to generate custom schema.',
+        );
         setData('0x');
         return;
       }
 
-      const adHocSchema = customSchemaResult.schema; 
+      const adHocSchema = customSchemaResult.schema;
       const keyFromCustomForm = adHocSchema.key;
-      
-      // --- Proposed Debugging Logs --- 
-      console.log('[onGetDataClick] Key retrieved from Custom Form:', keyFromCustomForm);
-      console.log('[onGetDataClick] Full adHocSchema from form:', adHocSchema);
-      // --- End Debugging Logs --- 
 
       const dataToDecode = await getData(address, keyFromCustomForm, web3);
 
@@ -309,33 +318,38 @@ const GetData: NextPage = () => {
         const decodedPayload = tempErc725.decodeData([
           { keyName: adHocSchema.name, value: dataToDecode },
         ]);
-        
+
         const decodedCustomValue = decodedPayload[0]?.value;
 
         const decodedResult =
-        adHocSchema.valueContent === 'VerifiableURI' || isValidTuple(adHocSchema.valueType, adHocSchema.valueContent)
-          ? JSON.stringify(decodedCustomValue, null, 4)
-          : decodedCustomValue;
+          adHocSchema.valueContent === 'VerifiableURI' ||
+          isValidTuple(adHocSchema.valueType, adHocSchema.valueContent)
+            ? JSON.stringify(decodedCustomValue, null, 4)
+            : decodedCustomValue;
         setDecodedData(String(decodedResult));
       } catch (error) {
-          console.error('Error decoding custom key:', error);
-          setDecodedData(`Error decoding custom key: ${(error as Error).message}`);
+        console.error('Error decoding custom key:', error);
+        setDecodedData(
+          `Error decoding custom key: ${(error as Error).message}`,
+        );
       }
-
     } else {
       // User added console logs here:
       console.log('[onGetDataClick - Predefined Path] dataKey state:', dataKey);
-      console.log('[onGetDataClick - Predefined Path] dataKeyError state:', dataKeyError);
-  
+      console.log(
+        '[onGetDataClick - Predefined Path] dataKeyError state:',
+        dataKeyError,
+      );
+
       if (dataKeyError || !dataKey) {
-          console.log('Invalid data key provided.');
-          setData('0x');
-          setDecodedData('Invalid data key. Please check your input.');
-          return;
+        console.log('Invalid data key provided.');
+        setData('0x');
+        setDecodedData('Invalid data key. Please check your input.');
+        return;
       }
 
       const dataToDecode = await getData(address, dataKey, web3);
-      
+
       if (!dataToDecode) {
         setData('0x');
         setDecodedData('no data to decode 🤷');
@@ -344,7 +358,9 @@ const GetData: NextPage = () => {
 
         const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
         if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
-          setDecodedData('Schema not found for this key using standard LSPs. Try \'Custom Key\'.');
+          setDecodedData(
+            "Schema not found for this key using standard LSPs. Try 'Custom Key'.",
+          );
           return;
         }
         let keyName, valueType, valueContent;
@@ -357,7 +373,7 @@ const GetData: NextPage = () => {
           valueContent = 'VerifiableURI';
         } else {
           console.error('Unknown schema error for predefined key');
-           setDecodedData('Could not determine schema for the key.');
+          setDecodedData('Could not determine schema for the key.');
           return;
         }
 
@@ -380,7 +396,8 @@ const GetData: NextPage = () => {
           ]);
         }
         const decodedResult =
-          valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
+          valueContent == 'VerifiableURI' ||
+          isValidTuple(valueType, valueContent)
             ? JSON.stringify(decodedValue[0].value, null, 4)
             : decodedValue[0].value;
         setDecodedData(decodedResult);
@@ -532,7 +549,8 @@ const GetData: NextPage = () => {
                 address === '' ||
                 addressError !== '' ||
                 !interfaces.isErc725Y ||
-                (selectedDataKeyOption !== '' && (dataKey === '' || dataKeyError !== ''))
+                (selectedDataKeyOption !== '' &&
+                  (dataKey === '' || dataKeyError !== ''))
               }
               onClick={onGetDataClick}
             >
