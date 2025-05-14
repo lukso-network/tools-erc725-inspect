@@ -514,7 +514,6 @@ const GetData: NextPage = () => {
                     placeholder={LSP1DataKeys[0].key}
                     value={dataKey}
                     onChange={(e) => onDataKeyChange(e.target.value)}
-                    disabled={!!(selectedDataKeyOption && dataKeyList.find(item => item.key === selectedDataKeyOption && item.key !== ''))}
                   />
                 </div>
               )}
