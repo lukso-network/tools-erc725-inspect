@@ -99,18 +99,16 @@ const GetData: NextPage = () => {
   ];
 
   // Effect to sync selectedDataKeyOption when dataKey changes (e.g., from URL or programmatically)
+  // Only sync when dataKey matches a predefined key exactly
   useEffect(() => {
     if (!dataKey) {
-      setSelectedDataKeyOption('');
       return;
     }
-    const isPredefined = dataKeyList.some(
+    const matchingKey = dataKeyList.find(
       (item) => item.key === dataKey && item.key !== '',
     );
-    if (isPredefined) {
+    if (matchingKey && selectedDataKeyOption !== dataKey) {
       setSelectedDataKeyOption(dataKey);
-    } else {
-      setSelectedDataKeyOption('');
     }
   }, [dataKey]);
 
@@ -195,23 +193,17 @@ const GetData: NextPage = () => {
       setDataKeyError(error);
       updateURLParams(address, inputKey);
 
+      // Only update dropdown selection if this is an exact match to a predefined key
+      // Don't switch to custom key mode automatically
       const isPredefined = dataKeyList.some(
         (item) => item.key === inputKey && item.key !== '',
       );
       if (isPredefined) {
         setSelectedDataKeyOption(inputKey);
-      } else {
-        setSelectedDataKeyOption('');
       }
+      // Removed the else clause that was setting selectedDataKeyOption to ''
     },
-    [
-      address,
-      updateURLParams,
-      setSelectedDataKeyOption,
-      setData,
-      setDataKey,
-      setDataKeyError,
-    ],
+    [address, updateURLParams, setData, setDataKey, setDataKeyError],
   );
 
   const handleDataKeyDropdownChange = useCallback(
@@ -334,15 +326,7 @@ const GetData: NextPage = () => {
         );
       }
     } else {
-      // User added console logs here:
-      console.log('[onGetDataClick - Predefined Path] dataKey state:', dataKey);
-      console.log(
-        '[onGetDataClick - Predefined Path] dataKeyError state:',
-        dataKeyError,
-      );
-
       if (dataKeyError || !dataKey) {
-        console.log('Invalid data key provided.');
         setData('0x');
         setDecodedData('Invalid data key. Please check your input.');
         return;
