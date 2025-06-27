@@ -218,13 +218,6 @@ const CustomKeySchemaForm = forwardRef<
       ) : (
         <>
           <h5 className="title is-5">Custom Key Schema - Form View</h5>
-          <div className="notification is-success is-light mb-4">
-            <p className="is-size-7">
-              ✅ JSON parsed successfully! You can now review and modify the
-              fields below.
-            </p>
-          </div>
-
           <div className="field">
             <label className="label is-small">Schema Name</label>
             <div className="control">

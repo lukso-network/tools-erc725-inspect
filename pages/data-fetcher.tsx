@@ -37,6 +37,7 @@ const LSP28_THE_GRID_KEY =
   '0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff';
 
 const dataKeyList = [
+  { name: 'Custom Key', key: '', icon: '🔧' },
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
   ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
   ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
@@ -48,7 +49,6 @@ const dataKeyList = [
   ...LSP12DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
   ...LSP17DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💎' })),
   { name: 'LSP28TheGrid', key: LSP28_THE_GRID_KEY, icon: '🌐' },
-  { name: 'Custom Key', key: '', icon: '🔧' },
 ];
 
 const GetData: NextPage = () => {
@@ -193,15 +193,19 @@ const GetData: NextPage = () => {
       setDataKeyError(error);
       updateURLParams(address, inputKey);
 
-      // Only update dropdown selection if this is an exact match to a predefined key
-      // Don't switch to custom key mode automatically
-      const isPredefined = dataKeyList.some(
-        (item) => item.key === inputKey && item.key !== '',
-      );
-      if (isPredefined) {
-        setSelectedDataKeyOption(inputKey);
+      // Update dropdown selection based on the input
+      if (inputKey === '') {
+        // Empty key means custom key mode
+        setSelectedDataKeyOption('');
+      } else {
+        // Only update dropdown selection if this is an exact match to a predefined key
+        const isPredefined = dataKeyList.some(
+          (item) => item.key === inputKey && item.key !== '',
+        );
+        if (isPredefined) {
+          setSelectedDataKeyOption(inputKey);
+        }
       }
-      // Removed the else clause that was setting selectedDataKeyOption to ''
     },
     [address, updateURLParams, setData, setDataKey, setDataKeyError],
   );
