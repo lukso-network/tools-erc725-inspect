@@ -37,6 +37,7 @@ const LSP28_THE_GRID_KEY =
   '0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff';
 
 const dataKeyList = [
+  { name: 'Custom Key', key: '', icon: '🔧' },
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
   ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
   ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
@@ -48,7 +49,6 @@ const dataKeyList = [
   ...LSP12DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
   ...LSP17DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💎' })),
   { name: 'LSP28TheGrid', key: LSP28_THE_GRID_KEY, icon: '🌐' },
-  { name: 'Custom Key', key: '', icon: '🔧' },
 ];
 
 const GetData: NextPage = () => {
@@ -99,18 +99,16 @@ const GetData: NextPage = () => {
   ];
 
   // Effect to sync selectedDataKeyOption when dataKey changes (e.g., from URL or programmatically)
+  // Only sync when dataKey matches a predefined key exactly
   useEffect(() => {
     if (!dataKey) {
-      setSelectedDataKeyOption('');
       return;
     }
-    const isPredefined = dataKeyList.some(
+    const matchingKey = dataKeyList.find(
       (item) => item.key === dataKey && item.key !== '',
     );
-    if (isPredefined) {
+    if (matchingKey && selectedDataKeyOption !== dataKey) {
       setSelectedDataKeyOption(dataKey);
-    } else {
-      setSelectedDataKeyOption('');
     }
   }, [dataKey]);
 
@@ -195,23 +193,21 @@ const GetData: NextPage = () => {
       setDataKeyError(error);
       updateURLParams(address, inputKey);
 
-      const isPredefined = dataKeyList.some(
-        (item) => item.key === inputKey && item.key !== '',
-      );
-      if (isPredefined) {
-        setSelectedDataKeyOption(inputKey);
-      } else {
+      // Update dropdown selection based on the input
+      if (inputKey === '') {
+        // Empty key means custom key mode
         setSelectedDataKeyOption('');
+      } else {
+        // Only update dropdown selection if this is an exact match to a predefined key
+        const isPredefined = dataKeyList.some(
+          (item) => item.key === inputKey && item.key !== '',
+        );
+        if (isPredefined) {
+          setSelectedDataKeyOption(inputKey);
+        }
       }
     },
-    [
-      address,
-      updateURLParams,
-      setSelectedDataKeyOption,
-      setData,
-      setDataKey,
-      setDataKeyError,
-    ],
+    [address, updateURLParams, setData, setDataKey, setDataKeyError],
   );
 
   const handleDataKeyDropdownChange = useCallback(
@@ -334,15 +330,7 @@ const GetData: NextPage = () => {
         );
       }
     } else {
-      // User added console logs here:
-      console.log('[onGetDataClick - Predefined Path] dataKey state:', dataKey);
-      console.log(
-        '[onGetDataClick - Predefined Path] dataKeyError state:',
-        dataKeyError,
-      );
-
       if (dataKeyError || !dataKey) {
-        console.log('Invalid data key provided.');
         setData('0x');
         setDecodedData('Invalid data key. Please check your input.');
         return;

@@ -26,6 +26,11 @@ const CustomKeySchemaForm = forwardRef<
   const [customValueType, setCustomValueType] = useState<string>('');
   const [customValueContent, setCustomValueContent] = useState<string>('');
 
+  // New states for JSON input mode
+  const [isJSONMode, setIsJSONMode] = useState<boolean>(true);
+  const [jsonInput, setJsonInput] = useState<string>('');
+  const [jsonError, setJsonError] = useState<string>('');
+
   const handleDataKeyValueChange = (value: string) => {
     let inputKey = value;
     let error = '';
@@ -56,6 +61,60 @@ const CustomKeySchemaForm = forwardRef<
 
     setDataKeyValue(inputKey);
     setDataKeyError(error);
+  };
+
+  const parseAndPopulateFromJSON = (jsonString: string) => {
+    try {
+      const parsed = JSON.parse(jsonString);
+
+      // Validate required fields
+      const requiredFields = [
+        'name',
+        'key',
+        'keyType',
+        'valueType',
+        'valueContent',
+      ];
+      const missingFields = requiredFields.filter((field) => !parsed[field]);
+
+      if (missingFields.length > 0) {
+        setJsonError(`Missing required fields: ${missingFields.join(', ')}`);
+        return;
+      }
+
+      // Validate and populate fields
+      setCustomSchemaName(parsed.name);
+      handleDataKeyValueChange(parsed.key); // This will validate the key format
+      setCustomKeyType(parsed.keyType);
+      setCustomValueType(parsed.valueType);
+      setCustomValueContent(parsed.valueContent);
+
+      setJsonError('');
+      setIsJSONMode(false); // Switch to form mode
+    } catch (error) {
+      setJsonError('Invalid JSON format. Please check your syntax.');
+    }
+  };
+
+  const handleJSONInputChange = (value: string) => {
+    setJsonInput(value);
+    if (value.trim()) {
+      parseAndPopulateFromJSON(value);
+    } else {
+      setJsonError('');
+    }
+  };
+
+  const resetForm = () => {
+    setCustomSchemaName('');
+    setDataKeyValue('');
+    setDataKeyError('');
+    setCustomKeyType('');
+    setCustomValueType('');
+    setCustomValueContent('');
+    setJsonInput('');
+    setJsonError('');
+    setIsJSONMode(true);
   };
 
   useImperativeHandle(ref, () => ({
@@ -102,110 +161,168 @@ const CustomKeySchemaForm = forwardRef<
 
   return (
     <div className="mt-4 p-4 has-background-light">
-      <h5 className="title is-5">Custom Key Schema</h5>
-      <div className="field">
-        <label className="label is-small">Schema Name</label>
+      <div className="field is-grouped is-grouped-right mb-4">
         <div className="control">
-          <input
-            className="input is-small"
-            type="text"
-            placeholder="e.g., MyCustomProfileData"
-            value={customSchemaName}
-            onChange={(e) => setCustomSchemaName(e.target.value)}
-          />
+          <button
+            className="button is-small is-light mr-2"
+            type="button"
+            onClick={() => setIsJSONMode(!isJSONMode)}
+          >
+            {isJSONMode ? 'Switch to Manual Form' : 'Switch to JSON Input'}
+          </button>
         </div>
-        <p className="help is-info is-small">
-          A unique name for this custom schema definition.
-        </p>
+        <div className="control">
+          <button
+            className="button is-small is-light"
+            type="button"
+            onClick={resetForm}
+          >
+            Reset Form
+          </button>
+        </div>
       </div>
 
-      <div className="field">
-        <label className="label is-small">Key Value (Data Key)</label>
-        <div className="control">
-          <input
-            className={`input is-small ${dataKeyError ? 'is-danger' : ''}`}
-            type="text"
-            placeholder="0x... (e.g., 0x123...abc)"
-            value={dataKeyValue}
-            onChange={(e) => handleDataKeyValueChange(e.target.value)}
-          />
-        </div>
-        {dataKeyError && (
-          <p className="help is-danger is-small">{dataKeyError}</p>
-        )}
-        {!dataKeyError && dataKeyValue === '' && (
-          <p className="help is-info is-small">
-            Enter the specific ERC725Y data key (bytes32 hex string).
-          </p>
-        )}
-      </div>
+      {isJSONMode ? (
+        <>
+          <h5 className="title is-5">Custom Key Schema - JSON Input</h5>
+          <div className="field">
+            <label className="label is-small">
+              Paste your ERC725JSONSchema JSON here:
+            </label>
+            <div className="control">
+              <textarea
+                className={`textarea ${jsonError ? 'is-danger' : ''}`}
+                rows={8}
+                placeholder={`{
+  "name": "MyCustomKey",
+  "key": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "keyType": "Singleton",
+  "valueType": "bytes",
+  "valueContent": "Bytes"
+}`}
+                value={jsonInput}
+                onChange={(e) => handleJSONInputChange(e.target.value)}
+              />
+            </div>
+            {jsonError && (
+              <p className="help is-danger is-small">{jsonError}</p>
+            )}
+            {!jsonError && !jsonInput && (
+              <p className="help is-info is-small">
+                Enter a valid ERC725JSONSchema JSON object with fields: name,
+                key, keyType, valueType, valueContent
+              </p>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <h5 className="title is-5">Custom Key Schema - Form View</h5>
+          <div className="field">
+            <label className="label is-small">Schema Name</label>
+            <div className="control">
+              <input
+                className="input is-small"
+                type="text"
+                placeholder="e.g., MyCustomProfileData"
+                value={customSchemaName}
+                onChange={(e) => setCustomSchemaName(e.target.value)}
+              />
+            </div>
+            <p className="help is-info is-small">
+              A unique name for this custom schema definition.
+            </p>
+          </div>
 
-      <div className="field">
-        <label className="label is-small">Key Type</label>
-        <div className="control">
-          <input
-            className="input is-small"
-            type="text"
-            placeholder="e.g., Singleton, Mapping, Array"
-            value={customKeyType}
-            onChange={(e) => setCustomKeyType(e.target.value)}
-          />
-        </div>
-        <p className="help is-info is-small">
-          Refer to{' '}
-          <a
-            href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#data-key-types"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <strong>LSP2 `keyType` specification</strong>
-          </a>
-        </p>
-      </div>
-      <div className="field">
-        <label className="label is-small">Value Type</label>
-        <div className="control">
-          <input
-            className="input is-small"
-            type="text"
-            placeholder="e.g., bytes, string, address[], etc."
-            value={customValueType}
-            onChange={(e) => setCustomValueType(e.target.value)}
-          />
-        </div>
-        <p className="help is-info is-small">
-          Refer to{' '}
-          <a
-            href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#valuetype-encoding"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <strong>LSP2 `valueType` specification</strong>
-          </a>
-        </p>
-      </div>
-      <div className="field">
-        <label className="label is-small">Value Content</label>
-        <div className="control">
-          <input
-            className="input is-small"
-            type="text"
-            placeholder="e.g., HexString, VerifiableURI, AddressArray"
-            value={customValueContent}
-            onChange={(e) => setCustomValueContent(e.target.value)}
-          />
-        </div>
-        <p className="help is-info is-small">
-          Refer to{' '}
-          <a
-            href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#valuetype-encoding"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <strong>LSP2 `valueContent` specification</strong>
-          </a>
-        </p>
-      </div>
+          <div className="field">
+            <label className="label is-small">Key Value (Data Key)</label>
+            <div className="control">
+              <input
+                className={`input is-small ${dataKeyError ? 'is-danger' : ''}`}
+                type="text"
+                placeholder="0x... (e.g., 0x123...abc)"
+                value={dataKeyValue}
+                onChange={(e) => handleDataKeyValueChange(e.target.value)}
+              />
+            </div>
+            {dataKeyError && (
+              <p className="help is-danger is-small">{dataKeyError}</p>
+            )}
+            {!dataKeyError && dataKeyValue === '' && (
+              <p className="help is-info is-small">
+                Enter the specific ERC725Y data key (bytes32 hex string).
+              </p>
+            )}
+          </div>
+
+          <div className="field">
+            <label className="label is-small">Key Type</label>
+            <div className="control">
+              <input
+                className="input is-small"
+                type="text"
+                placeholder="e.g., Singleton, Mapping, Array"
+                value={customKeyType}
+                onChange={(e) => setCustomKeyType(e.target.value)}
+              />
+            </div>
+            <p className="help is-info is-small">
+              Refer to{' '}
+              <a
+                href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#data-key-types"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <strong>LSP2 `keyType` specification</strong>
+              </a>
+            </p>
+          </div>
+          <div className="field">
+            <label className="label is-small">Value Type</label>
+            <div className="control">
+              <input
+                className="input is-small"
+                type="text"
+                placeholder="e.g., bytes, string, address[], etc."
+                value={customValueType}
+                onChange={(e) => setCustomValueType(e.target.value)}
+              />
+            </div>
+            <p className="help is-info is-small">
+              Refer to{' '}
+              <a
+                href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#valuetype-encoding"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <strong>LSP2 `valueType` specification</strong>
+              </a>
+            </p>
+          </div>
+          <div className="field">
+            <label className="label is-small">Value Content</label>
+            <div className="control">
+              <input
+                className="input is-small"
+                type="text"
+                placeholder="e.g., HexString, VerifiableURI, AddressArray"
+                value={customValueContent}
+                onChange={(e) => setCustomValueContent(e.target.value)}
+              />
+            </div>
+            <p className="help is-info is-small">
+              Refer to{' '}
+              <a
+                href="https://docs.lukso.tech/standards/metadata/lsp2-json-schema#valuetype-encoding"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <strong>LSP2 `valueContent` specification</strong>
+              </a>
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 });
