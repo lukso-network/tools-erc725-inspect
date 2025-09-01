@@ -2,7 +2,7 @@
  * @author Hugo Masclet <git@hugom.xyz>
  */
 import React, { useState, useEffect } from 'react';
-import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
+import { encodeArrayKey, ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '@/components/AddressButtons';
 import ControllersList from '@/components/ControllersList';
 import { LUKSO_IPFS_BASE_URL } from '@/globals';
@@ -127,22 +127,53 @@ const ValueTypeDecoder: React.FC<Props> = ({
         }
 
         return (
-          <ul>
-            <li style={{ listStyleType: 'none' }}>
-              {decodedDataArray.value.length} elements in Array
-            </li>
-            {decodedDataArray.value.map(
-              (item, index) =>
-                item && (
-                  <li key={index}>
-                    <AddressInfos
-                      assetAddress={item.toString()}
-                      userAddress={address}
-                    />
-                  </li>
-                ),
-            )}
-          </ul>
+          <>
+            <p style={{ display: 'inline' }}>
+              {decodedDataArray.value.length} received assets found
+            </p>
+            <table className="table" style={{ backgroundColor: 'transparent' }}>
+              <thead>
+                <tr>
+                  <th>
+                    <abbr title="Position">Data Key index</abbr>
+                  </th>
+                  <th>
+                    <abbr title="Played">Value</abbr>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {decodedDataArray.value.map((item, index) => (
+                  <tr key={index}>
+                    <td>
+                      <p>
+                        {/* TODO: get the actual raw data key */}
+                        <strong>
+                          {erc725JSONSchema.name.replace('[]', `[${index}]`)}
+                        </strong>
+                      </p>
+                      <p>
+                        ➡{' '}
+                        <code>
+                          {encodeArrayKey(erc725JSONSchema.key, index)}
+                        </code>
+                      </p>
+                    </td>
+                    <td style={{ width: '50%' }}>
+                      {item ? (
+                        <AddressInfos
+                          assetAddress={item.toString()}
+                          userAddress={address}
+                        />
+                      ) : (
+                        <i>No received asset address found at index {index}</i>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         );
       }
     }
