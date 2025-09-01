@@ -2,7 +2,7 @@
  * @author Hugo Masclet <git@hugom.xyz>
  */
 import Web3 from 'web3';
-import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import { ERC725YDataKeys, INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import {
   INTERFACE_ID_LSP7,
   INTERFACE_ID_LSP7_PREVIOUS,
@@ -25,6 +25,7 @@ import {
   GNOSIS_SAFE_IMPLEMENTATION,
   GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
 } from '@/globals';
+import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.json';
 
 export const getDataBatch = async (
   address: string,
@@ -62,7 +63,7 @@ export const getData = async (
 
 export const checkInterface = async (address: string, web3: Web3) => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
-  const supportsContractInterface = await checkSupportedInterfaces(
+  const supportsContractInterface = await getSupportedInterfaces(
     address,
     [
       INTERFACE_IDS.ERC725X,
@@ -78,7 +79,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
   );
 
   // digital assets need to be checked against multiple interface IDs
-  const supportsAssetInterface = await checkSupportedInterfaces(
+  const supportsAssetInterface = await getSupportedInterfaces(
     address,
     [
       INTERFACE_ID_LSP7_PREVIOUS['v0.12.0'],
@@ -129,7 +130,7 @@ export const aggregateCalls = async (
   }
 };
 
-async function checkSupportedInterfaces(
+async function getSupportedInterfaces(
   assetAddress: string,
   interfaceIds: string[],
   web3: Web3,
@@ -158,6 +159,102 @@ async function checkSupportedInterfaces(
       return false;
     }
   });
+}
+
+export async function getAssetInfosAndBalance(
+  assetAddress: string,
+  userAddress: string,
+  isLSP7: boolean,
+  web3: Web3,
+): Promise<string[] | undefined[]> {
+  const tokenContract = new web3.eth.Contract(
+    LSP7Artifact.abi as AbiItem[],
+    assetAddress,
+  );
+
+  const viewCalls: [string, string][] = [
+    [
+      assetAddress,
+      tokenContract.methods
+        .getData(ERC725YDataKeys.LSP4.LSP4TokenName)
+        .encodeABI(),
+    ],
+    [
+      assetAddress,
+      tokenContract.methods
+        .getData(ERC725YDataKeys.LSP4.LSP4TokenSymbol)
+        .encodeABI(),
+    ],
+    [
+      assetAddress,
+      tokenContract.methods
+        .getData(ERC725YDataKeys.LSP4.LSP4TokenType)
+        .encodeABI(),
+    ],
+    [assetAddress, tokenContract.methods.balanceOf(userAddress).encodeABI()],
+  ];
+
+  if (isLSP7) {
+    viewCalls.push([
+      assetAddress,
+      tokenContract.methods.decimals().encodeABI(),
+    ]);
+  }
+
+  try {
+    const response = await aggregateCalls(viewCalls, web3);
+
+    // decode from an abi-encoded `bytes` type to the raw bytes value to be then converted to:
+    // - utf8 (for token name + symbol)
+    // - uint256 (for token type)
+    const decodedBytesName = web3.eth.abi.decodeParameter(
+      'bytes',
+      response[0],
+    ) as unknown as string;
+    const decodedBytesSymbol = web3.eth.abi.decodeParameter(
+      'bytes',
+      response[1],
+    ) as unknown as string;
+    const decodedBytesTokenType = web3.eth.abi.decodeParameter(
+      'bytes',
+      response[2],
+    ) as unknown as string;
+
+    const decodedStringName = web3.utils.toUtf8(decodedBytesName);
+    const decodedStringSymbol = web3.utils.toUtf8(decodedBytesSymbol);
+    const tokenTypeString = `${web3.eth.abi.decodeParameter(
+      'uint256',
+      decodedBytesTokenType,
+    )}`;
+
+    // format balance according to the decimals place
+    let tokenBalance = web3.eth.abi.decodeParameter(
+      'uint256',
+      response[3],
+    ) as unknown as string;
+
+    if (isLSP7) {
+      const decimals = web3.eth.abi.decodeParameter('uint8', response[4]);
+      const unit =
+        (decimals as unknown as string) == '18' ? 'ether' : 'noether';
+      tokenBalance = web3.utils.fromWei(tokenBalance, unit);
+    }
+
+    return [
+      decodedStringName,
+      decodedStringSymbol,
+      tokenTypeString,
+      tokenBalance,
+    ];
+  } catch (error) {
+    console.error(
+      'could not aggregate calls and decode to read asset data: ',
+      error,
+    );
+
+    // return new Array(4).fill(undefined);
+    return [undefined, undefined, undefined, undefined];
+  }
 }
 
 export const getVersion = async (

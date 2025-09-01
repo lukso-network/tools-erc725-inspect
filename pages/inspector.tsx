@@ -243,7 +243,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Inspect - ERC725 Tools</title>
       </Head>
-      <div className="container">
+      <div>
         <h2 className="title is-2">Inspector</h2>
         <article className="message is-info">
           <div className="message-body">
@@ -323,7 +323,7 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        <div className="container">
+        <div>
           {!errorMessage &&
             !isLoading &&
             (isErc725X ||

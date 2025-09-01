@@ -13,10 +13,11 @@ import {
   LSP1_GRAVE_FORWARDER,
   UP_RECOVERY_ADDRESSES,
 } from '@/globals';
-import { checkInterface, getData, checkIsGnosisSafe } from '@/utils/web3';
-
-import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.json';
-import { AbiItem } from 'web3-utils';
+import {
+  checkInterface,
+  checkIsGnosisSafe,
+  getAssetInfosAndBalance,
+} from '@/utils/web3';
 
 interface Props {
   assetAddress: string;
@@ -28,14 +29,6 @@ interface BadgeProps {
   isLight: boolean;
   colorClass?: string;
   contractVersion?: string;
-}
-
-interface AssetProps {
-  name: string;
-  symbol: string;
-  assetAddress: string;
-  userAddress: string;
-  isLSP7: boolean;
 }
 
 const AddressTypeBadge: React.FC<BadgeProps> = ({
@@ -61,51 +54,35 @@ const AddressTypeBadge: React.FC<BadgeProps> = ({
   );
 };
 
-const AssetInfosBadge: React.FC<AssetProps> = ({
+interface AssetInfosProps {
+  name: string;
+  symbol: string;
+  tokenType: string;
+  balance: string;
+}
+
+const AssetInfosBadge: React.FC<AssetInfosProps> = ({
   name,
   symbol,
-  assetAddress,
-  userAddress,
-  isLSP7,
+  tokenType,
+  balance,
 }) => {
-  const web3 = useWeb3();
-  const [balance, setBalance] = useState<string | undefined>();
-
-  useEffect(() => {
-    async function getAssetBalance(assetAddress: string) {
-      if (!web3 || !userAddress) return;
-      const tokenContract = new web3.eth.Contract(
-        LSP7Artifact.abi as AbiItem[],
-        assetAddress,
-      );
-
-      const assetBalance = await tokenContract.methods
-        .balanceOf(userAddress)
-        .call();
-
-      // balance is returned in Wei with 1e18 decimals. Format to ether/LYX unit for LSP7 fungible tokens
-      const formattedBalance = isLSP7
-        ? parseFloat(web3.utils.fromWei(assetBalance, 'ether')).toFixed(2)
-        : assetBalance;
-
-      setBalance(formattedBalance);
-    }
-
-    getAssetBalance(assetAddress);
-  }, [assetAddress, web3, userAddress]);
-
   return (
     <>
       <div className="tags has-addons mr-2" style={{ display: 'inline' }}>
-        <span className="tag is-info">name:</span>
+        <span className="tag is-info">name</span>
         <span className="tag is-light">{name}</span>
       </div>
       <div className="tags has-addons" style={{ display: 'inline' }}>
-        <span className="tag is-info">symbol:</span>
+        <span className="tag is-info">symbol</span>
         <span className="tag is-light">{symbol}</span>
       </div>
       <div className="tags has-addons" style={{ display: 'inline' }}>
-        <span className="tag is-info">balance:</span>
+        <span className="tag is-info">token type</span>
+        <span className="tag is-light">{tokenType}</span>
+      </div>
+      <div className="tags has-addons" style={{ display: 'inline' }}>
+        <span className="tag is-info">balance</span>
         <span className="tag is-light">{balance}</span>
       </div>
     </>
@@ -122,12 +99,15 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
   const [isEOA, setIsEOA] = useState(true);
   const [isLSP7, setIsLSP7] = useState(false);
   const [isLSP8, setIsLSP8] = useState(false);
-  const [assetName, setAssetName] = useState('');
-  const [assetSymbol, setAssetSymbol] = useState('');
   const [isLSP1GraveForwarder, setIsLSP1GraveForwarder] = useState(false);
   const [isGnosisSafe, setIsGnosisSafe] = useState(false);
 
-  const checkAddressInterface = async (_address: string) => {
+  const [assetName, setAssetName] = useState('');
+  const [assetSymbol, setAssetSymbol] = useState('');
+  const [assetTokenType, setAssetTokenType] = useState<string>('undefined');
+  const [assetBalance, setAssetBalance] = useState<string | undefined>('0');
+
+  const getAssetInfos = async (_address: string) => {
     if (!web3 || !_address) {
       return;
     }
@@ -149,24 +129,30 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
     const isGnosisSafeContract = await checkIsGnosisSafe(_address, web3);
     setIsGnosisSafe(isGnosisSafeContract);
 
-    const nameBytesValue = await getData(
-      assetAddress,
-      ERC725YDataKeys.LSP4.LSP4TokenName,
-      web3,
-    );
+    if (isLsp7DigitalAsset || isLsp8IdentifiableDigitalAsset) {
+      const [tokenName, tokenSymbol, tokenType, tokenBalance] =
+        await getAssetInfosAndBalance(
+          assetAddress,
+          userAddress,
+          isLsp7DigitalAsset,
+          web3,
+        );
 
-    if (nameBytesValue) {
-      setAssetName(web3.utils.toUtf8(nameBytesValue));
-    }
+      setAssetName(tokenName ?? '');
+      setAssetSymbol(tokenSymbol ?? '');
 
-    const symbolBytesValue = await getData(
-      assetAddress,
-      ERC725YDataKeys.LSP4.LSP4TokenSymbol,
-      web3,
-    );
+      const TOKEN_TYPE_MAP: { [key: string]: string } = {
+        '0': 'Token',
+        '1': 'NFT',
+        '2': 'Collection',
+      };
 
-    if (symbolBytesValue) {
-      setAssetSymbol(web3.utils.toUtf8(symbolBytesValue));
+      const tokenTypeText = tokenType
+        ? `${TOKEN_TYPE_MAP[tokenType]} (${tokenType})`
+        : 'Unknown';
+
+      setAssetTokenType(tokenTypeText);
+      setAssetBalance(tokenBalance ?? '0');
     }
   };
 
@@ -175,7 +161,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
     setIsLoading(true);
     setIsLSP1GraveForwarder(assetAddress === LSP1_GRAVE_FORWARDER);
 
-    checkAddressInterface(assetAddress)
+    getAssetInfos(assetAddress)
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
   }, [assetAddress, web3]);
@@ -190,7 +176,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
     EXPLORER_BASE_URL[network.name]
   }/address/${assetAddress}`;
 
-  const renderTags = () => {
+  const renderAddressTag = () => {
     if (isLoading) {
       return <Skeleton width="120px" />;
     }
@@ -199,7 +185,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
       <>
         {isUPRecovery && (
           <AddressTypeBadge
-            text="🌱 - UP Recovery"
+            text="🌱 UP Recovery"
             colorClass="is-success"
             isLight={false}
           />
@@ -207,7 +193,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
         {isLSP1Delegate && (
           <AddressTypeBadge
-            text="📢 - LSP1 Delegate"
+            text="📢 LSP1 Delegate"
             colorClass="is-link"
             isLight={false}
             contractVersion={LSP1_DELEGATE_VERSIONS[assetAddress]}
@@ -216,7 +202,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
         {isLSP1GraveForwarder && (
           <AddressTypeBadge
-            text="👻 - LSP1 Grave Forwarder"
+            text="👻 LSP1 Grave Forwarder"
             colorClass="is-danger"
             isLight={true}
           />
@@ -224,46 +210,49 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
         {isGnosisSafe && (
           <AddressTypeBadge
-            text="🥝 - Gnosis Safe"
+            text="🥝 Gnosis Safe"
             colorClass="is-success"
             isLight={true}
           />
         )}
 
         {isLSP7 && (
-          <>
-            <AddressTypeBadge
-              text="🪙 - LSP7 Digital Asset"
-              colorClass="is-warning"
-              isLight={true}
-            />
-            <AssetInfosBadge
-              name={assetName}
-              symbol={assetSymbol}
-              assetAddress={assetAddress}
-              userAddress={userAddress}
-              isLSP7={isLSP7}
-            />
-          </>
+          <AddressTypeBadge
+            text="🪙 LSP7 Digital Asset"
+            colorClass="is-warning"
+            isLight={true}
+          />
         )}
 
         {isLSP8 && (
-          <>
-            <AddressTypeBadge
-              text="🎨 - LSP8 Identifiable Digital Asset"
-              colorClass="is-link"
-              isLight={true}
-            />
-            <AssetInfosBadge
-              name={assetName}
-              symbol={assetSymbol}
-              assetAddress={assetAddress}
-              userAddress={userAddress}
-              isLSP7={isLSP7}
-            />
-          </>
+          <AddressTypeBadge
+            text="🎨 LSP8 Identifiable Digital Asset"
+            colorClass="is-link"
+            isLight={true}
+          />
         )}
       </>
+    );
+  };
+
+  const renderAssetInfosTags = () => {
+    if (isLoading) {
+      return <Skeleton width="120px" />;
+    }
+
+    if (!isLSP7 && !isLSP8) {
+      return null;
+    }
+
+    return (
+      <div className="my-2">
+        <AssetInfosBadge
+          name={assetName}
+          symbol={assetSymbol}
+          tokenType={assetTokenType}
+          balance={assetBalance}
+        />
+      </div>
     );
   };
 
@@ -279,7 +268,8 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
         </a>
       </code>
       <AddressTypeBadge text={addressTypeText} isLight={true} />
-      {renderTags()}
+      {renderAddressTag()}
+      {renderAssetInfosTags()}
     </div>
   );
 };
