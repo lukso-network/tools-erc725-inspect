@@ -19,37 +19,40 @@ const AddressButtons: React.FC<Props> = ({
   const networkType = network.name.toLocaleLowerCase();
 
   return (
-    <div className="buttons is-centered are-small pt-2">
+    <div
+      className="buttons is-centered are-small pt-2"
+      style={{ display: 'inline' }}
+    >
       <a
-        className="button is-success is-normal"
+        className="button is-link is-normal"
         target="_blank"
         rel="noreferrer"
-        href={`https://wallet.universalprofile.cloud/${address}?network=${networkType}`}
+        href={`https://universaleverything.io/${address}?network=${networkType}`}
       >
-        View on UP as Profile 🧑‍🎤
+        🌐 View on universaleverything.io
       </a>
-      <a
-        className="button is-success is-normal"
+      {/* <a
+        className="button is-link is-normal"
         target="_blank"
         rel="noreferrer"
-        href={`https://wallet.universalprofile.cloud/asset/${address}?network=${networkType}`}
+        href={`https://universaleverything.io/asset/${address}?network=${networkType}`}
       >
-        View on UP as Asset 👗
-      </a>
+        👗 View on universaleverything.io as Asset
+      </a> */}
       <a
-        className="button is-success is-normal"
+        className="button is-danger is-normal"
         target="_blank"
         rel="noreferrer"
         href={`https://explorer.execution.${networkType}.lukso.network/address/${address}`}
       >
-        View on Blockscout ⛓
+        ⛓ View on Blockscout
       </a>
       {showInspectButton && (
         <a
           className="button is-success is-normal"
           href={`${window.location.href.split('?')[0]}?address=${address}`}
         >
-          ERC725 Inspect 🔍
+          🔍 Analyse with ERC725 Inspect
         </a>
       )}
     </div>

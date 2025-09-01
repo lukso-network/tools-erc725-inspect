@@ -334,40 +334,40 @@ const Home: NextPage = () => {
               <>
                 <>
                   <h3 className="title is-3">Instance and Ownership</h3>
-                  <div className="columns is-multiline mt-3">
-                    <div className="column is-full dataKeyBox">
-                      <div className="content">
-                        <div className="title is-4">
-                          <a
-                            href="https://docs.lukso.tech/standards/lsp-background/erc725"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="home-link"
-                          >
-                            Contract ↗️
-                          </a>
-                        </div>
-                        <ul>
-                          <li>
-                            <strong>Contract address:</strong>
-                            <span className="tag is-small mb-2 mx-2 is-link is-light">
-                              address
-                            </span>
-                            <code>{address}</code>
-                          </li>
-                          <li>
-                            <strong>Contract type:</strong>{' '}
-                            <code>
-                              {isLSP0ERC725Account && '🆙 Universal Profile'}{' '}
-                              (ERC725-compatible)
-                            </code>
-                          </li>
-                        </ul>
-                        <AddressButtons
-                          address={address}
-                          showInspectButton={false}
-                        ></AddressButtons>
+                  <div className="columns dataKeyBox is-multiline mt-3">
+                    <div className="column">
+                      <div className="title is-4">
+                        <a
+                          href="https://docs.lukso.tech/standards/lsp-background/erc725"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="home-link"
+                        >
+                          Contract ↗️
+                        </a>
                       </div>
+                      <ul>
+                        <li>
+                          <strong>Contract address:</strong>
+                          <span className="tag is-small mb-2 mx-2 is-link is-light">
+                            address
+                          </span>
+                          <code>{address}</code>
+                        </li>
+                        <li>
+                          <strong>Contract type:</strong>{' '}
+                          <code>
+                            {isLSP0ERC725Account && '🆙 Universal Profile'}{' '}
+                            (ERC725-compatible)
+                          </code>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="column">
+                      <AddressButtons
+                        address={address}
+                        showInspectButton={false}
+                      ></AddressButtons>
                     </div>
                   </div>
                 </>

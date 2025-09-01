@@ -252,7 +252,6 @@ export async function getAssetInfosAndBalance(
       error,
     );
 
-    // return new Array(4).fill(undefined);
     return [undefined, undefined, undefined, undefined];
   }
 }

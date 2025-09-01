@@ -117,21 +117,25 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                 </td>
                 <td style={{ width: '50%' }}>
                   <div className="mb-3">
-                    <p>Controller Infos:</p>
-                    {controller ? (
-                      <AddressInfos assetAddress={controller.toString()} />
-                    ) : (
-                      <i>No controller found at index {index}</i>
-                    )}
+                    <p>
+                      {controller ? (
+                        <AddressInfos assetAddress={controller.toString()} />
+                      ) : (
+                        <i>No controller found at index {index}</i>
+                      )}
+                    </p>
                   </div>
 
                   <div className="mb-3">
-                    {controller && <p>Permissions:</p>}
-                    {controllersPermissions[index] && (
+                    {controller && (
                       <p>
-                        <code>{controllersPermissions[index].bitArray}</code>
+                        Permissions:{' '}
+                        {controllersPermissions[index] && (
+                          <code>{controllersPermissions[index].bitArray}</code>
+                        )}
                       </p>
                     )}
+
                     {controllersPermissions[index] &&
                       Object.entries(
                         controllersPermissions[index].permissions,
