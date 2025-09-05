@@ -1,24 +1,21 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import { ERC725JSONSchema } from '@erc725/erc725.js';
+import React, { useState } from 'react';
+import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
+import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
+import { getData } from '@/utils/web3';
+import useWeb3 from '@/hooks/useWeb3';
 
-// Define the interface for the methods exposed by the ref
-export interface CustomKeySchemaFormRef {
-  getCompleteCustomSchema: () => {
-    schema: ERC725JSONSchema | null;
-    error?: string;
-  };
-}
-
-// New props interface
+// Props interface
 interface CustomKeySchemaFormProps {
+  address: string;
+  isErc725Y: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any; // Using an index signature to allow any props
 }
 
-const CustomKeySchemaForm = forwardRef<
-  CustomKeySchemaFormRef,
-  CustomKeySchemaFormProps
->((props, ref) => {
+const CustomKeySchemaForm = (props: CustomKeySchemaFormProps) => {
+  const { address, isErc725Y } = props;
+  const web3 = useWeb3();
+
   const [customSchemaName, setCustomSchemaName] = useState<string>('');
   const [dataKeyValue, setDataKeyValue] = useState<string>('');
   const [dataKeyError, setDataKeyError] = useState<string>('');
@@ -30,6 +27,12 @@ const CustomKeySchemaForm = forwardRef<
   const [isJSONMode, setIsJSONMode] = useState<boolean>(true);
   const [jsonInput, setJsonInput] = useState<string>('');
   const [jsonError, setJsonError] = useState<string>('');
+
+  // States for data fetching and display
+  const [rawData, setRawData] = useState<string>('');
+  const [decodedData, setDecodedData] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fetchError, setFetchError] = useState<string>('');
 
   const handleDataKeyValueChange = (value: string) => {
     let inputKey = value;
@@ -115,49 +118,111 @@ const CustomKeySchemaForm = forwardRef<
     setJsonInput('');
     setJsonError('');
     setIsJSONMode(true);
+    setRawData('');
+    setDecodedData('');
+    setFetchError('');
   };
 
-  useImperativeHandle(ref, () => ({
-    getCompleteCustomSchema: () => {
-      // Validate Data Key Value first
-      if (!dataKeyValue) {
-        // Check if dataKeyValue is empty first
-        return {
-          schema: null,
-          error: 'Key Value must be provided.',
-        };
-      }
-      if (dataKeyError) {
-        // Then check if there's a format error
-        return {
-          schema: null,
-          error: dataKeyError,
-        };
-      }
-      // Validate other schema details
-      if (
-        !customSchemaName ||
-        !customKeyType ||
-        !customValueType ||
-        !customValueContent
-      ) {
-        return {
-          schema: null,
-          error:
-            'All custom schema fields (Schema Name, Key Value, Key Type, Value Type, Value Content) must be provided and valid.',
-        };
+  const handleGetData = async () => {
+    if (!web3 || !address || !isErc725Y) return;
+
+    const customSchemaResult = getCompleteCustomSchema();
+
+    if (customSchemaResult.error || !customSchemaResult.schema) {
+      setFetchError(
+        customSchemaResult.error || 'Failed to generate custom schema.',
+      );
+      setRawData('');
+      setDecodedData('');
+      return;
+    }
+
+    setIsLoading(true);
+    setFetchError('');
+
+    const adHocSchema = customSchemaResult.schema;
+    const keyFromCustomForm = adHocSchema.key;
+
+    try {
+      const dataToDecode = await getData(address, keyFromCustomForm, web3);
+
+      if (!dataToDecode) {
+        setRawData('0x');
+        setDecodedData('No data found for this custom key');
+        setIsLoading(false);
+        return;
       }
 
-      const adHocSchema: ERC725JSONSchema = {
-        name: customSchemaName,
-        key: dataKeyValue, // Use validated internal state for the key
-        keyType: customKeyType,
-        valueType: customValueType,
-        valueContent: customValueContent,
+      setRawData(dataToDecode);
+
+      // Create temporary ERC725 instance with the custom schema
+      const tempErc725 = new ERC725(
+        [adHocSchema],
+        address,
+        web3?.currentProvider,
+        {
+          ipfsGateway: 'https://api.ipfs.lukso.network/ipfs/',
+        },
+      );
+
+      const decodedPayload = tempErc725.decodeData([
+        { keyName: adHocSchema.name, value: dataToDecode },
+      ]);
+
+      const decodedCustomValue = decodedPayload[0]?.value;
+
+      const decodedResult =
+        adHocSchema.valueContent === 'VerifiableURI' ||
+        isValidTuple(adHocSchema.valueType, adHocSchema.valueContent)
+          ? JSON.stringify(decodedCustomValue, null, 4)
+          : decodedCustomValue;
+
+      setDecodedData(String(decodedResult));
+    } catch (error) {
+      console.error('Error decoding custom key:', error);
+      setFetchError(`Error decoding custom key: ${(error as Error).message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getCompleteCustomSchema = () => {
+    // Validate Data Key Value first
+    if (!dataKeyValue) {
+      return {
+        schema: null,
+        error: 'Key Value must be provided.',
       };
-      return { schema: adHocSchema, error: undefined };
-    },
-  }));
+    }
+    if (dataKeyError) {
+      return {
+        schema: null,
+        error: dataKeyError,
+      };
+    }
+    // Validate other schema details
+    if (
+      !customSchemaName ||
+      !customKeyType ||
+      !customValueType ||
+      !customValueContent
+    ) {
+      return {
+        schema: null,
+        error:
+          'All custom schema fields (Schema Name, Key Value, Key Type, Value Type, Value Content) must be provided and valid.',
+      };
+    }
+
+    const adHocSchema: ERC725JSONSchema = {
+      name: customSchemaName,
+      key: dataKeyValue,
+      keyType: customKeyType,
+      valueType: customValueType,
+      valueContent: customValueContent,
+    };
+    return { schema: adHocSchema, error: undefined };
+  };
 
   return (
     <div className="mt-4 p-4 has-background-light">
@@ -323,9 +388,84 @@ const CustomKeySchemaForm = forwardRef<
           </div>
         </>
       )}
+
+      {/* Get Data Button */}
+      <div className="field mt-4">
+        <div className="control">
+          <button
+            className={`button is-primary ${isLoading ? 'is-loading' : ''}`}
+            type="button"
+            onClick={handleGetData}
+            disabled={
+              !address ||
+              !isErc725Y ||
+              isLoading ||
+              (!isJSONMode &&
+                (!customSchemaName ||
+                  !dataKeyValue ||
+                  !customKeyType ||
+                  !customValueType ||
+                  !customValueContent ||
+                  dataKeyError !== '')) ||
+              (isJSONMode && (!jsonInput || jsonError !== ''))
+            }
+          >
+            Get Data
+          </button>
+        </div>
+        {!isErc725Y && (
+          <p className="help is-warning">Contract does not support ERC725Y</p>
+        )}
+      </div>
+
+      {/* Error Display */}
+      {fetchError && (
+        <div className="notification is-danger mt-4">{fetchError}</div>
+      )}
+
+      {/* Data Display */}
+      {rawData && !fetchError && (
+        <div className="column is-full mt-4 dataKeyBox">
+          <div className="content">
+            <div className="title is-4">
+              Custom Key Data
+              <span className="tag is-small mb-2 mx-2 is-info">
+                {customKeyType}
+              </span>
+            </div>
+            <ul>
+              <li>
+                <strong>Schema Name:</strong> <code>{customSchemaName}</code>
+              </li>
+              <li>
+                <strong>Key:</strong> <code>{dataKeyValue}</code>
+              </li>
+              <li>
+                <strong>Raw value: </strong>
+                <span className="tag is-small mx-2 is-link is-light">
+                  {customValueType}
+                </span>
+                <code>{rawData}</code>
+              </li>
+              <li>
+                <strong>Value Content: </strong>
+                <span className="tag is-small is-link is-light">
+                  {customValueContent.toLowerCase()}
+                </span>
+              </li>
+              <li>
+                <strong>Decoded value: </strong>
+                <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
+                  {decodedData}
+                </pre>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
-});
+};
 
 CustomKeySchemaForm.displayName = 'CustomKeySchemaForm';
 

@@ -16,6 +16,7 @@ import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInp
 import { NetworkContext } from '@/contexts/NetworksContext';
 
 import ContractOwner from '@/components/ContractOwner';
+import CustomKeySchemaForm from '@/components/CustomKeySchemaForm';
 import useWeb3 from '@/hooks/useWeb3';
 import { SAMPLE_ADDRESS } from '@/constants';
 
@@ -381,6 +382,8 @@ const Home: NextPage = () => {
                   isAsset={isLSP7DigitalAsset || isLSP8IdentifiableDigitalAsset}
                   isLSP8={isLSP8IdentifiableDigitalAsset}
                 />
+                <h3 className="title is-3 mt-6">Custom Key</h3>
+                <CustomKeySchemaForm address={address} isErc725Y={isErc725Y} />
               </>
             )}
         </div>
