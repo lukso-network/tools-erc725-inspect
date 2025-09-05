@@ -5,10 +5,10 @@
 import React, { useContext } from 'react';
 import { NetworkContext } from '@/contexts/NetworksContext';
 
-interface Props {
+type Props = {
   address: string;
   showInspectButton?: boolean;
-}
+};
 
 const AddressButtons: React.FC<Props> = ({
   address,
@@ -31,14 +31,6 @@ const AddressButtons: React.FC<Props> = ({
       >
         🌐 View on universaleverything.io
       </a>
-      {/* <a
-        className="button is-link is-normal"
-        target="_blank"
-        rel="noreferrer"
-        href={`https://universaleverything.io/asset/${address}?network=${networkType}`}
-      >
-        👗 View on universaleverything.io as Asset
-      </a> */}
       <a
         className="button is-danger is-normal"
         target="_blank"
