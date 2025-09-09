@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
 import { getData } from '@/utils/web3';
@@ -12,6 +12,7 @@ const CodeMirror = dynamic(() => import('@uiw/react-codemirror'), {
 });
 import { json as jsonLang } from '@codemirror/lang-json';
 import { githubLight } from '@uiw/codemirror-theme-github';
+import { EditorView } from '@codemirror/view';
 
 const SCHEMA_PLACEHOLDER = {
   name: 'MyCustomKey',
@@ -113,7 +114,7 @@ const JSONInput = ({
   const codeEditorJsonExtension = useMemo(() => jsonLang(), []);
 
   const codeEditorExtensions = useMemo(
-    () => [codeEditorJsonExtension],
+    () => [codeEditorJsonExtension, EditorView.lineWrapping],
     [codeEditorJsonExtension],
   );
 
@@ -123,14 +124,17 @@ const JSONInput = ({
         <label className="label is-small">
           Paste your ERC725JSONSchema JSON here:
         </label>
-        <div className="control is-flex is-flex is-justify-content-space-between is-align-items-center">
+        <div className="control">
           <CodeMirror
             value={jsonInput}
             theme={githubLight}
-            basicSetup={{ lineNumbers: false }}
+            basicSetup={{
+              lineNumbers: false,
+              foldGutter: false,
+            }}
             extensions={codeEditorExtensions} // JSON syntax highlighting
             onChange={(val) => handleJSONInputChange(val)}
-            width="800px" // TODO: change width to be dynamic
+            style={{ width: '100%' }}
           />
         </div>
         {jsonError && <p className="help is-danger is-small">{jsonError}</p>}
@@ -139,17 +143,142 @@ const JSONInput = ({
   );
 };
 
+type ManualInputProps = {
+  // All states and handlers are passed down from parent component
+  customSchemaName: string;
+  setCustomSchemaName: (value: string) => void;
+  customDataKey: string;
+  handleDataKeyChange: (value: string) => void;
+  dataKeyError: string;
+  customKeyType: string;
+  setCustomKeyType: (value: string) => void;
+  customValueType: string;
+  setCustomValueType: (value: string) => void;
+  customValueContent: string;
+  setCustomValueContent: (value: string) => void;
+};
+
+const ManualInput = ({
+  customSchemaName,
+  setCustomSchemaName,
+  customDataKey,
+  handleDataKeyChange,
+  dataKeyError,
+  customKeyType,
+  setCustomKeyType,
+  customValueType,
+  setCustomValueType,
+  customValueContent,
+  setCustomValueContent,
+}: ManualInputProps) => (
+  <>
+    <div className="field">
+      <label className="label is-small">Schema Name</label>
+      <div className="control">
+        <input
+          className="input is-small"
+          type="text"
+          placeholder="e.g., MyCustomProfileData"
+          value={customSchemaName}
+          onChange={(e) => setCustomSchemaName(e.target.value)}
+        />
+      </div>
+    </div>
+
+    <div className="field">
+      <label className="label is-small">Data Key (Hex)</label>
+      <div className="control">
+        <input
+          className={`input is-small ${dataKeyError ? 'is-danger' : ''}`}
+          type="text"
+          placeholder="0x... (e.g., 0x123...abc)"
+          value={customDataKey}
+          onChange={(e) => handleDataKeyChange(e.target.value)}
+        />
+      </div>
+      {dataKeyError && (
+        <p className="help is-danger is-small">{dataKeyError}</p>
+      )}
+    </div>
+
+    <div className="field">
+      <label className="label is-small">Data Key Type</label>
+      <div className="control">
+        <select
+          className="input is-small"
+          value={customKeyType}
+          onChange={(e) => setCustomKeyType(e.target.value)}
+        >
+          <option value="">Select Key Type</option>
+          <option value="Singleton">Singleton</option>
+          <option value="Array">Array</option>
+          <option value="Mapping">Mapping</option>
+          <option value="MappingWithGrouping">MappingWithGrouping</option>
+        </select>
+      </div>
+    </div>
+    <div className="field">
+      <label className="label is-small">Value Type</label>
+      <div className="control">
+        <input
+          className="input is-small"
+          type="select"
+          value={customValueType}
+          onChange={(e) => setCustomValueType(e.target.value)}
+        />
+      </div>
+    </div>
+
+    <div className="field">
+      <label className="label is-small">Value Content</label>
+      <div className="control">
+        <select
+          className="input is-small"
+          value={customValueContent}
+          onChange={(e) => setCustomValueContent(e.target.value)}
+        >
+          <option value="">Select Value Content</option>
+
+          <optgroup label="Basic Types">
+            <option value="Address">Address</option>
+            <option value="Boolean">Boolean</option>
+            <option value="Number">Number</option>
+            <option value="String">String</option>
+          </optgroup>
+
+          <optgroup label="Complex Types">
+            <option value="Keccak256">Keccak256</option>
+            <option value="BitArray">BitArray</option>
+          </optgroup>
+
+          <optgroup label="File & Media">
+            <option value="Markdown">Markdown</option>
+            <option value="URL">URL</option>
+            <option value="VerifiableURI">VerifiableURI</option>
+          </optgroup>
+
+          <optgroup label="Dynamic & Fixed Bytes">
+            <option value="Bytes">Bytes</option>
+            {/* Bytes1 to Bytes32 */}
+            {Array.from({ length: 32 }, (_, i) => (
+              <option key={i + 1} value={`Bytes${i + 1}`}>
+                Bytes{i + 1}
+              </option>
+            ))}
+          </optgroup>
+        </select>
+      </div>
+    </div>
+  </>
+);
+
 // Props interface
 interface CustomKeySchemaFormProps {
   address: string;
-  isErc725Y: boolean;
   [key: string]: any; // Using an index signature to allow any props
 }
 
-const CustomKeySchemaForm = ({
-  address,
-  isErc725Y,
-}: CustomKeySchemaFormProps) => {
+const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
   const web3 = useWeb3();
 
   // States for custom schema fields
@@ -227,8 +356,6 @@ const CustomKeySchemaForm = ({
       setCustomValueContent(parsed.valueContent);
 
       setJsonError('');
-
-      // setIsJSONMode(false); // Switch to form mode
     } catch (error) {
       setJsonError('Invalid JSON format. Please check your syntax.');
     }
@@ -260,7 +387,7 @@ const CustomKeySchemaForm = ({
   };
 
   const handleGetData = async () => {
-    if (!web3 || !address || !isErc725Y) return;
+    if (!web3 || !address) return;
 
     const customSchemaResult = getCompleteCustomSchema();
 
@@ -277,7 +404,7 @@ const CustomKeySchemaForm = ({
     setFetchError('');
 
     const customSchema = customSchemaResult.schema;
-    const { key, valueType, valueContent } = customSchema;
+    const { key, keyType, valueType, valueContent } = customSchema;
 
     try {
       const dataToDecode = await getData(address, key, web3);
@@ -301,13 +428,12 @@ const CustomKeySchemaForm = ({
         },
       );
 
-      const decodedPayload = erc725js.decodeData([
-        { keyName: customSchema.name, value: dataToDecode },
-      ]);
+      const fetchedResult = await erc725js.fetchData([customSchema.name]);
 
-      const decodedCustomValue = decodedPayload[0]?.value;
+      const decodedCustomValue = fetchedResult[0]?.value;
 
       const displayAsJSON =
+        keyType === 'Array' ||
         valueContent === 'VerifiableURI' ||
         isValidTuple(valueType, valueContent);
 
@@ -362,231 +488,141 @@ const CustomKeySchemaForm = ({
     return { schema: customSchema, error: undefined };
   };
 
-  // Individual components
-
-  const ManualInput = () => (
+  return (
     <>
-      <div className="field">
-        <label className="label is-small">Schema Name</label>
-        <div className="control">
-          <input
-            className="input is-small"
-            type="text"
-            placeholder="e.g., MyCustomProfileData"
-            value={customSchemaName}
-            onChange={(e) => setCustomSchemaName(e.target.value)}
-          />
-        </div>
-      </div>
+      <h4 className="title is-4 mt-6">Custom Key Reading</h4>
 
-      <div className="field">
-        <label className="label is-small">Data Key (Hex)</label>
-        <div className="control">
-          <input
-            className={`input is-small ${dataKeyError ? 'is-danger' : ''}`}
-            type="text"
-            placeholder="0x... (e.g., 0x123...abc)"
-            value={customDataKey}
-            onChange={(e) => handleDataKeyChange(e.target.value)}
-          />
+      <div className="mb-4 p-4 has-background-light">
+        <div className="is-flex is-justify-content-space-between is-align-items-center">
+          <h5 className="title is-5 home-link">
+            <a href={LSP2_SPECS_URL} target="_blank" rel="noreferrer">
+              LSP2 Schema - {isJSONMode ? 'JSON Input' : 'Form Input'}
+            </a>
+          </h5>
+          <div className="field is-grouped is-grouped-right mb-4">
+            <div className="buttons">
+              <button
+                className="button is-info is-small mr-2"
+                type="button"
+                onClick={() => setIsJSONMode(!isJSONMode)}
+              >
+                {isJSONMode ? 'Switch to Manual Form' : 'Switch to JSON Input'}
+              </button>
+
+              <button
+                className="button is-info is-small"
+                type="button"
+                onClick={resetForm}
+              >
+                Reset Form
+              </button>
+            </div>
+          </div>
         </div>
-        {dataKeyError && (
-          <p className="help is-danger is-small">{dataKeyError}</p>
+
+        <div className="columns is-variable is-align-items-flex-start">
+          <div className="column is-two-thirds">
+            {isJSONMode ? (
+              <JSONInput
+                jsonInput={jsonInput}
+                jsonError={jsonError}
+                handleJSONInputChange={handleJSONInputChange}
+              />
+            ) : (
+              <ManualInput
+                customSchemaName={customSchemaName}
+                setCustomSchemaName={setCustomSchemaName}
+                customDataKey={customDataKey}
+                handleDataKeyChange={handleDataKeyChange}
+                dataKeyError={dataKeyError}
+                customKeyType={customKeyType}
+                setCustomKeyType={setCustomKeyType}
+                customValueType={customValueType}
+                setCustomValueType={setCustomValueType}
+                customValueContent={customValueContent}
+                setCustomValueContent={setCustomValueContent}
+              />
+            )}
+          </div>
+          <div className="column is-one-third">
+            <FieldsDescription />
+          </div>
+        </div>
+
+        {/* Get Data Button */}
+        <div className="field mt-4">
+          <div className="control">
+            <button
+              className={`button is-primary ${isLoading ? 'is-loading' : ''}`}
+              type="button"
+              onClick={handleGetData}
+              disabled={
+                !address ||
+                isLoading ||
+                (!isJSONMode &&
+                  (!customSchemaName ||
+                    !customDataKey ||
+                    !customKeyType ||
+                    !customValueType ||
+                    !customValueContent ||
+                    dataKeyError !== '')) ||
+                (isJSONMode && (!jsonInput || jsonError !== ''))
+              }
+            >
+              Get Data
+            </button>
+          </div>
+        </div>
+
+        {/* Error Display */}
+        {fetchError && (
+          <div className="notification is-danger mt-4">{fetchError}</div>
         )}
-      </div>
 
-      <div className="field">
-        <label className="label is-small">Data Key Type</label>
-        <div className="control">
-          <select
-            className="input is-small"
-            value={customKeyType}
-            onChange={(e) => setCustomKeyType(e.target.value)}
-          >
-            <option value="">Select Key Type</option>
-            <option value="Singleton">Singleton</option>
-            <option value="Array">Array</option>
-            <option value="Mapping">Mapping</option>
-            <option value="MappingWithGrouping">MappingWithGrouping</option>
-          </select>
-        </div>
-      </div>
-      <div className="field">
-        <label className="label is-small">Value Type</label>
-        <div className="control">
-          <input
-            className="input is-small"
-            type="select"
-            value={customValueType}
-            onChange={(e) => setCustomValueType(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="field">
-        <label className="label is-small">Value Content</label>
-        <div className="control">
-          <select
-            className="input is-small"
-            value={customValueContent}
-            onChange={(e) => setCustomValueContent(e.target.value)}
-          >
-            <option value="">Select Value Content</option>
-
-            <optgroup label="Basic Types">
-              <option value="Address">Address</option>
-              <option value="Boolean">Boolean</option>
-              <option value="Number">Number</option>
-              <option value="String">String</option>
-            </optgroup>
-
-            <optgroup label="Complex Types">
-              <option value="Keccak256">Keccak256</option>
-              <option value="BitArray">BitArray</option>
-            </optgroup>
-
-            <optgroup label="File & Media">
-              <option value="Markdown">Markdown</option>
-              <option value="URL">URL</option>
-              <option value="VerifiableURI">VerifiableURI</option>
-            </optgroup>
-
-            <optgroup label="Dynamic & Fixed Bytes">
-              <option value="Bytes">Bytes</option>
-              {/* Bytes1 to Bytes32 */}
-              {Array.from({ length: 32 }, (_, i) => (
-                <option key={i + 1} value={`Bytes${i + 1}`}>
-                  Bytes{i + 1}
-                </option>
-              ))}
-            </optgroup>
-          </select>
-        </div>
+        {/* Data Display */}
+        {rawData && !fetchError && (
+          <div className="column is-full mt-4 dataKeyBox">
+            <div className="content">
+              <div className="title is-4">
+                Custom Key Data
+                <span className="tag is-small mb-2 mx-2 is-info">
+                  {customKeyType}
+                </span>
+              </div>
+              <ul>
+                <li>
+                  <strong>Schema Name:</strong> <code>{customSchemaName}</code>
+                </li>
+                <li>
+                  <strong>Key:</strong> <code>{customDataKey}</code>
+                </li>
+                <li>
+                  <strong>Raw value: </strong>
+                  <span className="tag is-small mx-2 is-link is-light">
+                    {customValueType}
+                  </span>
+                  <code>{rawData}</code>
+                </li>
+                <li>
+                  <strong>Value Content: </strong>
+                  <span className="tag is-small is-link is-light">
+                    {customValueContent.toLowerCase()}
+                  </span>
+                </li>
+                <li>
+                  <strong>Decoded value: </strong>
+                  <pre
+                    style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
+                  >
+                    {decodedData}
+                  </pre>
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </>
-  );
-
-  return (
-    <div className="p-4 has-background-light">
-      {/* Header */}
-      <div className="is-flex is-justify-content-space-between is-align-items-center">
-        <h5 className="title is-5">
-          LSP2 Schema - {isJSONMode ? 'JSON Input' : 'Form Input'}
-        </h5>
-        <div className="field is-grouped is-grouped-right mb-4">
-          <div className="control">
-            <button
-              className="button is-small is-light mr-2"
-              type="button"
-              onClick={() => setIsJSONMode(!isJSONMode)}
-            >
-              {isJSONMode ? 'Switch to Manual Form' : 'Switch to JSON Input'}
-            </button>
-          </div>
-          <div className="control">
-            <button
-              className="button is-small is-light"
-              type="button"
-              onClick={resetForm}
-            >
-              Reset Form
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="columns is-variable is-align-items-flex-start">
-        <div className="column is-two-thirds">
-          {isJSONMode ? (
-            <JSONInput
-              jsonInput={jsonInput}
-              jsonError={jsonError}
-              handleJSONInputChange={handleJSONInputChange}
-            />
-          ) : (
-            <ManualInput />
-          )}
-        </div>
-        <div className="column is-one-third">
-          <FieldsDescription />
-        </div>
-      </div>
-
-      {/* Get Data Button */}
-      <div className="field mt-4">
-        <div className="control">
-          <button
-            className={`button is-primary ${isLoading ? 'is-loading' : ''}`}
-            type="button"
-            onClick={handleGetData}
-            disabled={
-              !address ||
-              !isErc725Y ||
-              isLoading ||
-              (!isJSONMode &&
-                (!customSchemaName ||
-                  !customDataKey ||
-                  !customKeyType ||
-                  !customValueType ||
-                  !customValueContent ||
-                  dataKeyError !== '')) ||
-              (isJSONMode && (!jsonInput || jsonError !== ''))
-            }
-          >
-            Get Data
-          </button>
-        </div>
-        {!isErc725Y && (
-          <p className="help is-warning">Contract does not support ERC725Y</p>
-        )}
-      </div>
-
-      {/* Error Display */}
-      {fetchError && (
-        <div className="notification is-danger mt-4">{fetchError}</div>
-      )}
-
-      {/* Data Display */}
-      {rawData && !fetchError && (
-        <div className="column is-full mt-4 dataKeyBox">
-          <div className="content">
-            <div className="title is-4">
-              Custom Key Data
-              <span className="tag is-small mb-2 mx-2 is-info">
-                {customKeyType}
-              </span>
-            </div>
-            <ul>
-              <li>
-                <strong>Schema Name:</strong> <code>{customSchemaName}</code>
-              </li>
-              <li>
-                <strong>Key:</strong> <code>{customDataKey}</code>
-              </li>
-              <li>
-                <strong>Raw value: </strong>
-                <span className="tag is-small mx-2 is-link is-light">
-                  {customValueType}
-                </span>
-                <code>{rawData}</code>
-              </li>
-              <li>
-                <strong>Value Content: </strong>
-                <span className="tag is-small is-link is-light">
-                  {customValueContent.toLowerCase()}
-                </span>
-              </li>
-              <li>
-                <strong>Decoded value: </strong>
-                <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                  {decodedData}
-                </pre>
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
-    </div>
   );
 };
 
