@@ -1,21 +1,21 @@
 /* eslint-disable react/no-unescaped-entities */
-
+import React, { useContext, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import React, { useContext, useEffect, useState } from 'react';
 import { isAddress } from 'web3-utils';
 
 import '@/styles/Inspect.module.css';
 import { checkInterface, getVersion } from '@/utils/web3';
 
-import DataKeysTable from '@/components/DataKeysTable';
 import AddressButtons from '@/components/AddressButtons';
+import CustomKeySchemaForm from '@/components/CustomKeySchemaForm';
+import ContractOwner from '@/components/ContractOwner';
+import DataKeysTable from '@/components/DataKeysTable';
 import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
 import { NetworkContext } from '@/contexts/NetworksContext';
 
-import ContractOwner from '@/components/ContractOwner';
 import useWeb3 from '@/hooks/useWeb3';
 import { SAMPLE_ADDRESS } from '@/constants';
 
@@ -374,7 +374,8 @@ const Home: NextPage = () => {
                 {(isErc725X || isErc725Y) && (
                   <ContractOwner contractAddress={address} />
                 )}
-                <h3 className="title is-3">Data Keys</h3>
+                <h3 className="title is-3 mt-6">Data Keys</h3>
+                <CustomKeySchemaForm address={address} />
                 <DataKeysTable
                   address={address}
                   isErc725Y={isErc725Y}

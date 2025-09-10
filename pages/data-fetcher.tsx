@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { isAddress } from 'web3-utils';
 import ERC725, {
   ERC725JSONSchema,
@@ -28,16 +28,12 @@ import { SAMPLE_ADDRESS } from '@/constants';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
-import CustomKeySchemaForm, {
-  CustomKeySchemaFormRef,
-} from '@/components/CustomKeySchemaForm/CustomKeySchemaForm';
 
 // using local variable for LSP28TheGrid key for now
 const LSP28_THE_GRID_KEY =
   '0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff';
 
 const dataKeyList = [
-  { name: 'Custom Key', key: '', icon: '🔧' },
   ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
   ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
   ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
@@ -57,11 +53,6 @@ const GetData: NextPage = () => {
   const [dataKey, setDataKey] = useState(dataKeyList[0].key);
   const [dataKeyError, setDataKeyError] = useState('');
 
-  // New state for controlling the dropdown selection
-  const [selectedDataKeyOption, setSelectedDataKeyOption] = useState(
-    dataKeyList[0].key,
-  );
-
   const [data, setData] = useState('');
   const [decodedData, setDecodedData] = useState('');
 
@@ -75,8 +66,6 @@ const GetData: NextPage = () => {
   const router = useRouter();
 
   const web3 = useWeb3();
-
-  const customKeySchemaFormRef = useRef<CustomKeySchemaFormRef>(null);
 
   const schemas = [
     ...LSP1DataKeys,
@@ -98,298 +87,134 @@ const GetData: NextPage = () => {
     },
   ];
 
-  // Effect to sync selectedDataKeyOption when dataKey changes (e.g., from URL or programmatically)
-  // Only sync when dataKey matches a predefined key exactly
   useEffect(() => {
-    if (!dataKey) {
-      return;
+    const queryAddress = router.query.address;
+    const queryDataKey = router.query.dataKey;
+
+    if (queryAddress && typeof queryAddress === 'string') {
+      setAddress(queryAddress);
     }
-    const matchingKey = dataKeyList.find(
-      (item) => item.key === dataKey && item.key !== '',
-    );
-    if (matchingKey && selectedDataKeyOption !== dataKey) {
-      setSelectedDataKeyOption(dataKey);
+    if (queryDataKey && typeof queryDataKey === 'string') {
+      setDataKey(queryDataKey);
     }
-  }, [dataKey]);
+  }, [router.query]);
 
-  const updateURLParams = useCallback(
-    (newAddress: string, newDataKey: string) => {
-      if (typeof window === 'undefined') return;
+  const updateURLParams = (address: string, dataKey: string) => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('address', address);
+    currentUrl.searchParams.set('datakey', dataKey);
+    router.replace(currentUrl.href, undefined, { shallow: true });
+  };
 
-      const currentUrl = new URL(window.location.href);
-      const existingAddress = currentUrl.searchParams.get('address');
-      const existingDatakey = currentUrl.searchParams.get('datakey');
+  const onContractAddressChange = async (address: string) => {
+    setAddress(address);
+    setData('');
 
-      if (newAddress === existingAddress && newDataKey === existingDatakey) {
-        return;
-      }
+    updateURLParams(address, dataKey);
 
-      currentUrl.searchParams.set('address', newAddress);
-      currentUrl.searchParams.set('datakey', newDataKey);
-      router.replace(currentUrl.toString(), undefined, { shallow: true });
-    },
-    [router], // router is stable
-  );
-
-  const onContractAddressChange = useCallback(
-    async (addr: string) => {
-      let finalAddr = addr;
-      if (addr.slice(0, 2) !== '0x' && addr.length !== 0) {
-        finalAddr = `0x${addr}`;
-      }
-      setAddress(finalAddr);
-      setData('');
-      setAddressError('');
-
-      updateURLParams(finalAddr, dataKey);
-
-      if (!isAddress(finalAddr) && finalAddr.length !== 0) {
-        setAddressError('The address is not valid');
-        setInterfaces({ isErc725X: false, isErc725Y: false });
-        return;
-      }
-
-      if (!web3) {
-        return;
-      }
-
-      try {
-        const result = await checkInterface(finalAddr, web3);
-        setInterfaces(result);
-      } catch (error) {
-        console.error('Error checking interface:', error);
-        setInterfaces({ isErc725X: false, isErc725Y: false });
-      }
-    },
-    [
-      web3,
-      dataKey,
-      updateURLParams,
-      setAddress,
-      setData,
-      setAddressError,
-      setInterfaces,
-    ],
-  );
-
-  const onDataKeyChange = useCallback(
-    (value: string) => {
-      let inputKey = value;
-      let error = '';
-      setData('');
-
-      if (inputKey.length > 0) {
-        if (
-          (inputKey.length !== 64 && inputKey.length !== 66) ||
-          (inputKey.length === 66 && inputKey.slice(0, 2) !== '0x')
-        ) {
-          error = 'The data key is not valid';
-        } else if (inputKey.length === 64 && !inputKey.startsWith('0x')) {
-          inputKey = `0x${inputKey}`;
-        }
-      }
-
-      setDataKey(inputKey);
-      setDataKeyError(error);
-      updateURLParams(address, inputKey);
-
-      // Update dropdown selection based on the input
-      if (inputKey === '') {
-        // Empty key means custom key mode
-        setSelectedDataKeyOption('');
-      } else {
-        // Only update dropdown selection if this is an exact match to a predefined key
-        const isPredefined = dataKeyList.some(
-          (item) => item.key === inputKey && item.key !== '',
-        );
-        if (isPredefined) {
-          setSelectedDataKeyOption(inputKey);
-        }
-      }
-    },
-    [address, updateURLParams, setData, setDataKey, setDataKeyError],
-  );
-
-  const handleDataKeyDropdownChange = useCallback(
-    (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedOptionValue = event.target.value;
-      setSelectedDataKeyOption(selectedOptionValue);
-      setData('');
-
-      if (selectedOptionValue !== '') {
-        onDataKeyChange(selectedOptionValue);
-      } else {
-        setDataKey('');
-        setDataKeyError('');
-        updateURLParams(address, '');
-      }
-    },
-    [
-      address,
-      updateURLParams,
-      setSelectedDataKeyOption,
-      setData,
-      setDataKey,
-      setDataKeyError,
-      onDataKeyChange,
-    ],
-  );
-
-  // Moved this useEffect hook to be after the definitions of its dependencies
-  useEffect(() => {
-    // Wait for the router to be ready to ensure router.query is populated
-    if (!router.isReady) {
+    if (!isAddress(address) && address.length !== 0) {
+      setAddressError('The address is not valid');
+      setInterfaces({
+        isErc725X: false,
+        isErc725Y: false,
+      });
       return;
     }
 
-    const queryAddress = router.query.address as string | undefined;
-    const queryDatakeyValue = router.query.datakey as string | undefined; // Use 'datakey'
-
-    if (queryAddress !== undefined && queryAddress !== address) {
-      onContractAddressChange(queryAddress);
+    if (address.slice(0, 2) !== '0x' && address.length !== 0) {
+      setAddress(`0x${address}`);
     }
 
-    if (queryDatakeyValue !== undefined && queryDatakeyValue !== dataKey) {
-      onDataKeyChange(queryDatakeyValue);
+    setAddressError('');
+
+    if (!web3) {
+      return;
     }
-  }, [
-    router.isReady,
-    router.query,
-    address,
-    dataKey,
-    onContractAddressChange,
-    onDataKeyChange,
-  ]);
+
+    const result = await checkInterface(address, web3);
+    setInterfaces(result);
+  };
+
+  const onDataKeyChange = (dataKey: string) => {
+    setDataKey(dataKey);
+    setData('');
+
+    updateURLParams(address, dataKey);
+
+    if (
+      (dataKey.length !== 64 && dataKey.length !== 66) ||
+      (dataKey.length === 66 && dataKey.slice(0, 2) !== '0x')
+    ) {
+      setDataKeyError('The data key is not valid');
+      return;
+    }
+
+    if (dataKey.slice(0, 2) !== '0x') {
+      setDataKey(`0x${dataKey}`);
+    }
+
+    setDataKeyError('');
+  };
 
   const onGetDataClick = async () => {
-    if (!web3 || !erc725js) return;
-    if (!interfaces.isErc725Y) {
-      console.log('Contract not compatible with ERC725');
+    if (!web3 || !erc725js) {
       return;
     }
 
-    const isCustomKeyMode = selectedDataKeyOption === '';
+    if (!interfaces.isErc725Y) {
+      console.log('Contract not compatible with ERC725');
 
-    if (isCustomKeyMode) {
-      if (!customKeySchemaFormRef.current) {
-        console.error('CustomKeySchemaForm ref not available');
-        setDecodedData('Internal error: Custom key form not ready.');
-        setData('0x');
-        return;
-      }
+      return;
+    }
 
-      const customSchemaResult =
-        customKeySchemaFormRef.current.getCompleteCustomSchema();
+    const data = await getData(address, dataKey, web3);
 
-      if (customSchemaResult.error || !customSchemaResult.schema) {
-        setDecodedData(
-          customSchemaResult.error || 'Failed to generate custom schema.',
-        );
-        setData('0x');
-        return;
-      }
-
-      const adHocSchema = customSchemaResult.schema;
-      const keyFromCustomForm = adHocSchema.key;
-
-      const dataToDecode = await getData(address, keyFromCustomForm, web3);
-
-      if (!dataToDecode) {
-        setData('0x');
-        setDecodedData('no data to decode for the custom key 🤷');
-        return;
-      }
-      setData(dataToDecode);
-
-      const tempErc725 = new ERC725(
-        [...schemas, adHocSchema],
-        address,
-        web3?.currentProvider,
-        {
-          ipfsGateway: 'https://api.ipfs.lukso.network/ipfs/',
-        },
-      );
-
-      try {
-        const decodedPayload = tempErc725.decodeData([
-          { keyName: adHocSchema.name, value: dataToDecode },
-        ]);
-
-        const decodedCustomValue = decodedPayload[0]?.value;
-
-        const decodedResult =
-          adHocSchema.valueContent === 'VerifiableURI' ||
-          isValidTuple(adHocSchema.valueType, adHocSchema.valueContent)
-            ? JSON.stringify(decodedCustomValue, null, 4)
-            : decodedCustomValue;
-        setDecodedData(String(decodedResult));
-      } catch (error) {
-        console.error('Error decoding custom key:', error);
-        setDecodedData(
-          `Error decoding custom key: ${(error as Error).message}`,
-        );
-      }
+    if (!data) {
+      setData('0x');
+      setDecodedData('no data to decode 🤷');
     } else {
-      if (dataKeyError || !dataKey) {
-        setData('0x');
-        setDecodedData('Invalid data key. Please check your input.');
+      setData(data);
+
+      const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
+      if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
+        return;
+      }
+      let keyName, valueType, valueContent;
+
+      if (foundSchema) {
+        ({ name: keyName, valueType, valueContent } = foundSchema);
+      } else if (dataKey === LSP28_THE_GRID_KEY) {
+        keyName = 'LSP28TheGrid';
+        valueType = 'bytes';
+        valueContent = 'VerifiableURI';
+      } else {
+        console.error('Unknown schema');
         return;
       }
 
-      const dataToDecode = await getData(address, dataKey, web3);
+      let decodedValue;
 
-      if (!dataToDecode) {
-        setData('0x');
-        setDecodedData('no data to decode 🤷');
+      if (isDynamicKeyName(keyName)) {
+        decodedValue = erc725js.decodeData([
+          {
+            keyName,
+            dynamicKeyParts: dataKey.slice(26),
+            value: data,
+          },
+        ]);
       } else {
-        setData(dataToDecode);
-
-        const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
-        if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
-          setDecodedData(
-            "Schema not found for this key using standard LSPs. Try 'Custom Key'.",
-          );
-          return;
-        }
-        let keyName, valueType, valueContent;
-
-        if (foundSchema) {
-          ({ name: keyName, valueType, valueContent } = foundSchema);
-        } else if (dataKey === LSP28_THE_GRID_KEY) {
-          keyName = 'LSP28TheGrid';
-          valueType = 'bytes';
-          valueContent = 'VerifiableURI';
-        } else {
-          console.error('Unknown schema error for predefined key');
-          setDecodedData('Could not determine schema for the key.');
-          return;
-        }
-
-        let decodedValue;
-
-        if (isDynamicKeyName(keyName)) {
-          decodedValue = erc725js.decodeData([
-            {
-              keyName,
-              dynamicKeyParts: dataKey.slice(26),
-              value: dataToDecode,
-            },
-          ]);
-        } else {
-          decodedValue = erc725js.decodeData([
-            {
-              keyName,
-              value: dataToDecode,
-            },
-          ]);
-        }
-        const decodedResult =
-          valueContent == 'VerifiableURI' ||
-          isValidTuple(valueType, valueContent)
-            ? JSON.stringify(decodedValue[0].value, null, 4)
-            : decodedValue[0].value;
-        setDecodedData(decodedResult);
+        decodedValue = erc725js.decodeData([
+          {
+            keyName,
+            value: data,
+          },
+        ]);
       }
+      const decodedResult =
+        valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
+          ? JSON.stringify(decodedValue[0].value, null, 4)
+          : decodedValue[0].value;
+      setDecodedData(decodedResult);
     }
   };
 
@@ -496,38 +321,32 @@ const GetData: NextPage = () => {
 
               <div className="select mb-4 is-fullwidth">
                 <select
-                  value={selectedDataKeyOption}
-                  onChange={handleDataKeyDropdownChange}
+                  value={dataKey}
+                  onChange={(e) => onDataKeyChange(e.target.value)}
                   className="is-fullwidth"
                 >
-                  {dataKeyList.map((dataKeyItem, index) => {
+                  {dataKeyList.map((dataKey, index) => {
                     return (
-                      <option key={index} value={dataKeyItem.key}>
-                        {dataKeyItem.icon} &nbsp;
-                        {dataKeyItem.name}
+                      <option key={index} value={dataKey.key}>
+                        {dataKey.icon} &nbsp;
+                        {dataKey.name}
                       </option>
                     );
                   })}
                 </select>
               </div>
               <br />
-              {selectedDataKeyOption !== '' && (
-                <div className="control">
-                  <input
-                    className="input"
-                    type="text"
-                    placeholder={LSP1DataKeys[0].key}
-                    value={dataKey}
-                    onChange={(e) => onDataKeyChange(e.target.value)}
-                  />
-                </div>
-              )}
-              {selectedDataKeyOption !== '' && dataKeyError !== '' && (
+              <div className="control">
+                <input
+                  className="input"
+                  type="text"
+                  placeholder={LSP1DataKeys[0].key}
+                  value={dataKey}
+                  onChange={(e) => onDataKeyChange(e.target.value)}
+                />
+              </div>
+              {dataKeyError !== '' && (
                 <p className="help is-danger">{dataKeyError}</p>
-              )}
-
-              {selectedDataKeyOption === '' && (
-                <CustomKeySchemaForm ref={customKeySchemaFormRef} />
               )}
             </div>
             <button
@@ -535,10 +354,10 @@ const GetData: NextPage = () => {
               type="button"
               disabled={
                 address === '' ||
+                dataKey === '' ||
                 addressError !== '' ||
-                !interfaces.isErc725Y ||
-                (selectedDataKeyOption !== '' &&
-                  (dataKey === '' || dataKeyError !== ''))
+                dataKeyError !== '' ||
+                !interfaces.isErc725Y
               }
               onClick={onGetDataClick}
             >
