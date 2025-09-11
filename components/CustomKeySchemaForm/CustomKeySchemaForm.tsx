@@ -1,18 +1,12 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
 import { getData } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 import { isHex } from 'web3-utils';
-import dynamic from 'next/dynamic';
-const CodeMirror = dynamic(() => import('@uiw/react-codemirror'), {
-  ssr: false,
-});
-import { json as jsonLang } from '@codemirror/lang-json';
-import { githubLight } from '@uiw/codemirror-theme-github';
-import { EditorView } from '@codemirror/view';
+import CodeEditor from '../CodeEditor';
 
 const SCHEMA_PLACEHOLDER = {
   name: 'MyCustomKey',
@@ -110,33 +104,17 @@ const JSONInput = ({
   jsonError,
   handleJSONInputChange,
 }: JSONInputProps) => {
-  // Don't recreate on every render
-  const codeEditorJsonExtension = useMemo(() => jsonLang(), []);
-
-  const codeEditorExtensions = useMemo(
-    () => [codeEditorJsonExtension, EditorView.lineWrapping],
-    [codeEditorJsonExtension],
-  );
-
   return (
     <>
       <div className="field mx-2">
         <label className="label is-small">
           Paste your ERC725JSONSchema JSON here:
         </label>
-        <div className="control">
-          <CodeMirror
-            value={jsonInput}
-            theme={githubLight}
-            basicSetup={{
-              lineNumbers: false,
-              foldGutter: false,
-            }}
-            extensions={codeEditorExtensions} // JSON syntax highlighting
-            onChange={(val) => handleJSONInputChange(val)}
-            style={{ width: '100%' }}
-          />
-        </div>
+        <div className="control"></div>
+        <CodeEditor
+          sourceCode={jsonInput}
+          handleChange={handleJSONInputChange}
+        />
         {jsonError && <p className="help is-danger is-small">{jsonError}</p>}
       </div>
     </>
@@ -293,7 +271,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
   // New states for JSON input mode
   const [isJSONMode, setIsJSONMode] = useState<boolean>(true);
   const [jsonInput, setJsonInput] = useState<string>(
-    JSON.stringify(SCHEMA_PLACEHOLDER, null, 2),
+    JSON.stringify(SCHEMA_PLACEHOLDER, null, 4),
   );
   const [jsonError, setJsonError] = useState<string>('');
 

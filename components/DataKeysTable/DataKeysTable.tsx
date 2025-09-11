@@ -13,6 +13,7 @@ import { SCHEMA_DOCS_LINKS, SchemaName } from './schemas';
 import { getDataBatch } from '@/utils/web3';
 
 import useWeb3 from '@/hooks/useWeb3';
+import CodeEditor from '../CodeEditor';
 
 interface Props {
   address: string;
@@ -106,10 +107,20 @@ const DataKeysTable: React.FC<Props> = ({
                 ) : (
                   data.schema.name
                 )}
-                <span className="tag is-small mb-2 mx-2 is-info">
+
+                <span className="tag is-small mx-2 is-info">
                   {data.schema.keyType}
                 </span>
               </div>
+              <details className="has-background-light p-2 is-clickable m-4 is-size-6 has-text-weight-light">
+                <summary className="has-text-weight-semibold">
+                  See LSP2 JSON Schema of <code>{data.schema.name}</code>
+                </summary>
+                <CodeEditor
+                  sourceCode={JSON.stringify(data.schema, null, 4)}
+                  readOnly={true}
+                />
+              </details>
               <ul>
                 <li>
                   <strong>Key:</strong> <code>{data.schema.key}</code>
