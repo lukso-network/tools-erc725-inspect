@@ -55,33 +55,5 @@
     "keyType": "Array",
     "valueType": "address",
     "valueContent": "Address"
-  },
-  {
-    "name": "LSP1UniversalReceiverDelegate:LSP7Tokens_SenderNotification",
-    "key": "0x0cfc51aec37c55a4d0b10000429ac7a06903dbc9c13dfcb3c9d11df8194581fa",
-    "keyType": "Mapping",
-    "valueType": "address",
-    "valueContent": "Address"
-  },
-  {
-    "name": "LSP1UniversalReceiverDelegate:LSP7Tokens_RecipientNotification",
-    "key": "0x0cfc51aec37c55a4d0b1000020804611b3e2ea21c480dc465142210acf4a2485",
-    "keyType": "Mapping",
-    "valueType": "address",
-    "valueContent": "Address"
-  },
-  {
-    "name": "LSP1UniversalReceiverDelegate:LSP8Tokens_SenderNotification",
-    "key": "0x0cfc51aec37c55a4d0b10000b23eae7e6d1564b295b4c3e3be402d9a2f0776c5",
-    "keyType": "Mapping",
-    "valueType": "address",
-    "valueContent": "Address"
-  },
-  {
-    "name": "LSP1UniversalReceiverDelegate:LSP8Tokens_RecipientNotification",
-    "key": "0x0cfc51aec37c55a4d0b100000b084a55ebf70fd3c06fd755269dac2212c4d3f0",
-    "keyType": "Mapping",
-    "valueType": "address",
-    "valueContent": "Address"
   }
 ]

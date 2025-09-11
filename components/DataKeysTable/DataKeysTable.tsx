@@ -5,6 +5,7 @@ import AddressButtons from '@/components/AddressButtons';
 import ValueTypeDecoder from '@/components/ValueTypeDecoder';
 
 import ProfileSchema from './ProfileSchema.json';
+import LSP1NotificationsSchema from './LSP1NotificationsSchema.json';
 import AssetSchema from './AssetSchema.json';
 import LSP8Schema from './LSP8Schema.json';
 
@@ -52,7 +53,7 @@ const DataKeysTable: React.FC<Props> = ({
 
       try {
         if (isErc725Y) {
-          let schemaToLoad = ProfileSchema;
+          let schemaToLoad = [...ProfileSchema, ...LSP1NotificationsSchema];
 
           if (isAsset) {
             schemaToLoad = AssetSchema;
