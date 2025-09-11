@@ -468,7 +468,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
 
   return (
     <>
-      <h4 className="title is-4 mt-6">Custom Key Reading</h4>
+      <h3 className="title is-3 mt-6">Custom Key Reading</h3>
 
       <div className="mb-4 p-4 has-background-light">
         <div className="is-flex is-justify-content-space-between is-align-items-center">
