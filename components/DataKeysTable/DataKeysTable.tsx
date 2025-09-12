@@ -158,8 +158,9 @@ const DataKeysTable: React.FC<Props> = ({
           </ul>
           <p>
             This lets you plug custom logic to run after receiving notifications
-            like <i>"I received some tokens"</i>, <i>"I received some LYX"</i>,{' '}
-            <i>"I have a new follower"</i>, and many more.
+            like <i>&quot;I received some tokens&quot;</i>,{' '}
+            <i>&quot;I received some LYX&quot;</i>,{' '}
+            <i>&quot;I have a new follower&quot;</i>, and many more.
           </p>
         </div>
       </article>
