@@ -374,7 +374,6 @@ const Home: NextPage = () => {
                 {(isErc725X || isErc725Y) && (
                   <ContractOwner contractAddress={address} />
                 )}
-                <h3 className="title is-3 mt-6">Data Keys</h3>
                 <CustomKeySchemaForm address={address} />
                 <DataKeysTable
                   address={address}

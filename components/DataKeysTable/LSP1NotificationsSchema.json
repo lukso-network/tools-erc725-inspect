@@ -1,0 +1,86 @@
+[
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP7Tokens_SenderNotification",
+    "key": "0x0cfc51aec37c55a4d0b10000429ac7a06903dbc9c13dfcb3c9d11df8194581fa",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP7Tokens_RecipientNotification",
+    "key": "0x0cfc51aec37c55a4d0b1000020804611b3e2ea21c480dc465142210acf4a2485",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP7Tokens_OperatorNotification",
+    "key": "0x0cfc51aec37c55a4d0b10000386072cc5a58e61263b434c722725f21031cd06e",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP8Tokens_SenderNotification",
+    "key": "0x0cfc51aec37c55a4d0b10000b23eae7e6d1564b295b4c3e3be402d9a2f0776c5",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP8Tokens_RecipientNotification",
+    "key": "0x0cfc51aec37c55a4d0b10000b084a55ebf70fd3c06fd755269dac2212c4d3f0",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP8Tokens_OperatorNotification",
+    "key": "0x0cfc51aec37c55a4d0b10000468cd1581d7bc001c3b685513d2b929b55437be3",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP26FollowerSystem_FollowNotification",
+    "key": "0x0cfc51aec37c55a4d0b1000071e02f9f05bcd5816ec4f3134aa2e5a916669537",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP26FollowerSystem_UnfollowNotification",
+    "key": "0x0cfc51aec37c55a4d0b100009d3c0b4012b69658977b099bdaa51eff0f0460f4",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP0ValueReceived",
+    "key": "0x0cfc51aec37c55a4d0b100009c4705229491d365fb5434052e12a386d6771d97",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP0OwnershipTransferStarted",
+    "key": "0x0cfc51aec37c55a4d0b10000e17117c9d2665d1dbeb479ed8058bbebde3c50ac",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP0OwnershipTransferred_SenderNotification",
+    "key": "0x0cfc51aec37c55a4d0b10000a4e59c931d14f7c8a7a35027f92ee40b5f2886b9",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  },
+  {
+    "name": "LSP1UniversalReceiverDelegate:LSP0OwnershipTransferred_RecipientNotification",
+    "key": "0x0cfc51aec37c55a4d0b10000ceca317f109c43507871523e82dc2a3cc64dfa18",
+    "keyType": "Mapping",
+    "valueType": "address",
+    "valueContent": "Address"
+  }
+]

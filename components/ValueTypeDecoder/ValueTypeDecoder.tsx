@@ -13,6 +13,7 @@ import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeD
 import AddressInfos from '@/components/AddressInfos';
 
 import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';
+import CodeEditor from '../CodeEditor';
 
 interface Props {
   address: string;
@@ -161,7 +162,10 @@ const ValueTypeDecoder: React.FC<Props> = ({
 
       return (
         <>
-          <pre>{JSON.stringify(decodedDataOneKey[0].value, null, 4)}</pre>
+          <CodeEditor
+            sourceCode={JSON.stringify(decodedDataOneKey[0].value, null, 4)}
+            readOnly={true}
+          />
 
           <span>
             URL:
