@@ -28,9 +28,9 @@ const Home: NextPage = () => {
 
   const [address, setAddress] = useState('');
   const { network } = useContext(NetworkContext);
+
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
-
   const [isERC1271, setIsERC1271] = useState(false);
   const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
   const [isLSP1UniversalReceiver, setIsLSP1UniversalReceiver] = useState(false);
@@ -61,6 +61,14 @@ const Home: NextPage = () => {
 
       setIsErc725X(false);
       setIsErc725Y(false);
+      setIsERC1271(false);
+      setIsLSP0ERC725Account(false);
+      setIsLSP1UniversalReceiver(false);
+      setIsLSP6KeyManager(false);
+      setIsLSP7DigitalAsset(false);
+      setIsLSP8IdentifiableDigitalAsset(false);
+      setIsLSP9Vault(false);
+      setIsERC721(false);
       setErrorMessage('');
 
       if (address.length === 0) {
@@ -125,115 +133,105 @@ const Home: NextPage = () => {
       );
     }
 
-    if (!isEmptyInput && !isLoading) {
-      return (
-        <div className="help is-success inspect-result mt-4">
-          <div className="tags has-addons">
-            <span className="tag is-dark">Version</span>
-            <span className="tag is-info">{contractVersion}</span>
-          </div>
-          <h3 className="title is-3">Supported Standards</h3>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isErc725X && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725x---generic-executor"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC725X ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isErc725Y && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC725Y ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isERC1271 && 'is-outlined'
-            }`}
-            href="https://eips.ethereum.org/EIPS/eip-1271"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC1271 ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP0ERC725Account && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP0ERC725Account ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP1UniversalReceiver && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/generic-standards/lsp1-universal-receiver"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP1UniversalReceiver ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP6KeyManager && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP6KeyManager ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP7DigitalAsset && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/nft-2.0/LSP7-Digital-Asset"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP7DigitalAsset ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP8IdentifiableDigitalAsset && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/nft-2.0/LSP8-Identifiable-Digital-Asset"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP8IdentifiableDigitalAsset ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP9Vault && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp9-vault"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP9Vault ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${!isERC721 && 'is-outlined'}`}
-            href="https://eips.ethereum.org/EIPS/eip-721"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC721 ↗️
-          </a>
-        </div>
-      );
-    }
+    // if (!isEmptyInput && !isLoading) {
+    return (
+      <div className="help is-success inspect-result">
+        <h3 className="title is-3">Supported Standards</h3>
+        {/* TODO: change this to an array.map(...) method for simplicity */}
+        <a
+          className={`button is-info mr-2 ${!isErc725X && 'is-outlined'}`}
+          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725x---generic-executor"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ERC725X ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 ${!isErc725Y && 'is-outlined'}`}
+          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ERC725Y ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 ${!isERC1271 && 'is-outlined'}`}
+          href="https://eips.ethereum.org/EIPS/eip-1271"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ERC1271 ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 ${
+            !isLSP0ERC725Account && 'is-outlined'
+          }`}
+          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP0ERC725Account ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 mt-2 ${
+            !isLSP1UniversalReceiver && 'is-outlined'
+          }`}
+          href="https://docs.lukso.tech/standards/generic-standards/lsp1-universal-receiver"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP1UniversalReceiver ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 mt-2 ${
+            !isLSP6KeyManager && 'is-outlined'
+          }`}
+          href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP6KeyManager ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 mt-2 ${
+            !isLSP7DigitalAsset && 'is-outlined'
+          }`}
+          href="https://docs.lukso.tech/standards/nft-2.0/LSP7-Digital-Asset"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP7DigitalAsset ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 mt-2 ${
+            !isLSP8IdentifiableDigitalAsset && 'is-outlined'
+          }`}
+          href="https://docs.lukso.tech/standards/nft-2.0/LSP8-Identifiable-Digital-Asset"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP8IdentifiableDigitalAsset ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 mt-2 ${
+            !isLSP9Vault && 'is-outlined'
+          }`}
+          href="https://docs.lukso.tech/standards/universal-profile/lsp9-vault"
+          target="_blank"
+          rel="noreferrer"
+        >
+          LSP9Vault ↗️
+        </a>
+        <a
+          className={`button is-info mr-2 mt-2 ${!isERC721 && 'is-outlined'}`}
+          href="https://eips.ethereum.org/EIPS/eip-721"
+          target="_blank"
+          rel="noreferrer"
+        >
+          ERC721 ↗️
+        </a>
+      </div>
+    );
 
     return null;
   };
@@ -309,17 +307,24 @@ const Home: NextPage = () => {
                 <SampleAddressInput
                   onClick={(newAddress) => setAddress(newAddress)}
                 />
+                {!isEmptyInput && !isLoading && (
+                  <>
+                    {(errorMessage && (
+                      <div className="help is-danger">{errorMessage}</div>
+                    )) || (
+                      <div className="tags has-addons">
+                        <span className="tag is-dark">Version</span>
+                        <span className="tag is-info">{contractVersion}</span>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-              <div className="columns">
-                <div className="column is-one-half">
-                  <div className="control"></div>
-                  {errorMessage && !isEmptyInput ? (
-                    <div className="help is-danger">{errorMessage}</div>
-                  ) : (
-                    <ERC725InspectResult />
-                  )}
-                </div>
-              </div>
+            </div>
+          </div>
+          <div className="column is-half">
+            <div className="field">
+              <ERC725InspectResult />
             </div>
           </div>
         </div>
@@ -374,13 +379,19 @@ const Home: NextPage = () => {
                 {(isErc725X || isErc725Y) && (
                   <ContractOwner contractAddress={address} />
                 )}
-                <CustomKeySchemaForm address={address} />
-                <DataKeysTable
-                  address={address}
-                  isErc725Y={isErc725Y}
-                  isAsset={isLSP7DigitalAsset || isLSP8IdentifiableDigitalAsset}
-                  isLSP8={isLSP8IdentifiableDigitalAsset}
-                />
+                {isErc725Y && (
+                  <>
+                    <CustomKeySchemaForm address={address} />
+                    <DataKeysTable
+                      address={address}
+                      isErc725Y={isErc725Y}
+                      isAsset={
+                        isLSP7DigitalAsset || isLSP8IdentifiableDigitalAsset
+                      }
+                      isLSP8={isLSP8IdentifiableDigitalAsset}
+                    />
+                  </>
+                )}
               </>
             )}
         </div>
