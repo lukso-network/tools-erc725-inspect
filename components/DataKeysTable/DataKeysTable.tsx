@@ -188,7 +188,7 @@ const DataKeysTable: React.FC<Props> = ({
           return (
             <>
               <DataKeyBox key={data.key} address={address} data={data} />
-              <article className="columns m-1 p-1 message has-background-danger-light">
+              <article className="columns m-1 p-1 message has-background-warning-light">
                 <div className="message-body is-text-small">
                   <strong>What does this do?</strong>{' '}
                   {
