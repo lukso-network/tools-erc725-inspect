@@ -5,7 +5,8 @@ import { SAMPLE_ADDRESS } from '@/constants';
 
 enum AddressType {
   UP = 'UP',
-  Asset = 'Asset',
+  LSP7 = 'LSP7',
+  LSP8 = 'LSP8',
 }
 
 interface Props {
@@ -30,7 +31,7 @@ const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
         }
         break;
 
-      case AddressType.Asset:
+      case AddressType.LSP7:
         switch (network.name) {
           case 'MAINNET':
             address = SAMPLE_ADDRESS.MAINNET_LSP7;
@@ -40,24 +41,42 @@ const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
             break;
         }
         break;
+
+      case AddressType.LSP8:
+        switch (network.name) {
+          case 'MAINNET':
+            address = SAMPLE_ADDRESS.MAINNET_LSP8;
+            break;
+          case 'TESTNET':
+            address = SAMPLE_ADDRESS.TESTNET_LSP8;
+            break;
+        }
+        break;
     }
 
     onClick(address);
   };
 
   return (
-    <div>
+    <div className="is-flex is-flex-direction-row is-align-items-center">
+      <span className="mr-2">Try with:</span>
       <button
         className="button is-light is-small my-4"
         onClick={() => changeInputAddress(AddressType.UP)}
       >
-        Try with a Universal Profile Sample Address
+        🆙 Universal Profile Sample Address
       </button>
       <button
         className="button is-light is-small my-4 ml-2"
-        onClick={() => changeInputAddress(AddressType.Asset)}
+        onClick={() => changeInputAddress(AddressType.LSP7)}
       >
-        Try with a Digital Asset Sample Address
+        🪙 LSP7 Sample Address
+      </button>
+      <button
+        className="button is-light is-small my-4 ml-2"
+        onClick={() => changeInputAddress(AddressType.LSP8)}
+      >
+        🖼️ LSP8 Sample Address
       </button>
     </div>
   );

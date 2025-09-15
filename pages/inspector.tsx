@@ -385,7 +385,10 @@ const Home: NextPage = () => {
               >
                 LSP2 ERC725YJSONSchema
               </a>
-              specification. It&lsquo;s using the
+              specification.
+            </p>
+            <p>
+              It&lsquo;s using the
               <a
                 href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
                 target="_blank"
