@@ -35,17 +35,33 @@ const Home: NextPage = () => {
   const [address, setAddress] = useState('');
   const { network } = useContext(NetworkContext);
 
+  // Account Standards
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
   const [isERC1271, setIsERC1271] = useState(false);
   const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
   const [isLSP1UniversalReceiver, setIsLSP1UniversalReceiver] = useState(false);
+  const [isLSP17Extendable, setIsLSP17Extendable] = useState(false);
+  const [isLSP25ExecuteRelayCall, setIsLSP25ExecuteRelayCall] = useState(false);
+
+  // Access Control Standards
   const [isLSP6KeyManager, setIsLSP6KeyManager] = useState(false);
+  const [isLSP14OwnableTwoSteps, setIsLSP14OwnableTwoSteps] = useState(false);
+  const [isLSP20CallVerification, setIsLSP20CallVerification] = useState(false);
+  const [isLSP20CallVerifier, setIsLSP20CallVerifier] = useState(false);
+
+  // Asset Standards
   const [isLSP7DigitalAsset, setIsLSP7DigitalAsset] = useState(false);
   const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] =
     useState(false);
-  const [isLSP9Vault, setIsLSP9Vault] = useState(false);
+  const [isERC20, setIsERC20] = useState(false);
   const [isERC721, setIsERC721] = useState(false);
+
+  // Other Standards
+  const [isLSP1Delegate, setIsLSP1Delegate] = useState(false);
+  const [isLSP9Vault, setIsLSP9Vault] = useState(false);
+  const [isLSP17Extension, setIsLSP17Extension] = useState(false);
+  const [isLSP26FollowerSystem, setIsLSP26FollowerSystem] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
@@ -64,16 +80,26 @@ const Home: NextPage = () => {
         return;
       }
 
+      // Reset all interface states
       setIsErc725X(false);
       setIsErc725Y(false);
       setIsERC1271(false);
       setIsLSP0ERC725Account(false);
       setIsLSP1UniversalReceiver(false);
+      setIsLSP17Extendable(false);
+      setIsLSP25ExecuteRelayCall(false);
       setIsLSP6KeyManager(false);
+      setIsLSP14OwnableTwoSteps(false);
+      setIsLSP20CallVerification(false);
+      setIsLSP20CallVerifier(false);
       setIsLSP7DigitalAsset(false);
       setIsLSP8IdentifiableDigitalAsset(false);
-      setIsLSP9Vault(false);
+      setIsERC20(false);
       setIsERC721(false);
+      setIsLSP1Delegate(false);
+      setIsLSP9Vault(false);
+      setIsLSP17Extension(false);
+      setIsLSP26FollowerSystem(false);
       setErrorMessage('');
 
       if (address.length === 0) {
@@ -102,23 +128,70 @@ const Home: NextPage = () => {
 
       const supportStandards = await checkInterface(address, web3);
 
+      // Account Standards
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
-
       setIsERC1271(supportStandards.isErc1271);
       setIsLSP0ERC725Account(supportStandards.isLsp0Erc725Account);
       setIsLSP1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
+      setIsLSP17Extendable(supportStandards.isLsp17Extendable);
+      setIsLSP25ExecuteRelayCall(supportStandards.isLsp25ExecuteRelayCall);
+
+      // Access Control Standards
       setIsLSP6KeyManager(supportStandards.isLsp6KeyManager);
+      setIsLSP14OwnableTwoSteps(supportStandards.isLsp14OwnableTwoSteps);
+      setIsLSP20CallVerification(supportStandards.isLsp20CallVerification);
+      setIsLSP20CallVerifier(supportStandards.isLsp20CallVerifier);
+
+      // Asset Standards
       setIsLSP7DigitalAsset(supportStandards.isLsp7DigitalAsset);
       setIsLSP8IdentifiableDigitalAsset(
         supportStandards.isLsp8IdentifiableDigitalAsset,
       );
+      setIsERC20(supportStandards.isErc20);
+      setIsERC721(supportStandards.isERC721);
+
+      // Other Standards
+      setIsLSP1Delegate(supportStandards.isLsp1Delegate);
       setIsLSP9Vault(supportStandards.isLsp9Vault);
+      setIsLSP17Extension(supportStandards.isLsp17Extension);
+      setIsLSP26FollowerSystem(supportStandards.isLsp26FollowerSystem);
 
       setIsLoading(false);
     };
     check();
   }, [address, web3, errorMessage, network.name, router]);
+
+  // Helper function to determine if an interface is supported
+  const getInterfaceSupport = (standard: string): boolean => {
+    const interfaceMap: { [key: string]: boolean } = {
+      // Account Standards
+      ERC725X: isErc725X,
+      ERC725Y: isErc725Y,
+      ERC1271: isERC1271,
+      LSP0ERC725Account: isLSP0ERC725Account,
+      LSP1UniversalReceiver: isLSP1UniversalReceiver,
+      LSP17Extendable: isLSP17Extendable,
+      LSP25ExecuteRelayCall: isLSP25ExecuteRelayCall,
+      // Access Control Standards
+      LSP6KeyManager: isLSP6KeyManager,
+      LSP14OwnableTwoSteps: isLSP14OwnableTwoSteps,
+      LSP20CallVerification: isLSP20CallVerification,
+      LSP20CallVerifier: isLSP20CallVerifier,
+      // Asset Standards
+      LSP7DigitalAsset: isLSP7DigitalAsset,
+      LSP8IdentifiableDigitalAsset: isLSP8IdentifiableDigitalAsset,
+      ERC20: isERC20,
+      ERC721: isERC721,
+      // Other Standards
+      LSP1Delegate: isLSP1Delegate,
+      LSP9Vault: isLSP9Vault,
+      LSP17Extension: isLSP17Extension,
+      LSP26FollowerSystem: isLSP26FollowerSystem,
+    };
+
+    return interfaceMap[standard] || false;
+  };
 
   const ERC725InspectResult = () => {
     if (
@@ -156,7 +229,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info is-outlined`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -185,7 +260,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info is-outlined`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -216,7 +293,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info is-outlined`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -245,7 +324,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info is-outlined`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -349,9 +430,17 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                      <div className="tags has-addons">
-                        <span className="tag is-dark">Version</span>
-                        <span className="tag is-info">{contractVersion}</span>
+                      <div>
+                        <div className="tags has-addons">
+                          <span className="tag is-dark">version</span>
+                          <span className="tag is-info">{contractVersion}</span>
+                        </div>
+                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                          <i className="has-text-centered mb-2">
+                            Scroll to see results
+                          </i>
+                          <p className="has-text-centered">⬇️</p>
+                        </div>
                       </div>
                     )}
                   </>

@@ -65,14 +65,27 @@ export const checkInterface = async (address: string, web3: Web3) => {
   const supportsContractInterface = await checkSupportedInterfaces(
     address,
     [
+      // Account Standards
       INTERFACE_IDS.ERC725X,
       INTERFACE_IDS.ERC725Y,
       INTERFACE_IDS.ERC1271,
       INTERFACE_IDS.LSP0ERC725Account,
       INTERFACE_IDS.LSP1UniversalReceiver,
+      INTERFACE_IDS.LSP17Extendable,
+      INTERFACE_IDS.LSP25ExecuteRelayCall,
+      // Access Control Standards
       INTERFACE_IDS.LSP6KeyManager,
-      INTERFACE_IDS.LSP9Vault,
+      INTERFACE_IDS.LSP14Ownable2Step,
+      INTERFACE_IDS.LSP20CallVerification,
+      INTERFACE_IDS.LSP20CallVerifier,
+      // Asset Standards (non-LSP7/8)
+      INTERFACE_IDS.ERC20,
       INTERFACE_IDS.ERC721,
+      // Other Standards
+      INTERFACE_IDS.LSP1UniversalReceiverDelegate,
+      INTERFACE_IDS.LSP9Vault,
+      INTERFACE_IDS.LSP17Extension,
+      INTERFACE_IDS.LSP26FollowerSystem,
     ],
     web3,
   );
@@ -92,12 +105,20 @@ export const checkInterface = async (address: string, web3: Web3) => {
   );
 
   return {
+    // Account Standards
     isErc725X: supportsContractInterface[0],
     isErc725Y: supportsContractInterface[1],
     isErc1271: supportsContractInterface[2],
     isLsp0Erc725Account: supportsContractInterface[3],
     isLsp1UniversalReceiver: supportsContractInterface[4],
-    isLsp6KeyManager: supportsContractInterface[5],
+    isLsp17Extendable: supportsContractInterface[5],
+    isLsp25ExecuteRelayCall: supportsContractInterface[6],
+    // Access Control Standards
+    isLsp6KeyManager: supportsContractInterface[7],
+    isLsp14OwnableTwoSteps: supportsContractInterface[8],
+    isLsp20CallVerification: supportsContractInterface[9],
+    isLsp20CallVerifier: supportsContractInterface[10],
+    // Asset Standards
     isLsp7DigitalAsset:
       supportsAssetInterface[0] ||
       supportsAssetInterface[1] ||
@@ -106,8 +127,13 @@ export const checkInterface = async (address: string, web3: Web3) => {
       supportsAssetInterface[3] ||
       supportsAssetInterface[4] ||
       supportsAssetInterface[5],
-    isLsp9Vault: supportsContractInterface[6],
-    isERC721: supportsContractInterface[7],
+    isErc20: supportsContractInterface[11],
+    isERC721: supportsContractInterface[12],
+    // Other Standards
+    isLsp1Delegate: supportsContractInterface[13],
+    isLsp9Vault: supportsContractInterface[14],
+    isLsp17Extension: supportsContractInterface[15],
+    isLsp26FollowerSystem: supportsContractInterface[16],
   };
 };
 
