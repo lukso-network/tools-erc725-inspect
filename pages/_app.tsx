@@ -20,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <NetworksProvider>
       <NavBar />
-      <section className="section">
+      <section className="mt-5">
         <Component {...pageProps} />
       </section>
     </NetworksProvider>

@@ -17,7 +17,13 @@ import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInp
 import { NetworkContext } from '@/contexts/NetworksContext';
 
 import useWeb3 from '@/hooks/useWeb3';
-import { SAMPLE_ADDRESS } from '@/constants';
+import {
+  ACCESS_CONTROL_INTERFACE_IDS,
+  ACCOUNT_INTERFACE_IDS,
+  ASSETS_INTERFACE_IDS,
+  OTHER_INTERFACE_IDS,
+  SAMPLE_ADDRESS,
+} from '@/constants';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -39,7 +45,6 @@ const Home: NextPage = () => {
   const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] =
     useState(false);
   const [isLSP9Vault, setIsLSP9Vault] = useState(false);
-
   const [isERC721, setIsERC721] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -133,104 +138,139 @@ const Home: NextPage = () => {
       );
     }
 
-    // if (!isEmptyInput && !isLoading) {
     return (
-      <div className="help is-success inspect-result">
+      <>
         <h3 className="title is-3">Supported Standards</h3>
-        {/* TODO: change this to an array.map(...) method for simplicity */}
-        <a
-          className={`button is-info mr-2 ${!isErc725X && 'is-outlined'}`}
-          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725x---generic-executor"
-          target="_blank"
-          rel="noreferrer"
-        >
-          ERC725X ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 ${!isErc725Y && 'is-outlined'}`}
-          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-          target="_blank"
-          rel="noreferrer"
-        >
-          ERC725Y ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 ${!isERC1271 && 'is-outlined'}`}
-          href="https://eips.ethereum.org/EIPS/eip-1271"
-          target="_blank"
-          rel="noreferrer"
-        >
-          ERC1271 ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 ${
-            !isLSP0ERC725Account && 'is-outlined'
-          }`}
-          href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LSP0ERC725Account ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 mt-2 ${
-            !isLSP1UniversalReceiver && 'is-outlined'
-          }`}
-          href="https://docs.lukso.tech/standards/generic-standards/lsp1-universal-receiver"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LSP1UniversalReceiver ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 mt-2 ${
-            !isLSP6KeyManager && 'is-outlined'
-          }`}
-          href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LSP6KeyManager ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 mt-2 ${
-            !isLSP7DigitalAsset && 'is-outlined'
-          }`}
-          href="https://docs.lukso.tech/standards/nft-2.0/LSP7-Digital-Asset"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LSP7DigitalAsset ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 mt-2 ${
-            !isLSP8IdentifiableDigitalAsset && 'is-outlined'
-          }`}
-          href="https://docs.lukso.tech/standards/nft-2.0/LSP8-Identifiable-Digital-Asset"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LSP8IdentifiableDigitalAsset ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 mt-2 ${
-            !isLSP9Vault && 'is-outlined'
-          }`}
-          href="https://docs.lukso.tech/standards/universal-profile/lsp9-vault"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LSP9Vault ↗️
-        </a>
-        <a
-          className={`button is-info mr-2 mt-2 ${!isERC721 && 'is-outlined'}`}
-          href="https://eips.ethereum.org/EIPS/eip-721"
-          target="_blank"
-          rel="noreferrer"
-        >
-          ERC721 ↗️
-        </a>
-      </div>
+        <div className="columns">
+          <div className="column is-half">
+            <table className="table is-borderless is-size-7 table-no-borders">
+              <thead>
+                <tr>
+                  <th>Account Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(ACCOUNT_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info is-outlined`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+            <table className="table is-borderless is-size-7 table-no-borders">
+              <thead>
+                <tr>
+                  <th>Access Control Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(ACCESS_CONTROL_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info is-outlined`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="column is-half">
+            <table className="table is-borderless is-size-7 justify-content-center table-no-borders">
+              <thead>
+                <tr>
+                  <th>Asset Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(ASSETS_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info is-outlined`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+            <table className="table is-borderless is-size-7 table-no-borders">
+              <thead>
+                <tr>
+                  <th>Other Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(OTHER_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info is-outlined`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+            <a
+              href="https://docs.lukso.tech/contracts/interface-ids/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              📚↗️ All interface IDs on docs.lukso.tech
+            </a>
+          </div>
+        </div>
+      </>
     );
 
     return null;
@@ -243,50 +283,47 @@ const Home: NextPage = () => {
       </Head>
       <div className="container">
         <h2 className="title is-2">Inspector</h2>
-        <article className="message is-info">
+        <article className="message is-info content">
           <div className="message-body">
-            Retrieve and decode all
-            <a
-              href="https://github.com/ERC725Alliance/ERC725"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              ERC725Y
-            </a>
-            data keys of a smart contract using the
-            <a
-              href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              LSP2 ERC725YJSONSchema
-            </a>
-            specification.
-          </div>
-        </article>
-        <article className="message">
-          <div className="message-body">
-            It&lsquo;s using the
-            <a
-              href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              getData
-            </a>
-            function of the
-            <a
-              href="https://www.npmjs.com/package/@erc725/erc725.js"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              erc725.js
-            </a>
-            library.
+            <p>
+              Retrieve and decode all
+              <a
+                href="https://github.com/ERC725Alliance/ERC725"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                ERC725Y
+              </a>
+              data keys of a smart contract using the
+              <a
+                href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                LSP2 ERC725YJSONSchema
+              </a>
+              specification. It&lsquo;s using the
+              <a
+                href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                getData
+              </a>
+              function of the
+              <a
+                href="https://www.npmjs.com/package/@erc725/erc725.js"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                erc725.js
+              </a>
+              library.
+            </p>
           </div>
         </article>
 
