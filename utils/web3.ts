@@ -2,7 +2,7 @@
  * @author Hugo Masclet <git@hugom.xyz>
  */
 import Web3 from 'web3';
-import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import { ERC725YDataKeys, INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import {
   INTERFACE_ID_LSP7,
   INTERFACE_ID_LSP7_PREVIOUS,
@@ -23,8 +23,11 @@ import { AbiItem } from 'web3-utils';
 import {
   GNOSIS_SAFE_IMPLEMENTATION,
   GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
+  LUKSO_IPFS_BASE_URL,
   MULTICALL_CONTRACT_ADDRESS,
 } from '@/globals';
+import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
+import ERC725 from '@erc725/erc725.js';
 
 export const checkInterface = async (address: string, web3: Web3) => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
@@ -230,4 +233,20 @@ export const getData = async (
   }
 
   return data;
+};
+
+export const getProfileMetadataJSON = async (
+  address: string,
+  web3: Web3,
+): Promise<any> => {
+  const erc725js = new ERC725(LSP3Schema, address, web3.currentProvider, {
+    ipfsGateway: LUKSO_IPFS_BASE_URL + '/',
+    gas: 20_000_000, // high gas to fetch large amount of metadata
+  });
+
+  const lsp3ProfileValue = await erc725js.fetchData('LSP3Profile');
+
+  if (!lsp3ProfileValue) return null;
+
+  return lsp3ProfileValue;
 };
