@@ -17,48 +17,14 @@ import {
   getDataBatchABI,
   getDataABI,
   VersionABI,
-  MULTICALL_CONTRACT_ADDRESS,
   aggregateABI,
 } from '@/constants';
 import { AbiItem } from 'web3-utils';
 import {
   GNOSIS_SAFE_IMPLEMENTATION,
   GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
+  MULTICALL_CONTRACT_ADDRESS,
 } from '@/globals';
-
-export const getDataBatch = async (
-  address: string,
-  keys: string[],
-  web3: Web3,
-) => {
-  const Contract = new web3.eth.Contract(getDataBatchABI as AbiItem[], address);
-
-  let data: string[] = [];
-  try {
-    data = await Contract.methods.getDataBatch(keys).call();
-  } catch (err: any) {
-    console.log(err.message);
-  }
-
-  return data;
-};
-
-export const getData = async (
-  address: string,
-  key: string,
-  web3: Web3,
-): Promise<string | null> => {
-  const Contract = new web3.eth.Contract(getDataABI, address);
-
-  let data: string | null = null;
-  try {
-    data = await Contract.methods.getData(key).call();
-  } catch (err: any) {
-    console.log(err.message);
-  }
-
-  return data;
-};
 
 export const checkInterface = async (address: string, web3: Web3) => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
@@ -137,24 +103,6 @@ export const checkInterface = async (address: string, web3: Web3) => {
   };
 };
 
-export const aggregateCalls = async (
-  calls: [string, string][],
-  web3: Web3,
-): Promise<string[]> => {
-  try {
-    const multiCallContract = new web3.eth.Contract(
-      aggregateABI,
-      MULTICALL_CONTRACT_ADDRESS,
-    );
-
-    const result = await multiCallContract.methods.aggregate(calls).call();
-    return result.returnData;
-  } catch (error) {
-    console.warn('could not aggregate results: ', error);
-    return ['', ''];
-  }
-};
-
 async function checkSupportedInterfaces(
   assetAddress: string,
   interfaceIds: string[],
@@ -186,24 +134,21 @@ async function checkSupportedInterfaces(
   });
 }
 
-export const getVersion = async (
-  address: string,
+export const aggregateCalls = async (
+  calls: [string, string][],
   web3: Web3,
-): Promise<string> => {
-  const Contract = new web3.eth.Contract(VersionABI, address);
-
+): Promise<string[]> => {
   try {
-    const result = await Contract.methods.VERSION().call();
-    if (result == '') {
-      return 'unknown';
-    }
-    return result;
-  } catch (error) {
-    console.warn(
-      'Could not fetch smart contract version for contract at address ',
-      address,
+    const multiCallContract = new web3.eth.Contract(
+      aggregateABI,
+      MULTICALL_CONTRACT_ADDRESS,
     );
-    return 'unknown';
+
+    const result = await multiCallContract.methods.aggregate(calls).call();
+    return result.returnData;
+  } catch (error) {
+    console.warn('could not aggregate results: ', error);
+    return ['', ''];
   }
 };
 
@@ -231,3 +176,58 @@ export async function checkIsGnosisSafe(
 
   return implementationAddress == GNOSIS_SAFE_IMPLEMENTATION;
 }
+
+export const getVersion = async (
+  address: string,
+  web3: Web3,
+): Promise<string> => {
+  const Contract = new web3.eth.Contract(VersionABI, address);
+
+  try {
+    const result = await Contract.methods.VERSION().call();
+    if (result == '') {
+      return 'unknown';
+    }
+    return result;
+  } catch (error) {
+    console.warn(
+      'Could not fetch smart contract version for contract at address ',
+      address,
+    );
+    return 'unknown';
+  }
+};
+
+export const getDataBatch = async (
+  address: string,
+  keys: string[],
+  web3: Web3,
+) => {
+  const Contract = new web3.eth.Contract(getDataBatchABI as AbiItem[], address);
+
+  let data: string[] = [];
+  try {
+    data = await Contract.methods.getDataBatch(keys).call();
+  } catch (err: any) {
+    console.log(err.message);
+  }
+
+  return data;
+};
+
+export const getData = async (
+  address: string,
+  key: string,
+  web3: Web3,
+): Promise<string | null> => {
+  const Contract = new web3.eth.Contract(getDataABI, address);
+
+  let data: string | null = null;
+  try {
+    data = await Contract.methods.getData(key).call();
+  } catch (err: any) {
+    console.log(err.message);
+  }
+
+  return data;
+};

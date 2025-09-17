@@ -22,8 +22,9 @@ import {
   ACCOUNT_INTERFACE_IDS,
   ASSETS_INTERFACE_IDS,
   OTHER_INTERFACE_IDS,
-  SAMPLE_ADDRESS,
 } from '@/constants';
+
+import { SAMPLE_ADDRESS } from '@/globals';
 
 const Home: NextPage = () => {
   const router = useRouter();
