@@ -19,23 +19,14 @@ export const AddressTypeBadge: React.FC<BadgeProps> = ({
   isLight,
   colorClass,
   contractVersion,
-}) => {
-  let classText = colorClass;
-  classText += isLight ? ' is-light' : '';
-
-  const addressSpan = <span className={`tag mr-2 ${classText}`}>{text}</span>;
-
-  if (!contractVersion) {
-    return addressSpan;
-  }
-
-  return (
-    <div className="tags has-addons mr-2" style={{ display: 'inline' }}>
-      {addressSpan}
-      <span className="tag is-dark">{contractVersion}</span>
-    </div>
-  );
-};
+}) => (
+  <div className="tags has-addons mr-2 mb-0">
+    <span className={`tag ${colorClass} ${isLight ? 'is-light' : ''}`}>
+      {text}
+    </span>
+    {contractVersion && <span className="tag is-dark">{contractVersion}</span>}
+  </div>
+);
 
 interface AssetProps {
   assetAddress: string;
@@ -96,20 +87,20 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
   }, [assetAddress, web3, userAddress]);
 
   return (
-    <>
-      <div className="tags has-addons mr-2" style={{ display: 'inline' }}>
+    <div className="is-flex">
+      <div className="tags has-addons mr-2 mb-0">
         <span className="tag is-info">name</span>
         <span className="tag is-light">{assetName}</span>
       </div>
-      <div className="tags has-addons" style={{ display: 'inline' }}>
+      <div className="tags has-addons mr-2 mb-0">
         <span className="tag is-info">symbol</span>
         <span className="tag is-light">{assetSymbol}</span>
       </div>
-      <div className="tags has-addons" style={{ display: 'inline' }}>
+      <div className="tags has-addons mr-2 mb-0">
         <span className="tag is-info">balance</span>
         <span className="tag is-light">{assetBalance}</span>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -161,17 +152,21 @@ export const ProfileInfosBadge: React.FC<ProfileProps> = ({
   }, [web3]);
 
   return (
-    <div className="tags has-addons">
-      {profileImage && (
-        <span className="tag is-info is-light">
-          <img
-            src={profileImage}
-            alt="Profile"
-            style={{ width: '20px', borderRadius: '50%' }}
-          />
-        </span>
+    <>
+      {(profileImage || profileName) && (
+        <div className="tags has-addons mr-2 mb-0">
+          {profileImage && (
+            <span className="tag is-info is-light">
+              <img
+                src={profileImage}
+                alt="Profile"
+                style={{ width: '20px', borderRadius: '50%' }}
+              />
+            </span>
+          )}
+          {profileName && <span className="tag is-info">{profileName}</span>}
+        </div>
       )}
-      {profileName && <span className="tag is-info">{profileName}</span>}
-    </div>
+    </>
   );
 };

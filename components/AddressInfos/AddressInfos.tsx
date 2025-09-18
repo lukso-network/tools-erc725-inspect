@@ -12,11 +12,7 @@ import {
   LSP1_GRAVE_FORWARDER,
   UP_RECOVERY_ADDRESSES,
 } from '@/globals';
-import {
-  checkInterface,
-  checkIsGnosisSafe,
-  getProfileMetadataJSON,
-} from '@/utils/web3';
+import { checkInterface, checkIsGnosisSafe } from '@/utils/web3';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
 
@@ -93,7 +89,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
     }
 
     return (
-      <div className="mt-2 is-flex">
+      <div className="is-flex is-align-items-center mt-1 mb-2">
         {isUPRecovery && (
           <AddressTypeBadge
             text="🌱 LUKSO UP Recovery"
@@ -121,7 +117,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
         {isGnosisSafe && (
           <AddressTypeBadge
-            text="🏦 - Gnosis Safe"
+            text="🏦 Gnosis Safe"
             colorClass="is-success"
             isLight={true}
           />
@@ -176,15 +172,17 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
   }
 
   return (
-    <div>
-      <code className="mr-2">
-        <a target="_blank" rel="noreferrer" href={explorerLink}>
-          {assetAddress}
-        </a>
-      </code>
-      <AddressTypeBadge text={addressTypeText} isLight={true} />
-      {renderTags()}
-    </div>
+    <>
+      <div className="is-flex">
+        <code className="mr-2">
+          <a target="_blank" rel="noreferrer" href={explorerLink}>
+            {assetAddress}
+          </a>
+        </code>
+        <AddressTypeBadge text={addressTypeText} isLight={true} />
+      </div>
+      <div className="is-flex">{renderTags()}</div>
+    </>
   );
 };
 
