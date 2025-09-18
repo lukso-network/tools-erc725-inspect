@@ -9,9 +9,10 @@ import { LUKSO_IPFS_BASE_URL } from '@/globals';
 
 interface BadgeProps {
   text: string;
-  isLight: boolean;
+  isLight?: boolean;
   colorClass?: string;
   contractVersion?: string;
+  addLUKSOLogo?: boolean;
 }
 
 export const AddressTypeBadge: React.FC<BadgeProps> = ({
@@ -19,8 +20,18 @@ export const AddressTypeBadge: React.FC<BadgeProps> = ({
   isLight,
   colorClass,
   contractVersion,
+  addLUKSOLogo,
 }) => (
   <div className="tags has-addons mr-2 mb-0">
+    {addLUKSOLogo && (
+      <span className={`tag ${colorClass} is-light`}>
+        <img
+          src="/lukso-signet-fuschia.svg"
+          alt="Profile"
+          style={{ width: '20px', padding: '0.15rem' }}
+        />
+      </span>
+    )}
     <span className={`tag ${colorClass} ${isLight ? 'is-light' : ''}`}>
       {text}
     </span>

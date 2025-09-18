@@ -119,7 +119,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                   <div className="mb-3">
                     <p>Controller Infos:</p>
                     {controller ? (
-                      <AddressInfos assetAddress={controller.toString()} />
+                      <AddressInfos address={controller.toString()} />
                     ) : (
                       <i>No controller found at index {index}</i>
                     )}

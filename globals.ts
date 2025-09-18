@@ -28,7 +28,7 @@ export enum SAMPLE_ADDRESS {
   TESTNET_LSP8 = '0x00aB25152E666Fcdf541Df9F46b3847F1c7887A0',
 }
 
-export const UP_RECOVERY_ADDRESSES: Record<NetworkName, string[]> = {
+export const LUKSO_UP_RECOVERY_ADDRESSES: Record<NetworkName, string[]> = {
   [NetworkName.MAINNET]: [
     '0xD6ebB3C5C1836f5377d134c303f4EBb053562f6f',
     '0x2e90C2ff7E9bbD9381c8e4eA030666f9c6090727',
@@ -49,7 +49,7 @@ export const UP_RECOVERY_ADDRESSES: Record<NetworkName, string[]> = {
 };
 
 // Mainnet AND Testnet
-export const LSP1_DELEGATE_VERSIONS = {
+export const LUKSO_LSP1_DELEGATE_VERSIONS = {
   '0xA5467dfe7019bF2C7C5F7A707711B9d4cAD118c8': '0.12.1',
   '0x7870C5B8BC9572A8001C3f96f7ff59961B23500D': '0.14.0',
 };

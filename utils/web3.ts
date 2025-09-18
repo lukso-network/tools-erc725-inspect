@@ -99,7 +99,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
     isErc20: supportsContractInterface[11],
     isERC721: supportsContractInterface[12],
     // Other Standards
-    isLsp1Delegate: supportsContractInterface[13],
+    isLsp1UniversalReceiverDelegate: supportsContractInterface[13],
     isLsp9Vault: supportsContractInterface[14],
     isLsp17Extension: supportsContractInterface[15],
     isLsp26FollowerSystem: supportsContractInterface[16],

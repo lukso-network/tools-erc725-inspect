@@ -74,11 +74,12 @@ const ValueTypeDecoder: React.FC<Props> = ({
         <>
           <code>{value}</code>
           <div className="mt-4"></div>
-          <AddressInfos assetAddress={badgeContent} userAddress={address} />
+          <AddressInfos address={badgeContent} userAddress={address} />
           <AddressButtons address={badgeContent} />
         </>
       );
     }
+
     if (
       !decodedDataOneKey[0].name.endsWith('[]') &&
       (typeof decodedDataOneKey[0].value === 'string' ||
@@ -137,7 +138,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
                 item && (
                   <li key={index}>
                     <AddressInfos
-                      assetAddress={item.toString()}
+                      address={item.toString()}
                       userAddress={address}
                     />
                   </li>

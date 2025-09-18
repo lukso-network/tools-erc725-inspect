@@ -8,24 +8,22 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 import useWeb3 from '@/hooks/useWeb3';
 import {
   EXPLORER_BASE_URL,
-  LSP1_DELEGATE_VERSIONS,
+  LUKSO_LSP1_DELEGATE_VERSIONS,
   LSP1_GRAVE_FORWARDER,
-  UP_RECOVERY_ADDRESSES,
+  LUKSO_UP_RECOVERY_ADDRESSES,
 } from '@/globals';
-import { checkInterface, checkIsGnosisSafe } from '@/utils/web3';
+import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
 
 interface Props {
-  assetAddress: string;
+  address: string;
   userAddress?: string;
 }
 
-const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
+const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
   const web3 = useWeb3();
   const { network } = useContext(NetworkContext);
-
-  const recoveryAddresses = UP_RECOVERY_ADDRESSES[network.name];
 
   const [isLoading, setIsLoading] = useState(true);
   const [isEOA, setIsEOA] = useState(true);
@@ -33,8 +31,11 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
   const [isLSP7, setIsLSP7] = useState(false);
   const [isLSP8, setIsLSP8] = useState(false);
 
+  const [isLSP1Delegate, setIsLSP1Delegate] = useState(false);
   const [isLSP1GraveForwarder, setIsLSP1GraveForwarder] = useState(false);
   const [isGnosisSafe, setIsGnosisSafe] = useState(false);
+
+  const [contractVersion, setContractVersion] = useState('');
 
   const checkAddressInfos = async (_address: string) => {
     if (!web3 || !_address) {
@@ -50,38 +51,50 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
     setIsEOA(false);
 
     const {
+      isLsp0Erc725Account,
+      isLsp1UniversalReceiverDelegate,
       isLsp7DigitalAsset,
       isLsp8IdentifiableDigitalAsset,
-      isLsp0Erc725Account,
     } = await checkInterface(_address, web3);
 
+    setIsLSP0(isLsp0Erc725Account);
     setIsLSP7(isLsp7DigitalAsset);
     setIsLSP8(isLsp8IdentifiableDigitalAsset);
-    setIsLSP0(isLsp0Erc725Account);
+
+    setIsLSP1Delegate(isLsp1UniversalReceiverDelegate);
 
     const isGnosisSafeContract = await checkIsGnosisSafe(_address, web3);
     setIsGnosisSafe(isGnosisSafeContract);
+
+    if (isLsp0Erc725Account) {
+      const fetchedContractVersion = await getVersion(address, web3);
+      setContractVersion(fetchedContractVersion);
+    }
   };
 
   useEffect(() => {
-    if (!assetAddress) return;
+    if (!address) return;
     setIsLoading(true);
-    setIsLSP1GraveForwarder(assetAddress === LSP1_GRAVE_FORWARDER);
+    setIsLSP1GraveForwarder(address === LSP1_GRAVE_FORWARDER);
 
-    checkAddressInfos(assetAddress)
+    checkAddressInfos(address)
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
-  }, [assetAddress, web3]);
+  }, [address, web3]);
 
-  const isUPRecovery = recoveryAddresses.includes(assetAddress);
-  const isLSP1Delegate = Object.keys(LSP1_DELEGATE_VERSIONS).includes(
-    assetAddress,
-  );
+  // Display addresses that are "official" contracts from LUKSO
+
+  // e.g: UP Recovery
+  const isLUKSOUPRecovery =
+    LUKSO_UP_RECOVERY_ADDRESSES[network.name].includes(address);
+
+  // e.g: Default LSP1 Delegate for registering tokens / NFTs received in `LSP5ReceivedAssets[]`
+  const isLUKSOLSP1Delegate = Object.keys(
+    LUKSO_LSP1_DELEGATE_VERSIONS,
+  ).includes(address);
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
-  const explorerLink = `${
-    EXPLORER_BASE_URL[network.name]
-  }/address/${assetAddress}`;
+  const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
 
   const renderTags = () => {
     if (isLoading) {
@@ -90,22 +103,73 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
 
     return (
       <div className="is-flex is-align-items-center mt-1 mb-2">
-        {isUPRecovery && (
+        {/* LUKSO Official addresses */}
+        {isLUKSOUPRecovery && (
           <AddressTypeBadge
             text="🌱 LUKSO UP Recovery"
-            colorClass="is-success"
+            colorClass="is-primary"
             isLight={false}
+            addLUKSOLogo={true}
+            contractVersion={contractVersion}
           />
         )}
 
-        {isLSP1Delegate && (
+        {isLUKSOLSP1Delegate && (
           <AddressTypeBadge
             text="📢 LUKSO LSP1 Delegate"
             colorClass="is-danger"
             isLight={false}
-            contractVersion={LSP1_DELEGATE_VERSIONS[assetAddress]}
+            contractVersion={LUKSO_LSP1_DELEGATE_VERSIONS[address]}
+            addLUKSOLogo={true}
           />
         )}
+
+        {/* Decode by contract type */}
+
+        {isLSP0 && (
+          <>
+            <AddressTypeBadge
+              text="🆙 Universal Profile"
+              colorClass="is-info"
+              contractVersion={contractVersion}
+            />
+            <ProfileInfosBadge profileAddress={address} />
+          </>
+        )}
+
+        {isLSP1Delegate && (
+          <AddressTypeBadge text="📢 LSP1 Delegate" colorClass="is-danger" />
+        )}
+
+        {isLSP7 && (
+          <>
+            <AddressTypeBadge
+              text="🪙 LSP7 Digital Asset"
+              colorClass="is-warning"
+            />
+            <AssetInfosBadge
+              assetAddress={address}
+              userAddress={userAddress}
+              isLSP7={isLSP7}
+            />
+          </>
+        )}
+
+        {isLSP8 && (
+          <>
+            <AddressTypeBadge
+              text="🎨 LSP8 Identifiable Digital Asset"
+              colorClass="is-link"
+            />
+            <AssetInfosBadge
+              assetAddress={address}
+              userAddress={userAddress}
+              isLSP7={isLSP7}
+            />
+          </>
+        )}
+
+        {/* Other type and community contracts */}
 
         {isLSP1GraveForwarder && (
           <AddressTypeBadge
@@ -122,52 +186,11 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
             isLight={true}
           />
         )}
-
-        {isLSP7 && (
-          <>
-            <AddressTypeBadge
-              text="🪙 LSP7 Digital Asset"
-              colorClass="is-warning"
-              isLight={true}
-            />
-            <AssetInfosBadge
-              assetAddress={assetAddress}
-              userAddress={userAddress}
-              isLSP7={isLSP7}
-            />
-          </>
-        )}
-
-        {isLSP8 && (
-          <>
-            <AddressTypeBadge
-              text="🎨 LSP8 Identifiable Digital Asset"
-              colorClass="is-link"
-              isLight={true}
-            />
-            <AssetInfosBadge
-              assetAddress={assetAddress}
-              userAddress={userAddress}
-              isLSP7={isLSP7}
-            />
-          </>
-        )}
-
-        {isLSP0 && (
-          <>
-            <AddressTypeBadge
-              text="🆙 Universal Profile"
-              colorClass="is-info"
-              isLight={false}
-            />
-            <ProfileInfosBadge profileAddress={assetAddress} />
-          </>
-        )}
       </div>
     );
   };
 
-  if (assetAddress === null) {
+  if (address === null) {
     return <span>no address set</span>;
   }
 
@@ -176,7 +199,7 @@ const AddressInfos: React.FC<Props> = ({ assetAddress, userAddress = '' }) => {
       <div className="is-flex">
         <code className="mr-2">
           <a target="_blank" rel="noreferrer" href={explorerLink}>
-            {assetAddress}
+            {address}
           </a>
         </code>
         <AddressTypeBadge text={addressTypeText} isLight={true} />

@@ -153,7 +153,7 @@ const Home: NextPage = () => {
       setIsERC721(supportStandards.isERC721);
 
       // Other Standards
-      setIsLSP1Delegate(supportStandards.isLsp1Delegate);
+      setIsLSP1Delegate(supportStandards.isLsp1UniversalReceiverDelegate);
       setIsLSP9Vault(supportStandards.isLsp9Vault);
       setIsLSP17Extension(supportStandards.isLsp17Extension);
       setIsLSP26FollowerSystem(supportStandards.isLsp26FollowerSystem);
