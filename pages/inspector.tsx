@@ -17,7 +17,13 @@ import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInp
 import { NetworkContext } from '@/contexts/NetworksContext';
 
 import useWeb3 from '@/hooks/useWeb3';
-import { SAMPLE_ADDRESS } from '@/constants';
+import {
+  ACCESS_CONTROL_INTERFACE_IDS,
+  ACCOUNT_INTERFACE_IDS,
+  ASSETS_INTERFACE_IDS,
+  OTHER_INTERFACE_IDS,
+  SAMPLE_ADDRESS,
+} from '@/constants';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -28,19 +34,34 @@ const Home: NextPage = () => {
 
   const [address, setAddress] = useState('');
   const { network } = useContext(NetworkContext);
+
+  // Account Standards
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
-
   const [isERC1271, setIsERC1271] = useState(false);
   const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
   const [isLSP1UniversalReceiver, setIsLSP1UniversalReceiver] = useState(false);
+  const [isLSP17Extendable, setIsLSP17Extendable] = useState(false);
+  const [isLSP25ExecuteRelayCall, setIsLSP25ExecuteRelayCall] = useState(false);
+
+  // Access Control Standards
   const [isLSP6KeyManager, setIsLSP6KeyManager] = useState(false);
+  const [isLSP14OwnableTwoSteps, setIsLSP14OwnableTwoSteps] = useState(false);
+  const [isLSP20CallVerification, setIsLSP20CallVerification] = useState(false);
+  const [isLSP20CallVerifier, setIsLSP20CallVerifier] = useState(false);
+
+  // Asset Standards
   const [isLSP7DigitalAsset, setIsLSP7DigitalAsset] = useState(false);
   const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] =
     useState(false);
-  const [isLSP9Vault, setIsLSP9Vault] = useState(false);
-
+  const [isERC20, setIsERC20] = useState(false);
   const [isERC721, setIsERC721] = useState(false);
+
+  // Other Standards
+  const [isLSP1Delegate, setIsLSP1Delegate] = useState(false);
+  const [isLSP9Vault, setIsLSP9Vault] = useState(false);
+  const [isLSP17Extension, setIsLSP17Extension] = useState(false);
+  const [isLSP26FollowerSystem, setIsLSP26FollowerSystem] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
@@ -59,8 +80,26 @@ const Home: NextPage = () => {
         return;
       }
 
+      // Reset all interface states
       setIsErc725X(false);
       setIsErc725Y(false);
+      setIsERC1271(false);
+      setIsLSP0ERC725Account(false);
+      setIsLSP1UniversalReceiver(false);
+      setIsLSP17Extendable(false);
+      setIsLSP25ExecuteRelayCall(false);
+      setIsLSP6KeyManager(false);
+      setIsLSP14OwnableTwoSteps(false);
+      setIsLSP20CallVerification(false);
+      setIsLSP20CallVerifier(false);
+      setIsLSP7DigitalAsset(false);
+      setIsLSP8IdentifiableDigitalAsset(false);
+      setIsERC20(false);
+      setIsERC721(false);
+      setIsLSP1Delegate(false);
+      setIsLSP9Vault(false);
+      setIsLSP17Extension(false);
+      setIsLSP26FollowerSystem(false);
       setErrorMessage('');
 
       if (address.length === 0) {
@@ -89,23 +128,70 @@ const Home: NextPage = () => {
 
       const supportStandards = await checkInterface(address, web3);
 
+      // Account Standards
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
-
       setIsERC1271(supportStandards.isErc1271);
       setIsLSP0ERC725Account(supportStandards.isLsp0Erc725Account);
       setIsLSP1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
+      setIsLSP17Extendable(supportStandards.isLsp17Extendable);
+      setIsLSP25ExecuteRelayCall(supportStandards.isLsp25ExecuteRelayCall);
+
+      // Access Control Standards
       setIsLSP6KeyManager(supportStandards.isLsp6KeyManager);
+      setIsLSP14OwnableTwoSteps(supportStandards.isLsp14OwnableTwoSteps);
+      setIsLSP20CallVerification(supportStandards.isLsp20CallVerification);
+      setIsLSP20CallVerifier(supportStandards.isLsp20CallVerifier);
+
+      // Asset Standards
       setIsLSP7DigitalAsset(supportStandards.isLsp7DigitalAsset);
       setIsLSP8IdentifiableDigitalAsset(
         supportStandards.isLsp8IdentifiableDigitalAsset,
       );
+      setIsERC20(supportStandards.isErc20);
+      setIsERC721(supportStandards.isERC721);
+
+      // Other Standards
+      setIsLSP1Delegate(supportStandards.isLsp1Delegate);
       setIsLSP9Vault(supportStandards.isLsp9Vault);
+      setIsLSP17Extension(supportStandards.isLsp17Extension);
+      setIsLSP26FollowerSystem(supportStandards.isLsp26FollowerSystem);
 
       setIsLoading(false);
     };
     check();
   }, [address, web3, errorMessage, network.name, router]);
+
+  // Helper function to determine if an interface is supported
+  const getInterfaceSupport = (standard: string): boolean => {
+    const interfaceMap: { [key: string]: boolean } = {
+      // Account Standards
+      ERC725X: isErc725X,
+      ERC725Y: isErc725Y,
+      ERC1271: isERC1271,
+      LSP0ERC725Account: isLSP0ERC725Account,
+      LSP1UniversalReceiver: isLSP1UniversalReceiver,
+      LSP17Extendable: isLSP17Extendable,
+      LSP25ExecuteRelayCall: isLSP25ExecuteRelayCall,
+      // Access Control Standards
+      LSP6KeyManager: isLSP6KeyManager,
+      LSP14OwnableTwoSteps: isLSP14OwnableTwoSteps,
+      LSP20CallVerification: isLSP20CallVerification,
+      LSP20CallVerifier: isLSP20CallVerifier,
+      // Asset Standards
+      LSP7DigitalAsset: isLSP7DigitalAsset,
+      LSP8IdentifiableDigitalAsset: isLSP8IdentifiableDigitalAsset,
+      ERC20: isERC20,
+      ERC721: isERC721,
+      // Other Standards
+      LSP1Delegate: isLSP1Delegate,
+      LSP9Vault: isLSP9Vault,
+      LSP17Extension: isLSP17Extension,
+      LSP26FollowerSystem: isLSP26FollowerSystem,
+    };
+
+    return interfaceMap[standard] || false;
+  };
 
   const ERC725InspectResult = () => {
     if (
@@ -125,115 +211,148 @@ const Home: NextPage = () => {
       );
     }
 
-    if (!isEmptyInput && !isLoading) {
-      return (
-        <div className="help is-success inspect-result mt-4">
-          <div className="tags has-addons">
-            <span className="tag is-dark">Version</span>
-            <span className="tag is-info">{contractVersion}</span>
+    return (
+      <>
+        <h3 className="title is-3">Supported Standards</h3>
+        <div className="columns">
+          <div className="column is-half">
+            <table className="table is-borderless is-size-7 table-no-borders">
+              <thead>
+                <tr>
+                  <th>Account Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(ACCOUNT_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+            <table className="table is-borderless is-size-7 table-no-borders">
+              <thead>
+                <tr>
+                  <th>Access Control Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(ACCESS_CONTROL_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
           </div>
-          <h3 className="title is-3">Supported Standards</h3>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isErc725X && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725x---generic-executor"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC725X ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isErc725Y && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC725Y ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isERC1271 && 'is-outlined'
-            }`}
-            href="https://eips.ethereum.org/EIPS/eip-1271"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC1271 ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP0ERC725Account && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP0ERC725Account ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP1UniversalReceiver && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/generic-standards/lsp1-universal-receiver"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP1UniversalReceiver ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP6KeyManager && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP6KeyManager ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP7DigitalAsset && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/nft-2.0/LSP7-Digital-Asset"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP7DigitalAsset ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP8IdentifiableDigitalAsset && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/nft-2.0/LSP8-Identifiable-Digital-Asset"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP8IdentifiableDigitalAsset ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${
-              !isLSP9Vault && 'is-outlined'
-            }`}
-            href="https://docs.lukso.tech/standards/universal-profile/lsp9-vault"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP9Vault ↗️
-          </a>
-          <a
-            className={`button is-info mr-2 mt-2 ${!isERC721 && 'is-outlined'}`}
-            href="https://eips.ethereum.org/EIPS/eip-721"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC721 ↗️
-          </a>
+          <div className="column is-half">
+            <table className="table is-borderless is-size-7 justify-content-center table-no-borders">
+              <thead>
+                <tr>
+                  <th>Asset Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(ASSETS_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+            <table className="table is-borderless is-size-7 table-no-borders">
+              <thead>
+                <tr>
+                  <th>Other Standard</th>
+                  <th>Interface ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(OTHER_INTERFACE_IDS).map(
+                  ([standard, { interfaceId, docsUrl }]) => (
+                    <tr key={interfaceId}>
+                      <td>
+                        <a
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
+                          href={docsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {standard} ↗️
+                        </a>
+                      </td>
+                      <td className="is-vcentered">
+                        <code>{interfaceId}</code>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+            <a
+              href="https://docs.lukso.tech/contracts/interface-ids/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              📚↗️ All interface IDs on docs.lukso.tech
+            </a>
+          </div>
         </div>
-      );
-    }
+      </>
+    );
 
     return null;
   };
@@ -245,50 +364,50 @@ const Home: NextPage = () => {
       </Head>
       <div className="container">
         <h2 className="title is-2">Inspector</h2>
-        <article className="message is-info">
+        <article className="message is-info content">
           <div className="message-body">
-            Retrieve and decode all
-            <a
-              href="https://github.com/ERC725Alliance/ERC725"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              ERC725Y
-            </a>
-            data keys of a smart contract using the
-            <a
-              href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              LSP2 ERC725YJSONSchema
-            </a>
-            specification.
-          </div>
-        </article>
-        <article className="message">
-          <div className="message-body">
-            It&lsquo;s using the
-            <a
-              href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              getData
-            </a>
-            function of the
-            <a
-              href="https://www.npmjs.com/package/@erc725/erc725.js"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              erc725.js
-            </a>
-            library.
+            <p>
+              Retrieve and decode all
+              <a
+                href="https://github.com/ERC725Alliance/ERC725"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                ERC725Y
+              </a>
+              data keys of a smart contract using the
+              <a
+                href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                LSP2 ERC725YJSONSchema
+              </a>
+              specification.
+            </p>
+            <p>
+              It&lsquo;s using the
+              <a
+                href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                getData
+              </a>
+              function of the
+              <a
+                href="https://www.npmjs.com/package/@erc725/erc725.js"
+                target="_blank"
+                rel="noreferrer"
+                className="mx-1"
+              >
+                erc725.js
+              </a>
+              library.
+            </p>
           </div>
         </article>
 
@@ -309,17 +428,32 @@ const Home: NextPage = () => {
                 <SampleAddressInput
                   onClick={(newAddress) => setAddress(newAddress)}
                 />
+                {!isEmptyInput && !isLoading && (
+                  <>
+                    {(errorMessage && (
+                      <div className="help is-danger">{errorMessage}</div>
+                    )) || (
+                      <div>
+                        <div className="tags has-addons">
+                          <span className="tag is-dark">version</span>
+                          <span className="tag is-info">{contractVersion}</span>
+                        </div>
+                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                          <i className="has-text-centered mb-2">
+                            Scroll to see results
+                          </i>
+                          <p className="has-text-centered">⬇️</p>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-              <div className="columns">
-                <div className="column is-one-half">
-                  <div className="control"></div>
-                  {errorMessage && !isEmptyInput ? (
-                    <div className="help is-danger">{errorMessage}</div>
-                  ) : (
-                    <ERC725InspectResult />
-                  )}
-                </div>
-              </div>
+            </div>
+          </div>
+          <div className="column is-half">
+            <div className="field">
+              <ERC725InspectResult />
             </div>
           </div>
         </div>
@@ -374,13 +508,19 @@ const Home: NextPage = () => {
                 {(isErc725X || isErc725Y) && (
                   <ContractOwner contractAddress={address} />
                 )}
-                <CustomKeySchemaForm address={address} />
-                <DataKeysTable
-                  address={address}
-                  isErc725Y={isErc725Y}
-                  isAsset={isLSP7DigitalAsset || isLSP8IdentifiableDigitalAsset}
-                  isLSP8={isLSP8IdentifiableDigitalAsset}
-                />
+                {isErc725Y && (
+                  <>
+                    <CustomKeySchemaForm address={address} />
+                    <DataKeysTable
+                      address={address}
+                      isErc725Y={isErc725Y}
+                      isAsset={
+                        isLSP7DigitalAsset || isLSP8IdentifiableDigitalAsset
+                      }
+                      isLSP8={isLSP8IdentifiableDigitalAsset}
+                    />
+                  </>
+                )}
               </>
             )}
         </div>
