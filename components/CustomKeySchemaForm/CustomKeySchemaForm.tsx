@@ -260,11 +260,21 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
   const web3 = useWeb3();
 
   // States for custom schema fields
-  const [customSchemaName, setCustomSchemaName] = useState<string>('');
-  const [customDataKey, setCustomDataKey] = useState<string>('');
-  const [customKeyType, setCustomKeyType] = useState<string>('');
-  const [customValueType, setCustomValueType] = useState<string>('');
-  const [customValueContent, setCustomValueContent] = useState<string>('');
+  const [customSchemaName, setCustomSchemaName] = useState<string>(
+    SCHEMA_PLACEHOLDER.name,
+  );
+  const [customDataKey, setCustomDataKey] = useState<string>(
+    SCHEMA_PLACEHOLDER.key,
+  );
+  const [customKeyType, setCustomKeyType] = useState<string>(
+    SCHEMA_PLACEHOLDER.keyType,
+  );
+  const [customValueType, setCustomValueType] = useState<string>(
+    SCHEMA_PLACEHOLDER.valueType,
+  );
+  const [customValueContent, setCustomValueContent] = useState<string>(
+    SCHEMA_PLACEHOLDER.valueContent,
+  );
 
   const [dataKeyError, setDataKeyError] = useState<string>('');
 
