@@ -260,22 +260,22 @@ interface CustomKeySchemaFormProps {
 const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
   const web3 = useWeb3();
 
+  const {
+    name: sampleName,
+    key: sampleKey,
+    keyType: sampleKeyType,
+    valueType: sampleValueType,
+    valueContent: sampleValueContent,
+  } = SCHEMA_PLACEHOLDER;
+
   // States for custom schema fields
-  const [customSchemaName, setCustomSchemaName] = useState<string>(
-    SCHEMA_PLACEHOLDER.name,
-  );
-  const [customDataKey, setCustomDataKey] = useState<string>(
-    SCHEMA_PLACEHOLDER.key,
-  );
-  const [customKeyType, setCustomKeyType] = useState<string>(
-    SCHEMA_PLACEHOLDER.keyType,
-  );
-  const [customValueType, setCustomValueType] = useState<string>(
-    SCHEMA_PLACEHOLDER.valueType,
-  );
-  const [customValueContent, setCustomValueContent] = useState<string>(
-    SCHEMA_PLACEHOLDER.valueContent,
-  );
+  const [customSchemaName, setCustomSchemaName] = useState<string>(sampleName);
+  const [customDataKey, setCustomDataKey] = useState<string>(sampleKey);
+  const [customKeyType, setCustomKeyType] = useState<string>(sampleKeyType);
+  const [customValueType, setCustomValueType] =
+    useState<string>(sampleValueType);
+  const [customValueContent, setCustomValueContent] =
+    useState<string>(sampleValueContent);
 
   const [dataKeyError, setDataKeyError] = useState<string>('');
 
@@ -361,12 +361,14 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
   };
 
   const resetForm = () => {
-    setCustomSchemaName('');
-    setCustomDataKey('');
+    setCustomSchemaName(sampleName);
+    setCustomDataKey(sampleKey);
+    setCustomKeyType(sampleKeyType);
+    setCustomValueType(sampleValueType);
+    setCustomValueContent(sampleValueContent);
+
     setDataKeyError('');
-    setCustomKeyType('');
-    setCustomValueType('');
-    setCustomValueContent('');
+
     setJsonInput(JSON.stringify(SCHEMA_PLACEHOLDER, null, 2));
     setJsonError('');
     setIsJSONMode(true);
