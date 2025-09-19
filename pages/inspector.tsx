@@ -22,8 +22,9 @@ import {
   ACCOUNT_INTERFACE_IDS,
   ASSETS_INTERFACE_IDS,
   OTHER_INTERFACE_IDS,
-  SAMPLE_ADDRESS,
 } from '@/constants';
+
+import { SAMPLE_ADDRESS } from '@/globals';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -152,7 +153,7 @@ const Home: NextPage = () => {
       setIsERC721(supportStandards.isERC721);
 
       // Other Standards
-      setIsLSP1Delegate(supportStandards.isLsp1Delegate);
+      setIsLSP1Delegate(supportStandards.isLsp1UniversalReceiverDelegate);
       setIsLSP9Vault(supportStandards.isLsp9Vault);
       setIsLSP17Extension(supportStandards.isLsp17Extension);
       setIsLSP26FollowerSystem(supportStandards.isLsp26FollowerSystem);

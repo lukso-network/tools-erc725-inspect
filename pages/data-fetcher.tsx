@@ -24,7 +24,7 @@ import { checkInterface, getData } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 
 import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
-import { SAMPLE_ADDRESS } from '@/constants';
+import { SAMPLE_ADDRESS } from '@/globals';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
