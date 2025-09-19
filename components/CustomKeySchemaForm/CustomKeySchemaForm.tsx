@@ -3,10 +3,14 @@
 import { useState } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
-import { getData } from '@/utils/web3';
-import useWeb3 from '@/hooks/useWeb3';
 import { isHex } from 'web3-utils';
+
+import useWeb3 from '@/hooks/useWeb3';
+import { getData } from '@/utils/web3';
+
 import CodeEditor from '../CodeEditor';
+
+import { LSP_SPECS_URL } from '@/globals';
 
 const SCHEMA_PLACEHOLDER = {
   name: 'MyCustomKey',
@@ -19,14 +23,11 @@ const SCHEMA_PLACEHOLDER = {
 const LSP2_DOCS_URL =
   'https://docs.lukso.tech/standards/metadata/lsp2-json-schema';
 
-const LSP2_SPECS_URL =
-  'https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md';
-
 const FieldsDescription = () => (
   <>
     <label className="label is-small mb-5">
       Enter a valid{' '}
-      <a href={LSP2_SPECS_URL} target="_blank" rel="noreferrer">
+      <a href={LSP_SPECS_URL.LSP2} target="_blank" rel="noreferrer">
         LSP2 JSON Schema ↗️
       </a>{' '}
       with fields:
@@ -35,7 +36,7 @@ const FieldsDescription = () => (
       <li className="help is-info">
         <code>name</code>: a{' '}
         <a
-          href={`${LSP2_SPECS_URL}#data-key-name`}
+          href={`${LSP_SPECS_URL.LSP2}#data-key-name`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -46,7 +47,7 @@ const FieldsDescription = () => (
       <li className="help is-info">
         <code>key</code>: Enter the specific ERC725Y data key as{' '}
         <a
-          href={`${LSP2_SPECS_URL}#data-key-hash`}
+          href={`${LSP_SPECS_URL.LSP2}#data-key-hash`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -56,7 +57,7 @@ const FieldsDescription = () => (
       <li className="help is-info">
         <code>keyType</code>: refer to{' '}
         <a
-          href={`${LSP2_DOCS_URL}#data-key-types`}
+          href={`${LSP_SPECS_URL.LSP2}#data-key-types`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -80,7 +81,7 @@ const FieldsDescription = () => (
       <li className="help is-info">
         <code>valueContent</code>: refer to{' '}
         <a
-          href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md#value-content"
+          href={`${LSP_SPECS_URL.LSP2}#value-content`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -483,7 +484,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
       <div className="mb-4 p-4 has-background-light">
         <div className="is-flex is-justify-content-space-between is-align-items-center">
           <h5 className="title is-5 home-link">
-            <a href={LSP2_SPECS_URL} target="_blank" rel="noreferrer">
+            <a href={LSP_SPECS_URL.LSP2} target="_blank" rel="noreferrer">
               LSP2 Schema - {isJSONMode ? 'JSON Input' : 'Form Input'}
             </a>
           </h5>

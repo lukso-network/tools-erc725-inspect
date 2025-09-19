@@ -24,7 +24,7 @@ import {
   OTHER_INTERFACE_IDS,
 } from '@/constants';
 
-import { SAMPLE_ADDRESS } from '@/globals';
+import { LSP_SPECS_URL, SAMPLE_ADDRESS } from '@/globals';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -379,7 +379,7 @@ const Home: NextPage = () => {
               </a>
               data keys of a smart contract using the
               <a
-                href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
+                href={LSP_SPECS_URL.LSP2}
                 target="_blank"
                 rel="noreferrer"
                 className="mx-1"

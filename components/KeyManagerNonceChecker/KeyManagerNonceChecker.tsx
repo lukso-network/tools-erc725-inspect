@@ -5,6 +5,7 @@ import { useContext, useState } from 'react';
 import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
 import useWeb3 from '@/hooks/useWeb3';
 import { NetworkContext } from '@/contexts/NetworksContext';
+import { LSP_SPECS_URL } from '@/globals';
 
 const KeyManagerNonceChecker: React.FC = () => {
   const web3 = useWeb3();
@@ -88,18 +89,14 @@ const KeyManagerNonceChecker: React.FC = () => {
         <div className="message-body">
           It's calling the{' '}
           <a
-            href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md#getnonce"
+            href={`${LSP_SPECS_URL.LSP25}#getnonce`}
             target="_blank"
             rel="noreferrer"
           >
             getNonce
           </a>{' '}
           function of the{' '}
-          <a
-            href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href={LSP_SPECS_URL.LSP25} target="_blank" rel="noreferrer">
             LSP25 ExecuteRelayCall
           </a>{' '}
           standardization that every{' '}
