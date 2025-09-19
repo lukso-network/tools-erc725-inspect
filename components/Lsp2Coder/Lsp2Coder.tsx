@@ -3,6 +3,7 @@ import valueContents from './utils/valueContents';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ERC725 } from '@erc725/erc725.js';
 import errorsDict from './utils/errorsDict';
+import { LSP_SPECS_URL } from '@/globals';
 
 interface IVerifiableURIEncode {
   verification: {
@@ -215,7 +216,7 @@ const Lsp2Coder: React.FC = () => {
           </a>
           data keys following the
           <a
-            href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md"
+            href={LSP_SPECS_URL.LSP2}
             className="mx-1"
             target="_blank"
             rel="noreferrer"

@@ -24,7 +24,7 @@ import { checkInterface, getData } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 
 import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
-import { SAMPLE_ADDRESS } from '@/globals';
+import { LSP_SPECS_URL, SAMPLE_ADDRESS } from '@/globals';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
@@ -256,7 +256,7 @@ const GetData: NextPage = () => {
               <a
                 target="_blank"
                 rel="noreferrer"
-                href="https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md#valueContent"
+                href={`${LSP_SPECS_URL.LSP2}#valueContent`}
                 className="mx-1"
               >
                 LSP-2 ERC725YJSONSchema

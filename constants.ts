@@ -1,5 +1,6 @@
 import { AbiItem } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import { LSP_SPECS_URL } from './globals';
 
 // ABI for Interface Detection
 export const eip165ABI: AbiItem[] = [
@@ -219,7 +220,6 @@ export const OTHER_INTERFACE_IDS = {
   },
   LSP26FollowerSystem: {
     interfaceId: INTERFACE_IDS.LSP26FollowerSystem,
-    docsUrl:
-      'https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-26-FollowerSystem.md',
+    docsUrl: LSP_SPECS_URL.LSP26,
   },
 };
