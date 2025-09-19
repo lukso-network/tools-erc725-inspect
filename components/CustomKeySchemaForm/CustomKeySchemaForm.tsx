@@ -595,7 +595,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
                 <li>
                   <strong>Value Content: </strong>
                   <span className="tag is-small is-link is-light">
-                    {customValueContent.toLowerCase()}
+                    {customValueContent}
                   </span>
                 </li>
                 <li>

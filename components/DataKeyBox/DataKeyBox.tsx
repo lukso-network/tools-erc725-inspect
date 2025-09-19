@@ -61,7 +61,7 @@ const DataKeyBox = ({ address, data }: DataKeyBoxProps) => {
           <li>
             <strong>Value Content: </strong>
             <span className="tag is-small is-link is-light">
-              {data.schema.valueContent.toLowerCase()}
+              {data.schema.valueContent}
             </span>
           </li>
           <li>
