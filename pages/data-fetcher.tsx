@@ -221,7 +221,7 @@ const GetData: NextPage = () => {
   useEffect(() => {
     setERC725JsInstance(
       new ERC725(schemas, address, web3?.currentProvider, {
-        ipfsGateway: 'https://api.ipfs.lukso.network/ipfs/',
+        ipfsGateway: 'https://api.universalprofile.cloud/ipfs/',
       }),
     );
   }, [address, web3]);
