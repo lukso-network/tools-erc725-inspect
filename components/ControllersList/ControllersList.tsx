@@ -102,18 +102,31 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
             {controllers.map((controller, index) => (
               <tr key={controller}>
                 <td>
-                  <p>
-                    <strong>AddressPermissions[{index}]</strong>
-                  </p>
-                  <p>
+                  <div className="mb-6">
+                    <p className="has-text-weight-bold">
+                      AddressPermissions[{index}]
+                    </p>
                     ➡{' '}
-                    <code>
+                    <code className="has-text-weight-bold">
                       {encodeArrayKey(
                         ERC725YDataKeys.LSP6['AddressPermissions[]'].length,
                         index,
                       )}
                     </code>
-                  </p>
+                  </div>
+                  <div>
+                    <p className="has-text-weight-bold">
+                      AddressPermissions:Permissions:
+                      <code className="is-size-7">{controller}</code>
+                    </p>
+                    ➡{' '}
+                    <code className="has-text-weight-bold">
+                      {encodeKeyName(
+                        'AddressPermissions:Permissions:<address>',
+                        controller,
+                      )}
+                    </code>
+                  </div>
                 </td>
                 <td style={{ width: '50%' }}>
                   <div className="mb-3">
@@ -129,7 +142,9 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                     {controller && <p>Permissions:</p>}
                     {controllersPermissions[index] && (
                       <p>
-                        <code>{controllersPermissions[index].bitArray}</code>
+                        <code className="has-text-primary">
+                          {controllersPermissions[index].bitArray}
+                        </code>
                       </p>
                     )}
                     {controllersPermissions[index] &&
