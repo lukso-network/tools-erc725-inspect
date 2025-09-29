@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
 
-import { getData, getDataBatch } from '@/utils/web3';
+import { getDataBatch } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 import AddressInfos from '@/components/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
@@ -19,7 +19,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
       arrayIndexDataKey: string;
       permissionDataKey: string | null;
       bitArray: string | null;
-      permissions: { [key: string]: any };
+      permissions: { [key: string]: boolean };
     };
   }>({});
 
@@ -45,8 +45,8 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                 controller,
               );
 
-              // permission values are fetched below all at once via `getDataBatch` for optimisation
-              // to avoid multiple RPC calls per controller
+              // permission values are fetched below all at once via `getDataBatch`
+              // for optimisation to avoid multiple RPC calls per controller
               bitArray = null;
             }
 
@@ -192,7 +192,16 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
           </thead>
           <tbody>
             {Object.values(controllersPermissions).map(
-              (controllerInfos, index) => (
+              (
+                {
+                  controller,
+                  arrayIndexDataKey,
+                  permissionDataKey,
+                  bitArray,
+                  permissions,
+                },
+                index,
+              ) => (
                 <tr key={index}>
                   <td>
                     <div className="mb-6">
@@ -201,24 +210,22 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                       </p>
                       ➡{' '}
                       <code className="has-text-weight-bold">
-                        {controllerInfos.arrayIndexDataKey}
+                        {arrayIndexDataKey}
                       </code>
                     </div>
                     <div className="mb-6">
                       <p className="has-text-weight-bold">
                         AddressPermissions:Permissions:
                         <code className="is-size-7">
-                          {controllerInfos.controller
-                            ? controllerInfos.controller
-                            : 'unknown'}
+                          {controller ? controller : 'unknown'}
                         </code>
                       </p>
 
-                      {controllerInfos.controller ? (
+                      {controller ? (
                         <p>
                           ➡{' '}
                           <code className="has-text-weight-bold">
-                            {controllerInfos.permissionDataKey}
+                            {permissionDataKey}
                           </code>
                         </p>
                       ) : (
@@ -229,11 +236,10 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                     </div>
                   </td>
                   <td style={{ width: '50%' }}>
-                    {/* TODO: Make this its own component (the two below) */}
                     <div className="mb-3">
                       <p>Controller Infos:</p>
-                      {controllerInfos.controller ? (
-                        <AddressInfos address={controllerInfos.controller} />
+                      {controller ? (
+                        <AddressInfos address={controller} />
                       ) : (
                         <p className="notification is-warning is-light">
                           ⚠️ No controller found at index {index}
@@ -243,15 +249,13 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
 
                     <div className="mb-3">
                       {<p className="text-bold">Permissions:</p>}
-                      {controllerInfos.controller ? (
+                      {controller ? (
                         <div>
                           <p>
-                            <code className="has-text-primary">
-                              {controllerInfos.bitArray}
-                            </code>
+                            <code className="has-text-primary">{bitArray}</code>
                           </p>
                           <p>
-                            {Object.entries(controllerInfos.permissions).map(
+                            {Object.entries(permissions).map(
                               ([permission, isSet]) =>
                                 isSet &&
                                 permission !== '0x' && (
