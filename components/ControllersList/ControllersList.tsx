@@ -1,14 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
+import { hexToBytes } from 'web3-utils';
 
 import { getDataBatch } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 import AddressInfos from '@/components/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
+interface PermissionDataKeyDisplayProps {
+  permissionDataKey: string;
+}
+
+const PermissionDataKeyDisplay: React.FC<PermissionDataKeyDisplayProps> = ({
+  permissionDataKey,
+}) => {
+  // Extract the three parts of the permission data key
+  const addressPermissionsPrefix = permissionDataKey.slice(0, 22); // First 10 bytes: AddressPermissions:Permissions prefix
+  const separator = permissionDataKey.slice(22, 26); // Next 2 bytes: 0000 separator
+  const controllerAddress = permissionDataKey.slice(26); // Last 20 bytes: controller address
+
+  return (
+    <code className="has-text-weight-bold">
+      <span title="AddressPermissions:Permissions prefix (10 bytes)">
+        {addressPermissionsPrefix}
+      </span>
+      <span
+        className="has-text-grey"
+        title="Separator (2 bytes - should be 0000)"
+      >
+        {separator}
+      </span>
+      <span title="Controller address (20 bytes)">{controllerAddress}</span>
+    </code>
+  );
+};
+
 interface Props {
   address: string; // UP address
-  permissionDataKey: string;
   controllers: (string | null)[];
 }
 
@@ -221,12 +249,12 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                         </code>
                       </p>
 
-                      {controller ? (
+                      {controller && permissionDataKey ? (
                         <p>
                           ➡{' '}
-                          <code className="has-text-weight-bold">
-                            {permissionDataKey}
-                          </code>
+                          <PermissionDataKeyDisplay
+                            permissionDataKey={permissionDataKey}
+                          />
                         </p>
                       ) : (
                         <p className="notification is-warning is-light">
@@ -255,6 +283,11 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                             <code className="has-text-primary">{bitArray}</code>
                           </p>
                           <p>
+                            {bitArray == '0x' ||
+                              (bitArray ==
+                                '0x0000000000000000000000000000000000000000000000000000000000000000' && (
+                                <i>No permission set</i>
+                              ))}
                             {Object.entries(permissions).map(
                               ([permission, isSet]) =>
                                 isSet &&
