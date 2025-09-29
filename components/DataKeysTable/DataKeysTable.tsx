@@ -93,7 +93,7 @@ const DataKeysTable: React.FC<Props> = ({
 
   return (
     <div className="is-multiline">
-      {/* Show data keys related to LSP1 Delegates for specific notification types separately */}
+      {/* Show Standard LSP Data Keys as first section */}
       <h3 className="title is-3 mt-6">LSP Standards Data Keys 🗄️</h3>
       <article className="columns mx-1 message is-info">
         <div className="message-body">
@@ -105,8 +105,9 @@ const DataKeysTable: React.FC<Props> = ({
         .map((data) => {
           return <DataKeyBox key={data.key} address={address} data={data} />;
         })}
-      <h3 className="title is-3 mt-6">📢 LSP1 Delegate Data Keys</h3>
 
+      {/* Show data keys related to LSP1 Delegates for specific notification types separately */}
+      <h3 className="title is-3 mt-6">📢 LSP1 Delegate Data Keys</h3>
       <article className="columns mx-1 message is-info">
         <div className="content message-body">
           <p>

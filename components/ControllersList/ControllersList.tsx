@@ -9,7 +9,7 @@ import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 interface Props {
   address: string; // UP address
   permissionDataKey: string;
-  controllers: string[];
+  controllers: (string | null)[];
 }
 
 const ControllersList: React.FC<Props> = ({ address, controllers }) => {
@@ -21,28 +21,16 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
       bitArray: string | null;
       permissions: { [key: string]: any };
     };
-  }>({
-    // TODO: do we need this initial empty state initially?
-    0: {
-      controller: null,
-      arrayIndexDataKey: encodeArrayKey(
-        ERC725YDataKeys.LSP6['AddressPermissions[]'].length,
-        0,
-      ),
-      permissionDataKey: encodeKeyName(
-        'AddressPermissions:Permissions:<address>',
-        '0xcafecafecafecafecafecafecafecafecafecafe',
-      ),
-      bitArray:
-        '0x0000000000000000000000000000000000000000000000000000000000000000',
-      permissions: {},
-    },
-  });
+  }>({});
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const web3 = useWeb3();
 
   useEffect(() => {
     const getPermissions = async () => {
+      setIsLoading(true);
+
       try {
         if (address && web3 !== undefined) {
           controllers.map(async (controller, index) => {
@@ -95,26 +83,28 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
             web3,
           );
 
-          Object.values(
-            controllersPermissions,
-          ).forEach(({ controller }, index) => {
-            const currentState = controllersPermissions;
+          Object.values(controllersPermissions).forEach(
+            ({ controller }, index) => {
+              const currentState = controllersPermissions;
 
-            currentState[index].bitArray =
-              controller && permissionsDataValues[index];
+              currentState[index].bitArray =
+                controller && permissionsDataValues[index];
 
-            currentState[index].permissions = controller
-              ? (ERC725.decodePermissions(permissionsDataValues[index]) as {
-                [key: string]: any;
-              })
-              : {};
+              currentState[index].permissions = controller
+                ? (ERC725.decodePermissions(permissionsDataValues[index]) as {
+                    [key: string]: any;
+                  })
+                : {};
 
-            setControllersPermissions({ ...currentState });
-          });
+              setControllersPermissions({ ...currentState });
+            },
+          );
         }
       } catch (error: any) {
         console.error(error);
       }
+
+      setIsLoading(false);
     };
     getPermissions();
   }, [address, web3]);
@@ -125,31 +115,70 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
         {controllers.length} controllers found
       </p>
 
-      {/* TODO: This is not displayed. Fix it + improve the display as a better message */}
-      {controllers.find((controller) => controller == null) && (
+      <div className="m-3" hidden={!isLoading}>
+        <span>Loading controllers permissions. Please wait...</span>
+        <progress
+          className="progress is-small is-primary mt-1"
+          style={{ width: '300px' }}
+          max="100"
+        >
+          Loading...{' '}
+        </progress>
+      </div>
+
+      {controllers.some((controller) => controller == null) && (
         <div className="notification is-warning is-light mt-3">
           <p>
-            ⚠️ It looks like at some indexes inside your{' '}
-            <code>AddressPermissions[]</code> array, some values are set to{' '}
-            <code>null</code> /<code>0x</code>.
+            ⚠️ It looks like some entries inside the{' '}
+            <code>AddressPermissions[]</code> array do not contain controller
+            addresses. The value for some indexes is set to <code>0x</code>.
           </p>
           <p>
-            This could be due to the fact that some controller addresses at
-            specific indexes got removed, but the value for the array length
-            data key <br />
-            <code>
-              AddressPermissions[] ➡{' '}
-              {ERC725YDataKeys.LSP6['AddressPermissions[]'].length}
-            </code>{' '}
-            never got updated.
+            <strong></strong>
+          </p>
+          <table
+            className="table my-4"
+            style={{ backgroundColor: 'transparent' }}
+          >
+            <thead>
+              <tr>
+                <th className="">Affected indexes:</th>
+                <th className="">Array Index Data Key</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.values(controllersPermissions)
+                .map((controllerInfo, index) => ({ ...controllerInfo, index }))
+                .filter(({ controller }) => controller == null)
+                .map(({ index, arrayIndexDataKey }) => (
+                  <tr key={index}>
+                    <td>
+                      <code>AddressPermissions[{index}]</code>
+                    </td>
+                    <td className="ml-4 mt-1">
+                      <code>{arrayIndexDataKey}</code>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+          <p>
+            This could be because some controller addresses have been removed at
+            these specific indexes, but the array length has not been updated.
+          </p>
+          <p>
+            <code>AddressPermissions[].length = {controllers.length}</code>{' '}
+            (correspond to the <strong>&quot;Raw value&quot;</strong> above
+            converted from hex to decimal)
           </p>
           <strong>
-            Consider updating the array length to fix your array of controllers.
+            Consider updating the array length or re-adding the controller
+            addresses at these specific indexes to fix the list of controllers.
           </strong>
         </div>
       )}
 
-      {controllers && (
+      {!isLoading && (
         <table className="table" style={{ backgroundColor: 'transparent' }}>
           <thead>
             <tr>
@@ -163,58 +192,65 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
           </thead>
           <tbody>
             {Object.values(controllersPermissions).map(
-              (controllerInfos, index) => {
-                return (
-                  <tr key={index}>
-                    <td>
-                      <div className="mb-6">
-                        <p className="has-text-weight-bold">
-                          AddressPermissions[{index}]
-                        </p>
-                        ➡{' '}
-                        <code className="has-text-weight-bold">
-                          {controllerInfos.arrayIndexDataKey}
+              (controllerInfos, index) => (
+                <tr key={index}>
+                  <td>
+                    <div className="mb-6">
+                      <p className="has-text-weight-bold">
+                        AddressPermissions[{index}]
+                      </p>
+                      ➡{' '}
+                      <code className="has-text-weight-bold">
+                        {controllerInfos.arrayIndexDataKey}
+                      </code>
+                    </div>
+                    <div className="mb-6">
+                      <p className="has-text-weight-bold">
+                        AddressPermissions:Permissions:
+                        <code className="is-size-7">
+                          {controllerInfos.controller
+                            ? controllerInfos.controller
+                            : 'unknown'}
                         </code>
-                      </div>
-                      <div className="mb-6">
-                        <p className="has-text-weight-bold">
-                          AddressPermissions:Permissions:
-                          <code className="is-size-7">
-                            {controllerInfos.controller
-                              ? controllerInfos.controller
-                              : 'unknown'}
-                          </code>
-                        </p>
-                        ➡{' '}
-                        {controllerInfos.controller ? (
+                      </p>
+
+                      {controllerInfos.controller ? (
+                        <p>
+                          ➡{' '}
                           <code className="has-text-weight-bold">
                             {controllerInfos.permissionDataKey}
                           </code>
-                        ) : (
-                          <i>
-                            Cannot encode data key: controller address unknown
-                          </i>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ width: '50%' }}>
-                      {/* TODO: Make this its own component (the two below) */}
-                      <div className="mb-3">
-                        <p>Controller Infos:</p>
-                        {controllerInfos.controller ? (
-                          <AddressInfos address={controllerInfos.controller} />
-                        ) : (
-                          <p>No controller found at index {index}</p>
-                        )}
-                      </div>
+                        </p>
+                      ) : (
+                        <p className="notification is-warning is-light">
+                          ⚠️ Cannot encode data key: controller address unknown
+                        </p>
+                      )}
+                    </div>
+                  </td>
+                  <td style={{ width: '50%' }}>
+                    {/* TODO: Make this its own component (the two below) */}
+                    <div className="mb-3">
+                      <p>Controller Infos:</p>
+                      {controllerInfos.controller ? (
+                        <AddressInfos address={controllerInfos.controller} />
+                      ) : (
+                        <p className="notification is-warning is-light">
+                          ⚠️ No controller found at index {index}
+                        </p>
+                      )}
+                    </div>
 
-                      <div className="mb-3">
-                        {<p className="text-bold">Permissions:</p>}
-                        {controllerInfos.controller ? (
+                    <div className="mb-3">
+                      {<p className="text-bold">Permissions:</p>}
+                      {controllerInfos.controller ? (
+                        <div>
                           <p>
                             <code className="has-text-primary">
                               {controllerInfos.bitArray}
                             </code>
+                          </p>
+                          <p>
                             {Object.entries(controllerInfos.permissions).map(
                               ([permission, isSet]) =>
                                 isSet &&
@@ -228,17 +264,17 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                                 ),
                             )}
                           </p>
-                        ) : (
-                          <p>
-                            Cannot fetch permissions: controller unknown at
-                            index {index}
-                          </p>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              },
+                        </div>
+                      ) : (
+                        <p className="notification is-warning is-light">
+                          ⚠️ Cannot fetch permissions: controller unknown at
+                          index {index}
+                        </p>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ),
             )}
           </tbody>
         </table>
