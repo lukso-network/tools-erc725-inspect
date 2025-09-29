@@ -7,27 +7,35 @@ import AddressInfos from '@/components/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 interface Props {
-  dataKey: string;
-  address: string;
+  address: string; // UP address
+  permissionDataKey: string;
   controllers: string[];
 }
 
 const ControllersList: React.FC<Props> = ({ address, controllers }) => {
   const [controllersPermissions, setControllersPermissions] = useState<{
     [key: number]: {
-      dataKey: string;
-      bitArray: string;
+      controller: string | null;
+      arrayIndexDataKey: string;
+      permissionDataKey: string | null;
+      bitArray: string | null;
       permissions: { [key: string]: any };
-    } | null;
+    };
   }>({
+    // TODO: do we need this initial empty state initially?
     0: {
-      dataKey: encodeKeyName(
+      controller: null,
+      arrayIndexDataKey: encodeArrayKey(
+        ERC725YDataKeys.LSP6['AddressPermissions[]'].length,
+        0,
+      ),
+      permissionDataKey: encodeKeyName(
         'AddressPermissions:Permissions:<address>',
         '0xcafecafecafecafecafecafecafecafecafecafe',
       ),
       bitArray:
         '0x0000000000000000000000000000000000000000000000000000000000000000',
-      permissions: [],
+      permissions: {},
     },
   });
 
@@ -40,31 +48,68 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
           controllers.map(async (controller, index) => {
             const currentState = controllersPermissions;
 
-            if (controller === null) {
-              currentState[index] = null;
-              setControllersPermissions(currentState);
-            } else {
-              const controllerPermissionDataKey = encodeKeyName(
+            let permissionDataKey: string | null = null;
+            let bitArray: string | null = null;
+
+            if (controller != null) {
+              permissionDataKey = encodeKeyName(
                 'AddressPermissions:Permissions:<address>',
                 controller,
               );
-              const controllerPermissionDataValue = await getData(
-                address,
-                controllerPermissionDataKey,
-                web3,
-              );
 
-              currentState[index] = {
-                dataKey: controllerPermissionDataKey,
-                bitArray:
-                  controllerPermissionDataValue ||
-                  '0x0000000000000000000000000000000000000000000000000000000000000000',
-                permissions: controllerPermissionDataValue
-                  ? ERC725.decodePermissions(controllerPermissionDataValue)
-                  : [],
-              };
-              setControllersPermissions(currentState);
+              // permission values are fetched below all at once via `getDataBatch` for optimisation
+              // to avoid multiple RPC calls per controller
+              bitArray = null;
             }
+
+            currentState[index] = {
+              arrayIndexDataKey: encodeArrayKey(
+                ERC725YDataKeys.LSP6['AddressPermissions[]'].length,
+                index,
+              ),
+              controller,
+              permissionDataKey,
+              bitArray,
+              permissions: {},
+            };
+
+            setControllersPermissions(currentState);
+          });
+
+          const permissionsDataKeysToFetch = Object.values(
+            controllersPermissions,
+          ).map(({ permissionDataKey }) => {
+            // for unknown controllers (null), we cannot encode the data key, so we use address(0) as placeholder
+            return (
+              permissionDataKey ||
+              encodeKeyName(
+                'AddressPermissions:Permissions:<address>',
+                '0x0000000000000000000000000000000000000000',
+              )
+            );
+          });
+
+          const permissionsDataValues = await getDataBatch(
+            address,
+            permissionsDataKeysToFetch,
+            web3,
+          );
+
+          Object.values(
+            controllersPermissions,
+          ).forEach(({ controller }, index) => {
+            const currentState = controllersPermissions;
+
+            currentState[index].bitArray =
+              controller && permissionsDataValues[index];
+
+            currentState[index].permissions = controller
+              ? (ERC725.decodePermissions(permissionsDataValues[index]) as {
+                [key: string]: any;
+              })
+              : {};
+
+            setControllersPermissions({ ...currentState });
           });
         }
       } catch (error: any) {
@@ -80,6 +125,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
         {controllers.length} controllers found
       </p>
 
+      {/* TODO: This is not displayed. Fix it + improve the display as a better message */}
       {controllers.find((controller) => controller == null) && (
         <div className="notification is-warning is-light mt-3">
           <p>
@@ -116,65 +162,60 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
             </tr>
           </thead>
           <tbody>
-            {controllers.map((controller, index) => {
-              return (
-                <tr key={controller}>
-                  <td>
-                    <div className="mb-6">
-                      <p className="has-text-weight-bold">
-                        AddressPermissions[{index}]
-                      </p>
-                      ➡{' '}
-                      <code className="has-text-weight-bold">
-                        {/* TODO: add this data key in the state as `arrayIndexDataKey` */}
-                        {encodeArrayKey(
-                          ERC725YDataKeys.LSP6['AddressPermissions[]'].length,
-                          index,
-                        )}
-                      </code>
-                    </div>
-                    <div className="mb-6">
-                      <p className="has-text-weight-bold">
-                        AddressPermissions:Permissions:
-                        <code className="is-size-7">{controller}</code>
-                      </p>
-                      ➡{' '}
-                      {controller ? (
+            {Object.values(controllersPermissions).map(
+              (controllerInfos, index) => {
+                return (
+                  <tr key={index}>
+                    <td>
+                      <div className="mb-6">
+                        <p className="has-text-weight-bold">
+                          AddressPermissions[{index}]
+                        </p>
+                        ➡{' '}
                         <code className="has-text-weight-bold">
-                          {/* TODO: rename to `permissionDataKey` */}
-                          {controllersPermissions[index]?.dataKey}
+                          {controllerInfos.arrayIndexDataKey}
                         </code>
-                      ) : (
-                        <i>
-                          Cannot encode the data key if controller address is
-                          unknown
-                        </i>
-                      )}
-                    </div>
-                  </td>
-                  <td style={{ width: '50%' }}>
-                    <div className="mb-3">
-                      <p>Controller Infos:</p>
-                      {controller ? (
-                        // TODO: remove `toString()`
-                        <AddressInfos address={controller.toString()} />
-                      ) : (
-                        <p>No controller found at index {index}</p>
-                      )}
-                    </div>
-
-                    <div className="mb-3">
-                      {<p className="text-bold">Permissions:</p>}
-                      {controllersPermissions[index] != null ? (
-                        <p>
-                          <code className="has-text-primary">
-                            {controllersPermissions[index] &&
-                              controllersPermissions[index].bitArray}
+                      </div>
+                      <div className="mb-6">
+                        <p className="has-text-weight-bold">
+                          AddressPermissions:Permissions:
+                          <code className="is-size-7">
+                            {controllerInfos.controller
+                              ? controllerInfos.controller
+                              : 'unknown'}
                           </code>
-                          {controllersPermissions[index] &&
-                            Object.entries(
-                              controllersPermissions[index].permissions,
-                            ).map(
+                        </p>
+                        ➡{' '}
+                        {controllerInfos.controller ? (
+                          <code className="has-text-weight-bold">
+                            {controllerInfos.permissionDataKey}
+                          </code>
+                        ) : (
+                          <i>
+                            Cannot encode data key: controller address unknown
+                          </i>
+                        )}
+                      </div>
+                    </td>
+                    <td style={{ width: '50%' }}>
+                      {/* TODO: Make this its own component (the two below) */}
+                      <div className="mb-3">
+                        <p>Controller Infos:</p>
+                        {controllerInfos.controller ? (
+                          <AddressInfos address={controllerInfos.controller} />
+                        ) : (
+                          <p>No controller found at index {index}</p>
+                        )}
+                      </div>
+
+                      <div className="mb-3">
+                        {<p className="text-bold">Permissions:</p>}
+                        {controllerInfos.controller ? (
+                          <p>
+                            <code className="has-text-primary">
+                              {controllerInfos.bitArray}
+                            </code>
+                            {Object.entries(controllerInfos.permissions).map(
                               ([permission, isSet]) =>
                                 isSet &&
                                 permission !== '0x' && (
@@ -186,18 +227,19 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                                   </span>
                                 ),
                             )}
-                        </p>
-                      ) : (
-                        <p>
-                          Cannot fetch permissions as controller is unknown at
-                          index {index}
-                        </p>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+                          </p>
+                        ) : (
+                          <p>
+                            Cannot fetch permissions: controller unknown at
+                            index {index}
+                          </p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              },
+            )}
           </tbody>
         </table>
       )}
