@@ -22,9 +22,10 @@ import {
   ACCOUNT_INTERFACE_IDS,
   ASSETS_INTERFACE_IDS,
   OTHER_INTERFACE_IDS,
-} from '@/constants';
+} from '@/constants/interface-ids';
 
-import { LSP_SPECS_URL, SAMPLE_ADDRESS } from '@/globals';
+import { LSP_SPECS_URL } from '@/constants/links';
+import { SAMPLE_ADDRESS } from '@/constants/contracts';
 
 const Home: NextPage = () => {
   const router = useRouter();

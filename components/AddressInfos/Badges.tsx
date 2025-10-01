@@ -5,7 +5,7 @@ import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.
 import { AbiItem } from 'web3-utils';
 import { getDataBatch, getProfileMetadataJSON } from '@/utils/web3';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
-import { LUKSO_IPFS_BASE_URL } from '@/globals';
+import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 interface BadgeProps {
   text: string;

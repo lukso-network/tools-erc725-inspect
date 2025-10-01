@@ -2,32 +2,33 @@
  * @author Hugo Masclet <git@hugom.xyz>
  */
 import Web3 from 'web3';
-import { ERC725YDataKeys, INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import { AbiItem } from 'web3-utils';
+import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
+import ERC725 from '@erc725/erc725.js';
+
 import {
   INTERFACE_ID_LSP7,
   INTERFACE_ID_LSP7_PREVIOUS,
 } from '@lukso/lsp7-contracts';
-
 import {
   INTERFACE_ID_LSP8_PREVIOUS,
   INTERFACE_ID_LSP8,
 } from '@lukso/lsp8-contracts';
+
 import {
   eip165ABI,
   getDataBatchABI,
   getDataABI,
   VersionABI,
   aggregateABI,
-} from '@/constants';
-import { AbiItem } from 'web3-utils';
+} from '@/constants/abi';
 import {
   GNOSIS_SAFE_IMPLEMENTATION,
   GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
-  LUKSO_IPFS_BASE_URL,
   MULTICALL_CONTRACT_ADDRESS,
-} from '@/globals';
-import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
-import ERC725 from '@erc725/erc725.js';
+} from '@/constants/contracts';
+import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 export const checkInterface = async (address: string, web3: Web3) => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency

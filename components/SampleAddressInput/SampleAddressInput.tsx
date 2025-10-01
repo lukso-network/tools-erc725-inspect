@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { NetworkContext } from '@/contexts/NetworksContext';
-import { SAMPLE_ADDRESS } from '@/globals';
+import { SAMPLE_ADDRESS } from '@/constants/contracts';
 
 enum AddressType {
   UP = 'UP',

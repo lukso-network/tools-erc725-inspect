@@ -1,30 +1,4 @@
-// Network Connections
-
-import { NetworkName } from './types/network';
-
-export const RPC_URL: Record<NetworkName, string> = {
-  [NetworkName.MAINNET]: 'https://rpc.mainnet.lukso.network',
-  [NetworkName.TESTNET]: 'https://rpc.testnet.lukso.network',
-  [NetworkName.LOCALHOST]: 'http://localhost:8545',
-};
-
-export const EXPLORER_BASE_URL: Record<NetworkName, string> = {
-  [NetworkName.MAINNET]: 'https://explorer.execution.mainnet.lukso.network',
-  [NetworkName.TESTNET]: 'https://explorer.execution.testnet.lukso.network',
-  [NetworkName.LOCALHOST]: 'http://localhost:3000',
-};
-
-// Data Source
-export const LUKSO_IPFS_BASE_URL = 'https://api.universalprofile.cloud/ipfs';
-
-// Docs links
-export const LSP_SPECS_URL = {
-  LSP2: 'https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-2-ERC725YJSONSchema.md',
-  LSP25:
-    'https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-25-ExecuteRelayCall.md',
-  LSP26:
-    'https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-26-FollowerSystem.md',
-};
+import { NetworkName } from '@/types/network';
 
 // Sample Address Inputs
 // TODO: refactor with enum like below as Hugo always suggested

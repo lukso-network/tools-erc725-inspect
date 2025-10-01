@@ -10,7 +10,7 @@ import { getData } from '@/utils/web3';
 
 import CodeEditor from '../CodeEditor';
 
-import { LSP_SPECS_URL } from '@/globals';
+import { LSP_SPECS_URL } from '@/constants/links';
 
 const SCHEMA_PLACEHOLDER = {
   name: 'MyCustomKey',

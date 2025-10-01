@@ -1,27 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
-import { INetwork, NetworkContext } from '@/contexts/NetworksContext';
-
-import { RPC_URL } from '@/globals';
-import { NetworkName } from '@/types/network';
-
-const luksoChains: INetwork[] = [
-  {
-    name: NetworkName.MAINNET,
-    rpc: RPC_URL[NetworkName.MAINNET],
-    imgUrl: '/lukso.png',
-  },
-  {
-    name: NetworkName.TESTNET,
-    rpc: RPC_URL[NetworkName.TESTNET],
-    imgUrl: '/lukso.png',
-  },
-  {
-    name: NetworkName.LOCALHOST,
-    rpc: RPC_URL[NetworkName.LOCALHOST],
-    imgUrl: '/lukso.png',
-  },
-];
+import { NetworkContext } from '@/contexts/NetworksContext';
+import { INetwork } from '@/types/network';
+import { CHAINS } from '@/constants/networks';
 
 const NetworkSwitch: React.FC = () => {
   const router = useRouter();
@@ -82,7 +63,7 @@ const NetworkSwitch: React.FC = () => {
           isDropdownActive ? 'is-block' : 'is-hidden-touch'
         }`}
       >
-        {luksoChains.map((chain) => {
+        {CHAINS.map((chain) => {
           if (chain.rpc === network.rpc) {
             return null;
           }

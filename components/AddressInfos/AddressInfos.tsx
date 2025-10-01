@@ -7,14 +7,14 @@ import Skeleton from 'react-loading-skeleton';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import useWeb3 from '@/hooks/useWeb3';
 import {
-  EXPLORER_BASE_URL,
   LUKSO_LSP1_DELEGATE_VERSIONS,
   LSP1_GRAVE_FORWARDER,
   LUKSO_UP_RECOVERY_ADDRESSES,
-} from '@/globals';
+} from '@/constants/contracts';
 import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
+import { EXPLORER_BASE_URL } from '@/constants/networks';
 
 interface Props {
   address: string;
