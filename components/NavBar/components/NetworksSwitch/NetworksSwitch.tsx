@@ -46,7 +46,7 @@ const NetworkSwitch: React.FC = () => {
             src={network.imgUrl}
             alt={network.name}
             className="mr-2"
-            style={{ height: '1em' }}
+            style={{ height: '1.5em' }}
           />
         )}
         <span style={{ flexGrow: 1 }}>{network.name}</span>
@@ -81,7 +81,7 @@ const NetworkSwitch: React.FC = () => {
                 className="mr-2"
                 src={chain.imgUrl}
                 alt={chain.name}
-                style={{ height: '1em' }}
+                style={{ height: '1.5em' }}
               />
               <span>{chain.name}</span>
             </a>
