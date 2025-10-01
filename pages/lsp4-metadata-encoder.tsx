@@ -22,10 +22,9 @@ import { AuthenticatedFormDataUploader } from '@lukso/data-provider-base';
 const erc725js = new ERC725(LSP4Schema);
 
 const gateway = 'https://api.universalprofile.cloud/api/v0/add';
-const sharedKey = Buffer.from(
-  process.env.SHARED_KEY as string,
-  'base64',
-).toString();
+const sharedKey = process.env.SHARED_KEY
+  ? Buffer.from(process.env.SHARED_KEY, 'base64').toString()
+  : '';
 
 interface FileDetails {
   name: string;
@@ -234,7 +233,7 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
       }
 
       const image = `data:${type};base64,${buffer.toString('base64')}`;
-      const { height, width } = sizeOf(buffer);
+      const { height, width } = sizeOf(new Uint8Array(buffer));
 
       if (!height || !width) {
         return;
@@ -254,7 +253,7 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
       }
 
       const image = `data:${type};base64,${buffer.toString('base64')}`;
-      const { height, width } = sizeOf(buffer);
+      const { height, width } = sizeOf(new Uint8Array(buffer));
 
       if (!height || !width) {
         return;
@@ -274,11 +273,18 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
   };
 
   const upload = async () => {
+    if (!sharedKey) {
+      console.error('SHARED_KEY environment variable is not set');
+      return;
+    }
+
     setUploadStatus(1);
 
     const encodedIcons: ImageMetadata[] = [];
     for (const { buffer, width, height } of icons) {
-      const { url, hash } = await dataProvider.upload(new Blob([buffer]));
+      const { url, hash } = await dataProvider.upload(
+        new Blob([new Uint8Array(buffer)]),
+      );
 
       encodedIcons.push({
         width,
@@ -293,7 +299,9 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
 
     const encodedImages: ImageMetadata[] = [];
     for (const { buffer, width, height } of images) {
-      const { url, hash } = await dataProvider.upload(new Blob([buffer]));
+      const { url, hash } = await dataProvider.upload(
+        new Blob([new Uint8Array(buffer)]),
+      );
 
       encodedImages.push({
         width,
@@ -308,7 +316,9 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
 
     const encodedAssets: AssetMetadata[] = [];
     for (const asset of assets) {
-      const { url, hash } = await dataProvider.upload(new Blob([asset.buffer]));
+      const { url, hash } = await dataProvider.upload(
+        new Blob([new Uint8Array(asset.buffer)]),
+      );
 
       encodedAssets.push({
         url,
@@ -334,7 +344,7 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
     };
 
     const { url } = await dataProvider.upload(
-      new Blob([Buffer.from(JSON.stringify(metadata))]),
+      new Blob([new Uint8Array(Buffer.from(JSON.stringify(metadata)))]),
     );
 
     const { values } = erc725js.encodeData([
