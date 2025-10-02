@@ -100,8 +100,8 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
   }, [contractAddress, web3]);
 
   return (
-    <div className="columns is-multiline mt-3">
-      <div className="column is-full dataKeyBox">
+    <div className="columns is-multiline dataKeyBox my-3">
+      <div className="column is-two-thirds">
         <div className="content">
           <div className="title is-4 home-link">
             <a
@@ -124,8 +124,10 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
               <strong>Owner type:</strong> <code>{ownerType}</code>
             </li>
           </ul>
-          <AddressButtons address={contractOwner}></AddressButtons>
         </div>
+      </div>
+      <div className="column">
+        <AddressButtons address={contractOwner} />
       </div>
     </div>
   );

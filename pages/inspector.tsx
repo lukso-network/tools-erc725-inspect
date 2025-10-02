@@ -470,8 +470,8 @@ const Home: NextPage = () => {
               <>
                 <>
                   <h3 className="title is-3">Instance and Ownership</h3>
-                  <div className="columns is-multiline mt-3">
-                    <div className="column is-full dataKeyBox">
+                  <div className="columns is-multiline dataKeyBox my-3">
+                    <div className="column is-two-thirds">
                       <div className="content">
                         <div className="title is-4">
                           <a
@@ -499,11 +499,18 @@ const Home: NextPage = () => {
                             </code>
                           </li>
                         </ul>
-                        <AddressButtons
-                          address={address}
-                          showInspectButton={false}
-                        ></AddressButtons>
                       </div>
+                    </div>
+                    <div className="column">
+                      <AddressButtons
+                        address={address}
+                        showInspectButton={false}
+                        standards={{
+                          isLSP0ERC725Account,
+                          isLSP7DigitalAsset,
+                          isLSP8IdentifiableDigitalAsset,
+                        }}
+                      />
                     </div>
                   </div>
                 </>
