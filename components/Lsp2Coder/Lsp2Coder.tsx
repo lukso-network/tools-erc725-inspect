@@ -202,7 +202,7 @@ const Lsp2Coder: React.FC = () => {
 
   return (
     <div className="container">
-      <h2 className="title is-2">LSP2 Encoder</h2>
+      <h2 className="title is-2">Metadata Encoder</h2>
       <article className="message is-info">
         <div className="message-body">
           Encode or decode the values of

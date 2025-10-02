@@ -44,30 +44,19 @@ const AddressButtons: React.FC<Props> = ({
               alt="UniversalEverything"
             />
           </span>
-          <span>View on UniversalEverything.io</span>
+          <span>View on Universal Everything</span>
         </a>
       )}
-      {/* <a
-        className="button is-normal"
-        target="_blank"
-        rel="noreferrer"
-        href={universalEverythingURL}
-      >
-        <span className="icon is-small p-1">
-          <img src="/universaleverything-logo.png" alt="UniversalEverything" />
-        </span>
-        <span>View on UniversalEverything.io</span>
-      </a> */}
       <a
         className="button is-normal is-info"
         target="_blank"
         rel="noreferrer"
         href={`https://explorer.execution.${networkType}.lukso.network/address/${address}`}
       >
-        <span className="icon is-small">
+        <span className="icon is-small mr-2">
           <img src="/blockscout-logo-white.svg" alt="Blockscout" />
         </span>
-        <span>View on Blockscout</span>
+        <span>View on Blockscout Explorer</span>
       </a>
       {showInspectButton && (
         <a
@@ -77,7 +66,7 @@ const AddressButtons: React.FC<Props> = ({
           <span className="icon is-small">
             <img src="/inspect-icon.svg" alt="ERC725 Inspect" />
           </span>
-          <span>Inspect with erc725-inspect</span>
+          <span>Inspect with ERC725 Inspect</span>
         </a>
       )}
     </div>
