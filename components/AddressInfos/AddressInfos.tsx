@@ -6,15 +6,17 @@ import Skeleton from 'react-loading-skeleton';
 
 import { NetworkContext } from '@/contexts/NetworksContext';
 import useWeb3 from '@/hooks/useWeb3';
+
 import {
-  LUKSO_LSP1_DELEGATE_VERSIONS,
+  LUKSO_LSP1_DELEGATE,
   LSP1_GRAVE_FORWARDER,
   LUKSO_UP_RECOVERY_ADDRESSES,
 } from '@/constants/contracts';
+import { EXPLORER_BASE_URL } from '@/constants/networks';
+
 import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
-import { EXPLORER_BASE_URL } from '@/constants/networks';
 
 interface Props {
   address: string;
@@ -89,9 +91,9 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
     LUKSO_UP_RECOVERY_ADDRESSES[network.name].includes(address);
 
   // e.g: Default LSP1 Delegate for registering tokens / NFTs received in `LSP5ReceivedAssets[]`
-  const isLUKSOLSP1Delegate = Object.keys(
-    LUKSO_LSP1_DELEGATE_VERSIONS,
-  ).includes(address);
+  const isLUKSOLSP1Delegate = LUKSO_LSP1_DELEGATE.find(
+    (contract) => contract.address === address,
+  );
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
   const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
@@ -119,7 +121,7 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
             text="📢 LUKSO LSP1 Delegate"
             colorClass="is-danger"
             isLight={false}
-            contractVersion={LUKSO_LSP1_DELEGATE_VERSIONS[address]}
+            contractVersion={isLUKSOLSP1Delegate.version}
             addLUKSOLogo={true}
           />
         )}

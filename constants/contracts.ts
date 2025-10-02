@@ -1,15 +1,20 @@
+import { CrossChainImplementationContract } from '@/types/contract';
 import { NetworkName } from '@/types/network';
 
 // Sample Address Inputs
-// TODO: refactor with enum like below as Hugo always suggested
-export enum SAMPLE_ADDRESS {
-  MAINNET_UP = '0x26e7Da1968cfC61FB8aB2Aad039b5A083b9De21e',
-  TESTNET_UP = '0x027b6f7be4399727d4e0132c2cE027Cd3e015364',
-  MAINNET_LSP7 = '0x8DA488C29FB873c9561cCF5FF44Dda6C1DedDC37',
-  TESTNET_LS7 = '0x41b35F490EB6325001fC94E92C58b9d9CC61586D',
-  MAINNET_LSP8 = '0x86e817172b5c07f7036bf8aa46e2db9063743a83',
-  TESTNET_LSP8 = '0x00aB25152E666Fcdf541Df9F46b3847F1c7887A0',
-}
+export const SAMPLE_ADDRESS: Record<NetworkName, { [key: string]: string }> = {
+  [NetworkName.MAINNET]: {
+    UP: '0x26e7Da1968cfC61FB8aB2Aad039b5A083b9De21e',
+    LSP7: '0x8DA488C29FB873c9561cCF5FF44Dda6C1DedDC37',
+    LSP8: '0x86e817172b5c07f7036bf8aa46e2db9063743a83',
+  },
+  [NetworkName.TESTNET]: {
+    UP: '0x027b6f7be4399727d4e0132c2cE027Cd3e015364',
+    LSP7: '0x41b35F490EB6325001fC94E92C58b9d9CC61586D',
+    LSP8: '0x00aB25152E666Fcdf541Df9F46b3847F1c7887A0',
+  },
+  [NetworkName.LOCALHOST]: {},
+};
 
 export const LUKSO_UP_RECOVERY_ADDRESSES: Record<NetworkName, string[]> = {
   [NetworkName.MAINNET]: [
@@ -31,11 +36,19 @@ export const LUKSO_UP_RECOVERY_ADDRESSES: Record<NetworkName, string[]> = {
   [NetworkName.LOCALHOST]: [],
 };
 
-// Mainnet AND Testnet
-export const LUKSO_LSP1_DELEGATE_VERSIONS = {
-  '0xA5467dfe7019bF2C7C5F7A707711B9d4cAD118c8': '0.12.1',
-  '0x7870C5B8BC9572A8001C3f96f7ff59961B23500D': '0.14.0',
-};
+// Multichain contracts (deployed at the same address across different networks)
+export const LUKSO_LSP1_DELEGATE: CrossChainImplementationContract[] = [
+  {
+    version: '0.14.0',
+    address: '0x7870C5B8BC9572A8001C3f96f7ff59961B23500D',
+  },
+  {
+    version: '0.12.1',
+    address: '0xA5467dfe7019bF2C7C5F7A707711B9d4cAD118c8',
+  },
+];
+
+// Other
 
 // Mainnet only
 export const LSP1_GRAVE_FORWARDER =

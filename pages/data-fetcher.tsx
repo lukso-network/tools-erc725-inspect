@@ -298,7 +298,7 @@ const GetData: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder={SAMPLE_ADDRESS.TESTNET_UP}
+                  placeholder={SAMPLE_ADDRESS[network.name].UP}
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
                 />

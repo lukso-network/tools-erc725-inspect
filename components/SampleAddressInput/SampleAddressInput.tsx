@@ -21,36 +21,13 @@ const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
 
     switch (type) {
       case AddressType.UP:
-        switch (network.name) {
-          case 'MAINNET':
-            address = SAMPLE_ADDRESS.MAINNET_UP;
-            break;
-          case 'TESTNET':
-            address = SAMPLE_ADDRESS.TESTNET_UP;
-            break;
-        }
+        address = SAMPLE_ADDRESS[network.name].UP;
         break;
-
       case AddressType.LSP7:
-        switch (network.name) {
-          case 'MAINNET':
-            address = SAMPLE_ADDRESS.MAINNET_LSP7;
-            break;
-          case 'TESTNET':
-            address = SAMPLE_ADDRESS.TESTNET_LS7;
-            break;
-        }
+        address = SAMPLE_ADDRESS[network.name].LSP7;
         break;
-
       case AddressType.LSP8:
-        switch (network.name) {
-          case 'MAINNET':
-            address = SAMPLE_ADDRESS.MAINNET_LSP8;
-            break;
-          case 'TESTNET':
-            address = SAMPLE_ADDRESS.TESTNET_LSP8;
-            break;
-        }
+        address = SAMPLE_ADDRESS[network.name].LSP8;
         break;
     }
 
