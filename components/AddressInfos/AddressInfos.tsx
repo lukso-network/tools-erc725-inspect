@@ -12,10 +12,11 @@ import {
   LSP1_GRAVE_FORWARDER,
   LUKSO_UP_RECOVERY_ADDRESSES,
 } from '@/constants/contracts';
+import { EXPLORER_BASE_URL } from '@/constants/networks';
+
 import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
-import { EXPLORER_BASE_URL } from '@/constants/networks';
 
 interface Props {
   address: string;
