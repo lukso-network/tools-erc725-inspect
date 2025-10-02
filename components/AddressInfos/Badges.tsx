@@ -12,7 +12,7 @@ interface BadgeProps {
   isLight?: boolean;
   colorClass?: string;
   contractVersion?: string;
-  addLUKSOLogo?: boolean;
+  logo?: string;
 }
 
 export const AddressTypeBadge: React.FC<BadgeProps> = ({
@@ -20,13 +20,13 @@ export const AddressTypeBadge: React.FC<BadgeProps> = ({
   isLight,
   colorClass,
   contractVersion,
-  addLUKSOLogo,
+  logo,
 }) => (
   <div className="tags has-addons mr-2 mb-0">
-    {addLUKSOLogo && (
+    {logo && (
       <span className={`tag ${colorClass} is-light`}>
         <img
-          src="/lukso-signet-fuschia.svg"
+          src={logo}
           alt="Profile"
           style={{ width: '20px', padding: '0.15rem' }}
         />
@@ -175,7 +175,9 @@ export const ProfileInfosBadge: React.FC<ProfileProps> = ({
               />
             </span>
           )}
-          {profileName && <span className="tag is-info">{profileName}</span>}
+          {profileName && (
+            <span className="tag is-info is-light">{profileName}</span>
+          )}
         </div>
       )}
     </>

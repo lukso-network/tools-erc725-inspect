@@ -24,8 +24,8 @@ import {
   aggregateABI,
 } from '@/constants/abi';
 import {
-  GNOSIS_SAFE_IMPLEMENTATION,
-  GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
+  GNOSIS_SAFE,
+  GNOSIS_SAFE_PROXY_BYTECODE,
   MULTICALL_CONTRACT_ADDRESS,
 } from '@/constants/contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
@@ -159,11 +159,11 @@ export const aggregateCalls = async (
 export async function checkIsGnosisSafe(
   address: string,
   web3: Web3,
-): Promise<boolean> {
+): Promise<{ isSafe: boolean; version?: string }> {
   const codeAt = await web3.eth.getCode(address);
 
-  if (codeAt != GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE) {
-    return false;
+  if (codeAt != GNOSIS_SAFE_PROXY_BYTECODE) {
+    return { isSafe: false };
   }
 
   // in the Solidity code of the Gnosis Safe proxy, the address of the singleton (= implementation)
@@ -176,11 +176,20 @@ export async function checkIsGnosisSafe(
   const implementationAddress = web3.eth.abi.decodeParameter(
     'address',
     valueAtStorageSlot0,
+  ) as unknown as string;
+
+  const safeImplementation = GNOSIS_SAFE.find(
+    (safeVersion) => safeVersion.address === implementationAddress,
   );
 
-  return (
-    (implementationAddress as unknown as string) === GNOSIS_SAFE_IMPLEMENTATION
-  );
+  if (!safeImplementation) {
+    return { isSafe: false };
+  }
+
+  return {
+    isSafe: true,
+    version: safeImplementation.version,
+  };
 }
 
 export const getVersion = async (

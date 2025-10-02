@@ -65,8 +65,12 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
 
     setIsLSP1Delegate(isLsp1UniversalReceiverDelegate);
 
-    const isGnosisSafeContract = await checkIsGnosisSafe(_address, web3);
-    setIsGnosisSafe(isGnosisSafeContract);
+    const { isSafe, version } = await checkIsGnosisSafe(_address, web3);
+    setIsGnosisSafe(isSafe);
+
+    if (isSafe && version) {
+      setContractVersion(version);
+    }
 
     if (isLsp0Erc725Account) {
       const fetchedContractVersion = await getVersion(address, web3);
@@ -111,7 +115,7 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
             text="🌱 LUKSO UP Recovery"
             colorClass="is-primary"
             isLight={false}
-            addLUKSOLogo={true}
+            logo="/lukso-signet-fuschia.svg"
             contractVersion={contractVersion}
           />
         )}
@@ -122,7 +126,7 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
             colorClass="is-danger"
             isLight={false}
             contractVersion={isLUKSOLSP1Delegate.version}
-            addLUKSOLogo={true}
+            logo="/lukso-signet-fuschia.svg"
           />
         )}
 
@@ -131,9 +135,10 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
         {isLSP0 && (
           <>
             <AddressTypeBadge
-              text="🆙 Universal Profile"
+              text="Universal Profile"
               colorClass="is-info"
               contractVersion={contractVersion}
+              logo="/up-box-logo.png"
             />
             <ProfileInfosBadge profileAddress={address} />
           </>
@@ -183,9 +188,10 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
 
         {isGnosisSafe && (
           <AddressTypeBadge
-            text="🏦 Gnosis Safe"
-            colorClass="is-success"
-            isLight={true}
+            text="Gnosis Safe"
+            colorClass="bg-safe"
+            contractVersion={contractVersion}
+            logo="/safe-logo.png"
           />
         )}
       </div>
