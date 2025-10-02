@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import packageJson from '@/package.json';
 import CardContainer from '@/components/CardContainer';
+import { menuItems } from '@/constants/menu';
 
 const ERC725_JS_VERSION = packageJson.dependencies['@erc725/erc725.js'];
 const LSP_SMART_CONTRACTS_VERSION =
@@ -28,48 +29,7 @@ const Home: NextPage = () => {
             </a>
             smart contracts.
           </p>
-          <CardContainer
-            cardData={[
-              {
-                title: '🔎 Inspector',
-                description:
-                  'Check the data keys and interfaces of smart contract.',
-                link: '/inspector',
-                isExternal: false,
-              },
-              {
-                title: '✅ LSP Checker',
-                description:
-                  'Check that your 🆙, Token or NFT is compliant with the LSP Standards.',
-                link: '/lsp-checker',
-                isExternal: false,
-              },
-              {
-                title: '💽 Data Fetcher',
-                description:
-                  'Retrieve the contents of the smart contract data keys.',
-                link: '/data-fetcher',
-              },
-              {
-                title: '🔐 Key Manager',
-                description:
-                  'Encode and decode smart contract permissions of the key manager.',
-                link: '/key-manager',
-              },
-              {
-                title: '📜 ABI Encoder',
-                description:
-                  'Encode and decode smart contract transaction data.',
-                link: '/abi-encoder',
-              },
-              {
-                title: '📖 LSP2 Encoder ',
-                description:
-                  'Encode and decode storage information based on the JSON schema.',
-                link: '/lsp2-encoder',
-              },
-            ]}
-          ></CardContainer>
+          <CardContainer cardData={menuItems} />
           <h3 className="title is-3">External Developer Resources</h3>
           <p>
             Start integrating{' '}

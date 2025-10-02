@@ -12,6 +12,7 @@ const CardContainer = ({ cardData }) => {
             link={card.link}
             isExternal={card.isExternal}
             version={card.version}
+            isBeta={card.isBeta}
           />
         </div>
       ))}
