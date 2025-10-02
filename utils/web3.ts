@@ -173,12 +173,14 @@ export async function checkIsGnosisSafe(
   // example: https://explorer.execution.mainnet.lukso.network/address/0x14C2041eD166e00A8Ed2adad8c9C7389b3Dd87fb?tab=contract
   const valueAtStorageSlot0 = await web3.eth.getStorageAt(address, 0);
 
-  const { implementationAddress } = web3.eth.abi.decodeParameter(
+  const implementationAddress = web3.eth.abi.decodeParameter(
     'address',
     valueAtStorageSlot0,
   );
 
-  return implementationAddress == GNOSIS_SAFE_IMPLEMENTATION;
+  return (
+    (implementationAddress as unknown as string) === GNOSIS_SAFE_IMPLEMENTATION
+  );
 }
 
 export const getVersion = async (
