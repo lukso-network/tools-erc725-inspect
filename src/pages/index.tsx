@@ -1,12 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import packageJson from '@/package.json';
 import CardContainer from '@/components/CardContainer';
 import { menuItems } from '@/constants/menu';
-
-const ERC725_JS_VERSION = packageJson.dependencies['@erc725/erc725.js'];
-const LSP_SMART_CONTRACTS_VERSION =
-  packageJson.dependencies['@lukso/lsp-smart-contracts'];
 
 const Home: NextPage = () => {
   return (
@@ -68,7 +63,6 @@ const Home: NextPage = () => {
                   'The ERC725 library allows seamless interaction of smart contract schemas and contracts to simpify ERC725 integration.',
                 link: 'https://docs.lukso.tech/tools/dapps/erc725js/getting-started/',
                 isExternal: true,
-                version: ERC725_JS_VERSION,
               },
               {
                 title: 'lsp-smart-contracts',
@@ -76,7 +70,6 @@ const Home: NextPage = () => {
                   'The LSP library includes Solidity code, JSON ABIs, and constants, to streamline your LSP smart contract development.',
                 link: 'https://docs.lukso.tech/tools/lsp-smart-contracts/getting-started',
                 isExternal: true,
-                version: LSP_SMART_CONTRACTS_VERSION,
               },
             ]}
           ></CardContainer>
