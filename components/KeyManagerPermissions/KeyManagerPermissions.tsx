@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import ERC725 from '@erc725/erc725.js';
 import PermissionsBtns from '@/components/PermissionsBtns';
+import ToolInfos from '../ToolInfos';
+import { LSP_DOCS_URL } from '@/constants/links';
 
 const KeyManagerPermissions: React.FC = () => {
   const initialEncodedPermissions =
@@ -39,48 +41,26 @@ const KeyManagerPermissions: React.FC = () => {
   return (
     <div className="container">
       <h2 className="title is-2">Permissions</h2>
-      <article className="message is-info">
-        <div className="message-body">
-          Encode and decode{' '}
-          <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager/#address-permissions"
-            target="_blank"
-            rel="noreferrer"
-          >
-            permissions
-          </a>{' '}
-          based on the{' '}
-          <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP6 KeyManager
-          </a>{' '}
-          standard.
-        </div>
-      </article>
-      <article className="message">
-        <div className="message-body">
-          It&lsquo;s using the{' '}
-          <a
-            href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
-            target="_blank"
-            rel="noreferrer"
-          >
-            encodePermissions
-          </a>{' '}
-          function of the{' '}
-          <a
-            href="https://www.npmjs.com/package/@erc725/erc725.js"
-            target="_blank"
-            rel="noreferrer"
-          >
-            erc725.js
-          </a>{' '}
-          library.
-        </div>
-      </article>
+      <ToolInfos
+        erc725jsMethod={['encodePermissions', 'decodePermissions']}
+        description={
+          <>
+            Encode and decode{' '}
+            <a
+              href={`${LSP_DOCS_URL.LSP6}#address-permissions`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              permissions
+            </a>{' '}
+            based on the{' '}
+            <a href={LSP_DOCS_URL.LSP6} target="_blank" rel="noreferrer">
+              LSP6 Key Manager
+            </a>{' '}
+            standard.
+          </>
+        }
+      />
 
       <div className="columns">
         <div className="column">
