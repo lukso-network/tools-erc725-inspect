@@ -51,16 +51,17 @@ const LinksMenu = ({
 
         <div className="navbar-dropdown">
           {linkItems.map(({ link, title, isBeta }) => (
-            <Link
+            <a
               key={title}
-              href={createLink(link)}
               className={clsx(
                 'navbar-item',
                 pathname === link && 'has-text-link',
               )}
-              onClick={() => setActiveMenu(null)} // close menu after click>
+              onClick={() => setActiveMenu(null)}
             >
-              {title}
+              {' '}
+              {/* to close menu on click */}
+              <Link href={createLink(link)}>{title}</Link>
               {isBeta && (
                 <button
                   className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2"
@@ -69,7 +70,7 @@ const LinksMenu = ({
                   beta
                 </button>
               )}
-            </Link>
+            </a>
           ))}
           {/* </div> */}
         </div>
@@ -83,22 +84,21 @@ const LinksMenu = ({
         {isActive && (
           <div className="navbar-dropdown">
             {linkItems.map(({ title, link, isBeta }) => (
-              <Link
+              <a
                 key={title}
-                href={createLink(link)}
                 className={clsx(
                   'navbar-item',
                   pathname === link && 'has-text-link',
                 )}
                 onClick={() => setActiveMenu(null)}
               >
-                {title}
+                <Link href={createLink(link)}>{title}</Link>
                 {isBeta && (
                   <span className="tag is-warning is-light is-rounded is-small ml-2">
                     beta
                   </span>
                 )}
-              </Link>
+              </a>
             ))}
           </div>
         )}
@@ -145,9 +145,9 @@ const NavBar: React.FC = () => {
   return (
     <nav className="navbar is-light sticky">
       <div className={`navbar-brand ${styles.navbarHeight}`}>
-        <Link href={createLink('/')} className="navbar-item is-hidden-desktop">
-          Home
-        </Link>
+        <div className="navbar-item">
+          <Link href={createLink('/')}>Home</Link>
+        </div>
         <a
           role="button"
           className={clsx('navbar-burger burger', isMobileOpen && 'is-active')}
@@ -163,12 +163,6 @@ const NavBar: React.FC = () => {
 
       <div className={clsx('navbar-menu', isMobileOpen && 'is-active')}>
         <div className="navbar-start">
-          <Link
-            href={createLink('/')}
-            className={`navbar-item is-hidden-touch ${styles.navbarHeight}`}
-          >
-            Home
-          </Link>
           <LinksMenu
             id="inspector"
             router={router}
