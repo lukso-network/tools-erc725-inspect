@@ -1,58 +1,138 @@
 import React, { useEffect, useState } from 'react';
 import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
+import { hexToBytes } from 'web3-utils';
 
 import { getDataBatch } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 import AddressInfos from '@/components/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
+interface PermissionDataKeyDisplayProps {
+  permissionDataKey: string;
+}
+
+const PermissionDataKeyDisplay: React.FC<PermissionDataKeyDisplayProps> = ({
+  permissionDataKey,
+}) => {
+  // Extract the three parts of the permission data key
+  const addressPermissionsPrefix = permissionDataKey.slice(0, 22); // First 10 bytes: AddressPermissions:Permissions prefix
+  const separator = permissionDataKey.slice(22, 26); // Next 2 bytes: 0000 separator
+  const controllerAddress = permissionDataKey.slice(26); // Last 20 bytes: controller address
+
+  return (
+    <code className="has-text-weight-bold">
+      <span title="AddressPermissions:Permissions prefix (10 bytes)">
+        {addressPermissionsPrefix}
+      </span>
+      <span
+        className="has-text-grey"
+        title="Separator (2 bytes - should be 0000)"
+      >
+        {separator}
+      </span>
+      <span title="Controller address (20 bytes)">{controllerAddress}</span>
+    </code>
+  );
+};
+
 interface Props {
-  address: string;
-  controllers: string[];
+  address: string; // UP address
+  controllers: (string | null)[];
 }
 
 const ControllersList: React.FC<Props> = ({ address, controllers }) => {
-  const [controllersPermissions, setControllersPermissions] = useState<
-    {
-      bitArray: string;
-      permissions: { [key: string]: any };
-    }[]
-  >([
-    {
-      bitArray:
-        '0x0000000000000000000000000000000000000000000000000000000000000000',
-      permissions: [],
-    },
-  ]);
+  const [controllersPermissions, setControllersPermissions] = useState<{
+    [key: number]: {
+      controller: string | null;
+      arrayIndexDataKey: string;
+      permissionDataKey: string | null;
+      bitArray: string | null;
+      permissions: { [key: string]: boolean };
+    };
+  }>({});
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const web3 = useWeb3();
 
   useEffect(() => {
     const getPermissions = async () => {
+      setIsLoading(true);
+
       try {
         if (address && web3 !== undefined) {
-          const permissionsDataKeys = controllers
-            .filter((controller) => controller != null)
-            .map((controller) => {
-              return encodeKeyName(
+          controllers.map(async (controller, index) => {
+            const currentState = controllersPermissions;
+
+            let permissionDataKey: string | null = null;
+            let bitArray: string | null = null;
+
+            if (controller != null) {
+              permissionDataKey = encodeKeyName(
                 'AddressPermissions:Permissions:<address>',
                 controller,
               );
-            });
 
-          const result = await getDataBatch(address, permissionsDataKeys, web3);
+              // permission values are fetched below all at once via `getDataBatch`
+              // for optimisation to avoid multiple RPC calls per controller
+              bitArray = null;
+            }
 
-          const decodedPermissions = result.map((value) => {
-            return {
-              bitArray: value,
-              permissions: ERC725.decodePermissions(value),
+            currentState[index] = {
+              arrayIndexDataKey: encodeArrayKey(
+                ERC725YDataKeys.LSP6['AddressPermissions[]'].length,
+                index,
+              ),
+              controller,
+              permissionDataKey,
+              bitArray,
+              permissions: {},
             };
+
+            setControllersPermissions(currentState);
           });
-          setControllersPermissions(decodedPermissions);
+
+          const permissionsDataKeysToFetch = Object.values(
+            controllersPermissions,
+          ).map(({ permissionDataKey }) => {
+            // for unknown controllers (null), we cannot encode the data key, so we use address(0) as placeholder
+            return (
+              permissionDataKey ||
+              encodeKeyName(
+                'AddressPermissions:Permissions:<address>',
+                '0x0000000000000000000000000000000000000000',
+              )
+            );
+          });
+
+          const permissionsDataValues = await getDataBatch(
+            address,
+            permissionsDataKeysToFetch,
+            web3,
+          );
+
+          Object.values(controllersPermissions).forEach(
+            ({ controller }, index) => {
+              const currentState = controllersPermissions;
+
+              currentState[index].bitArray =
+                controller && permissionsDataValues[index];
+
+              currentState[index].permissions = controller
+                ? (ERC725.decodePermissions(permissionsDataValues[index]) as {
+                    [key: string]: any;
+                  })
+                : {};
+
+              setControllersPermissions({ ...currentState });
+            },
+          );
         }
       } catch (error: any) {
         console.error(error);
       }
+
+      setIsLoading(false);
     };
     getPermissions();
   }, [address, web3]);
@@ -63,30 +143,70 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
         {controllers.length} controllers found
       </p>
 
-      {controllers.find((controller) => controller === null) && (
+      <div className="m-3" hidden={!isLoading}>
+        <span>Loading controllers permissions. Please wait...</span>
+        <progress
+          className="progress is-small is-primary mt-1"
+          style={{ width: '300px' }}
+          max="100"
+        >
+          Loading...{' '}
+        </progress>
+      </div>
+
+      {controllers.some((controller) => controller == null) && (
         <div className="notification is-warning is-light mt-3">
           <p>
-            ⚠️ It looks like at some indexes inside your{' '}
-            <code>AddressPermissions[]</code> array, some values are set to{' '}
-            <code>null</code> /<code>0x</code>.
+            ⚠️ It looks like some entries inside the{' '}
+            <code>AddressPermissions[]</code> array do not contain controller
+            addresses. The value for some indexes is set to <code>0x</code>.
           </p>
           <p>
-            This could be due to the fact that some controller addresses at
-            specific indexes got removed, but the value for the array length
-            data key <br />
-            <code>
-              AddressPermissions[] ➡{' '}
-              {ERC725YDataKeys.LSP6['AddressPermissions[]'].length}
-            </code>{' '}
-            never got updated.
+            <strong></strong>
+          </p>
+          <table
+            className="table my-4"
+            style={{ backgroundColor: 'transparent' }}
+          >
+            <thead>
+              <tr>
+                <th className="">Affected indexes:</th>
+                <th className="">Array Index Data Key</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.values(controllersPermissions)
+                .map((controllerInfo, index) => ({ ...controllerInfo, index }))
+                .filter(({ controller }) => controller == null)
+                .map(({ index, arrayIndexDataKey }) => (
+                  <tr key={index}>
+                    <td>
+                      <code>AddressPermissions[{index}]</code>
+                    </td>
+                    <td className="ml-4 mt-1">
+                      <code>{arrayIndexDataKey}</code>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+          <p>
+            This could be because some controller addresses have been removed at
+            these specific indexes, but the array length has not been updated.
+          </p>
+          <p>
+            <code>AddressPermissions[].length = {controllers.length}</code>{' '}
+            (correspond to the <strong>&quot;Raw value&quot;</strong> above
+            converted from hex to decimal)
           </p>
           <strong>
-            Consider updating the array length to fix your array of controllers.
+            Consider updating the array length or re-adding the controller
+            addresses at these specific indexes to fix the list of controllers.
           </strong>
         </div>
       )}
 
-      {controllers && (
+      {!isLoading && (
         <table className="table" style={{ backgroundColor: 'transparent' }}>
           <thead>
             <tr>
@@ -99,73 +219,100 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
             </tr>
           </thead>
           <tbody>
-            {controllers.map((controller, index) => (
-              <tr key={controller}>
-                <td>
-                  <div className="mb-6">
-                    <p className="has-text-weight-bold">
-                      AddressPermissions[{index}]
-                    </p>
-                    ➡{' '}
-                    <code className="has-text-weight-bold">
-                      {encodeArrayKey(
-                        ERC725YDataKeys.LSP6['AddressPermissions[]'].length,
-                        index,
-                      )}
-                    </code>
-                  </div>
-                  <div>
-                    <p className="has-text-weight-bold">
-                      AddressPermissions:Permissions:
-                      <code className="is-size-7">{controller}</code>
-                    </p>
-                    ➡{' '}
-                    <code className="has-text-weight-bold">
-                      {encodeKeyName(
-                        'AddressPermissions:Permissions:<address>',
-                        controller,
-                      )}
-                    </code>
-                  </div>
-                </td>
-                <td style={{ width: '50%' }}>
-                  <div className="mb-3">
-                    <p>Controller Infos:</p>
-                    {controller ? (
-                      <AddressInfos address={controller.toString()} />
-                    ) : (
-                      <i>No controller found at index {index}</i>
-                    )}
-                  </div>
-
-                  <div className="mb-3">
-                    {controller && <p>Permissions:</p>}
-                    {controllersPermissions[index] && (
-                      <p>
-                        <code className="has-text-primary">
-                          {controllersPermissions[index].bitArray}
+            {Object.values(controllersPermissions).map(
+              (
+                {
+                  controller,
+                  arrayIndexDataKey,
+                  permissionDataKey,
+                  bitArray,
+                  permissions,
+                },
+                index,
+              ) => (
+                <tr key={index}>
+                  <td>
+                    <div className="mb-6">
+                      <p className="has-text-weight-bold">
+                        AddressPermissions[{index}]
+                      </p>
+                      ➡{' '}
+                      <code className="has-text-weight-bold">
+                        {arrayIndexDataKey}
+                      </code>
+                    </div>
+                    <div className="mb-6">
+                      <p className="has-text-weight-bold">
+                        AddressPermissions:Permissions:
+                        <code className="is-size-7">
+                          {controller ? controller : 'unknown'}
                         </code>
                       </p>
-                    )}
-                    {controllersPermissions[index] &&
-                      Object.entries(
-                        controllersPermissions[index].permissions,
-                      ).map(
-                        ([permission, isSet]) =>
-                          isSet &&
-                          permission !== '0x' && (
-                            <span
-                              key={permission}
-                              className="tag is-primary m-1"
-                            >
-                              {permission}
-                            </span>
-                          ),
+
+                      {controller && permissionDataKey ? (
+                        <p>
+                          ➡{' '}
+                          <PermissionDataKeyDisplay
+                            permissionDataKey={permissionDataKey}
+                          />
+                        </p>
+                      ) : (
+                        <p className="notification is-warning is-light">
+                          ⚠️ Cannot encode data key: controller address unknown
+                        </p>
                       )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    </div>
+                  </td>
+                  <td style={{ width: '50%' }}>
+                    <div className="mb-3">
+                      <p>Controller Infos:</p>
+                      {controller ? (
+                        <AddressInfos address={controller} />
+                      ) : (
+                        <p className="notification is-warning is-light">
+                          ⚠️ No controller found at index {index}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mb-3">
+                      {<p className="text-bold">Permissions:</p>}
+                      {controller ? (
+                        <div>
+                          <p>
+                            <code className="has-text-primary">{bitArray}</code>
+                          </p>
+                          <p>
+                            {bitArray == '0x' ||
+                              (bitArray ==
+                                '0x0000000000000000000000000000000000000000000000000000000000000000' && (
+                                <i>No permission set</i>
+                              ))}
+                            {Object.entries(permissions).map(
+                              ([permission, isSet]) =>
+                                isSet &&
+                                permission !== '0x' && (
+                                  <span
+                                    key={permission}
+                                    className="tag is-primary m-1"
+                                  >
+                                    {permission}
+                                  </span>
+                                ),
+                            )}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="notification is-warning is-light">
+                          ⚠️ Cannot fetch permissions: controller unknown at
+                          index {index}
+                        </p>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ),
+            )}
           </tbody>
         </table>
       )}
