@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ERC725 } from '@erc725/erc725.js';
 import errorsDict from './utils/errorsDict';
 import { LSP_SPECS_URL } from '@/constants/links';
+import ToolInfos from '../ToolInfos';
 
 interface IVerifiableURIEncode {
   verification: {
@@ -202,62 +203,44 @@ const Lsp2Coder: React.FC = () => {
 
   return (
     <div className="container">
-      <h2 className="title is-2">Metadata Encoder</h2>
-      <article className="message is-info">
+      <div className="is-flex is-align-items-center mb-2">
+        <h2 className="title is-2 mb-0">Metadata Encoder</h2>
+
+        <button className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2">
+          beta
+        </button>
+      </div>
+      <article className="message is-warning content">
         <div className="message-body">
-          Encode or decode the values of
-          <a
-            href="https://github.com/ERC725Alliance/ERC725/blob/main/docs/ERC-725.md#erc725y"
-            className="mx-1"
-            target="_blank"
-            rel="noreferrer"
-          >
-            ERC725Y
-          </a>
-          data keys following the
-          <a
-            href={LSP_SPECS_URL.LSP2}
-            className="mx-1"
-            target="_blank"
-            rel="noreferrer"
-          >
-            LSP2 ERC725YJSONSchema
-          </a>
-          standardization.
+          <p>This tool is in beta and under development</p>
         </div>
       </article>
-      <article className="message">
-        <div className="message-body">
-          It&lsquo;s using the
-          <a
-            href="https://docs.lukso.tech/tools/dapps/erc725js/methods/#encodedata"
-            target="_blank"
-            rel="noreferrer"
-            className="mx-1"
-          >
-            encodeData
-          </a>
-          and
-          <a
-            href="https://docs.lukso.tech/tools/dapps/erc725js/methods/#decodedata"
-            target="_blank"
-            rel="noreferrer"
-            className="mx-1"
-          >
-            decodeData
-          </a>
-          functions of the
-          <a
-            href="https://www.npmjs.com/package/@erc725/erc725.js"
-            target="_blank"
-            rel="noreferrer"
-            className="mx-1"
-          >
-            erc725.js
-          </a>
-          library.
-        </div>
-      </article>
+      <ToolInfos
+        erc725jsMethod={['encodeData', 'decodeData']}
+        description={
+          <>
+            Encode and decode any raw{' '}
+            <a
+              href={LSP_SPECS_URL.ERC725Y}
+              className="mx-1"
+              target="_blank"
+              rel="noreferrer"
+            >
+              ERC725Y
+            </a>
+            data in a developer-friendly way based on its{' '}
+            <a
+              href={LSP_SPECS_URL.LSP2}
+              className="mx-1"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LSP2 ERC725Y JSON Schema
+            </a>
+          </>
+        }
+      />
+
       <div className="field">
         <div className="label">Select valueContent</div>
         <div className="control">
