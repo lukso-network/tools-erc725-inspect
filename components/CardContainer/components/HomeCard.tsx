@@ -8,6 +8,7 @@ interface CardProps {
   link: string;
   isExternal: boolean;
   version: string;
+  isBeta?: boolean;
 }
 
 const HomeCard: React.FC<CardProps> = ({
@@ -16,6 +17,7 @@ const HomeCard: React.FC<CardProps> = ({
   link,
   isExternal,
   version,
+  isBeta = false,
 }) => {
   const fullTitle = isExternal ? `${title} ↗` : title;
 
@@ -38,7 +40,18 @@ const HomeCard: React.FC<CardProps> = ({
     <LinkWrapper>
       <div className={styles.card}>
         <div>
-          <h3 className={styles.cardContent}>{fullTitle}</h3>
+          <h3 className={styles.cardContent}>
+            {fullTitle}
+            {isBeta && (
+              <button
+                className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2"
+                style={{ display: 'inline-block' }}
+              >
+                beta
+              </button>
+            )}
+          </h3>
+
           <div className={styles.description}>{description}</div>
           {version && (
             <p className={styles.versionTag}>

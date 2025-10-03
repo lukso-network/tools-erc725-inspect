@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Decode from '@/components/Decode';
 import Encode from '@/components/Encode';
 import useWeb3 from '@/hooks/useWeb3';
+import { LSP_DOCS_URL } from '@/constants/links';
 
 enum TX_PARSER_MODES {
   ENCODE = 'ENCODE',
@@ -21,56 +22,24 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>ABI Coder - ERC725 Tools</title>
+        <title>Transaction Encoder / Decoder - ERC725 Tools</title>
       </Head>
       <div className="container">
-        <h2 className="title is-2">ABI Encoder</h2>
+        <h2 className="title is-2">Transaction Encoder / Decoder</h2>
         <article className="message is-info">
           <div className="message-body">
-            Encode and decode transaction data of
-            <a
-              className="mx-1"
-              href="https://docs.lukso.tech/standards/smart-contracts/lsp0-erc725-account"
-              target="_blank"
-              rel="noreferrer"
-            >
+            Encode and decode transaction calldata from the{' '}
+            <a href="https://docs.lukso.tech/contracts/contracts/LSP0ERC725Account/">
+              available functions and ABI
+            </a>{' '}
+            of an{' '}
+            <a href={LSP_DOCS_URL.LSP0} target="_blank" rel="noreferrer">
               LSP0 ERC725Account
-            </a>
-            smart contracts based on its
-            <a
-              className="ml-1"
-              target="_blank"
-              rel="noreferrer"
-              href="https://docs.lukso.tech/contracts/contracts/LSP0ERC725Account/#parameters-2"
-            >
-              execution parameters
-            </a>
-            .
+            </a>{' '}
+            smart contract.
           </div>
         </article>
-        <article className="message">
-          <div className="message-body">
-            It&lsquo;s using the
-            <a
-              href="https://docs.web3js.org/api/web3-eth-abi/function/decodeParameters/"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              decodeParameters
-            </a>
-            function of the
-            <a
-              href="https://www.npmjs.com/package/web3"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              web3
-            </a>
-            library.
-          </div>
-        </article>
+
         <div className="columns">
           <div className="column">
             <div className="mb-2">

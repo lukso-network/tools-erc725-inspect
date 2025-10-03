@@ -8,120 +8,121 @@ import { NextRouter, useRouter } from 'next/router';
 import NetworkSwitch from './components/NetworksSwitch';
 import styles from './NavBar.module.scss';
 import clsx from 'clsx';
+import { menuItems } from '@/constants/menu';
+import { MenuItem } from '@/types/menu';
 
 const LinksMenu = ({
+  id,
   router,
   createLink,
+  menuText,
+  linkItems,
+  activeMenu,
+  setActiveMenu,
 }: {
+  id: string;
   router: NextRouter;
   createLink: (path: string) => string;
+  menuText: string;
+  linkItems: MenuItem[];
+  activeMenu: string | null;
+  setActiveMenu: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
-  const [isActive, setIsActive] = useState(false);
+  const isActive = activeMenu === id;
+
+  const { pathname } = router;
+
+  const toggleMenu = () => {
+    setActiveMenu(isActive ? null : id); // open me, close others
+  };
 
   return (
-    <div className={clsx('navbar-item dropdown', isActive && 'is-active')}>
-      <div className="dropdown-trigger">
-        <a
-          className="navbar-link is-flex"
-          aria-haspopup="true"
-          aria-controls="dropdown-menu"
-          onClick={() => setIsActive(!isActive)}
-        >
-          Menu
-        </a>
-      </div>
-      <div className="dropdown-menu" id="dropdown-menu" role="menu">
-        <div className="dropdown-content" style={{ background: '#F0F0F0' }}>
-          <Link href={createLink('/inspector')}>
-            <a
-              className={clsx(
-                'dropdown-item',
-                router.pathname === '/inspector' && 'has-text-link',
-              )}
-              onClick={() => setIsActive(false)}
-            >
-              🔎 Inspector
-            </a>
-          </Link>
-          <Link href={createLink('/lsp-checker')}>
-            <a
-              className={clsx(
-                'dropdown-item',
-                router.pathname === '/lsp-checker' && 'has-text-link',
-              )}
-              onClick={() => setIsActive(false)}
-            >
-              ✅ LSP Checker
-            </a>
-          </Link>
-          <Link href={createLink('/data-fetcher')}>
-            <a
-              className={clsx(
-                'dropdown-item',
-                router.pathname === '/data-fetcher' && 'has-text-link',
-              )}
-              onClick={() => setIsActive(false)}
-            >
-              💽 Data Fetcher
-            </a>
-          </Link>
-          <Link href={createLink('/key-manager')}>
-            <a
-              className={clsx(
-                'dropdown-item',
-                router.pathname === '/key-manager' && 'has-text-link',
-              )}
-              onClick={() => setIsActive(false)}
-            >
-              🔐 Key Manager
-            </a>
-          </Link>
-          <Link href={createLink('/abi-encoder')}>
-            <a
-              className={clsx(
-                'dropdown-item',
-                router.pathname === '/abi-encoder' && 'has-text-link',
-              )}
-              onClick={() => setIsActive(false)}
-            >
-              📜 ABI Encoder
-            </a>
-          </Link>
-          <Link href={createLink('/lsp2-encoder')}>
-            <a
-              className={clsx(
-                'dropdown-item',
-                router.pathname === '/lsp2-encoder' && 'has-text-link',
-              )}
-              onClick={() => setIsActive(false)}
-            >
-              📖 LSP2 Encoder
-            </a>
-          </Link>
-          <Link href="/lsp4-metadata-encoder">
-            <a
-              className={clsx(
-                'dropdown-item',
-                router.pathname === '/lsp4-metadata-encoder' && 'has-text-link',
-              )}
-              onClick={() => setIsActive(false)}
-            >
-              📖 LSP4 Metadata Encoder
-            </a>
-          </Link>
+    <>
+      {/* Desktop menu */}
+      <div
+        className={clsx(
+          'navbar-item has-dropdown is-hidden-touch',
+          isActive && 'is-active',
+        )}
+        onMouseEnter={() => setActiveMenu(id)}
+        onMouseLeave={() => setActiveMenu(null)}
+      >
+        <a className="navbar-link is-flex">{menuText}</a>
+
+        <div className="navbar-dropdown">
+          {linkItems.map(({ link, title, isBeta }) => (
+            <Link key={title} href={createLink(link)}>
+              <a
+                className={clsx(
+                  'navbar-item',
+                  pathname === link && 'has-text-link',
+                )}
+                onClick={() => setActiveMenu(null)} // close menu after click
+              >
+                {title}
+                {isBeta && (
+                  <button
+                    className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2"
+                    style={{ fontSize: '0.5rem' }}
+                  >
+                    beta
+                  </button>
+                )}
+              </a>
+            </Link>
+          ))}
+          {/* </div> */}
         </div>
       </div>
-    </div>
+
+      {/* Mobile menu */}
+      <div className="navbar-item has-dropdown is-hidden-desktop">
+        <a className="navbar-link" onClick={toggleMenu}>
+          {menuText}
+        </a>
+        {isActive && (
+          <div className="navbar-dropdown">
+            {linkItems.map(({ title, link, isBeta }) => (
+              <Link key={title} href={createLink(link)}>
+                <a
+                  className={clsx(
+                    'navbar-item',
+                    pathname === link && 'has-text-link',
+                  )}
+                  onClick={() => setActiveMenu(null)}
+                >
+                  {title}
+                  {isBeta && (
+                    <span className="tag is-warning is-light is-rounded is-small ml-2">
+                      beta
+                    </span>
+                  )}
+                </a>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
 const NavBar: React.FC = () => {
-  const [isActive, setIsActive] = useState(false);
+  // controls which dropdown is open
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  // controls mobile hamburger toggle
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   const router = useRouter();
 
-  const toggleNavbar = () => {
-    setIsActive(!isActive);
-  };
+  const inspectorMenuItems = menuItems.filter(
+    ({ category }) => category === 'inspector',
+  );
+  const encoderMenuItems = menuItems.filter(
+    ({ category }) => category === 'encoder',
+  );
+
+  const toggleNavbar = () => setIsMobileOpen((prev) => !prev);
 
   const createLink = (path: string) => {
     if (typeof window === 'undefined') {
@@ -145,13 +146,13 @@ const NavBar: React.FC = () => {
     <nav className="navbar is-light sticky">
       <div className={`navbar-brand ${styles.navbarHeight}`}>
         <Link href={createLink('/')}>
-          <a className="navbar-item is-hidden-desktop">🛠 ERC725 Tools</a>
+          <a className="navbar-item is-hidden-desktop">Home</a>
         </Link>
         <a
           role="button"
-          className={clsx('navbar-burger burger', isActive && 'is-active')}
+          className={clsx('navbar-burger burger', isMobileOpen && 'is-active')}
           aria-label="menu"
-          aria-expanded="false"
+          aria-expanded={isMobileOpen}
           onClick={toggleNavbar}
         >
           <span aria-hidden="true"></span>
@@ -160,17 +161,34 @@ const NavBar: React.FC = () => {
         </a>
       </div>
 
-      <div className={`navbar-menu ${isActive ? 'is-active' : ''}`}>
-        <div className="navbar-start ml-3">
+      <div className={clsx('navbar-menu', isMobileOpen && 'is-active')}>
+        <div className="navbar-start">
           <Link href={createLink('/')}>
             <a className={`navbar-item is-hidden-touch ${styles.navbarHeight}`}>
-              🛠 ERC725 Tools
+              Home
             </a>
           </Link>
+          <LinksMenu
+            id="inspector"
+            router={router}
+            createLink={createLink}
+            linkItems={inspectorMenuItems}
+            menuText="🔍 Inspector Tools"
+            activeMenu={activeMenu}
+            setActiveMenu={setActiveMenu}
+          />
+          <LinksMenu
+            id="encoder"
+            router={router}
+            createLink={createLink}
+            linkItems={encoderMenuItems}
+            menuText="🛠️ Encoder Tools"
+            activeMenu={activeMenu}
+            setActiveMenu={setActiveMenu}
+          />
         </div>
 
         <div className="navbar-end">
-          <LinksMenu router={router} createLink={createLink} />
           <NetworkSwitch />
           <div className="navbar-item">
             <div className="buttons">
