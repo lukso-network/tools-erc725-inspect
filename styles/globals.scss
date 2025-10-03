@@ -111,18 +111,24 @@ code {
 // Remove all borders from tables
 .table-no-borders {
   border: none !important;
-  
-  th, td {
+
+  th,
+  td {
     border: none !important;
     border-bottom: none !important;
     border-top: none !important;
   }
-  
+
   thead th {
     border-bottom: none !important;
   }
-  
+
   tbody td {
     border-top: none !important;
   }
+}
+
+// TODO: move to component specific scss file]
+.bg-safe {
+  background-color: #13ff7f !important;
 }

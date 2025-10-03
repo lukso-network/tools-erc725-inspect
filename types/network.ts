@@ -3,3 +3,9 @@ export enum NetworkName {
   TESTNET = 'TESTNET',
   LOCALHOST = 'LOCALHOST',
 }
+
+export interface INetwork {
+  name: NetworkName;
+  rpc: string;
+  imgUrl?: string;
+}

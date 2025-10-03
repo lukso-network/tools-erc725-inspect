@@ -9,7 +9,7 @@ export enum SchemaName {
   'LSP28TheGrid' = 'LSP28TheGrid',
 }
 
-export const SCHEMA_DOCS_LINKS: { [key in SchemaName]: string } = {
+export const SCHEMA_DOCS_LINKS: Record<SchemaName, string> = {
   LSP1UniversalReceiverDelegate:
     'https://docs.lukso.tech/standards/generic-standards/lsp1-universal-receiver',
   'SupportedStandards:LSP3Profile':

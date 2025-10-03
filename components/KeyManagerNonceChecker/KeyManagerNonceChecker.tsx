@@ -5,7 +5,7 @@ import { useContext, useState } from 'react';
 import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
 import useWeb3 from '@/hooks/useWeb3';
 import { NetworkContext } from '@/contexts/NetworksContext';
-import { LSP_SPECS_URL } from '@/globals';
+import { LSP_SPECS_URL } from '@/constants/links';
 
 const KeyManagerNonceChecker: React.FC = () => {
   const web3 = useWeb3();

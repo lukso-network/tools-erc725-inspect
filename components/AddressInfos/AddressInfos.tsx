@@ -6,12 +6,14 @@ import Skeleton from 'react-loading-skeleton';
 
 import { NetworkContext } from '@/contexts/NetworksContext';
 import useWeb3 from '@/hooks/useWeb3';
+
 import {
-  EXPLORER_BASE_URL,
-  LUKSO_LSP1_DELEGATE_VERSIONS,
+  LUKSO_LSP1_DELEGATE,
   LSP1_GRAVE_FORWARDER,
   LUKSO_UP_RECOVERY_ADDRESSES,
-} from '@/globals';
+} from '@/constants/contracts';
+import { EXPLORER_BASE_URL } from '@/constants/networks';
+
 import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
@@ -63,8 +65,12 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
 
     setIsLSP1Delegate(isLsp1UniversalReceiverDelegate);
 
-    const isGnosisSafeContract = await checkIsGnosisSafe(_address, web3);
-    setIsGnosisSafe(isGnosisSafeContract);
+    const { isSafe, version } = await checkIsGnosisSafe(_address, web3);
+    setIsGnosisSafe(isSafe);
+
+    if (isSafe && version) {
+      setContractVersion(version);
+    }
 
     if (isLsp0Erc725Account) {
       const fetchedContractVersion = await getVersion(address, web3);
@@ -89,9 +95,9 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
     LUKSO_UP_RECOVERY_ADDRESSES[network.name].includes(address);
 
   // e.g: Default LSP1 Delegate for registering tokens / NFTs received in `LSP5ReceivedAssets[]`
-  const isLUKSOLSP1Delegate = Object.keys(
-    LUKSO_LSP1_DELEGATE_VERSIONS,
-  ).includes(address);
+  const isLUKSOLSP1Delegate = LUKSO_LSP1_DELEGATE.find(
+    (contract) => contract.address === address,
+  );
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
   const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
@@ -109,7 +115,7 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
             text="🌱 LUKSO UP Recovery"
             colorClass="is-primary"
             isLight={false}
-            addLUKSOLogo={true}
+            logo="/lukso-signet-fuschia.svg"
             contractVersion={contractVersion}
           />
         )}
@@ -119,8 +125,8 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
             text="📢 LUKSO LSP1 Delegate"
             colorClass="is-danger"
             isLight={false}
-            contractVersion={LUKSO_LSP1_DELEGATE_VERSIONS[address]}
-            addLUKSOLogo={true}
+            contractVersion={isLUKSOLSP1Delegate.version}
+            logo="/lukso-signet-fuschia.svg"
           />
         )}
 
@@ -129,9 +135,10 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
         {isLSP0 && (
           <>
             <AddressTypeBadge
-              text="🆙 Universal Profile"
+              text="Universal Profile"
               colorClass="is-info"
               contractVersion={contractVersion}
+              logo="/up-box-logo.png"
             />
             <ProfileInfosBadge profileAddress={address} />
           </>
@@ -181,9 +188,10 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
 
         {isGnosisSafe && (
           <AddressTypeBadge
-            text="🏦 Gnosis Safe"
-            colorClass="is-success"
-            isLight={true}
+            text="Gnosis Safe"
+            colorClass="bg-safe"
+            contractVersion={contractVersion}
+            logo="/safe-logo.png"
           />
         )}
       </div>

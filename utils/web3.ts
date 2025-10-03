@@ -2,32 +2,33 @@
  * @author Hugo Masclet <git@hugom.xyz>
  */
 import Web3 from 'web3';
-import { ERC725YDataKeys, INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import { AbiItem } from 'web3-utils';
+import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
+import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
+import ERC725 from '@erc725/erc725.js';
+
 import {
   INTERFACE_ID_LSP7,
   INTERFACE_ID_LSP7_PREVIOUS,
 } from '@lukso/lsp7-contracts';
-
 import {
   INTERFACE_ID_LSP8_PREVIOUS,
   INTERFACE_ID_LSP8,
 } from '@lukso/lsp8-contracts';
+
 import {
   eip165ABI,
   getDataBatchABI,
   getDataABI,
   VersionABI,
   aggregateABI,
-} from '@/constants';
-import { AbiItem } from 'web3-utils';
+} from '@/constants/abi';
 import {
-  GNOSIS_SAFE_IMPLEMENTATION,
-  GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE,
-  LUKSO_IPFS_BASE_URL,
+  GNOSIS_SAFE,
+  GNOSIS_SAFE_PROXY_BYTECODE,
   MULTICALL_CONTRACT_ADDRESS,
-} from '@/globals';
-import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
-import ERC725 from '@erc725/erc725.js';
+} from '@/constants/contracts';
+import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 export const checkInterface = async (address: string, web3: Web3) => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
@@ -158,11 +159,11 @@ export const aggregateCalls = async (
 export async function checkIsGnosisSafe(
   address: string,
   web3: Web3,
-): Promise<boolean> {
+): Promise<{ isSafe: boolean; version?: string }> {
   const codeAt = await web3.eth.getCode(address);
 
-  if (codeAt != GNOSIS_SAFE_PROXY_DEPLOYED_BYTECODE) {
-    return false;
+  if (codeAt != GNOSIS_SAFE_PROXY_BYTECODE) {
+    return { isSafe: false };
   }
 
   // in the Solidity code of the Gnosis Safe proxy, the address of the singleton (= implementation)
@@ -172,12 +173,23 @@ export async function checkIsGnosisSafe(
   // example: https://explorer.execution.mainnet.lukso.network/address/0x14C2041eD166e00A8Ed2adad8c9C7389b3Dd87fb?tab=contract
   const valueAtStorageSlot0 = await web3.eth.getStorageAt(address, 0);
 
-  const { implementationAddress } = web3.eth.abi.decodeParameter(
+  const implementationAddress = web3.eth.abi.decodeParameter(
     'address',
     valueAtStorageSlot0,
+  ) as unknown as string;
+
+  const safeImplementation = GNOSIS_SAFE.find(
+    (safeVersion) => safeVersion.address === implementationAddress,
   );
 
-  return implementationAddress == GNOSIS_SAFE_IMPLEMENTATION;
+  if (!safeImplementation) {
+    return { isSafe: false };
+  }
+
+  return {
+    isSafe: true,
+    version: safeImplementation.version,
+  };
 }
 
 export const getVersion = async (

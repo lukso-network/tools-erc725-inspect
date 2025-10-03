@@ -1,30 +1,7 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
-import { RPC_URL } from '@/globals';
-import { NetworkName } from '@/types/network';
 import { useRouter } from 'next/router';
-export interface INetwork {
-  name: NetworkName;
-  rpc: string;
-  imgUrl?: string;
-}
-
-const chains: INetwork[] = [
-  {
-    name: NetworkName.MAINNET,
-    rpc: RPC_URL[NetworkName.MAINNET],
-    imgUrl: '/lukso.png',
-  },
-  {
-    name: NetworkName.TESTNET,
-    rpc: RPC_URL[NetworkName.TESTNET],
-    imgUrl: '/lukso.png',
-  },
-  {
-    name: NetworkName.LOCALHOST,
-    rpc: RPC_URL[NetworkName.LOCALHOST],
-    imgUrl: '/lukso.png',
-  },
-];
+import { INetwork, NetworkName } from '@/types/network';
+import { CHAINS } from '@/constants/networks';
 
 export interface INetworksContext {
   network: INetwork;
@@ -44,15 +21,15 @@ const NetworksProvider = ({ children }) => {
       const storedNetworkName = localStorage.getItem('erc725InspectNetwork');
       if (storedNetworkName) {
         return (
-          chains.find(
+          CHAINS.find(
             (network) =>
               network.name.toLowerCase() === storedNetworkName.toLowerCase(),
-          ) || chains[0]
+          ) || CHAINS[0]
         );
       }
     }
     // Return default if nothing is in local storage
-    return chains[0];
+    return CHAINS[0];
   };
 
   // Get network from URL or switch to default chain
@@ -63,7 +40,7 @@ const NetworksProvider = ({ children }) => {
       return getNetworkFromLocalStorage();
     }
     return (
-      chains.find(
+      CHAINS.find(
         (network) => network.name.toLowerCase() === networkParam?.toLowerCase(),
       ) || getNetworkFromLocalStorage()
     );

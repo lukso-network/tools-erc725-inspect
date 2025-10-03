@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '@/components/AddressButtons';
 import ControllersList from '@/components/ControllersList';
-import { LUKSO_IPFS_BASE_URL } from '@/globals';
+import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 import useWeb3 from '@/hooks/useWeb3';
 

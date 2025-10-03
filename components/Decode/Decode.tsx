@@ -1,9 +1,7 @@
 import React, { ReactElement, useState } from 'react';
 import Web3 from 'web3';
-import {
-  TRANSACTION_SELECTORS,
-  TRANSACTION_TYPES,
-} from '@/interfaces/transaction';
+import { TRANSACTION_TYPES } from '@/types/transaction';
+import { TRANSACTION_SELECTORS } from '@/constants/selectors';
 import ErrorMessage from '@/components/ErrorMessage';
 import styles from './Decode.module.scss';
 
