@@ -8,7 +8,7 @@ import { isHex } from 'web3-utils';
 import useWeb3 from '@/hooks/useWeb3';
 import { getData } from '@/utils/web3';
 
-import CodeEditor from '../CodeEditor';
+import CodeEditor from '@/components/ui/CodeEditor';
 
 import { LSP_SPECS_URL } from '@/constants/links';
 

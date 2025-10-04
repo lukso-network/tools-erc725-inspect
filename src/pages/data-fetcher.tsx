@@ -23,13 +23,13 @@ import LSP17DataKeys from '@erc725/erc725.js/schemas/LSP17ContractExtension.json
 import { checkInterface, getData } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 
-import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
+import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
 import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
-import ToolInfos from '@/components/ToolInfos';
+import ToolInfos from '@/components/layout/ToolInfos';
 
 // using local variable for LSP28TheGrid key for now
 const LSP28_THE_GRID_KEY =

@@ -50,28 +50,33 @@ const LinksMenu = ({
         <a className="navbar-link is-flex">{menuText}</a>
 
         <div className="navbar-dropdown">
-          {linkItems.map(({ link, title, isBeta }) => (
-            <a
-              key={title}
-              className={clsx(
-                'navbar-item',
-                pathname === link && 'has-text-link',
-              )}
-              onClick={() => setActiveMenu(null)}
-            >
-              {' '}
-              {/* to close menu on click */}
-              <Link href={createLink(link)}>{title}</Link>
-              {isBeta && (
-                <button
-                  className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2"
-                  style={{ fontSize: '0.5rem' }}
+          {/* to close menu on click */}
+          {linkItems.map(({ link, title, isBeta }) => {
+            return (
+              <div
+                key={title}
+                className={clsx(
+                  'navbar-item',
+                  pathname === link && 'has-text-link',
+                )}
+              >
+                <Link
+                  onClick={() => setActiveMenu(null)}
+                  href={createLink(link)}
                 >
-                  beta
-                </button>
-              )}
-            </a>
-          ))}
+                  {title}
+                </Link>
+                {isBeta && (
+                  <button
+                    className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2"
+                    style={{ fontSize: '0.5rem' }}
+                  >
+                    beta
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

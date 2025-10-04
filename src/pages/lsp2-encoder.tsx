@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import Lsp2Coder from '@/components/Lsp2Coder';
+import Lsp2Coder from '@/components/features/Lsp2Coder';
 
 const Lsp2CoderPage: NextPage = () => {
   return <Lsp2Coder />;

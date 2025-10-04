@@ -3,7 +3,7 @@ import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
 
 import { getDataBatch } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
-import AddressInfos from '@/components/AddressInfos';
+import AddressInfos from '@/components/features/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 interface PermissionDataKeyDisplayProps {

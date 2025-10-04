@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import ERC725 from '@erc725/erc725.js';
-import PermissionsBtns from '@/components/PermissionsBtns';
-import ToolInfos from '../ToolInfos';
+import PermissionsBtns from '@/components/ui/PermissionsBtns';
+import ToolInfos from '@/components/layout/ToolInfos';
 import { LSP_DOCS_URL } from '@/constants/links';
 
 const KeyManagerPermissions: React.FC = () => {

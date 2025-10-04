@@ -3,7 +3,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 import type { AppProps } from 'next/app';
 
-import NavBar from '@/components/NavBar';
+import NavBar from '@/components/layout/NavBar';
 import NetworksProvider from '@/contexts/NetworksContext';
 
 // icons

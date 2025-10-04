@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ERC725 } from '@erc725/erc725.js';
 import errorsDict from './utils/errorsDict';
 import { LSP_SPECS_URL } from '@/constants/links';
-import ToolInfos from '../ToolInfos';
+import ToolInfos from '@/components/layout/ToolInfos';
 
 interface IVerifiableURIEncode {
   verification: {

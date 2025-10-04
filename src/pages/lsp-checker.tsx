@@ -11,7 +11,7 @@ import {
 import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 
-import SampleAddressInput from '@/components/SampleAddressInput';
+import SampleAddressInput from '@/components/ui/SampleAddressInput';
 import useWeb3 from '@/hooks/useWeb3';
 import { checkInterface, getDataBatch } from '@/utils/web3';
 import { isAddress, keccak256, stripHexPrefix } from 'web3-utils';

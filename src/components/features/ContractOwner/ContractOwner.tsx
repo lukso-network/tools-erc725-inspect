@@ -5,7 +5,7 @@ import useWeb3 from '@/hooks/useWeb3';
 import { eip165ABI } from '@/constants/abi';
 import { AbiItem, isAddress } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
-import AddressButtons from '@/components/AddressButtons';
+import AddressButtons from '@/components/ui/AddressButtons';
 
 type Props = {
   contractAddress: string;

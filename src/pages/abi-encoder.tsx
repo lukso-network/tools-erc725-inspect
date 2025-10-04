@@ -2,8 +2,8 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 
-import Decode from '@/components/Decode';
-import Encode from '@/components/Encode';
+import Decode from '@/components/features/Decode';
+import Encode from '@/components/features/Encode';
 import useWeb3 from '@/hooks/useWeb3';
 import { LSP_DOCS_URL } from '@/constants/links';
 

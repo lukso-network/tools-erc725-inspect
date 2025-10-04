@@ -12,8 +12,8 @@ import useWeb3 from '@/hooks/useWeb3';
 import { getDataBatch } from '@/utils/web3';
 
 // components
-import DataKeyBox from '../DataKeyBox';
-import { LSP1TypeIdsDescriptions } from '../DataKeyBox/schemas';
+import DataKeyBox from '../../ui/DataKeyBox';
+import { LSP1TypeIdsDescriptions } from '../../ui/DataKeyBox/schemas';
 
 /// @dev used to filter LSP1Delegate related data keys
 const LSP1DELEGATE_PREFIX = 'LSP1UniversalReceiverDelegate:';
