@@ -5,4 +5,5 @@ export type MenuItem = {
   category: string;
   isExternal?: boolean;
   isBeta?: boolean;
+  version?: string;
 };

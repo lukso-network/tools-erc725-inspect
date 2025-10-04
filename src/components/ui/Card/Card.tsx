@@ -1,17 +1,17 @@
 import * as React from 'react';
 import Link from 'next/link';
-import styles from './HomeCard.module.scss';
+import styles from './Card.module.scss';
 
 interface CardProps {
   title: string;
   description: string;
   link: string;
-  isExternal: boolean;
-  version: string;
+  isExternal?: boolean;
+  version?: string;
   isBeta?: boolean;
 }
 
-const HomeCard: React.FC<CardProps> = ({
+const Card: React.FC<CardProps> = ({
   title,
   description,
   link,
@@ -64,4 +64,4 @@ const HomeCard: React.FC<CardProps> = ({
   );
 };
 
-export default HomeCard;
+export default Card;

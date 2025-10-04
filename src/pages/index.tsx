@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import CardContainer from '@/components/ui/CardContainer';
+import Card from '@/components/ui/Card';
 import { menuItems } from '@/constants/menu';
 
 const Home: NextPage = () => {
@@ -24,7 +24,29 @@ const Home: NextPage = () => {
             </a>
             smart contracts.
           </p>
-          <CardContainer cardData={menuItems} />
+          {/* TODO: move out this styling */}
+          <div
+            style={{
+              maxWidth: '1400px',
+              margin: '0 auto',
+              padding: '1rem',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '2rem',
+              justifyContent: 'center',
+              alignItems: 'stretch',
+            }}
+          >
+            {menuItems.map((item, index) => (
+              <Card
+                key={index}
+                title={item.title}
+                description={item.description}
+                link={item.link}
+                isBeta={item.isBeta}
+              />
+            ))}
+          </div>
           <h3 className="title is-3">External Developer Resources</h3>
           <p>
             Start integrating{' '}
@@ -48,8 +70,19 @@ const Home: NextPage = () => {
             smart contracts into your own projects by diving into the following
             apps and libraries:
           </p>
-          <CardContainer
-            cardData={[
+          <div
+            style={{
+              maxWidth: '1400px',
+              margin: '0 auto',
+              padding: '1rem',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '2rem',
+              justifyContent: 'center',
+              alignItems: 'stretch',
+            }}
+          >
+            {[
               {
                 title: 'up-test-dapp',
                 description:
@@ -71,8 +104,16 @@ const Home: NextPage = () => {
                 link: 'https://docs.lukso.tech/tools/lsp-smart-contracts/getting-started',
                 isExternal: true,
               },
-            ]}
-          ></CardContainer>
+            ].map((item, index) => (
+              <Card
+                key={index}
+                title={item.title}
+                description={item.description}
+                link={item.link}
+                isExternal={item.isExternal}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </>
