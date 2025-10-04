@@ -3,17 +3,17 @@
  */
 import React, { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
-import AddressButtons from '@/components/AddressButtons';
-import ControllersList from '@/components/ControllersList';
+import AddressButtons from '@/components/ui/AddressButtons';
+import ControllersList from '@/components/features/ControllersList';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 import useWeb3 from '@/hooks/useWeb3';
 
 import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
-import AddressInfos from '@/components/AddressInfos';
+import AddressInfos from '@/components/features/AddressInfos';
 
 import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';
-import CodeEditor from '../CodeEditor';
+import CodeEditor from '../../ui/CodeEditor';
 
 interface Props {
   address: string;

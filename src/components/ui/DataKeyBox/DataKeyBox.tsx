@@ -2,10 +2,10 @@ import { ERC725JSONSchema } from '@erc725/erc725.js';
 
 import { SCHEMA_DOCS_LINKS, SchemaName } from './schemas';
 
-import CodeEditor from '../CodeEditor';
+import CodeEditor from '@/components/ui/CodeEditor';
 
-import AddressButtons from '@/components/AddressButtons';
-import ValueTypeDecoder from '@/components/ValueTypeDecoder';
+import AddressButtons from '@/components/ui/AddressButtons';
+import ValueTypeDecoder from '@/components/features/ValueTypeDecoder';
 
 type DataKeyBoxProps = {
   address: string;

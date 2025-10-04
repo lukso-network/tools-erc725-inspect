@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
-import KeyManagerNonceChecker from '@/components/KeyManagerNonceChecker';
-import KeyManagerPermissions from '@/components/KeyManagerPermissions';
+import KeyManagerNonceChecker from '@/components/features/KeyManagerNonceChecker';
+import KeyManagerPermissions from '@/components/features/KeyManagerPermissions';
 
 const KeyManager: NextPage = () => {
   return (

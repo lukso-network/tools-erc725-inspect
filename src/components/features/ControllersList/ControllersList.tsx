@@ -4,7 +4,7 @@ import { hexToBytes } from 'web3-utils';
 
 import { getDataBatch } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
-import AddressInfos from '@/components/AddressInfos';
+import AddressInfos from '@/components/features/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
 interface PermissionDataKeyDisplayProps {

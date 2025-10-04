@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import CardContainer from '@/components/CardContainer';
+import CardContainer from '@/components/ui/CardContainer';
 import { menuItems } from '@/constants/menu';
 
 const Home: NextPage = () => {

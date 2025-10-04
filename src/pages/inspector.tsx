@@ -9,11 +9,11 @@ import { isAddress } from 'web3-utils';
 import '@/styles/Inspect.module.css';
 import { checkInterface, getVersion } from '@/utils/web3';
 
-import AddressButtons from '@/components/AddressButtons';
-import CustomKeySchemaForm from '@/components/CustomKeySchemaForm';
-import ContractOwner from '@/components/ContractOwner';
-import DataKeysTable from '@/components/DataKeysTable';
-import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
+import AddressButtons from '@/components/ui/AddressButtons';
+import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
+import ContractOwner from '@/components/features/ContractOwner';
+import DataKeysTable from '@/components/features/DataKeysTable';
+import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
 import { NetworkContext } from '@/contexts/NetworksContext';
 
 import useWeb3 from '@/hooks/useWeb3';
@@ -26,7 +26,7 @@ import {
 
 import { LSP_SPECS_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
-import ToolInfos from '@/components/ToolInfos';
+import ToolInfos from '@/components/layout/ToolInfos';
 
 const Home: NextPage = () => {
   const router = useRouter();
