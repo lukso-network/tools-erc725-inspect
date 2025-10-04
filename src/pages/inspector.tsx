@@ -27,6 +27,7 @@ import {
 import { LSP_SPECS_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import ToolInfos from '@/components/layout/ToolInfos';
+import ExternalLink from '@/components/ui/ExternalLink/ExternalLink';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -446,14 +447,10 @@ const Home: NextPage = () => {
                     <div className="column is-two-thirds">
                       <div className="content">
                         <div className="title is-4">
-                          <a
-                            href="https://docs.lukso.tech/standards/lsp-background/erc725"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="home-link"
-                          >
-                            Contract ↗️
-                          </a>
+                          <ExternalLink
+                            url="https://docs.lukso.tech/standards/lsp-background/erc725"
+                            text="Contract ↗️"
+                          />
                         </div>
                         <ul>
                           <li>

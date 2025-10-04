@@ -103,8 +103,9 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
     <div className="columns is-multiline dataKeyBox my-3">
       <div className="column is-two-thirds">
         <div className="content">
-          <div className="title is-4 home-link">
+          <div className="title is-4">
             <a
+              className="home-link"
               href="https://docs.lukso.tech/standards/lsp-background/erc725/#ownership"
               target="_blank"
               rel="noopener noreferrer"

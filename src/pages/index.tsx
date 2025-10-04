@@ -2,6 +2,21 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Card from '@/components/ui/Card';
 import { menuItems } from '@/constants/menu';
+import styled from '@emotion/styled';
+import { LSP_DOCS_URL } from '@/constants/links';
+
+// Since we are in the `pages/` folder, just use CSS-in-JS here for simplicity
+// to avoid creating a new css file just for one class
+const CardsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  align-items: stretch;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+`;
 
 const Home: NextPage = () => {
   return (
@@ -15,7 +30,7 @@ const Home: NextPage = () => {
           <p>
             This website provides debugging tools to interact with{' '}
             <a
-              href="https://docs.lukso.tech/standards/lsp-background/erc725"
+              href={LSP_DOCS_URL.ERC725}
               target="_blank"
               rel="noreferrer"
               className="home-link mr-1"
@@ -24,34 +39,16 @@ const Home: NextPage = () => {
             </a>
             smart contracts.
           </p>
-          {/* TODO: move out this styling */}
-          <div
-            style={{
-              maxWidth: '1400px',
-              margin: '0 auto',
-              padding: '1rem',
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '2rem',
-              justifyContent: 'center',
-              alignItems: 'stretch',
-            }}
-          >
+          <CardsContainer>
             {menuItems.map((item, index) => (
-              <Card
-                key={index}
-                title={item.title}
-                description={item.description}
-                link={item.link}
-                isBeta={item.isBeta}
-              />
+              <Card key={index} {...item} />
             ))}
-          </div>
+          </CardsContainer>
           <h3 className="title is-3">External Developer Resources</h3>
           <p>
             Start integrating{' '}
             <a
-              href="https://docs.lukso.tech/standards/lsp-background/erc725"
+              href={LSP_DOCS_URL.ERC725}
               target="_blank"
               rel="noreferrer"
               className="home-link mr-1"
@@ -70,18 +67,7 @@ const Home: NextPage = () => {
             smart contracts into your own projects by diving into the following
             apps and libraries:
           </p>
-          <div
-            style={{
-              maxWidth: '1400px',
-              margin: '0 auto',
-              padding: '1rem',
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '2rem',
-              justifyContent: 'center',
-              alignItems: 'stretch',
-            }}
-          >
+          <CardsContainer>
             {[
               {
                 title: 'up-test-dapp',
@@ -113,7 +99,7 @@ const Home: NextPage = () => {
                 isExternal={item.isExternal}
               />
             ))}
-          </div>
+          </CardsContainer>
         </div>
       </div>
     </>

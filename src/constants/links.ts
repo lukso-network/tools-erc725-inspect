@@ -17,6 +17,7 @@ export const LSP_SPECS_URL = {
 // Specs
 
 export const LSP_DOCS_URL = {
+  ERC725: 'https://docs.lukso.tech/standards/lsp-background/erc725',
   ERC725Y:
     'https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y',
   LSP0: 'https://docs.lukso.tech/standards/accounts/lsp0-erc725account/',
