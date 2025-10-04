@@ -11,6 +11,7 @@ import { getData } from '@/utils/web3';
 import CodeEditor from '@/components/ui/CodeEditor';
 
 import { LSP_SPECS_URL } from '@/constants/links';
+import ExternalLink from '@/components/ui/ExternalLink';
 
 const SCHEMA_PLACEHOLDER = {
   name: 'MyCustomKey',
@@ -561,10 +562,11 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
 
       <div className="mb-4 p-4 has-background-light">
         <div className="is-flex is-justify-content-space-between is-align-items-center">
-          <h5 className="title is-5 home-link">
-            <a href={LSP_SPECS_URL.LSP2} target="_blank" rel="noreferrer">
-              LSP2 Schema - {isJSONMode ? 'JSON Input' : 'Form Input'}
-            </a>
+          <h5 className="title is-5">
+            <ExternalLink
+              url={LSP_SPECS_URL.LSP2}
+              text={`LSP2 Schema - ${isJSONMode ? 'JSON Input' : 'Form Input'}`}
+            />
           </h5>
           <div className="field is-grouped is-grouped-right mb-4">
             <div className="buttons">

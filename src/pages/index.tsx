@@ -4,6 +4,7 @@ import Card from '@/components/ui/Card';
 import { menuItems } from '@/constants/menu';
 import styled from '@emotion/styled';
 import { LSP_DOCS_URL } from '@/constants/links';
+import ExternalLink from '@/components/ui/ExternalLink/ExternalLink';
 
 // Since we are in the `pages/` folder, just use CSS-in-JS here for simplicity
 // to avoid creating a new css file just for one class
@@ -29,14 +30,7 @@ const Home: NextPage = () => {
           <h1 className="title is-1">Welcome to ERC725 Tools</h1>
           <p>
             This website provides debugging tools to interact with{' '}
-            <a
-              href={LSP_DOCS_URL.ERC725}
-              target="_blank"
-              rel="noreferrer"
-              className="home-link mr-1"
-            >
-              ERC725
-            </a>
+            <ExternalLink url={LSP_DOCS_URL.ERC725} text="ERC725" />
             smart contracts.
           </p>
           <CardsContainer>

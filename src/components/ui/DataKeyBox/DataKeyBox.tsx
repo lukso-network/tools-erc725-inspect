@@ -6,6 +6,7 @@ import CodeEditor from '@/components/ui/CodeEditor';
 
 import AddressButtons from '@/components/ui/AddressButtons';
 import ValueTypeDecoder from '@/components/features/ValueTypeDecoder';
+import ExternalLink from '../ExternalLink';
 
 type DataKeyBoxProps = {
   address: string;
@@ -30,14 +31,10 @@ const DataKeyBox = ({ address, data }: DataKeyBoxProps) => {
         <div className="content">
           <div className="title is-4">
             {data.schema.name in SchemaName ? (
-              <a
-                href={SCHEMA_DOCS_LINKS[data.schema.name]}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="home-link"
-              >
-                {data.schema.name} ↗️
-              </a>
+              <ExternalLink
+                url={SCHEMA_DOCS_LINKS[data.schema.name]}
+                text={`${data.schema.name} ↗️`}
+              />
             ) : (
               data.schema.name
             )}

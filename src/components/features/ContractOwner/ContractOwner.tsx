@@ -6,6 +6,7 @@ import { eip165ABI } from '@/constants/abi';
 import { AbiItem, isAddress } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import AddressButtons from '@/components/ui/AddressButtons';
+import ExternalLink from '@/components/ui/ExternalLink/ExternalLink';
 
 type Props = {
   contractAddress: string;
@@ -104,14 +105,10 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
       <div className="column is-two-thirds">
         <div className="content">
           <div className="title is-4">
-            <a
-              className="home-link"
-              href="https://docs.lukso.tech/standards/lsp-background/erc725/#ownership"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Owner ↗️
-            </a>
+            <ExternalLink
+              url="https://docs.lukso.tech/standards/lsp-background/erc725/#ownership"
+              text="Owner ↗️"
+            />
           </div>
           <ul>
             <li>
