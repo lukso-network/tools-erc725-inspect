@@ -19,7 +19,7 @@ export const SCHEMA_DOCS_LINKS: { [key in SchemaName]: string } = {
   'LSP5ReceivedAssets[]':
     'https://docs.lukso.tech/standards/universal-profile/lsp5-received-assets',
   'AddressPermissions[]':
-    'https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager/',
+    'https://docs.lukso.tech/standards/access-control/lsp6-key-manager',
   'LSP10Vaults[]':
     'https://docs.lukso.tech/standards/universal-profile/lsp10-received-vaults',
   'LSP12IssuedAssets[]':

@@ -58,7 +58,7 @@ const KeyManagerNonceChecker: React.FC = () => {
         <div className="message-body">
           Retrieve the nonce of a{' '}
           <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account"
+            href="https://docs.lukso.tech/standards/accounts/lsp0-erc725account"
             target="_blank"
             rel="noreferrer"
             className="ml-1"
@@ -67,7 +67,7 @@ const KeyManagerNonceChecker: React.FC = () => {
           </a>
           's{' '}
           <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager#introduction"
+            href="https://docs.lukso.tech/standards/access-control/lsp6-key-manager#introduction"
             target="_blank"
             rel="noreferrer"
           >
@@ -75,7 +75,7 @@ const KeyManagerNonceChecker: React.FC = () => {
           </a>{' '}
           for a specific{' '}
           <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+            href="https://docs.lukso.tech/standards/access-control/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
           >
@@ -101,7 +101,7 @@ const KeyManagerNonceChecker: React.FC = () => {
           </a>{' '}
           standardization that every{' '}
           <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+            href="https://docs.lukso.tech/standards/access-control/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
           >

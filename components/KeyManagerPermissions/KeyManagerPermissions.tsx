@@ -43,7 +43,7 @@ const KeyManagerPermissions: React.FC = () => {
         <div className="message-body">
           Encode and decode{' '}
           <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager/#address-permissions"
+            href="https://docs.lukso.tech/standards/access-control/lsp6-key-manager#address-permissions"
             target="_blank"
             rel="noreferrer"
           >
@@ -51,7 +51,7 @@ const KeyManagerPermissions: React.FC = () => {
           </a>{' '}
           based on the{' '}
           <a
-            href="https://docs.lukso.tech/standards/universal-profile/lsp6-key-manager"
+            href="https://docs.lukso.tech/standards/access-control/lsp6-key-manager"
             target="_blank"
             rel="noreferrer"
           >
@@ -64,7 +64,7 @@ const KeyManagerPermissions: React.FC = () => {
         <div className="message-body">
           It&lsquo;s using the{' '}
           <a
-            href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
+            href="https://docs.lukso.tech/tools/dapps/erc725js/methods/#encodepermissions"
             target="_blank"
             rel="noreferrer"
           >

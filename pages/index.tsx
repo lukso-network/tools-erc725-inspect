@@ -19,7 +19,7 @@ const Home: NextPage = () => {
           <p>
             This website provides debugging tools to interact with{' '}
             <a
-              href="https://docs.lukso.tech/standards/lsp-background/erc725"
+              href="https://docs.lukso.tech/standards/erc725/"
               target="_blank"
               rel="noreferrer"
               className="home-link mr-1"
@@ -74,7 +74,7 @@ const Home: NextPage = () => {
           <p>
             Start integrating{' '}
             <a
-              href="https://docs.lukso.tech/standards/lsp-background/erc725"
+              href="https://docs.lukso.tech/standards/erc725/"
               target="_blank"
               rel="noreferrer"
               className="home-link mr-1"
@@ -106,7 +106,7 @@ const Home: NextPage = () => {
                 title: 'erc725.js',
                 description:
                   'The ERC725 library allows seamless interaction of smart contract schemas and contracts to simpify ERC725 integration.',
-                link: 'https://docs.lukso.tech/tools/erc725js/getting-started',
+                link: 'https://docs.lukso.tech/tools/dapps/erc725js/getting-started/',
                 isExternal: true,
                 version: ERC725_JS_VERSION,
               },
