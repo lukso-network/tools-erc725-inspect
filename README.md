@@ -1,6 +1,6 @@
 # 📝 ERC725 Tools
 
-This project provides a debugging frontend for smart contract based on [ERC725](https://docs.lukso.tech/standards/lsp-background/erc725) standard on the [LUKSO network](https://docs.lukso.tech/networks/mainnet/parameters).
+This project provides a debugging frontend for smart contract based on [ERC725](https://docs.lukso.tech/standards/erc725/) standard on the [LUKSO network](https://docs.lukso.tech/networks/mainnet/parameters).
 
 If you are a developer, check out the [LUKSO Technical Documentation](https://docs.lukso.tech/).
 

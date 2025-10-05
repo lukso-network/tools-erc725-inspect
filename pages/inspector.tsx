@@ -392,7 +392,7 @@ const Home: NextPage = () => {
             <p>
               It&lsquo;s using the
               <a
-                href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodepermissions"
+                href="https://docs.lukso.tech/tools/dapps/erc725js/methods/#encodepermissions"
                 target="_blank"
                 rel="noreferrer"
                 className="mx-1"
@@ -475,7 +475,7 @@ const Home: NextPage = () => {
                       <div className="content">
                         <div className="title is-4">
                           <a
-                            href="https://docs.lukso.tech/standards/lsp-background/erc725"
+                            href="https://docs.lukso.tech/standards/erc725/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="home-link"

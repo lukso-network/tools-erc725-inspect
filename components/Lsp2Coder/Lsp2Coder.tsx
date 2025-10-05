@@ -230,7 +230,7 @@ const Lsp2Coder: React.FC = () => {
         <div className="message-body">
           It&lsquo;s using the
           <a
-            href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#encodedata"
+            href="https://docs.lukso.tech/tools/dapps/erc725js/methods/#encodedata"
             target="_blank"
             rel="noreferrer"
             className="mx-1"
@@ -239,7 +239,7 @@ const Lsp2Coder: React.FC = () => {
           </a>
           and
           <a
-            href="https://docs.lukso.tech/tools/erc725js/classes/ERC725#decodedata"
+            href="https://docs.lukso.tech/tools/dapps/erc725js/methods/#decodedata"
             target="_blank"
             rel="noreferrer"
             className="mx-1"
