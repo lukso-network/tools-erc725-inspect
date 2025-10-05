@@ -105,7 +105,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
         <div className="content">
           <div className="title is-4 home-link">
             <a
-              href="https://docs.lukso.tech/standards/erc725//#ownership"
+              href="https://docs.lukso.tech/standards/erc725/#ownership"
               target="_blank"
               rel="noopener noreferrer"
             >
