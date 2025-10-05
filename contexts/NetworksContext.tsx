@@ -12,17 +12,17 @@ const chains: INetwork[] = [
   {
     name: NetworkName.MAINNET,
     rpc: RPC_URL[NetworkName.MAINNET],
-    imgUrl: '/lukso.png',
+    imgUrl: '/lukso-signet-fuschia.svg',
   },
   {
     name: NetworkName.TESTNET,
     rpc: RPC_URL[NetworkName.TESTNET],
-    imgUrl: '/lukso.png',
+    imgUrl: '/lukso-signet-yellow.svg',
   },
   {
     name: NetworkName.LOCALHOST,
     rpc: RPC_URL[NetworkName.LOCALHOST],
-    imgUrl: '/lukso.png',
+    imgUrl: '/lukso-signet-yellow.svg',
   },
 ];
 
