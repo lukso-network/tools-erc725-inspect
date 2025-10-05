@@ -30,7 +30,7 @@ const Home: NextPage = () => {
             Encode and decode transaction data of
             <a
               className="mx-1"
-              href="https://docs.lukso.tech/standards/smart-contracts/lsp0-erc725-account"
+              href="https://docs.lukso.tech/standards/accounts/lsp0-erc725account"
               target="_blank"
               rel="noreferrer"
             >

@@ -242,7 +242,7 @@ const GetData: NextPage = () => {
             <p>
               Retrieve the encoded data stored under an
               <a
-                href="https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y---generic-key-value-store"
+                href="https://docs.lukso.tech/standards/accounts/lsp0-erc725account#erc725y---generic-key-value-store"
                 target="_blank"
                 rel="noreferrer"
                 className="mx-1"
@@ -278,7 +278,7 @@ const GetData: NextPage = () => {
             </a>
             function of the
             <a
-              href="https://docs.lukso.tech/standards/lsp-background/erc725#erc725y-generic-data-keyvalue-store"
+              href="https://docs.lukso.tech/standards/erc725/#erc725y-generic-data-keyvalue-store"
               target="_blank"
               rel="noreferrer"
               className="mx-1"
