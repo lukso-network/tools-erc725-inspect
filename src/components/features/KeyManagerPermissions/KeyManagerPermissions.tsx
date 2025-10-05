@@ -5,6 +5,7 @@ import ERC725 from '@erc725/erc725.js';
 import PermissionsBtns from '@/components/ui/PermissionsBtns';
 import ToolInfos from '@/components/layout/ToolInfos';
 import { LSP_DOCS_URL } from '@/constants/links';
+import PermissionBadge from '@/components/ui/PermissionBadge';
 
 const KeyManagerPermissions: React.FC = () => {
   const initialEncodedPermissions =
@@ -76,12 +77,28 @@ const KeyManagerPermissions: React.FC = () => {
       <div className="columns">
         <div className="column is-half">
           <h5 className="mb-2 title is-5">Contract Ownership</h5>
-          <PermissionsBtns
-            permissions={['CHANGEOWNER', 'ADDCONTROLLER', 'EDITPERMISSIONS']}
+          <div className="buttons">
+            {['CHANGEOWNER', 'ADDCONTROLLER', 'EDITPERMISSIONS'].map(
+              (permission) => (
+                <PermissionBadge
+                  key={permission}
+                  permissionName={permission}
+                  color={'is-orange-dark'}
+                  isOutlined={!decodedPermissions[permission] ? true : false}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePermissionClick(permission);
+                  }}
+                />
+              ),
+            )}
+          </div>
+          {/* <PermissionsBtns
+            permissions={}
             color={'is-orange-dark'}
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
-          />
+          /> */}
           <h5 className="mb-2 title is-5">Extensions</h5>
           <PermissionsBtns
             permissions={['ADDEXTENSIONS', 'CHANGEEXTENSIONS']}

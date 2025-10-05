@@ -1,3 +1,5 @@
+import PermissionBadge from '../PermissionBadge/PermissionBadge';
+
 type Props = {
   permissions: string[];
   color: string;
@@ -14,18 +16,16 @@ const PermissionBtn: React.FC<Props> = ({
   return (
     <div className="buttons">
       {permissions.map((permission: string) => (
-        <button
+        <PermissionBadge
           key={permission}
-          className={`button ${color} ${
-            !decodedPermissions[permission] && 'is-outlined'
-          }`}
+          color={color}
+          permissionName={permission}
+          isOutlined={!decodedPermissions[permission] ? true : false}
           onClick={(e) => {
             e.preventDefault();
             handlePermissionClick(permission);
           }}
-        >
-          {permission}
-        </button>
+        />
       ))}
     </div>
   );
