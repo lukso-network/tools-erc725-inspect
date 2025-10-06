@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "export": "next build && next export",
     "clean": "rm -rf .next"
   },
@@ -46,9 +46,9 @@
     "@typescript-eslint/eslint-plugin": "^5.9.1",
     "bulma": "^0.9.3",
     "eslint": "8.5.0",
-    "eslint-config-next": "15.5.4",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.37.5",
     "prettier": "^2.5.1",
     "typescript": "^5.3.3"
   }
