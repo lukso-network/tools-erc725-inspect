@@ -22,7 +22,7 @@ export const CHAINS: INetwork[] = [
   {
     name: NetworkName.TESTNET,
     rpc: RPC_URL[NetworkName.TESTNET],
-    imgUrl: '/lukso-signet-yellow.png',
+    imgUrl: '/lukso-signet-yellow.svg',
   },
   {
     name: NetworkName.LOCALHOST,
