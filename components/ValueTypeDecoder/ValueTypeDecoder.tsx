@@ -75,7 +75,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
           <code>{value}</code>
           <div className="mt-4"></div>
           <AddressInfos address={badgeContent} userAddress={address} />
-          <AddressButtons address={badgeContent} />
         </>
       );
     }

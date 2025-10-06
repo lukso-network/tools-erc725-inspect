@@ -24,11 +24,12 @@ import { checkInterface, getData } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';
 
 import SampleAddressInput from '@/components/SampleAddressInput/SampleAddressInput';
-import { LSP_SPECS_URL } from '@/constants/links';
+import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
 import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
+import ToolInfos from '@/components/ToolInfos';
 
 // using local variable for LSP28TheGrid key for now
 const LSP28_THE_GRID_KEY =
@@ -222,7 +223,7 @@ const GetData: NextPage = () => {
   useEffect(() => {
     setERC725JsInstance(
       new ERC725(schemas, address, web3?.currentProvider, {
-        ipfsGateway: 'https://api.universalprofile.cloud/ipfs/',
+        ipfsGateway: `${LUKSO_IPFS_BASE_URL}/`,
       }),
     );
   }, [address, web3]);
@@ -234,61 +235,25 @@ const GetData: NextPage = () => {
       </Head>
       <div className="container">
         <h2 className="title is-2">Data Fetcher</h2>
-        <div className="tags has-addons">
-          <span className="tag is-dark">Network</span>
-          <span className="tag is-warning">{network.name}</span>
-        </div>
-        <article className="message is-info">
-          <div className="message-body">
-            <p>
-              Retrieve the encoded data stored under an
-              <a
-                href="https://docs.lukso.tech/standards/accounts/lsp0-erc725account#erc725y---generic-key-value-store"
-                target="_blank"
-                rel="noreferrer"
-                className="mx-1"
-              >
+        <ToolInfos
+          erc725jsMethod="decodeData"
+          description={
+            <>
+              Retrieve the value under a specific{' '}
+              <a href={LSP_SPECS_URL.ERC725Y} target="_blank" rel="noreferrer">
                 ERC725Y
-              </a>
-              data key.
-            </p>
-            <p>
-              See the
+              </a>{' '}
+              data key and decode it according to its known{' '}
               <a
+                href={`${LSP_SPECS_URL.LSP2}#valueContent`}
                 target="_blank"
                 rel="noreferrer"
-                href={`${LSP_SPECS_URL.LSP2}#valueContent`}
-                className="mx-1"
               >
-                LSP-2 ERC725YJSONSchema
+                LSP2 <code>valueContent</code>
               </a>
-              specification to know how this value is encoded/decoded.
-            </p>
-          </div>
-        </article>
-        <article className="message">
-          <div className="message-body">
-            It&lsquo;s calling the
-            <a
-              href="https://github.com/ERC725Alliance/ERC725/blob/develop/docs/ERC-725.md#getdata"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              getData
-            </a>
-            function of the
-            <a
-              href="https://docs.lukso.tech/standards/erc725/#erc725y-generic-data-keyvalue-store"
-              target="_blank"
-              rel="noreferrer"
-              className="mx-1"
-            >
-              ERC725Y
-            </a>
-            smart contract.
-          </div>
-        </article>
+            </>
+          }
+        />
 
         <div className="is-flex">
           <div className="is-half">

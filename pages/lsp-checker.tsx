@@ -153,7 +153,7 @@ const LSPChecker: NextPage = () => {
             key,
           },
         ],
-        LUKSO_IPFS_BASE_URL,
+        LUKSO_IPFS_BASE_URL + '/',
       );
 
       const hash = keccak256(JSON.stringify(json));
@@ -181,7 +181,18 @@ const LSPChecker: NextPage = () => {
         <title>LSP Checker - ERC725 Tools</title>
       </Head>
       <div className="container">
-        <h2 className="title is-2">LSP Checker</h2>
+        <div className="is-flex is-align-items-center mb-2">
+          <h2 className="title is-2 mb-0">LSP Checker</h2>
+
+          <button className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2">
+            beta
+          </button>
+        </div>
+        <article className="message is-warning content">
+          <div className="message-body">
+            <p>This tool is in beta and under development</p>
+          </div>
+        </article>
 
         <div className="field">
           <h3 className="title is-3">Contract Address</h3>
@@ -203,7 +214,7 @@ const LSPChecker: NextPage = () => {
               type="button"
               onClick={retrieveData}
             >
-              Verify Universal Profile
+              Verify
             </button>
           </div>
         </div>

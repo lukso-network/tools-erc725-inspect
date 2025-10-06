@@ -26,6 +26,7 @@ import {
 
 import { LSP_SPECS_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
+import ToolInfos from '@/components/ToolInfos';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -366,52 +367,23 @@ const Home: NextPage = () => {
       </Head>
       <div className="container">
         <h2 className="title is-2">Inspector</h2>
-        <article className="message is-info content">
-          <div className="message-body">
-            <p>
-              Retrieve and decode all
-              <a
-                href="https://github.com/ERC725Alliance/ERC725"
-                target="_blank"
-                rel="noreferrer"
-                className="mx-1"
-              >
+        <ToolInfos
+          erc725jsMethod="fetchData"
+          description={
+            <>
+              Retrieve, decode and display all{' '}
+              <a href={LSP_SPECS_URL.ERC725Y} target="_blank" rel="noreferrer">
                 ERC725Y
-              </a>
-              data keys of a smart contract using the
-              <a
-                href={LSP_SPECS_URL.LSP2}
-                target="_blank"
-                rel="noreferrer"
-                className="mx-1"
-              >
-                LSP2 ERC725YJSONSchema
-              </a>
-              specification.
-            </p>
-            <p>
-              It&lsquo;s using the
-              <a
-                href="https://docs.lukso.tech/tools/dapps/erc725js/methods/#encodepermissions"
-                target="_blank"
-                rel="noreferrer"
-                className="mx-1"
-              >
-                getData
-              </a>
-              function of the
-              <a
-                href="https://www.npmjs.com/package/@erc725/erc725.js"
-                target="_blank"
-                rel="noreferrer"
-                className="mx-1"
-              >
-                erc725.js
-              </a>
-              library.
-            </p>
-          </div>
-        </article>
+              </a>{' '}
+              data keys of a smart contract in a developer-friendly way using
+              the{' '}
+              <a href={LSP_SPECS_URL.LSP2} target="_blank" rel="noreferrer">
+                LSP2 ERC725Y JSON Schema
+              </a>{' '}
+              standard.
+            </>
+          }
+        />
 
         <div className="columns">
           <div className="column is-half">
@@ -470,8 +442,8 @@ const Home: NextPage = () => {
               <>
                 <>
                   <h3 className="title is-3">Instance and Ownership</h3>
-                  <div className="columns is-multiline mt-3">
-                    <div className="column is-full dataKeyBox">
+                  <div className="columns is-multiline dataKeyBox my-3">
+                    <div className="column is-two-thirds">
                       <div className="content">
                         <div className="title is-4">
                           <a
@@ -499,11 +471,18 @@ const Home: NextPage = () => {
                             </code>
                           </li>
                         </ul>
-                        <AddressButtons
-                          address={address}
-                          showInspectButton={false}
-                        ></AddressButtons>
                       </div>
+                    </div>
+                    <div className="column">
+                      <AddressButtons
+                        address={address}
+                        showInspectButton={false}
+                        standards={{
+                          isLSP0ERC725Account,
+                          isLSP7DigitalAsset,
+                          isLSP8IdentifiableDigitalAsset,
+                        }}
+                      />
                     </div>
                   </div>
                 </>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
-import { hexToBytes } from 'web3-utils';
 
 import { getDataBatch } from '@/utils/web3';
 import useWeb3 from '@/hooks/useWeb3';

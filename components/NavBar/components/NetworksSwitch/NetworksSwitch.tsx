@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { INetwork } from '@/types/network';
 import { CHAINS } from '@/constants/networks';
+import clsx from 'clsx';
 
 const NetworkSwitch: React.FC = () => {
   const router = useRouter();
@@ -34,13 +35,13 @@ const NetworkSwitch: React.FC = () => {
 
   return (
     <div
-      className={`navbar-item has-dropdown ${
-        isDropdownActive ? 'is-active' : ''
-      }`}
+      className={clsx(
+        `navbar-item has-dropdown ${isDropdownActive && 'is-active'}`,
+      )}
       onClick={toggleDropdown}
       onBlur={handleDropdownBlur} // Add onBlur event handler
     >
-      <a className="navbar-link is-flex" style={{ alignItems: 'center' }}>
+      <a className="navbar-link is-flex">
         {network.imgUrl && (
           <img
             src={network.imgUrl}
