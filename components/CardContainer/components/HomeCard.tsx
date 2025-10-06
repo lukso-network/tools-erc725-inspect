@@ -21,7 +21,9 @@ const HomeCard: React.FC<CardProps> = ({
 }) => {
   const fullTitle = isExternal ? `${title} ↗` : title;
 
-  const LinkWrapper: React.FC = ({ children }) => {
+  const LinkWrapper: React.FC<{ children: React.ReactNode }> = ({
+    children,
+  }) => {
     if (isExternal) {
       return (
         <a href={link} target="_blank" rel="noopener noreferrer">

@@ -15,8 +15,6 @@ import {
 } from '@lukso/lsp-smart-contracts';
 
 // components
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FileIcon, IconType } from 'react-file-icon';
 import { AuthenticatedFormDataUploader } from '@lukso/data-provider-base';
 
 const erc725js = new ERC725(LSP4Schema);
@@ -53,15 +51,7 @@ const FileSelect = ({
       <label className="file-label">
         <input className="file-input" type="file" name="" onChange={choose} />
         <span className="file-cta">
-          <span className="file-icon">
-            <FontAwesomeIcon
-              icon={{
-                prefix: 'fas',
-                iconName: 'upload',
-              }}
-            />
-          </span>
-          <span className="file-label">Choose</span>
+          <span className="file-label">Choose file</span>
         </span>
         <span className="file-name">{file ? file.name : inputText}</span>
       </label>
@@ -93,13 +83,7 @@ const UploadedFile = ({
         <img alt="" src={image} style={{ padding: 0, maxWidth: '50px' }} />
       ) : (
         <div style={{ maxWidth: '50px' }}>
-          <FileIcon
-            {...((type && {
-              type: type.split('/')[0] as IconType,
-            }) || {
-              extension: name.substring(name.lastIndexOf('.') + 1),
-            })}
-          />
+          <p>Upload file</p>
         </div>
       )}
 
@@ -143,12 +127,7 @@ const AttributeTypeSelect = ({
         >
           <span>{text ? text : 'Type'}</span>
           <span className="file-icon" style={{ margin: '0 0 0 16px' }}>
-            <FontAwesomeIcon
-              icon={{
-                prefix: 'fas',
-                iconName: 'angle-down',
-              }}
-            />
+            Choose file
           </span>
         </button>
       </div>
@@ -447,14 +426,7 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
                       : null
                   }
                 >
-                  <FontAwesomeIcon
-                    icon={{
-                      prefix: 'fas',
-                      iconName: 'plus-circle',
-                    }}
-                    size="2x"
-                    color="#808080"
-                  />
+                  Add item
                 </button>
               ) : (
                 <button
@@ -471,14 +443,7 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
                     )
                   }
                 >
-                  <FontAwesomeIcon
-                    icon={{
-                      prefix: 'fas',
-                      iconName: 'minus-circle',
-                    }}
-                    size="2x"
-                    color="#808080"
-                  />
+                  Add item
                 </button>
               )}
             </div>
@@ -553,14 +518,7 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
                       : null
                   }
                 >
-                  <FontAwesomeIcon
-                    icon={{
-                      prefix: 'fas',
-                      iconName: 'plus-circle',
-                    }}
-                    size="2x"
-                    color="#808080"
-                  />
+                  Add attribute
                 </button>
               ) : (
                 <button
@@ -580,14 +538,7 @@ const Lsp4MetadataEncoderPage: NextPage = () => {
                     )
                   }
                 >
-                  <FontAwesomeIcon
-                    icon={{
-                      prefix: 'fas',
-                      iconName: 'minus-circle',
-                    }}
-                    size="2x"
-                    color="#808080"
-                  />
+                  Add
                 </button>
               )}
             </div>

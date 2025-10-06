@@ -51,24 +51,24 @@ const LinksMenu = ({
 
         <div className="navbar-dropdown">
           {linkItems.map(({ link, title, isBeta }) => (
-            <Link key={title} href={createLink(link)}>
-              <a
-                className={clsx(
-                  'navbar-item',
-                  pathname === link && 'has-text-link',
-                )}
-                onClick={() => setActiveMenu(null)} // close menu after click
-              >
-                {title}
-                {isBeta && (
-                  <button
-                    className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2"
-                    style={{ fontSize: '0.5rem' }}
-                  >
-                    beta
-                  </button>
-                )}
-              </a>
+            <Link
+              key={title}
+              href={createLink(link)}
+              className={clsx(
+                'navbar-item',
+                pathname === link && 'has-text-link',
+              )}
+              onClick={() => setActiveMenu(null)} // close menu after click>
+            >
+              {title}
+              {isBeta && (
+                <button
+                  className="button is-rounded is-small is-warning is-outlined is-light mx-2 px-2"
+                  style={{ fontSize: '0.5rem' }}
+                >
+                  beta
+                </button>
+              )}
             </Link>
           ))}
         </div>
@@ -82,21 +82,21 @@ const LinksMenu = ({
         {isActive && (
           <div className="navbar-dropdown">
             {linkItems.map(({ title, link, isBeta }) => (
-              <Link key={title} href={createLink(link)}>
-                <a
-                  className={clsx(
-                    'navbar-item',
-                    pathname === link && 'has-text-link',
-                  )}
-                  onClick={() => setActiveMenu(null)}
-                >
-                  {title}
-                  {isBeta && (
-                    <span className="tag is-warning is-light is-rounded is-small ml-2">
-                      beta
-                    </span>
-                  )}
-                </a>
+              <Link
+                key={title}
+                href={createLink(link)}
+                className={clsx(
+                  'navbar-item',
+                  pathname === link && 'has-text-link',
+                )}
+                onClick={() => setActiveMenu(null)}
+              >
+                {title}
+                {isBeta && (
+                  <span className="tag is-warning is-light is-rounded is-small ml-2">
+                    beta
+                  </span>
+                )}
               </Link>
             ))}
           </div>
@@ -144,8 +144,8 @@ const NavBar: React.FC = () => {
   return (
     <nav className="navbar is-light sticky">
       <div className={`navbar-brand ${styles.navbarHeight}`}>
-        <Link href={createLink('/')}>
-          <a className="navbar-item is-hidden-desktop">Home</a>
+        <Link href={createLink('/')} className="navbar-item is-hidden-desktop">
+          Home
         </Link>
         <a
           role="button"
@@ -162,10 +162,11 @@ const NavBar: React.FC = () => {
 
       <div className={clsx('navbar-menu', isMobileOpen && 'is-active')}>
         <div className="navbar-start">
-          <Link href={createLink('/')}>
-            <a className={`navbar-item is-hidden-touch ${styles.navbarHeight}`}>
-              Home
-            </a>
+          <Link
+            href={createLink('/')}
+            className={`navbar-item is-hidden-touch ${styles.navbarHeight}`}
+          >
+            Home
           </Link>
           <LinksMenu
             id="inspector"
