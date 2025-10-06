@@ -3,7 +3,7 @@ import { Erc725JsMethod } from '@/types/erc725js';
 // Data Source
 export const LUKSO_IPFS_BASE_URL = 'https://api.universalprofile.cloud/ipfs';
 
-// Docs
+// Specs
 export const LSP_SPECS_URL = {
   ERC725Y:
     'https://github.com/ERC725Alliance/ERC725/blob/develop/docs/ERC-725.md#erc725y',
@@ -14,8 +14,7 @@ export const LSP_SPECS_URL = {
     'https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-26-FollowerSystem.md',
 };
 
-// Specs
-
+// Docs
 export const LSP_DOCS_URL = {
   ERC725Y:
     'https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y',

@@ -28,7 +28,7 @@ export const menuItems: MenuItem[] = [
     category: 'encoder',
   },
   {
-    title: '🗄️ Metadata Encoder ',
+    title: '🗄️ Metadata Encoder',
     description:
       'Encode and decode storage information based on any LSP2 ERC725Y JSON schema.',
     link: '/lsp2-encoder',
