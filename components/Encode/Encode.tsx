@@ -6,7 +6,7 @@ import EncodeSetData from './components/EncodeSetData';
 import EncodeTransferOwnership from './components/EncodeTransferOwnership';
 import styles from './Encode.module.scss';
 
-import { TRANSACTION_TYPES } from '@/interfaces/transaction';
+import { TRANSACTION_TYPES } from '@/types/transaction';
 
 interface Props {
   web3: Web3;

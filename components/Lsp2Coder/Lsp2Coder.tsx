@@ -3,7 +3,7 @@ import valueContents from './utils/valueContents';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { ERC725 } from '@erc725/erc725.js';
 import errorsDict from './utils/errorsDict';
-import { LSP_SPECS_URL } from '@/globals';
+import { LSP_SPECS_URL } from '@/constants/links';
 
 interface IVerifiableURIEncode {
   verification: {
