@@ -3,6 +3,7 @@
 const webpack = require('webpack');
 
 module.exports = {
+  output: 'export',
   reactStrictMode: true,
   webpack: (config) => {
     config.resolve.fallback = {
