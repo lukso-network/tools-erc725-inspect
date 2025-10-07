@@ -22,7 +22,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           bun install
-          bun run export
+          bun run build
 
       - run: touch ./out/.nojekyll
 
