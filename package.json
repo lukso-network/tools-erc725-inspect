@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "export": "next build && next export",
     "clean": "rm -rf .next"
   },
   "author": {
