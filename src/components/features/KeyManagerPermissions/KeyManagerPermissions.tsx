@@ -137,6 +137,13 @@ const KeyManagerPermissions: React.FC = () => {
             decodedPermissions={decodedPermissions}
             handlePermissionClick={handlePermissionClick}
           />
+          <h5 className="mb-2 title is-5">Relay Transactions</h5>
+          <PermissionsBtns
+            permissions={['EXECUTE_RELAY_CALL']}
+            color={'is-info'}
+            decodedPermissions={decodedPermissions}
+            handlePermissionClick={handlePermissionClick}
+          />
         </div>
         <div className="column is-half">
           <pre>{JSON.stringify(decodedPermissions, undefined, 2)}</pre>
