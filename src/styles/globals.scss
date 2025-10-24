@@ -27,41 +27,141 @@ code {
   word-break: break-all;
 }
 
-.is-outlined.is-purple {
-  background-color: transparent;
-  border-color: purple;
-  color: purple;
+// Increase container max-width for Key Manager permissions page
+// to fit buttons on table horizontally
+
+@media screen and (min-width: 1408px) {
+  .container:not(.is-max-desktop):not(.is-max-widescreen) {
+    max-width: 1450px;
+  }
 }
 
-.is-purple {
-  background-color: rgba(128, 0, 128, 0.45);
+// Permissions colours
+// --------------------------------
+
+// Admin & Ownership colour + DELEGATE CALL + REENTRANCY colours
+
+.is-outlined.is-red {
+  background-color: transparent;
+  border-color: #ff0000;
+  color: #ff0000;
+}
+
+.is-red {
+  background-color: rgba(255, 0, 0, 1);
   border-color: transparent;
-  color: black;
+  color: white;
+  font-weight: bold;
+}
+
+// LSP17 Extensions colour
+
+.is-outlined.is-extension {
+  background-color: transparent;
+  border-color: #2c7a7b;
+  color: #2c7a7b;
+}
+
+.is-extension {
+  background-color: #2c7a7b;
+  border-color: transparent;
+  color: white;
+  font-weight: bold;
+}
+
+// LSP1 Universal Receiver Delegate colours
+
+.is-outlined.is-fuschia {
+  background-color: transparent;
+  border-color: #ff00b7e7;
+  color: #ff00b7e7;
+}
+
+.is-fuschia {
+  background-color: #ff00b7e7;
+  border-color: transparent;
+  color: white;
+  font-weight: bold;
+}
+
+// Interactions colours
+
+.is-outlined.is-yellow {
+  background-color: transparent;
+  border-color: rgba(255, 165, 0, 0.75);
+  color: rgba(255, 165, 0, 0.75);
+  font-weight: bold;
+}
+
+.is-yellow {
+  background-color: rgba(255, 183, 0, 0.891);
+  border-color: transparent;
+  color: white;
+  font-weight: bold;
 }
 
 .is-outlined.is-orange {
   background-color: transparent;
-  border-color: orange;
-  color: orange;
+  border-color: rgba(255, 77, 0, 0.75);
+  color: rgba(255, 77, 0, 0.75);
+  font-weight: bold;
 }
 
 .is-orange {
-  background-color: rgba(255, 165, 0, 0.45);
+  background-color: rgb(255, 149, 0);
   border-color: transparent;
-  color: black;
+  color: white;
+  font-weight: bold;
 }
 
-.is-outlined.is-orange-dark {
+// Set Data colours
+
+.is-outlined.is-blue {
   background-color: transparent;
-  border-color: #b37700;
-  color: #b37700;
+  border-color: #3e8ed1;
+  color: #3e8ed1;
+  font-weight: bold;
 }
 
-.is-orange-dark {
-  background-color: rgba(179, 119, 0, 0.45);
+.is-blue {
+  background-color: #3e8ed1;
   border-color: transparent;
-  color: black;
+  color: white;
+  font-weight: bold;
 }
+
+// Encrypt, Decrypt & Sign colours
+
+.is-outlined.is-purple {
+  background-color: transparent;
+  border-color: rgb(178, 0, 178);
+  color: rgb(178, 0, 178);
+  font-weight: bold;
+}
+
+.is-purple {
+  background-color: rgb(178, 0, 178);
+  border-color: transparent;
+  color: white;
+  font-weight: bold;
+}
+
+// Other permissions
+
+.is-outlined.is-grey {
+  background-color: transparent;
+  border-color: #5a5a5a;
+  color: #5a5a5a;
+}
+
+.is-grey {
+  background-color: rgba(90, 90, 90, 0.45);
+  border-color: transparent;
+  color: white;
+  font-weight: bold;
+}
+
+// Navigaton Bar
 
 .navbar-link {
   min-width: 160px;
