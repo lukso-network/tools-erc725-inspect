@@ -12,7 +12,7 @@ import ToolInfos from '@/components/layout/ToolInfos';
 import { LSP_DOCS_URL } from '@/constants/links';
 
 const AddressPermissionsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
-  (schema) => schema.name.startsWith('AddressPermissions:Permissions'),
+  (schema) => schema.name.startsWith('AddressPermissions:Permissions:'),
 );
 
 const KeyManagerPermissions: React.FC = () => {
