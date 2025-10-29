@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema, encodeKeyName } from '@erc725/erc725.js';
-import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
+import { isValidTuple, type ERC725JSONSchemaKeyType } from '@erc725/erc725.js';
 import { isHex } from 'web3-utils';
 
 import useWeb3 from '@/hooks/useWeb3';
@@ -273,20 +273,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
     if (!name || !keyType) return '';
 
     try {
-      switch (keyType) {
-        case 'Singleton':
-          return encodeKeyName(name);
-        case 'Array':
-          return encodeKeyName(name + '[]');
-        case 'Mapping':
-          // For Mapping, we use a generic placeholder for the dynamic part
-          return encodeKeyName(name + ':<address>');
-        case 'MappingWithGrouping':
-          // For MappingWithGrouping, we use generic placeholders for both dynamic parts
-          return encodeKeyName(name + ':<bytes32>:<address>');
-        default:
-          return '';
-      }
+      return encodeKeyName(name);
     } catch (error) {
       console.error('Error generating data key hash:', error);
       return '';
