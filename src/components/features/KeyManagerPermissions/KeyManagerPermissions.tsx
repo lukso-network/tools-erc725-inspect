@@ -1,15 +1,25 @@
 /* eslint-disable react/no-unescaped-entities */
-
 import { useState } from 'react';
-import ERC725 from '@erc725/erc725.js';
+import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
+import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
+import { isAddress, isHex } from 'viem';
+
+import CodeEditor from '@/components/ui/CodeEditor';
+import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
 import PermissionsBtns from '@/components/ui/PermissionsBtns';
 import ToolInfos from '@/components/layout/ToolInfos';
+
 import { LSP_DOCS_URL } from '@/constants/links';
-import CodeEditor from '@/components/ui/CodeEditor';
+
+const AddressPermissionsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
+  (schema) => schema.name.startsWith('AddressPermissions:Permissions'),
+);
 
 const KeyManagerPermissions: React.FC = () => {
   const initialEncodedPermissions =
     '0x0000000000000000000000000000000000000000000000000000000000000001';
+
+  const [controllerAddress, setControllerAddress] = useState('');
 
   const [encodedPermissions, setEncodedPermissions] = useState(
     initialEncodedPermissions,
@@ -19,9 +29,62 @@ const KeyManagerPermissions: React.FC = () => {
     Record<string, boolean>
   >(ERC725.decodePermissions(initialEncodedPermissions));
 
-  const handleEncodedPermissionChange = (input: string) => {
+  const [encodedPermissionsDataKeyValues, setEncodedPermissionsDataKeyValues] =
+    useState<{ key: string; value: string } | string>();
+
+  const handleEncodeDataKeyValuePermissions = () => {
+    if (!AddressPermissionsSchema) {
+      alert('AddressPermissions schema not found');
+      return;
+    }
+
+    if (!isAddress(controllerAddress.toLowerCase())) {
+      alert('Please enter a valid controller address');
+      return;
+    }
+
+    if (
+      !encodedPermissions ||
+      !isHex(encodedPermissions) ||
+      encodedPermissions.length !== 66
+    ) {
+      alert('Invalid encoded permissions. Must be a 32 bytes hex string');
+      return;
+    }
+
     try {
-      // TODO: Check Validation. 32 bytes
+      const result = ERC725.encodeData(
+        [
+          {
+            keyName: `AddressPermissions:Permissions:<address>`,
+            dynamicKeyParts: controllerAddress,
+            value: encodedPermissions,
+          },
+        ],
+        [AddressPermissionsSchema],
+      );
+
+      setEncodedPermissionsDataKeyValues({
+        key: result.keys[0],
+        value: result.values[0],
+      });
+    } catch (error: any) {
+      console.error('Error encoding data:', error);
+      setEncodedPermissionsDataKeyValues(`Error: ${error.message}`);
+    }
+  };
+
+  const handleEncodedPermissionChange = (input: string) => {
+    if (
+      !encodedPermissions ||
+      !isHex(encodedPermissions) ||
+      encodedPermissions.length !== 66
+    ) {
+      alert('Invalid encoded permissions. Must be a 32 bytes hex string');
+      return;
+    }
+
+    try {
       setEncodedPermissions(input);
       setDecodedPermissions(ERC725.decodePermissions(input));
     } catch (error: any) {
@@ -63,15 +126,61 @@ const KeyManagerPermissions: React.FC = () => {
         }
       />
 
-      <div className="columns">
+      <div className="columns mx-1 p-4 has-background-light">
         <div className="column">
-          <input
-            className="input is-medium"
-            type="text"
-            placeholder="0x0000000000000000000000000000000000000000000000000000000000000001"
-            value={encodedPermissions}
-            onChange={(e) => handleEncodedPermissionChange(e.target.value)}
-          />
+          <h5 className="title is-5">Encoded Data Key / Value Permissions</h5>
+          {AddressPermissionsSchema && (
+            <CollapsibleSchema schema={AddressPermissionsSchema} />
+          )}
+
+          <div className="field">
+            <label className="label is-normal">Controller Address</label>
+            <div className="control">
+              <input
+                className="input is-normal"
+                type="text"
+                placeholder="enter controller address"
+                value={controllerAddress}
+                onChange={(e) => setControllerAddress(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="field">
+            <label className="label is-normal">Encoded Permissions</label>
+            <div className="control">
+              <input
+                className="input is-normal"
+                type="text"
+                placeholder="0x0000000000000000000000000000000000000000000000000000000000000001"
+                value={encodedPermissions}
+                onChange={(e) => handleEncodedPermissionChange(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="column">
+          <button
+            className="button is-primary"
+            type="button"
+            onClick={handleEncodeDataKeyValuePermissions}
+            disabled={!controllerAddress || !encodedPermissions}
+          >
+            Encode Data Key / Value Permissions
+          </button>
+
+          {encodedPermissionsDataKeyValues && (
+            <div className="mt-4">
+              <h6 className="title is-6">Encoded Result:</h6>
+              <CodeEditor
+                sourceCode={JSON.stringify(
+                  encodedPermissionsDataKeyValues,
+                  null,
+                  2,
+                )}
+                readOnly
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="columns">

@@ -36,7 +36,8 @@
     "react-loading-skeleton": "^3.4.0",
     "sass": "^1.58.3",
     "web3": "^1.6.1",
-    "web3-utils": "^1.6.1"
+    "web3-utils": "^1.6.1",
+    "viem": "^2.38.4"
   },
   "devDependencies": {
     "@types/node": "17.0.5",

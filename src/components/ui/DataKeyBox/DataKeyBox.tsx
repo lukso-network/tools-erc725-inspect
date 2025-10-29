@@ -2,10 +2,9 @@ import { ERC725JSONSchema } from '@erc725/erc725.js';
 
 import { SCHEMA_DOCS_LINKS, SchemaName } from './schemas';
 
-import CodeEditor from '@/components/ui/CodeEditor';
-
 import AddressButtons from '@/components/ui/AddressButtons';
 import ValueTypeDecoder from '@/components/features/ValueTypeDecoder';
+import CollapsibleSchema from '../CollapsibleSchema';
 
 type DataKeyBoxProps = {
   address: string;
@@ -46,15 +45,7 @@ const DataKeyBox = ({ address, data }: DataKeyBoxProps) => {
               {data.schema.keyType}
             </span>
           </div>
-          <details className="has-background-link-light p-2 is-clickable m-4 is-size-6 has-text-weight-light">
-            <summary className="has-text-weight-semibold">
-              See LSP2 JSON Schema of <code>{data.schema.name}</code>
-            </summary>
-            <CodeEditor
-              sourceCode={JSON.stringify(data.schema, null, 4)}
-              readOnly={true}
-            />
-          </details>
+          <CollapsibleSchema schema={data.schema} />
           <ul>
             <li>
               <strong>Key:</strong> <code>{data.schema.key}</code>
