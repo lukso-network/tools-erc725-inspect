@@ -8,6 +8,7 @@ import ToolInfos from '@/components/layout/ToolInfos';
 
 import { LSP_DOCS_URL } from '@/constants/links';
 import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
+import CodeEditor from '@/components/ui/CodeEditor';
 
 const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
     (schema) => schema.name.startsWith('AddressPermissions:AllowedCalls:'),
@@ -16,6 +17,10 @@ const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
 const AllowedCallsEncoder: React.FC = () => {
     const [controllerAddress, setControllerAddress] = useState('');
     const [encodedAllowedCall, setEncodedAllowedCall] = useState<`0x${string}`>('0x');
+
+    // Display of data key / value pair
+    const [encodedDataKeyValues, setEncodedDataKeyValues] =
+        useState<{ key: string; value: string } | string>();
 
     // Row 1: Allowed call types
     const [allowedCallTypes, setAllowedCallTypes] = useState<
@@ -45,23 +50,47 @@ const AllowedCallsEncoder: React.FC = () => {
     >('any');
     const [allowedFunctionValue, setAllowedFunctionValue] = useState<`0x${string}`>('0xfffffff');
 
-    // Function to compute bitwise OR of selected call types
-    const computeCallTypeBits = (callTypes: Record<string, boolean>): string => {
-        let result = hexToBigInt("0x00000000");
+    const handleEncodeDataKeyValue = () => {
+        if (!controllerAddress || !encodedAllowedCall) {
+            alert('Please enter a controller address and encoded allowed call');
+            return;
+        }
 
-        // Convert hex strings to BigInt and perform bitwise OR
-        Object.entries(callTypes).forEach(([type, isEnabled]) => {
-            if (isEnabled && CALLTYPE[type as keyof typeof CALLTYPE]) {
-                const hexValue = CALLTYPE[type as keyof typeof CALLTYPE];
-                const value = hexToBigInt(hexValue);
-                result = result | value;
-            }
-        });
+        if (!AllowedCallsSchema) {
+            alert('Internal error: AddressPermissions:AllowedCalls schema not found');
+            return;
+        }
 
-        // Convert back to hex string with proper padding
-        const hexResult = toHex(result);
-        return pad(hexResult, { size: 4, dir: 'left' });
-    };
+        try {
+            // Compute and log the result
+            const callTypeBitsAsHex = computeCallTypeBits(allowedCallTypes);
+
+            const result = ERC725.encodeData(
+                [
+                    {
+                        keyName: 'AddressPermissions:AllowedCalls:<address>',
+                        dynamicKeyParts: controllerAddress,
+                        value: [
+                            [
+                                callTypeBitsAsHex, // CALL only
+                                allowedAddressValue,
+                                allowedStandardsValue,
+                                allowedFunctionValue,
+                            ],
+                        ] as any // TODO: there is a bug in the typing of erc725.js,
+                    },
+                ],
+                [AllowedCallsSchema]
+            );
+
+            setEncodedDataKeyValues({
+                key: result.keys[0],
+                value: result.values[0],
+            });
+        } catch (error) {
+            console.error('Error encoding allowed calls:', error);
+        }
+    }
 
     const handleCallTypeToggle = (type: string) => {
         const updatedCallTypes = {
@@ -79,16 +108,13 @@ const AllowedCallsEncoder: React.FC = () => {
         }
 
         if (!AllowedCallsSchema) {
-            alert('AllowedCalls schema not found');
+            alert('Internal error: AddressPermissions:AllowedCalls schema not found');
             return;
         }
 
         try {
             // Compute and log the result
             const callTypeBitsAsHex = computeCallTypeBits(allowedCallTypes);
-
-            console.log('Selected call types:', allowedCallTypes);
-            console.log('Call Type Bits as Hex (after bitwise OR):', callTypeBitsAsHex);
 
             const result = ERC725.encodeData(
                 [
@@ -108,12 +134,29 @@ const AllowedCallsEncoder: React.FC = () => {
                 [AllowedCallsSchema],
             );
 
-            console.log("result: ", result)
             setEncodedAllowedCall(result.values[0] as `0x${string}`);
         } catch (error) {
             console.error('Error encoding allowed calls:', error);
         }
     }
+
+    // Function to compute bitwise OR of selected call types
+    const computeCallTypeBits = (callTypes: Record<string, boolean>): string => {
+        let result = hexToBigInt("0x00000000");
+
+        // Convert hex strings to BigInt and perform bitwise OR
+        Object.entries(callTypes).forEach(([type, isEnabled]) => {
+            if (isEnabled && CALLTYPE[type as keyof typeof CALLTYPE]) {
+                const hexValue = CALLTYPE[type as keyof typeof CALLTYPE];
+                const value = hexToBigInt(hexValue);
+                result = result | value;
+            }
+        });
+
+        // Convert back to hex string with proper padding
+        const hexResult = toHex(result);
+        return pad(hexResult, { size: 4, dir: 'left' });
+    };
 
     return (
         <div className="container container-key-manager">
@@ -174,9 +217,22 @@ const AllowedCallsEncoder: React.FC = () => {
                     </div>
                 </div>
                 <div className="column">
-                    <button className="button is-primary" type="button" onClick={handleEncodingClick}>
-                        Encode Allowed Calls
+                    <button className="button is-primary" type="button" onClick={handleEncodeDataKeyValue} disabled={!controllerAddress || !encodedAllowedCall}>
+                        Encode Data Key / Value
                     </button>
+                    {encodedDataKeyValues && (
+                        <div className="mt-4">
+                            <h6 className="title is-6">Encoded Result:</h6>
+                            <CodeEditor
+                                sourceCode={JSON.stringify(
+                                    encodedDataKeyValues,
+                                    null,
+                                    2,
+                                )}
+                                readOnly
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -364,6 +420,11 @@ const AllowedCallsEncoder: React.FC = () => {
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div className='column is-flex is-justify-content-space-between is-align-items-center'>
+                    <button className="button is-primary" type="button" onClick={handleEncodingClick}>
+                        Encode Allowed Calls
+                    </button>
                 </div>
             </div>
         </div>
