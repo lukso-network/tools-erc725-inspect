@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema, encodeKeyName } from '@erc725/erc725.js';
-import { isValidTuple, type ERC725JSONSchemaKeyType } from '@erc725/erc725.js';
 import { isHex } from 'web3-utils';
 
 import useWeb3 from '@/hooks/useWeb3';
@@ -21,7 +20,7 @@ const SCHEMA_PLACEHOLDER = {
 };
 
 const LSP2_DOCS_URL =
-  'https://docs.lukso.tech/standards/metadata/lsp2-json-schema';
+  'https://docs.lukso.tech/standards/metadata/lspcomputeCallTypeBits2-json-schema';
 
 const FieldsDescription = () => (
   <>
@@ -488,8 +487,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
 
       const displayAsJSON =
         keyType === 'Array' ||
-        valueContent === 'VerifiableURI' ||
-        isValidTuple(valueType, valueContent);
+        valueContent === 'VerifiableURI'
 
       const decodedResult = displayAsJSON
         ? JSON.stringify(decodedCustomValue, null, 4)

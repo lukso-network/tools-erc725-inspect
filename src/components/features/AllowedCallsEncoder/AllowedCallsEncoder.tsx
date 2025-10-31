@@ -25,7 +25,6 @@ const AllowedCallsEncoder: React.FC = () => {
     const [encodedDataKeyValues, setEncodedDataKeyValues] =
         useState<{ key: string; value: string } | string>();
 
-    // Row 1: Allowed call types
     const [allowedCallTypes, setAllowedCallTypes] = useState<
         Record<CallType, boolean>
     >({
@@ -35,22 +34,14 @@ const AllowedCallsEncoder: React.FC = () => {
         DELEGATECALL: false,
     });
 
-    // Row 2: Allowed Standards (interface IDs)
-    const [allowedStandardsMode, setAllowedStandardsMode] = useState<
-        'any' | 'custom'
-    >('any');
+    // Allowed Standards value = ERC165 interface ID
+    const [allowedStandardsMode, setAllowedStandardsMode] = useState<'any' | 'custom'>('any');
     const [allowedStandardsValue, setAllowedStandardsValue] = useState<`0x${string}`>('0x');
 
-    // Row 3: Allowed Address
-    const [allowedAddressMode, setAllowedAddressMode] = useState<
-        'any' | 'custom'
-    >('any');
+    const [allowedAddressMode, setAllowedAddressMode] = useState<'any' | 'custom'>('any');
     const [allowedAddressValue, setAllowedAddressValue] = useState<`0x${string}`>('0x');
 
-    // Row 4: Allowed Function
-    const [allowedFunctionMode, setAllowedFunctionMode] = useState<
-        'any' | 'custom'
-    >('any');
+    const [allowedFunctionMode, setAllowedFunctionMode] = useState<'any' | 'custom'>('any');
     const [allowedFunctionValue, setAllowedFunctionValue] = useState<`0x${string}`>('0x');
 
     const allowedValuesToEncode = useMemo(() => {
@@ -150,7 +141,7 @@ const AllowedCallsEncoder: React.FC = () => {
                                 allowedStandardToEncode,
                                 allowedFunctionToEncode,
                             ],
-                        ] as any // TODO: there is a bug in the typing of erc725.js,
+                        ] as any // TODO: there is a bug in the typing of erc725.js
                     },
                 ],
                 [AllowedCallsSchema]

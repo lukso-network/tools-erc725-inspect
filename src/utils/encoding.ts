@@ -2,13 +2,15 @@ import { hexToBigInt, size, isHex, toHex } from "viem";
 import { pad } from "viem";
 import { CALLTYPE } from "@lukso/lsp-smart-contracts";
 
-export const computeCallTypeBits = (callTypes: Record<string, boolean>): string => {
+import type { CallType } from "@/types/erc725js";
+
+export const computeCallTypeBits = (callTypes: Record<CallType, boolean>): string => {
     let result = hexToBigInt('0x00000000');
 
     // Convert hex strings to BigInt and perform bitwise OR
-    Object.entries(callTypes).forEach(([type, isEnabled]) => {
-        if (isEnabled && CALLTYPE[type as keyof typeof CALLTYPE]) {
-            const hexValue = CALLTYPE[type as keyof typeof CALLTYPE];
+    Object.entries(callTypes).forEach(([callType, isEnabled]) => {
+        if (isEnabled && CALLTYPE[callType]) {
+            const hexValue = CALLTYPE[callType];
             const value = hexToBigInt(hexValue);
             result = result | value;
         }
