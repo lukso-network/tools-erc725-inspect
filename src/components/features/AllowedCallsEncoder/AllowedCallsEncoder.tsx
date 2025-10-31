@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { isAddress, zeroAddress } from 'viem';
 import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
-import { hexToBigInt, pad, toHex } from 'viem';
-import { CALLTYPE } from '@lukso/lsp-smart-contracts';
+import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
+const { encodeAllowedCalls } = require('@lukso/lsp-utils');
 
 import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
 import ToolInfos from '@/components/layout/ToolInfos';
+import CodeEditor from '@/components/ui/CodeEditor';
 
 import { LSP_DOCS_URL } from '@/constants/links';
-import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
-import CodeEditor from '@/components/ui/CodeEditor';
+import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
+import { CallType } from '@/types/erc725js';
+import ButtonCallType from '@/components/ui/ButtonCallType';
 
 const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
     (schema) => schema.name.startsWith('AddressPermissions:AllowedCalls:'),
@@ -24,7 +27,7 @@ const AllowedCallsEncoder: React.FC = () => {
 
     // Row 1: Allowed call types
     const [allowedCallTypes, setAllowedCallTypes] = useState<
-        Record<string, boolean>
+        Record<CallType, boolean>
     >({
         VALUE: false,
         CALL: false,
@@ -36,19 +39,85 @@ const AllowedCallsEncoder: React.FC = () => {
     const [allowedStandardsMode, setAllowedStandardsMode] = useState<
         'any' | 'custom'
     >('any');
-    const [allowedStandardsValue, setAllowedStandardsValue] = useState<`0x${string}`>('0x00000002');
+    const [allowedStandardsValue, setAllowedStandardsValue] = useState<`0x${string}`>('0x');
 
     // Row 3: Allowed Address
     const [allowedAddressMode, setAllowedAddressMode] = useState<
         'any' | 'custom'
     >('any');
-    const [allowedAddressValue, setAllowedAddressValue] = useState<`0x${string}`>('0xffffffffffffffffffffffffffffffffffffffff');
+    const [allowedAddressValue, setAllowedAddressValue] = useState<`0x${string}`>('0x');
 
     // Row 4: Allowed Function
     const [allowedFunctionMode, setAllowedFunctionMode] = useState<
         'any' | 'custom'
     >('any');
-    const [allowedFunctionValue, setAllowedFunctionValue] = useState<`0x${string}`>('0xfffffff');
+    const [allowedFunctionValue, setAllowedFunctionValue] = useState<`0x${string}`>('0x');
+
+    const allowedValuesToEncode = useMemo(() => {
+
+        const allowedAddressToEncode =
+            allowedAddressMode === 'any'
+                ? '0xffffffffffffffffffffffffffffffffffffffff'
+                : isAddress(allowedAddressValue) ? allowedAddressValue : zeroAddress;
+
+        const allowedStandardToEncode =
+            allowedStandardsMode === 'any'
+                ? '0xffffffff'
+                : isBytes4Hex(allowedStandardsValue) ? allowedStandardsValue : '0x00000000';
+
+        const allowedFunctionToEncode =
+            allowedFunctionMode === 'any'
+                ? '0xffffffff'
+                : isBytes4Hex(allowedFunctionValue) ? allowedFunctionValue : '0x00000000';
+
+        const callTypeBitsAsHex = computeCallTypeBits(allowedCallTypes);
+
+        return {
+            allowedAddressToEncode,
+            allowedStandardToEncode,
+            allowedFunctionToEncode,
+            callTypeBitsAsHex,
+        };
+    }, [
+        allowedAddressMode,
+        allowedAddressValue,
+        allowedCallTypes,
+        allowedFunctionMode,
+        allowedFunctionValue,
+        allowedStandardsMode,
+        allowedStandardsValue,
+    ]);
+
+    useEffect(() => {
+        if (!AllowedCallsSchema) {
+            console.warn('Internal error: AddressPermissions:AllowedCalls schema not found');
+            setEncodedAllowedCall('0x');
+            return;
+        }
+
+        const {
+            callTypeBitsAsHex,
+            allowedAddressToEncode,
+            allowedStandardToEncode,
+            allowedFunctionToEncode,
+        } = allowedValuesToEncode;
+
+        try {
+            const encodedAllowedCall = encodeAllowedCalls(
+                [callTypeBitsAsHex],
+                [allowedAddressToEncode],
+                [allowedStandardToEncode],
+                [allowedFunctionToEncode],
+            )
+
+            setEncodedAllowedCall(encodedAllowedCall as `0x${string}`);
+
+        } catch (error) {
+            console.error('Error encoding allowed calls:', error);
+            // Set empty result on error to indicate invalid configuration
+            setEncodedAllowedCall('0x');
+        }
+    }, [allowedValuesToEncode, AllowedCallsSchema]);
 
     const handleEncodeDataKeyValue = () => {
         if (!controllerAddress || !encodedAllowedCall) {
@@ -62,8 +131,12 @@ const AllowedCallsEncoder: React.FC = () => {
         }
 
         try {
-            // Compute and log the result
-            const callTypeBitsAsHex = computeCallTypeBits(allowedCallTypes);
+            const {
+                callTypeBitsAsHex,
+                allowedAddressToEncode,
+                allowedStandardToEncode,
+                allowedFunctionToEncode,
+            } = allowedValuesToEncode;
 
             const result = ERC725.encodeData(
                 [
@@ -73,9 +146,9 @@ const AllowedCallsEncoder: React.FC = () => {
                         value: [
                             [
                                 callTypeBitsAsHex, // CALL only
-                                allowedAddressValue,
-                                allowedStandardsValue,
-                                allowedFunctionValue,
+                                allowedAddressToEncode,
+                                allowedStandardToEncode,
+                                allowedFunctionToEncode,
                             ],
                         ] as any // TODO: there is a bug in the typing of erc725.js,
                     },
@@ -88,7 +161,7 @@ const AllowedCallsEncoder: React.FC = () => {
                 value: result.values[0],
             });
         } catch (error) {
-            console.error('Error encoding allowed calls:', error);
+            alert(`Error encoding allowed calls: ${error}`);
         }
     }
 
@@ -99,63 +172,6 @@ const AllowedCallsEncoder: React.FC = () => {
         };
 
         setAllowedCallTypes(updatedCallTypes);
-    };
-
-    const handleEncodingClick = () => {
-        if (!controllerAddress || !encodedAllowedCall) {
-            alert('Please enter a controller address and encoded allowed call');
-            return;
-        }
-
-        if (!AllowedCallsSchema) {
-            alert('Internal error: AddressPermissions:AllowedCalls schema not found');
-            return;
-        }
-
-        try {
-            // Compute and log the result
-            const callTypeBitsAsHex = computeCallTypeBits(allowedCallTypes);
-
-            const result = ERC725.encodeData(
-                [
-                    {
-                        keyName: 'AddressPermissions:AllowedCalls:<address>',
-                        dynamicKeyParts: controllerAddress,
-                        value: [
-                            [
-                                callTypeBitsAsHex, // CALL only
-                                allowedAddressValue,
-                                allowedStandardsValue,
-                                allowedFunctionValue,
-                            ],
-                        ] as any // TODO: there is a bug in the typing of erc725.js
-                    },
-                ],
-                [AllowedCallsSchema],
-            );
-
-            setEncodedAllowedCall(result.values[0] as `0x${string}`);
-        } catch (error) {
-            console.error('Error encoding allowed calls:', error);
-        }
-    }
-
-    // Function to compute bitwise OR of selected call types
-    const computeCallTypeBits = (callTypes: Record<string, boolean>): string => {
-        let result = hexToBigInt("0x00000000");
-
-        // Convert hex strings to BigInt and perform bitwise OR
-        Object.entries(callTypes).forEach(([type, isEnabled]) => {
-            if (isEnabled && CALLTYPE[type as keyof typeof CALLTYPE]) {
-                const hexValue = CALLTYPE[type as keyof typeof CALLTYPE];
-                const value = hexToBigInt(hexValue);
-                result = result | value;
-            }
-        });
-
-        // Convert back to hex string with proper padding
-        const hexResult = toHex(result);
-        return pad(hexResult, { size: 4, dir: 'left' });
     };
 
     return (
@@ -253,26 +269,14 @@ const AllowedCallsEncoder: React.FC = () => {
                                 </td>
                                 <td>
                                     <div className="buttons">
-                                        {Object.keys(allowedCallTypes).map((type) => {
-
-                                            const btnClass = type === 'DELEGATECALL' ? 'is-red' : type === 'STATICCALL' ? 'is-blue' : 'is-yellow';
-                                            const isOutlined = !allowedCallTypes[type] ? 'is-outlined' : '';
-
-                                            return (
-                                                // TODO: could be re-used as a component
-                                                <button
-                                                    key={type}
-                                                    className={`button ${btnClass} ${isOutlined}`}
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handleCallTypeToggle(type);
-                                                    }}
-                                                >
-                                                    {type}
-                                                </button>
-                                            )
-                                        }
-                                        )}
+                                        {Object.keys(allowedCallTypes).map((type) => (
+                                            <ButtonCallType
+                                                key={type}
+                                                callType={type as CallType}
+                                                isActive={allowedCallTypes[type as CallType]}
+                                                onClick={() => handleCallTypeToggle(type as CallType)}
+                                            />
+                                        ))}
                                     </div>
                                 </td>
                             </tr>
@@ -290,7 +294,9 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     ? 'is-info'
                                                     : 'is-info is-outlined'
                                                     }`}
-                                                onClick={() => { setAllowedAddressMode('any'); setAllowedAddressValue('0xffffffffffffffffffffffffffffffffffffffff'); }}
+                                                onClick={() => {
+                                                    setAllowedAddressMode('any');
+                                                }}
                                             >
                                                 Any
                                             </button>
@@ -301,7 +307,9 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     ? 'is-info'
                                                     : 'is-info is-outlined'
                                                     }`}
-                                                onClick={() => setAllowedAddressMode('custom')}
+                                                onClick={() => {
+                                                    setAllowedAddressMode('custom')
+                                                }}
                                             >
                                                 Custom
                                             </button>
@@ -313,9 +321,10 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     type="text"
                                                     placeholder="0x..."
                                                     value={allowedAddressValue}
-                                                    onChange={(e) =>
+                                                    onChange={(e) => {
+                                                        // Allow incremental typing - always update state
                                                         setAllowedAddressValue(e.target.value as `0x${string}`)
-                                                    }
+                                                    }}
                                                 />
                                             </div>
                                         )}
@@ -338,7 +347,9 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     ? 'is-info'
                                                     : 'is-info is-outlined'
                                                     }`}
-                                                onClick={() => { setAllowedStandardsMode('any'); setAllowedStandardsValue('0xffffffff'); }}
+                                                onClick={() => {
+                                                    setAllowedStandardsMode('any');
+                                                }}
                                             >
                                                 Any
                                             </button>
@@ -349,7 +360,9 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     ? 'is-info'
                                                     : 'is-info is-outlined'
                                                     }`}
-                                                onClick={() => setAllowedStandardsMode('custom')}
+                                                onClick={() => {
+                                                    setAllowedStandardsMode('custom')
+                                                }}
                                             >
                                                 Custom
                                             </button>
@@ -361,9 +374,10 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     type="text"
                                                     placeholder="0x..."
                                                     value={allowedStandardsValue}
-                                                    onChange={(e) =>
+                                                    onChange={(e) => {
+                                                        // Allow incremental typing - always update state
                                                         setAllowedStandardsValue(e.target.value as `0x${string}`)
-                                                    }
+                                                    }}
                                                 />
                                             </div>
                                         )}
@@ -386,7 +400,9 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     ? 'is-info'
                                                     : 'is-info is-outlined'
                                                     }`}
-                                                onClick={() => { setAllowedFunctionMode('any'); setAllowedFunctionValue('0xfffffff'); }}
+                                                onClick={() => {
+                                                    setAllowedFunctionMode('any');
+                                                }}
                                             >
                                                 Any
                                             </button>
@@ -397,7 +413,9 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     ? 'is-info'
                                                     : 'is-info is-outlined'
                                                     }`}
-                                                onClick={() => { setAllowedFunctionMode('custom'); setAllowedFunctionValue('0xfffffff'); }}
+                                                onClick={() => {
+                                                    setAllowedFunctionMode('custom');
+                                                }}
                                             >
                                                 Custom
                                             </button>
@@ -409,9 +427,10 @@ const AllowedCallsEncoder: React.FC = () => {
                                                     type="text"
                                                     placeholder="0x..."
                                                     value={allowedFunctionValue}
-                                                    onChange={(e) =>
+                                                    onChange={(e) => {
+                                                        // Allow incremental typing - always update state
                                                         setAllowedFunctionValue(e.target.value as `0x${string}`)
-                                                    }
+                                                    }}
                                                 />
                                             </div>
                                         )}
@@ -420,11 +439,6 @@ const AllowedCallsEncoder: React.FC = () => {
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <div className='column is-flex is-justify-content-space-between is-align-items-center'>
-                    <button className="button is-primary" type="button" onClick={handleEncodingClick}>
-                        Encode Allowed Calls
-                    </button>
                 </div>
             </div>
         </div>
