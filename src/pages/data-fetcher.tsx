@@ -28,7 +28,7 @@ import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
-import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
+import { isValidTuple } from '@erc725/erc725.js';
 import ToolInfos from '@/components/layout/ToolInfos';
 
 // using local variable for LSP28TheGrid key for now

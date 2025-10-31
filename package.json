@@ -18,7 +18,7 @@
     "@codemirror/lang-json": "^6.0.2",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@erc725/erc725.js": "^0.27.0",
+    "@erc725/erc725.js": "^0.28.2",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -35,9 +35,9 @@
     "react-file-icon": "^1.5.0",
     "react-loading-skeleton": "^3.4.0",
     "sass": "^1.58.3",
+    "viem": "^2.38.4",
     "web3": "^1.6.1",
-    "web3-utils": "^1.6.1",
-    "viem": "^2.38.4"
+    "web3-utils": "^1.6.1"
   },
   "devDependencies": {
     "@types/node": "17.0.5",

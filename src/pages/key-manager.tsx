@@ -3,6 +3,7 @@ import Head from 'next/head';
 
 import KeyManagerNonceChecker from '@/components/features/KeyManagerNonceChecker';
 import KeyManagerPermissions from '@/components/features/KeyManagerPermissions';
+import AllowedCallsEncoder from '@/components/features/AllowedCallsEncoder';
 
 const KeyManager: NextPage = () => {
   return (
@@ -12,6 +13,7 @@ const KeyManager: NextPage = () => {
       </Head>
 
       <KeyManagerPermissions />
+      <AllowedCallsEncoder />
       <KeyManagerNonceChecker />
     </>
   );
