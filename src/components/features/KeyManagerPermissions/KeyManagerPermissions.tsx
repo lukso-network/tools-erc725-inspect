@@ -29,8 +29,9 @@ const KeyManagerPermissions: React.FC = () => {
     Record<string, boolean>
   >(ERC725.decodePermissions(initialEncodedPermissions));
 
-  const [encodedDataKeyValues, setEncodedDataKeyValues] =
-    useState<{ key: string; value: string } | string>();
+  const [encodedDataKeyValues, setEncodedDataKeyValues] = useState<
+    { key: string; value: string } | string
+  >();
 
   const handleEncodeDataKeyValue = () => {
     if (!AddressPermissionsSchema) {
@@ -86,7 +87,7 @@ const KeyManagerPermissions: React.FC = () => {
 
     try {
       setEncodedPermissions(input);
-      setDecodedPermissions(ERC725.decodePermissions(input));
+      setDecodedPermissions(ERC725.decodePermissions(input as `0x${string}`));
     } catch (error: any) {
       console.log(error.message);
     }
@@ -172,11 +173,7 @@ const KeyManagerPermissions: React.FC = () => {
             <div className="mt-4">
               <h6 className="title is-6">Encoded Result:</h6>
               <CodeEditor
-                sourceCode={JSON.stringify(
-                  encodedDataKeyValues,
-                  null,
-                  2,
-                )}
+                sourceCode={JSON.stringify(encodedDataKeyValues, null, 2)}
                 readOnly
               />
             </div>

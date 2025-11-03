@@ -118,7 +118,9 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                 controller && permissionsDataValues[index];
 
               currentState[index].permissions = controller
-                ? (ERC725.decodePermissions(permissionsDataValues[index]) as {
+                ? (ERC725.decodePermissions(
+                    permissionsDataValues[index] as `0x${string}`,
+                  ) as {
                     [key: string]: any;
                   })
                 : {};

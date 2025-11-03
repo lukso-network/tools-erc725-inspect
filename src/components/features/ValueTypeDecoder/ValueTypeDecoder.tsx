@@ -9,7 +9,7 @@ import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 import useWeb3 from '@/hooks/useWeb3';
 
-import { DecodeDataOutput } from '@erc725/erc725.js/build/main/src/types/decodeData';
+import type { DecodeDataOutput } from '@erc725/erc725.js';
 import AddressInfos from '@/components/features/AddressInfos';
 
 import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';

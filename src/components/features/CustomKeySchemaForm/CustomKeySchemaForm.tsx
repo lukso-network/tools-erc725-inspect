@@ -486,8 +486,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
       const decodedCustomValue = fetchedResult[0]?.value;
 
       const displayAsJSON =
-        keyType === 'Array' ||
-        valueContent === 'VerifiableURI'
+        keyType === 'Array' || valueContent === 'VerifiableURI';
 
       const decodedResult = displayAsJSON
         ? JSON.stringify(decodedCustomValue, null, 4)

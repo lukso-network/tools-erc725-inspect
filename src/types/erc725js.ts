@@ -1,4 +1,4 @@
-import { CALLTYPE } from "@lukso/lsp-smart-contracts";
+import { CALLTYPE } from '@lukso/lsp-smart-contracts';
 
 export type Erc725JsMethod =
   | 'fetchData'
