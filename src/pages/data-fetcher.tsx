@@ -28,7 +28,6 @@ import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useRouter } from 'next/router';
-import { isValidTuple } from '@erc725/erc725.js/build/main/src/lib/decodeData';
 import ToolInfos from '@/components/layout/ToolInfos';
 
 // using local variable for LSP28TheGrid key for now
@@ -212,8 +211,9 @@ const GetData: NextPage = () => {
           },
         ]);
       }
+      // TODO: export isValidTuple from @erc725/erc725.js library and it it in this check
       const decodedResult =
-        valueContent == 'VerifiableURI' || isValidTuple(valueType, valueContent)
+        valueContent == 'VerifiableURI'
           ? JSON.stringify(decodedValue[0].value, null, 4)
           : decodedValue[0].value;
       setDecodedData(decodedResult);
@@ -348,7 +348,11 @@ const GetData: NextPage = () => {
                 {dataKey.startsWith(
                   ERC725YDataKeys.LSP6['AddressPermissions:Permissions'],
                 )
-                  ? JSON.stringify(ERC725.decodePermissions(data), undefined, 2)
+                  ? JSON.stringify(
+                      ERC725.decodePermissions(data as `0x${string}`),
+                      undefined,
+                      2,
+                    )
                   : decodedData}
               </pre>
             </div>

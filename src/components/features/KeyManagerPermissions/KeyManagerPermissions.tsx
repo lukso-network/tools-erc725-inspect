@@ -12,7 +12,7 @@ import ToolInfos from '@/components/layout/ToolInfos';
 import { LSP_DOCS_URL } from '@/constants/links';
 
 const AddressPermissionsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
-  (schema) => schema.name.startsWith('AddressPermissions:Permissions'),
+  (schema) => schema.name.startsWith('AddressPermissions:Permissions:'),
 );
 
 const KeyManagerPermissions: React.FC = () => {
@@ -29,10 +29,11 @@ const KeyManagerPermissions: React.FC = () => {
     Record<string, boolean>
   >(ERC725.decodePermissions(initialEncodedPermissions));
 
-  const [encodedPermissionsDataKeyValues, setEncodedPermissionsDataKeyValues] =
-    useState<{ key: string; value: string } | string>();
+  const [encodedDataKeyValues, setEncodedDataKeyValues] = useState<
+    { key: string; value: string } | string
+  >();
 
-  const handleEncodeDataKeyValuePermissions = () => {
+  const handleEncodeDataKeyValue = () => {
     if (!AddressPermissionsSchema) {
       alert('AddressPermissions schema not found');
       return;
@@ -64,13 +65,13 @@ const KeyManagerPermissions: React.FC = () => {
         [AddressPermissionsSchema],
       );
 
-      setEncodedPermissionsDataKeyValues({
+      setEncodedDataKeyValues({
         key: result.keys[0],
         value: result.values[0],
       });
     } catch (error: any) {
       console.error('Error encoding data:', error);
-      setEncodedPermissionsDataKeyValues(`Error: ${error.message}`);
+      setEncodedDataKeyValues(`Error: ${error.message}`);
     }
   };
 
@@ -86,7 +87,7 @@ const KeyManagerPermissions: React.FC = () => {
 
     try {
       setEncodedPermissions(input);
-      setDecodedPermissions(ERC725.decodePermissions(input));
+      setDecodedPermissions(ERC725.decodePermissions(input as `0x${string}`));
     } catch (error: any) {
       console.log(error.message);
     }
@@ -162,21 +163,17 @@ const KeyManagerPermissions: React.FC = () => {
           <button
             className="button is-primary"
             type="button"
-            onClick={handleEncodeDataKeyValuePermissions}
+            onClick={handleEncodeDataKeyValue}
             disabled={!controllerAddress || !encodedPermissions}
           >
-            Encode Data Key / Value Permissions
+            Encode Data Key / Value
           </button>
 
-          {encodedPermissionsDataKeyValues && (
+          {encodedDataKeyValues && (
             <div className="mt-4">
               <h6 className="title is-6">Encoded Result:</h6>
               <CodeEditor
-                sourceCode={JSON.stringify(
-                  encodedPermissionsDataKeyValues,
-                  null,
-                  2,
-                )}
+                sourceCode={JSON.stringify(encodedDataKeyValues, null, 2)}
                 readOnly
               />
             </div>
