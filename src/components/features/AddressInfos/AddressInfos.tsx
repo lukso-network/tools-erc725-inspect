@@ -233,21 +233,16 @@ const AddressInfos: React.FC<Props> = ({
 
   return (
     <>
-      {showAddress && (
-        <div className="is-flex">
+      <div className="is-flex">
+        {showAddress && (
           <code className="mr-2">
             <a target="_blank" rel="noreferrer" href={explorerLink}>
               {address}
             </a>
           </code>
-          <AddressTypeBadge text={addressTypeText} isLight={true} />
-        </div>
-      )}
-      {!showAddress && (
-        <div className="is-flex">
-          <AddressTypeBadge text={addressTypeText} isLight={true} />
-        </div>
-      )}
+        )}
+        <AddressTypeBadge text={addressTypeText} isLight={true} />
+      </div>
       <div className="is-flex">{renderTags()}</div>
     </>
   );

@@ -7,15 +7,15 @@ import DataKeyBox from "@/components/ui/DataKeyBox/DataKeyBox";
 
 // constants
 import { LSP1TypeIdsDescriptions } from "@/constants/schemas";
+import { LSP_DOCS_URL } from "@/constants/links";
 
 // LSP2 schemas
-import LSP1NotificationsSchema from './LSP1NotificationsSchema.json';
+import LSP1NotificationsSchema from '@/schemas/LSP1NotificationsSchema.json';
 
 // utilities
 import { getDataBatch } from "@/utils/web3";
 
-
-interface Props {
+type Props = {
     address: string;
     isErc725Y: boolean;
 }
@@ -75,7 +75,7 @@ const LSP1DelegateDataKeys: React.FC<Props> = ({ address, isErc725Y }) => {
                     <p>
                         Use these ERC725Y data keys on your Universal Profile to register
                         <a
-                            href="https://docs.lukso.tech/standards/accounts/lsp1-universal-receiver-delegate/"
+                            href={LSP_DOCS_URL.LSP1Delegate}
                             target="_blank"
                             rel="noreferrer"
                             className="mx-1"

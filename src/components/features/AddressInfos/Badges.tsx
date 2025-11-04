@@ -213,12 +213,14 @@ export const ProfileInfosBadge: React.FC<ProfileProps> = ({
           // Extract profile image (first available image)
           if (profileImage && profileImage.length > 0) {
             // Try to get the first image URL
-            const firstImage = profileImage[0];
-            if (firstImage?.url) {
-              const { url } = firstImage;
-              const cid = url.replace(/^ipfs:\/\//, '');
-              setProfileImage(`${LUKSO_IPFS_BASE_URL}/${cid}`);
+            let profileImageUrl = profileImage[0].url;
+
+            if (profileImageUrl.startsWith('ipfs://')) {
+              const cid = profileImageUrl.replace(/^ipfs:\/\//, '');
+              profileImageUrl = `${LUKSO_IPFS_BASE_URL}/${cid}`;
             }
+
+            setProfileImage(profileImageUrl);
           }
         }
       } catch (error) {

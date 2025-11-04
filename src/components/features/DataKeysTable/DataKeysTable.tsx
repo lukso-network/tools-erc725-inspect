@@ -5,9 +5,9 @@ import { ERC725JSONSchema } from '@erc725/erc725.js';
 import DataKeyBox from '../../ui/DataKeyBox';
 
 // LSP2 schemas
-import ProfileSchema from './ProfileSchema.json';
-import AssetSchema from './AssetSchema.json';
-import LSP8Schema from './LSP8Schema.json';
+import ProfileSchema from '@/schemas/ProfileSchema.json';
+import AssetSchema from '@/schemas/AssetSchema.json';
+import LSP8Schema from '@/schemas/LSP8Schema.json';
 
 // utilities
 import useWeb3 from '@/hooks/useWeb3';

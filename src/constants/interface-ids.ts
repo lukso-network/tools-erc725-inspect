@@ -1,5 +1,5 @@
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
-import { LSP_SPECS_URL } from '@/constants/links';
+import { LSP_DOCS_URL, LSP_SPECS_URL } from '@/constants/links';
 
 export const ACCOUNT_INTERFACE_IDS = {
   ERC725X: {
@@ -83,8 +83,7 @@ export const ASSETS_INTERFACE_IDS = {
 export const OTHER_INTERFACE_IDS = {
   LSP1Delegate: {
     interfaceId: INTERFACE_IDS.LSP1UniversalReceiverDelegate,
-    docsUrl:
-      'https://docs.lukso.tech/standards/accounts/lsp1-universal-receiver-delegate/',
+    docsUrl: LSP_DOCS_URL.LSP1Delegate,
   },
   LSP9Vault: {
     interfaceId: INTERFACE_IDS.LSP9Vault,
