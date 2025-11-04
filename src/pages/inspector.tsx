@@ -70,8 +70,6 @@ const Home: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
 
-  const [contractVersion, setContractVersion] = useState('');
-
   useEffect(() => {
     if (router.query.address) {
       setAddress(router.query.address.toString());
@@ -126,9 +124,6 @@ const Home: NextPage = () => {
       }
 
       setIsLoading(true);
-
-      const fetchedContractVersion = await getVersion(address, web3);
-      setContractVersion(fetchedContractVersion);
 
       const supportStandards = await checkInterface(address, web3);
 
@@ -405,10 +400,6 @@ const Home: NextPage = () => {
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
                         <div>
-                          <div className="tags has-addons">
-                            <span className="tag is-dark">version</span>
-                            <span className="tag is-info">{contractVersion}</span>
-                          </div>
                           <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
                             <i className="has-text-centered mb-2">
                               Scroll to see results
@@ -464,7 +455,7 @@ const Home: NextPage = () => {
                             <strong className="mr-2">Contract type:</strong>{' '}
                             <AddressInfos
                               address={address}
-                              assetBadgeOptions={{ showBalance: false }}
+                              assetBadgeOptions={{ showBalance: false, showName: true }}
                               showAddress={false}
                             />
                           </li>
