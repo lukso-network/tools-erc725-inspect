@@ -21,15 +21,27 @@ import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
 interface Props {
   address: string;
   userAddress?: string;
+  assetBadgeOptions?: {
+    showName?: boolean;
+    showSymbol?: boolean;
+    showBalance?: boolean;
+  };
+  showAddress?: boolean;
 }
 
-const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
+const AddressInfos: React.FC<Props> = ({
+  address,
+  userAddress = '',
+  assetBadgeOptions,
+  showAddress = true,
+}) => {
   const web3 = useWeb3();
   const { network } = useContext(NetworkContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isEOA, setIsEOA] = useState(true);
   const [isLSP0, setIsLSP0] = useState(false);
+  const [isLsp6KeyManager, setIsLsp6KeyManager] = useState(false);
   const [isLSP7, setIsLSP7] = useState(false);
   const [isLSP8, setIsLSP8] = useState(false);
 
@@ -57,6 +69,7 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
       isLsp1UniversalReceiverDelegate,
       isLsp7DigitalAsset,
       isLsp8IdentifiableDigitalAsset,
+      isLsp6KeyManager
     } = await checkInterface(_address, web3);
 
     setIsLSP0(isLsp0Erc725Account);
@@ -64,6 +77,7 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
     setIsLSP8(isLsp8IdentifiableDigitalAsset);
 
     setIsLSP1Delegate(isLsp1UniversalReceiverDelegate);
+    setIsLsp6KeyManager(isLsp6KeyManager);
 
     const { isSafe, version } = await checkIsGnosisSafe(_address, web3);
     setIsGnosisSafe(isSafe);
@@ -92,7 +106,7 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
 
   // e.g: UP Recovery
   const isLUKSOUPRecovery =
-    LUKSO_UP_RECOVERY_ADDRESSES[network.name].includes(address);
+    LUKSO_UP_RECOVERY_ADDRESSES[network.name]?.includes(address) ?? false;
 
   // e.g: Default LSP1 Delegate for registering tokens / NFTs received in `LSP5ReceivedAssets[]`
   const isLUKSOLSP1Delegate = LUKSO_LSP1_DELEGATE.find(
@@ -101,6 +115,11 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
   const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
+
+  const showName = assetBadgeOptions?.showName ?? true;
+  const showSymbol = assetBadgeOptions?.showSymbol ?? true;
+  const showBalance =
+    assetBadgeOptions?.showBalance ?? Boolean(userAddress);
 
   const renderTags = () => {
     if (isLoading) {
@@ -148,6 +167,10 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
           <AddressTypeBadge text="📢 LSP1 Delegate" colorClass="is-danger" />
         )}
 
+        {isLsp6KeyManager && (
+          <AddressTypeBadge text="🔐 Key Manager" colorClass="is-success" />
+        )}
+
         {isLSP7 && (
           <>
             <AddressTypeBadge
@@ -158,6 +181,9 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
               assetAddress={address}
               userAddress={userAddress}
               isLSP7={isLSP7}
+              showName={showName}
+              showSymbol={showSymbol}
+              showBalance={showBalance}
             />
           </>
         )}
@@ -172,6 +198,9 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
               assetAddress={address}
               userAddress={userAddress}
               isLSP7={isLSP7}
+              showName={showName}
+              showSymbol={showSymbol}
+              showBalance={showBalance}
             />
           </>
         )}
@@ -204,14 +233,21 @@ const AddressInfos: React.FC<Props> = ({ address, userAddress = '' }) => {
 
   return (
     <>
-      <div className="is-flex">
-        <code className="mr-2">
-          <a target="_blank" rel="noreferrer" href={explorerLink}>
-            {address}
-          </a>
-        </code>
-        <AddressTypeBadge text={addressTypeText} isLight={true} />
-      </div>
+      {showAddress && (
+        <div className="is-flex">
+          <code className="mr-2">
+            <a target="_blank" rel="noreferrer" href={explorerLink}>
+              {address}
+            </a>
+          </code>
+          <AddressTypeBadge text={addressTypeText} isLight={true} />
+        </div>
+      )}
+      {!showAddress && (
+        <div className="is-flex">
+          <AddressTypeBadge text={addressTypeText} isLight={true} />
+        </div>
+      )}
       <div className="is-flex">{renderTags()}</div>
     </>
   );

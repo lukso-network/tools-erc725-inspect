@@ -6,6 +6,7 @@ import { eip165ABI } from '@/constants/abi';
 import { AbiItem, isAddress } from 'web3-utils';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import AddressButtons from '@/components/ui/AddressButtons';
+import AddressInfos from '../AddressInfos';
 
 type Props = {
   contractAddress: string;
@@ -112,6 +113,9 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
               Owner ↗️
             </a>
           </div>
+          <div className="has-background-link-light p-2 m-4 is-size-6">
+            Returned by the <code>owner()</code> function
+          </div>
           <ul>
             <li>
               <strong>Owner address:</strong>
@@ -120,8 +124,9 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
               </span>
               <code>{contractOwner}</code>
             </li>
-            <li>
-              <strong>Owner type:</strong> <code>{ownerType}</code>
+            <li className="is-flex is-align-items-center">
+              <strong className="mr-2">Owner type:</strong>
+              <AddressInfos address={contractOwner} showAddress={false} />
             </li>
           </ul>
         </div>
