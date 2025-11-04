@@ -17,17 +17,22 @@ const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
   const { network } = useContext(NetworkContext);
 
   const changeInputAddress = (type: AddressType) => {
+    const addresses = SAMPLE_ADDRESS[network.name];
+    if (addresses === null) {
+      return;
+    }
+
     let address = '';
 
     switch (type) {
       case AddressType.UP:
-        address = SAMPLE_ADDRESS[network.name].UP;
+        address = addresses.UP ?? '';
         break;
       case AddressType.LSP7:
-        address = SAMPLE_ADDRESS[network.name].LSP7;
+        address = addresses.LSP7 ?? '';
         break;
       case AddressType.LSP8:
-        address = SAMPLE_ADDRESS[network.name].LSP8;
+        address = addresses.LSP8 ?? '';
         break;
     }
 

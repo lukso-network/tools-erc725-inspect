@@ -9,7 +9,7 @@ export interface INetworksContext {
 }
 
 export const NetworkContext = createContext<INetworksContext>({
-  network: { name: NetworkName.MAINNET, rpc: '' },
+  network: { name: NetworkName.LUKSO_MAINNET, rpc: '' },
   setNetwork: () => null,
 });
 
