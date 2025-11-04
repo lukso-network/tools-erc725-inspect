@@ -9,7 +9,7 @@ export interface INetworksContext {
 }
 
 export const NetworkContext = createContext<INetworksContext>({
-  network: { name: NetworkName.LUKSO_MAINNET, rpc: '' },
+  network: CHAINS[0],
   setNetwork: () => null,
 });
 
@@ -47,7 +47,7 @@ const NetworksProvider = ({ children }) => {
   }, [router.query.network]);
 
   // Initialize state based on network
-  const [network, setNetwork] = useState(getNetworkFromUrlOrDefault);
+  const [network, setNetwork] = useState<INetwork>(CHAINS[0]);
 
   const updateUrlWithNetwork = useCallback(
     (networkName) => {
@@ -62,6 +62,10 @@ const NetworksProvider = ({ children }) => {
   );
 
   useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
     const networkFromUrl = getNetworkFromUrlOrDefault();
     if (networkFromUrl.name !== network.name) {
       setNetwork(networkFromUrl);
@@ -71,9 +75,10 @@ const NetworksProvider = ({ children }) => {
 
     if (networkParam === undefined) {
       // Update the URL with the network parameter if missing
-      updateUrlWithNetwork(network.name.toLowerCase());
+      updateUrlWithNetwork(networkFromUrl.name.toLowerCase());
     }
   }, [
+    router.isReady,
     router.query.network,
     network.name,
     getNetworkFromUrlOrDefault,
