@@ -193,23 +193,6 @@ const Home: NextPage = () => {
     isLsp7DigitalAsset || isLsp8IdentifiableDigitalAsset;
 
   const ERC725InspectResult = () => {
-    if (
-      !isLoading &&
-      !isEmptyInput &&
-      !isErc725X &&
-      !isErc725Y &&
-      !isLsp1UniversalReceiver &&
-      !isLsp6KeyManager &&
-      !isLsp0Erc725Account
-    ) {
-      return (
-        <div className="help is-danger inspect-result">
-          <p>This address is not a valid ERC725 or Lsp contract.</p>
-          <p>Please check if the address is correct.</p>
-        </div>
-      );
-    }
-
     return (
       <>
         <h3 className="title is-3">Supported Standards</h3>
@@ -396,11 +379,25 @@ const Home: NextPage = () => {
                 <SampleAddressInput
                   onClick={(newAddress) => setAddress(newAddress)}
                 />
-                {isLoading && (
-                  <div className="help is-info">
-                    <p>Loading...</p>
+
+                <div className="m-3" hidden={!isLoading}>
+                  <span>Loading contract informations. Please wait...</span>
+                  <progress
+                    className="progress is-small is-primary mt-1"
+                    style={{ width: '300px' }}
+                    max="100"
+                  >
+                    Loading...{' '}
+                  </progress>
+                </div>
+
+                {!errorMessage && !isLoading && !isEmptyInput && !isErc725X && !isErc725Y && !isLsp1UniversalReceiver && !isLsp6KeyManager && !isLsp0Erc725Account && (
+                  <div className="help is-danger inspect-result">
+                    <p>This address is not a valid ERC725 or LSP smart contract.</p>
+                    <p>Please check if the address is correct.</p>
                   </div>
                 )}
+
                 {!isEmptyInput && !isLoading && (
                   <>
                     {(errorMessage && (
