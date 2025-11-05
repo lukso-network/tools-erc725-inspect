@@ -476,7 +476,14 @@ const Home: NextPage = () => {
                   </div>
                 </>
                 {(isErc725X || isErc725Y) && (
-                  <ContractOwner contractAddress={address} />
+                  <ContractOwner
+                    contractAddress={address}
+                    standards={{
+                      isLSP0ERC725Account,
+                      isLSP7DigitalAsset,
+                      isLSP8IdentifiableDigitalAsset,
+                    }}
+                  />
                 )}
                 {isErc725Y && (
                   <>

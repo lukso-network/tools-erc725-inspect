@@ -32,7 +32,7 @@ const AddressButtons: React.FC<Props> = ({
 
   const universalEverythingUrl =
     standards && isLuksoNetwork
-      ? standards.isLSP7DigitalAsset
+      ? standards.isLSP7DigitalAsset || standards.isLSP8IdentifiableDigitalAsset
         ? `https://universaleverything.io/asset/${address}?network=${networkType}`
         : `https://universaleverything.io/${address}?network=${networkType}`
       : undefined;

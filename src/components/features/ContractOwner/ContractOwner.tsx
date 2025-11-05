@@ -10,6 +10,11 @@ import AddressInfos from '../AddressInfos';
 
 type Props = {
   contractAddress: string;
+  standards?: {
+    isLSP0ERC725Account: boolean;
+    isLSP7DigitalAsset: boolean;
+    isLSP8IdentifiableDigitalAsset: boolean;
+  } | null;
 };
 
 enum ownerTypeEnum {
@@ -19,7 +24,7 @@ enum ownerTypeEnum {
   KeyManager = '🔐 Key Manager',
 }
 
-const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
+const ContractOwner: React.FC<Props> = ({ contractAddress, standards }) => {
   const [contractOwner, setContractOwner] = useState('');
   const [ownerType, setOwnerType] = useState<ownerTypeEnum>();
 
@@ -132,7 +137,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
         </div>
       </div>
       <div className="column">
-        <AddressButtons address={contractOwner} />
+        <AddressButtons address={contractOwner} standards={standards} />
       </div>
     </div>
   );
