@@ -10,6 +10,8 @@ export enum NetworkName {
 
 export interface INetwork {
   name: NetworkName;
-  rpc: string;
+  rpcUrl: string;
   imgUrl?: string;
+  explorerName?: string;
+  explorerBaseUrl?: string;
 }

@@ -12,7 +12,6 @@ import {
   LSP1_GRAVE_FORWARDER,
   LUKSO_UP_RECOVERY_ADDRESSES,
 } from '@/constants/contracts';
-import { EXPLORER_BASE_URL } from '@/constants/networks';
 
 import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
 
@@ -114,7 +113,10 @@ const AddressInfos: React.FC<Props> = ({
   );
   const addressTypeText = isEOA ? '🔑 EOA' : '📄 Contract';
 
-  const explorerLink = `${EXPLORER_BASE_URL[network.name]}/address/${address}`;
+  const explorerBaseUrl = network.explorerBaseUrl;
+  const explorerLink = explorerBaseUrl
+    ? `${explorerBaseUrl}/address/${address}`
+    : undefined;
 
   const showName = assetBadgeOptions?.showName ?? true;
   const showSymbol = assetBadgeOptions?.showSymbol ?? true;
@@ -236,9 +238,13 @@ const AddressInfos: React.FC<Props> = ({
       <div className="is-flex">
         {showAddress && (
           <code className="mr-2">
-            <a target="_blank" rel="noreferrer" href={explorerLink}>
-              {address}
-            </a>
+            {explorerLink ? (
+              <a target="_blank" rel="noreferrer" href={explorerLink}>
+                {address}
+              </a>
+            ) : (
+              address
+            )}
           </code>
         )}
         <AddressTypeBadge text={addressTypeText} isLight={true} />
