@@ -2,7 +2,7 @@
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Felix Hildebrandt <fhildeb>
  */
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { NetworkName } from '@/types/network';
 
@@ -10,9 +10,9 @@ interface Props {
   address: string;
   showInspectButton?: boolean;
   standards?: {
-    isLSP0ERC725Account: boolean;
-    isLSP7DigitalAsset: boolean;
-    isLSP8IdentifiableDigitalAsset: boolean;
+    isLsp0Erc725Account: boolean;
+    isLsp7DigitalAsset: boolean;
+    isLsp8IdentifiableDigitalAsset: boolean;
   } | null;
 }
 
@@ -22,6 +22,9 @@ const AddressButtons: React.FC<Props> = ({
   standards,
 }) => {
   const { network: currentNetwork } = useContext(NetworkContext);
+  const [universalEverythingUrl, setUniversalEverythingUrl] = useState<
+    string | undefined
+  >(undefined);
 
   const isLuksoNetwork =
     currentNetwork.name === NetworkName.LUKSO_MAINNET ||
@@ -30,12 +33,24 @@ const AddressButtons: React.FC<Props> = ({
   const networkType =
     currentNetwork.name === NetworkName.LUKSO_TESTNET ? 'testnet' : 'mainnet';
 
-  const universalEverythingUrl =
-    standards && isLuksoNetwork
-      ? standards.isLSP7DigitalAsset || standards.isLSP8IdentifiableDigitalAsset
-        ? `https://universaleverything.io/asset/${address}?network=${networkType}`
-        : `https://universaleverything.io/${address}?network=${networkType}`
-      : undefined;
+  useEffect(() => {
+    if (!standards || !isLuksoNetwork) return;
+
+    if (
+      standards.isLsp7DigitalAsset ||
+      standards.isLsp8IdentifiableDigitalAsset
+    ) {
+      setUniversalEverythingUrl(
+        `https://universaleverything.io/asset/${address}?network=${networkType}`,
+      );
+    }
+
+    if (standards.isLsp0Erc725Account) {
+      setUniversalEverythingUrl(
+        `https://universaleverything.io/${address}?network=${networkType}`,
+      );
+    }
+  }, [standards, address, networkType]);
 
   const explorerUrl = currentNetwork.explorerBaseUrl
     ? `${currentNetwork.explorerBaseUrl}/address/${address}`
