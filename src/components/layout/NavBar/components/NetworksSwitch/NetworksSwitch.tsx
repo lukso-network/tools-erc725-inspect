@@ -53,14 +53,16 @@ const NetworkSwitch: React.FC = () => {
         <span style={{ flexGrow: 1 }}>{network.name}</span>
         <span className="icon is-small is-hidden-touch">
           <i
-            className={`fas fa-chevron-down ${isDropdownActive ? 'is-active' : ''
-              }`}
+            className={`fas fa-chevron-down ${
+              isDropdownActive ? 'is-active' : ''
+            }`}
           ></i>
         </span>
       </a>
       <div
-        className={`navbar-dropdown ${isDropdownActive ? 'is-block' : 'is-hidden-touch'
-          }`}
+        className={`navbar-dropdown ${
+          isDropdownActive ? 'is-block' : 'is-hidden-touch'
+        }`}
       >
         {CHAINS.map((chain) => {
           if (chain.rpcUrl === network.rpcUrl) {

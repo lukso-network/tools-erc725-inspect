@@ -41,7 +41,10 @@ const AddressButtons: React.FC<Props> = ({
     ? `${currentNetwork.explorerBaseUrl}/address/${address}`
     : undefined;
 
-  const explorerLogo = currentNetwork.explorerName === 'Etherscan' ? '/etherscan-logo.svg' : '/blockscout-logo-white.svg';
+  const explorerLogo =
+    currentNetwork.explorerName === 'Etherscan'
+      ? '/etherscan-logo.svg'
+      : '/blockscout-logo-white.svg';
 
   const inspectUrl =
     typeof window !== 'undefined'
@@ -68,25 +71,26 @@ const AddressButtons: React.FC<Props> = ({
       )}
       {explorerUrl && (
         <a
-          className={`button is-normal ${currentNetwork.explorerName === 'Etherscan' ? 'is-normal' : 'is-info'}`}
+          className={`button is-normal ${
+            currentNetwork.explorerName === 'Etherscan'
+              ? 'is-normal'
+              : 'is-info'
+          }`}
           target="_blank"
           rel="noreferrer"
           href={explorerUrl}
         >
           <span className="icon is-small mr-2">
-            <img src={explorerLogo} alt={currentNetwork.explorerName || 'Explorer'} />
+            <img
+              src={explorerLogo}
+              alt={currentNetwork.explorerName || 'Explorer'}
+            />
           </span>
-          <span>
-            View on {currentNetwork.explorerName || 'Explorer'}
-          </span>
+          <span>View on {currentNetwork.explorerName || 'Explorer'}</span>
         </a>
-
       )}
       {showInspectButton && (
-        <a
-          className="button is-primary is-normal"
-          href={inspectUrl}
-        >
+        <a className="button is-primary is-normal" href={inspectUrl}>
           <span className="icon is-small">
             <img src="/inspect-icon.svg" alt="ERC725 Inspect" />
           </span>

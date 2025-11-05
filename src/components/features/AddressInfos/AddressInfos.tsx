@@ -68,7 +68,7 @@ const AddressInfos: React.FC<Props> = ({
       isLsp1UniversalReceiverDelegate,
       isLsp7DigitalAsset,
       isLsp8IdentifiableDigitalAsset,
-      isLsp6KeyManager
+      isLsp6KeyManager,
     } = await checkInterface(_address, web3);
 
     setIsLSP0(isLsp0Erc725Account);
@@ -120,8 +120,7 @@ const AddressInfos: React.FC<Props> = ({
 
   const showName = assetBadgeOptions?.showName ?? true;
   const showSymbol = assetBadgeOptions?.showSymbol ?? true;
-  const showBalance =
-    assetBadgeOptions?.showBalance ?? Boolean(userAddress);
+  const showBalance = assetBadgeOptions?.showBalance ?? Boolean(userAddress);
 
   const renderTags = () => {
     if (isLoading) {

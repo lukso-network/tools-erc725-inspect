@@ -87,6 +87,8 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
     }
 
     async function fetchAssetInfos(currentAddress: string) {
+      if (!web3) return;
+
       try {
         if (shouldFetchMetadata) {
           const [nameBytesValue, symbolBytesValue] = await getDataBatch(

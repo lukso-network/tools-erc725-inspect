@@ -228,8 +228,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info ${getInterfaceSupport(standard) ? '' : 'is-outlined'
-                            }`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -258,8 +259,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info ${getInterfaceSupport(standard) ? '' : 'is-outlined'
-                            }`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -290,8 +292,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info ${getInterfaceSupport(standard) ? '' : 'is-outlined'
-                            }`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -320,8 +323,9 @@ const Home: NextPage = () => {
                     <tr key={interfaceId}>
                       <td>
                         <a
-                          className={`button is-small is-info ${getInterfaceSupport(standard) ? '' : 'is-outlined'
-                            }`}
+                          className={`button is-small is-info ${
+                            getInterfaceSupport(standard) ? '' : 'is-outlined'
+                          }`}
                           href={docsUrl}
                           target="_blank"
                           rel="noreferrer"
@@ -399,15 +403,15 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                        <div>
-                          <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
-                            <i className="has-text-centered mb-2">
-                              Scroll to see results
-                            </i>
-                            <p className="has-text-centered">⬇️</p>
-                          </div>
+                      <div>
+                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                          <i className="has-text-centered mb-2">
+                            Scroll to see results
+                          </i>
+                          <p className="has-text-centered">⬇️</p>
                         </div>
-                      )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -455,7 +459,10 @@ const Home: NextPage = () => {
                             <strong className="mr-2">Contract type:</strong>{' '}
                             <AddressInfos
                               address={address}
-                              assetBadgeOptions={{ showBalance: false, showName: true }}
+                              assetBadgeOptions={{
+                                showBalance: false,
+                                showName: true,
+                              }}
                               showAddress={false}
                             />
                           </li>
@@ -499,8 +506,13 @@ const Home: NextPage = () => {
 
                     {
                       /* Show data keys related to LSP1 Delegates for specific notification types separately */
-                      (!isLSP7DigitalAsset && !isLSP8IdentifiableDigitalAsset) && <LSP1DelegateDataKeys address={address} isErc725Y={isErc725Y} />
-
+                      !isLSP7DigitalAsset &&
+                        !isLSP8IdentifiableDigitalAsset && (
+                          <LSP1DelegateDataKeys
+                            address={address}
+                            isErc725Y={isErc725Y}
+                          />
+                        )
                     }
                   </>
                 )}

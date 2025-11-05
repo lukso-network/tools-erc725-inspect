@@ -13,7 +13,6 @@ import LSP8Schema from '@/schemas/LSP8Schema.json';
 import useWeb3 from '@/hooks/useWeb3';
 import { getDataBatch } from '@/utils/web3';
 
-
 interface Props {
   address: string;
   isErc725Y: boolean;
@@ -36,7 +35,6 @@ const DataKeysTable: React.FC<Props> = ({
       schema: ERC725JSONSchema;
     }[]
   >([]);
-
 
   useEffect(() => {
     const fetch = async () => {
