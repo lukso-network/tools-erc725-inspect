@@ -7,9 +7,8 @@ import Head from 'next/head';
 import { isAddress } from 'web3-utils';
 
 import '@/styles/Inspect.module.css';
-import { checkInterface, getVersion } from '@/utils/web3';
+import { checkInterface } from '@/utils/web3';
 
-import AddressButtons from '@/components/ui/AddressButtons';
 import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
 import ContractOwner from '@/components/features/ContractOwner';
 import DataKeysTable from '@/components/features/DataKeysTable';
@@ -26,8 +25,8 @@ import {
 
 import { LSP_SPECS_URL } from '@/constants/links';
 import ToolInfos from '@/components/layout/ToolInfos';
-import AddressInfos from '@/components/features/AddressInfos';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
+import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -78,9 +77,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const check = async () => {
-      if (!web3) {
-        return;
-      }
+      if (!web3) return;
 
       // Reset all interface states
       setIsErc725X(false);
@@ -355,8 +352,6 @@ const Home: NextPage = () => {
         </div>
       </>
     );
-
-    return null;
   };
 
   return (
@@ -401,6 +396,11 @@ const Home: NextPage = () => {
                 <SampleAddressInput
                   onClick={(newAddress) => setAddress(newAddress)}
                 />
+                {isLoading && (
+                  <div className="help is-info">
+                    <p>Loading...</p>
+                  </div>
+                )}
                 {!isEmptyInput && !isLoading && (
                   <>
                     {(errorMessage && (
@@ -437,53 +437,17 @@ const Home: NextPage = () => {
               <>
                 <>
                   <h3 className="title is-3">Instance and Ownership</h3>
-                  <div className="columns is-multiline dataKeyBox my-3">
-                    <div className="column is-two-thirds">
-                      <div className="content">
-                        <div className="title is-4">
-                          <a
-                            href="https://docs.lukso.tech/standards/erc725/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="home-link"
-                          >
-                            Contract ↗️
-                          </a>
-                        </div>
-                        <ul>
-                          <li>
-                            <strong>Contract address:</strong>
-                            <span className="tag is-small mb-2 mx-2 is-link is-light">
-                              address
-                            </span>
-                            <code>{address}</code>
-                          </li>
-                          <li className="is-flex is-align-items-center">
-                            <strong className="mr-2">Contract type:</strong>{' '}
-                            <AddressInfos
-                              address={address}
-                              assetBadgeOptions={{
-                                showBalance: false,
-                                showName: true,
-                              }}
-                              showAddress={false}
-                            />
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="column">
-                      <AddressButtons
-                        address={address}
-                        showInspectButton={false}
-                        standards={{
-                          isLsp0Erc725Account,
-                          isLsp7DigitalAsset,
-                          isLsp8IdentifiableDigitalAsset,
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <ContractTypeBox
+                    title="Instance and Ownership"
+                    link="https://docs.lukso.tech/standards/erc725/"
+                    label="Contract address"
+                    address={address}
+                    standards={{
+                      isLsp0Erc725Account,
+                      isLsp7DigitalAsset,
+                      isLsp8IdentifiableDigitalAsset,
+                    }}
+                  />
                 </>
                 {(isErc725X || isErc725Y) && (
                   <ContractOwner contractAddress={address} />
