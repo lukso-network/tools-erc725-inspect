@@ -16,17 +16,11 @@ import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddress
 import { NetworkContext } from '@/contexts/NetworksContext';
 
 import useWeb3 from '@/hooks/useWeb3';
-import {
-  ACCESS_CONTROL_INTERFACE_IDS,
-  ACCOUNT_INTERFACE_IDS,
-  ASSETS_INTERFACE_IDS,
-  OTHER_INTERFACE_IDS,
-} from '@/constants/interface-ids';
-
 import { LSP_SPECS_URL } from '@/constants/links';
 import ToolInfos from '@/components/layout/ToolInfos';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
+import SupportedInterfacesTable from '@/components/ui/SupportedInterfacesTable';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -158,184 +152,8 @@ const Home: NextPage = () => {
     check();
   }, [address, web3, errorMessage, network.name, router]);
 
-  // Helper function to determine if an interface is supported
-  const getInterfaceSupport = (standard: string): boolean => {
-    const interfaceMap: { [key: string]: boolean } = {
-      // Account Standards
-      ERC725X: isErc725X,
-      ERC725Y: isErc725Y,
-      ERC1271: isErc1271,
-      LSP0Erc725Account: isLsp0Erc725Account,
-      LSP1UniversalReceiver: isLsp1UniversalReceiver,
-      LSP17Extendable: isLsp17Extendable,
-      LSP25ExecuteRelayCall: isLsp25ExecuteRelayCall,
-      // Access Control Standards
-      LSP6KeyManager: isLsp6KeyManager,
-      LSP14OwnableTwoSteps: isLsp14OwnableTwoSteps,
-      LSP20CallVerification: isLsp20CallVerification,
-      LSP20CallVerifier: isLsp20CallVerifier,
-      // Asset Standards
-      LSP7DigitalAsset: isLsp7DigitalAsset,
-      LSP8IdentifiableDigitalAsset: isLsp8IdentifiableDigitalAsset,
-      ERC20: isErc20,
-      ERC721: isErc721,
-      // Other Standards
-      LSP1Delegate: isLsp1Delegate,
-      LSP9Vault: isLsp9Vault,
-      LSP17Extension: isLsp17Extension,
-      LSP26FollowerSystem: isLsp26FollowerSystem,
-    };
-
-    return interfaceMap[standard] || false;
-  };
-
   const isLspDigitalAsset =
     isLsp7DigitalAsset || isLsp8IdentifiableDigitalAsset;
-
-  const ERC725InspectResult = () => {
-    return (
-      <>
-        <h3 className="title is-3">Supported Standards</h3>
-        <div className="columns">
-          <div className="column is-half">
-            <table className="table is-borderless is-size-7 table-no-borders">
-              <thead>
-                <tr>
-                  <th>Account Standard</th>
-                  <th>Interface ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(ACCOUNT_INTERFACE_IDS).map(
-                  ([standard, { interfaceId, docsUrl }]) => (
-                    <tr key={interfaceId}>
-                      <td>
-                        <a
-                          className={`button is-small is-info ${
-                            getInterfaceSupport(standard) ? '' : 'is-outlined'
-                          }`}
-                          href={docsUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {standard} ↗️
-                        </a>
-                      </td>
-                      <td className="is-vcentered">
-                        <code>{interfaceId}</code>
-                      </td>
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
-            <table className="table is-borderless is-size-7 table-no-borders">
-              <thead>
-                <tr>
-                  <th>Access Control Standard</th>
-                  <th>Interface ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(ACCESS_CONTROL_INTERFACE_IDS).map(
-                  ([standard, { interfaceId, docsUrl }]) => (
-                    <tr key={interfaceId}>
-                      <td>
-                        <a
-                          className={`button is-small is-info ${
-                            getInterfaceSupport(standard) ? '' : 'is-outlined'
-                          }`}
-                          href={docsUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {standard} ↗️
-                        </a>
-                      </td>
-                      <td className="is-vcentered">
-                        <code>{interfaceId}</code>
-                      </td>
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="column is-half">
-            <table className="table is-borderless is-size-7 justify-content-center table-no-borders">
-              <thead>
-                <tr>
-                  <th>Asset Standard</th>
-                  <th>Interface ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(ASSETS_INTERFACE_IDS).map(
-                  ([standard, { interfaceId, docsUrl }]) => (
-                    <tr key={interfaceId}>
-                      <td>
-                        <a
-                          className={`button is-small is-info ${
-                            getInterfaceSupport(standard) ? '' : 'is-outlined'
-                          }`}
-                          href={docsUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {standard} ↗️
-                        </a>
-                      </td>
-                      <td className="is-vcentered">
-                        <code>{interfaceId}</code>
-                      </td>
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
-            <table className="table is-borderless is-size-7 table-no-borders">
-              <thead>
-                <tr>
-                  <th>Other Standard</th>
-                  <th>Interface ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(OTHER_INTERFACE_IDS).map(
-                  ([standard, { interfaceId, docsUrl }]) => (
-                    <tr key={interfaceId}>
-                      <td>
-                        <a
-                          className={`button is-small is-info ${
-                            getInterfaceSupport(standard) ? '' : 'is-outlined'
-                          }`}
-                          href={docsUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {standard} ↗️
-                        </a>
-                      </td>
-                      <td className="is-vcentered">
-                        <code>{interfaceId}</code>
-                      </td>
-                    </tr>
-                  ),
-                )}
-              </tbody>
-            </table>
-            <a
-              href="https://docs.lukso.tech/contracts/interface-ids/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              📚↗️ All interface IDs on docs.lukso.tech
-            </a>
-          </div>
-        </div>
-      </>
-    );
-  };
 
   return (
     <>
@@ -413,15 +231,15 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                      <div>
-                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
-                          <i className="has-text-centered mb-2">
-                            Scroll to see results
-                          </i>
-                          <p className="has-text-centered">⬇️</p>
+                        <div>
+                          <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                            <i className="has-text-centered mb-2">
+                              Scroll to see results
+                            </i>
+                            <p className="has-text-centered">⬇️</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 )}
               </div>
@@ -429,7 +247,29 @@ const Home: NextPage = () => {
           </div>
           <div className="column is-half">
             <div className="field">
-              <ERC725InspectResult />
+              <SupportedInterfacesTable
+                supports={{
+                  isErc725X,
+                  isErc725Y,
+                  isErc1271,
+                  isLsp0Erc725Account,
+                  isLsp1UniversalReceiver,
+                  isLsp17Extendable,
+                  isLsp25ExecuteRelayCall,
+                  isLsp6KeyManager,
+                  isLsp14OwnableTwoSteps,
+                  isLsp20CallVerification,
+                  isLsp20CallVerifier,
+                  isLsp7DigitalAsset,
+                  isLsp8IdentifiableDigitalAsset,
+                  isErc20,
+                  isErc721,
+                  isLsp1Delegate,
+                  isLsp9Vault,
+                  isLsp17Extension,
+                  isLsp26FollowerSystem,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -454,7 +294,6 @@ const Home: NextPage = () => {
                       isLsp7DigitalAsset,
                       isLsp8IdentifiableDigitalAsset,
                     }}
-                    showInspectButton={false}
                   />
                 </>
                 {(isErc725X || isErc725Y) && (
