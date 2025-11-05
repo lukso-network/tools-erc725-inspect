@@ -21,47 +21,38 @@ import ToolInfos from '@/components/layout/ToolInfos';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
 import SupportedInterfacesTable from '@/components/ui/SupportedInterfacesTable';
+import {
+  CONTRACT_INTERFACE_KEYS,
+  type SupportedInterfaces,
+} from '@/types/contract';
+
+export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
+  Object.fromEntries(
+    CONTRACT_INTERFACE_KEYS.map((key) => [key, false] as const),
+  ) as SupportedInterfaces;
 
 const Home: NextPage = () => {
   const router = useRouter();
-
+  const { network } = useContext(NetworkContext);
   const web3 = useWeb3();
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const [address, setAddress] = useState('');
-  const { network } = useContext(NetworkContext);
-
-  // Account Standards
-  const [isErc725X, setIsErc725X] = useState(false);
-  const [isErc725Y, setIsErc725Y] = useState(false);
-  const [isErc1271, setIsErc1271] = useState(false);
-  const [isLsp0Erc725Account, setIsLsp0Erc725Account] = useState(false);
-  const [isLsp1UniversalReceiver, setIsLsp1UniversalReceiver] = useState(false);
-  const [isLsp17Extendable, setIsLsp17Extendable] = useState(false);
-  const [isLsp25ExecuteRelayCall, setIsLsp25ExecuteRelayCall] = useState(false);
-
-  // Access Control Standards
-  const [isLsp6KeyManager, setIsLsp6KeyManager] = useState(false);
-  const [isLsp14OwnableTwoSteps, setIsLsp14OwnableTwoSteps] = useState(false);
-  const [isLsp20CallVerification, setIsLsp20CallVerification] = useState(false);
-  const [isLsp20CallVerifier, setIsLsp20CallVerifier] = useState(false);
-
-  // Asset Standards
-  const [isLsp7DigitalAsset, setIsLsp7DigitalAsset] = useState(false);
-  const [isLsp8IdentifiableDigitalAsset, setIsLsp8IdentifiableDigitalAsset] =
-    useState(false);
-  const [isErc20, setIsErc20] = useState(false);
-  const [isErc721, setIsErc721] = useState(false);
-
-  // Other Standards
-  const [isLsp1Delegate, setIsLsp1Delegate] = useState(false);
-  const [isLsp9Vault, setIsLsp9Vault] = useState(false);
-  const [isLsp17Extension, setIsLsp17Extension] = useState(false);
-  const [isLsp26FollowerSystem, setIsLsp26FollowerSystem] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
+
+  const [supportedInterfaces, setSupportedInterfaces] =
+    useState<SupportedInterfaces>(DEFAULT_SUPPORTED_INTERFACE_ENTRIES);
+
+  const {
+    isErc725X,
+    isErc725Y,
+    isLsp0Erc725Account,
+    isLsp1UniversalReceiver,
+    isLsp6KeyManager,
+    isLsp7DigitalAsset,
+    isLsp8IdentifiableDigitalAsset,
+  } = supportedInterfaces;
 
   useEffect(() => {
     if (router.query.address) {
@@ -73,35 +64,17 @@ const Home: NextPage = () => {
     const check = async () => {
       if (!web3) return;
 
-      // Reset all interface states
-      setIsErc725X(false);
-      setIsErc725Y(false);
-      setIsErc1271(false);
-      setIsLsp0Erc725Account(false);
-      setIsLsp1UniversalReceiver(false);
-      setIsLsp17Extendable(false);
-      setIsLsp25ExecuteRelayCall(false);
-      setIsLsp6KeyManager(false);
-      setIsLsp14OwnableTwoSteps(false);
-      setIsLsp20CallVerification(false);
-      setIsLsp20CallVerifier(false);
-      setIsLsp7DigitalAsset(false);
-      setIsLsp8IdentifiableDigitalAsset(false);
-      setIsErc20(false);
-      setIsErc721(false);
-      setIsLsp1Delegate(false);
-      setIsLsp9Vault(false);
-      setIsLsp17Extension(false);
-      setIsLsp26FollowerSystem(false);
+      // Reset supported interfaces to default every time we run the check
+      setSupportedInterfaces(DEFAULT_SUPPORTED_INTERFACE_ENTRIES);
       setErrorMessage('');
 
       if (address.length === 0) {
         setIsEmptyInput(true);
         setErrorMessage('Empty input field');
         return;
-      } else {
-        setIsEmptyInput(false);
       }
+
+      setIsEmptyInput(false);
 
       if (!isAddress(address)) {
         setErrorMessage('Address is not valid');
@@ -115,39 +88,20 @@ const Home: NextPage = () => {
       }
 
       setIsLoading(true);
-
-      const supportStandards = await checkInterface(address, web3);
-
-      // Account Standards
-      setIsErc725X(supportStandards.isErc725X);
-      setIsErc725Y(supportStandards.isErc725Y);
-      setIsErc1271(supportStandards.isErc1271);
-      setIsLsp0Erc725Account(supportStandards.isLsp0Erc725Account);
-      setIsLsp1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
-      setIsLsp17Extendable(supportStandards.isLsp17Extendable);
-      setIsLsp25ExecuteRelayCall(supportStandards.isLsp25ExecuteRelayCall);
-
-      // Access Control Standards
-      setIsLsp6KeyManager(supportStandards.isLsp6KeyManager);
-      setIsLsp14OwnableTwoSteps(supportStandards.isLsp14OwnableTwoSteps);
-      setIsLsp20CallVerification(supportStandards.isLsp20CallVerification);
-      setIsLsp20CallVerifier(supportStandards.isLsp20CallVerifier);
-
-      // Asset Standards
-      setIsLsp7DigitalAsset(supportStandards.isLsp7DigitalAsset);
-      setIsLsp8IdentifiableDigitalAsset(
-        supportStandards.isLsp8IdentifiableDigitalAsset,
-      );
-      setIsErc20(supportStandards.isErc20);
-      setIsErc721(supportStandards.isErc721);
-
-      // Other Standards
-      setIsLsp1Delegate(supportStandards.isLsp1UniversalReceiverDelegate);
-      setIsLsp9Vault(supportStandards.isLsp9Vault);
-      setIsLsp17Extension(supportStandards.isLsp17Extension);
-      setIsLsp26FollowerSystem(supportStandards.isLsp26FollowerSystem);
-
-      setIsLoading(false);
+      try {
+        const interfacesSupportedByAddress = await checkInterface(
+          address,
+          web3,
+        );
+        setSupportedInterfaces(interfacesSupportedByAddress);
+      } catch (error) {
+        setErrorMessage(
+          'Error checking interfaces (check console for details): ' + error,
+        );
+        console.error('Error checking interfaces: ', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     check();
   }, [address, web3, errorMessage, network.name, router]);
@@ -190,9 +144,7 @@ const Home: NextPage = () => {
                   type="text"
                   placeholder="Enter a UP, LSP7 or LSP8 address"
                   value={address}
-                  onChange={(e) => {
-                    setAddress(e.target.value);
-                  }}
+                  onChange={(e) => setAddress(e.target.value)}
                 />
                 <SampleAddressInput
                   onClick={(newAddress) => setAddress(newAddress)}
@@ -231,15 +183,15 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                        <div>
-                          <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
-                            <i className="has-text-centered mb-2">
-                              Scroll to see results
-                            </i>
-                            <p className="has-text-centered">⬇️</p>
-                          </div>
+                      <div>
+                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                          <i className="has-text-centered mb-2">
+                            Scroll to see results
+                          </i>
+                          <p className="has-text-centered">⬇️</p>
                         </div>
-                      )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -248,27 +200,7 @@ const Home: NextPage = () => {
           <div className="column is-half">
             <div className="field">
               <SupportedInterfacesTable
-                supports={{
-                  isErc725X,
-                  isErc725Y,
-                  isErc1271,
-                  isLsp0Erc725Account,
-                  isLsp1UniversalReceiver,
-                  isLsp17Extendable,
-                  isLsp25ExecuteRelayCall,
-                  isLsp6KeyManager,
-                  isLsp14OwnableTwoSteps,
-                  isLsp20CallVerification,
-                  isLsp20CallVerifier,
-                  isLsp7DigitalAsset,
-                  isLsp8IdentifiableDigitalAsset,
-                  isErc20,
-                  isErc721,
-                  isLsp1Delegate,
-                  isLsp9Vault,
-                  isLsp17Extension,
-                  isLsp26FollowerSystem,
-                }}
+                supportedInterfaces={supportedInterfaces}
               />
             </div>
           </div>
