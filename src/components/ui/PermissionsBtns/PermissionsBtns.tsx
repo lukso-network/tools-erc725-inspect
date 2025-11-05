@@ -15,8 +15,9 @@ const PermissionBtn: React.FC<Props> = ({
     {permissions.map((permission: string) => (
       <button
         key={permission}
-        className={`button ${color} ${!decodedPermissions[permission] && 'is-outlined'
-          }`}
+        className={`button ${color} ${
+          !decodedPermissions[permission] && 'is-outlined'
+        }`}
         onClick={(e) => {
           e.preventDefault();
           handlePermissionClick(permission);

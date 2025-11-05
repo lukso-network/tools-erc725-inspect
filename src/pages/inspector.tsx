@@ -391,12 +391,22 @@ const Home: NextPage = () => {
                   </progress>
                 </div>
 
-                {!errorMessage && !isLoading && !isEmptyInput && !isErc725X && !isErc725Y && !isLsp1UniversalReceiver && !isLsp6KeyManager && !isLsp0Erc725Account && (
-                  <div className="help is-danger inspect-result">
-                    <p>This address is not a valid ERC725 or LSP smart contract.</p>
-                    <p>Please check if the address is correct.</p>
-                  </div>
-                )}
+                {!errorMessage &&
+                  !isLoading &&
+                  !isEmptyInput &&
+                  !isErc725X &&
+                  !isErc725Y &&
+                  !isLsp1UniversalReceiver &&
+                  !isLsp6KeyManager &&
+                  !isLsp0Erc725Account && (
+                    <div className="help is-danger inspect-result">
+                      <p>
+                        This address is not a valid ERC725 or LSP smart
+                        contract.
+                      </p>
+                      <p>Please check if the address is correct.</p>
+                    </div>
+                  )}
 
                 {!isEmptyInput && !isLoading && (
                   <>
@@ -435,7 +445,7 @@ const Home: NextPage = () => {
                 <>
                   <h3 className="title is-3">Instance and Ownership</h3>
                   <ContractTypeBox
-                    title="Instance and Ownership"
+                    title="Contract"
                     link="https://docs.lukso.tech/standards/erc725/"
                     label="Contract address"
                     address={address}
@@ -444,6 +454,7 @@ const Home: NextPage = () => {
                       isLsp7DigitalAsset,
                       isLsp8IdentifiableDigitalAsset,
                     }}
+                    showInspectButton={false}
                   />
                 </>
                 {(isErc725X || isErc725Y) && (

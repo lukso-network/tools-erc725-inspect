@@ -73,8 +73,13 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
       label="Owner address"
       address={contractOwner}
       standards={standards}
+      description={
+        <span>
+          Returned by the <code>owner()</code> function
+        </span>
+      }
     />
-  )
+  );
 };
 
 export default ContractOwner;
