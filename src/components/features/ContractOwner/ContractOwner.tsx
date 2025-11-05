@@ -46,38 +46,29 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
       contractAddress,
     );
 
-    const setOwner = async () => {
+    const getOwnerInfos = async () => {
       try {
-        await contractInstance.methods
-          .owner()
-          .call()
-          .then((owner: string) => {
-            setContractOwner(owner);
-          });
+        const owner = await contractInstance.methods.owner().call();
+
+        setContractOwner(owner);
+
+        const {
+          isLsp0Erc725Account,
+          isLsp7DigitalAsset,
+          isLsp8IdentifiableDigitalAsset,
+        } = await checkInterface(owner, web3);
+
+        setStandards({
+          isLsp0Erc725Account,
+          isLsp7DigitalAsset,
+          isLsp8IdentifiableDigitalAsset,
+        });
       } catch (error) {
-        console.log(error);
+        console.error('Error while getting owner infos:', error);
       }
     };
 
-    const detectInterfacesForUniversalEverythingLinks = async (
-      address: string,
-    ) => {
-      const {
-        isLsp0Erc725Account,
-        isLsp7DigitalAsset,
-        isLsp8IdentifiableDigitalAsset,
-      } = await checkInterface(address, web3);
-
-      setStandards({
-        isLsp0Erc725Account,
-        isLsp7DigitalAsset,
-        isLsp8IdentifiableDigitalAsset,
-      });
-    };
-
-    setOwner().then(() => {
-      detectInterfacesForUniversalEverythingLinks(contractOwner);
-    });
+    getOwnerInfos();
   }, [contractAddress, web3]);
 
   return (
