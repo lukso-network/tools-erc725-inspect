@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { ERC725, ERC725JSONSchema, encodeKeyName } from '@erc725/erc725.js';
-import { isHex } from 'web3-utils';
+import { isHex } from 'viem';
 
-import useWeb3 from '@/hooks/useWeb3';
+import { useNetworkSync } from '@/hooks/useNetworkSync';
 import { getData } from '@/utils/web3';
 
 import CodeEditor from '@/components/ui/CodeEditor';
@@ -257,7 +257,7 @@ interface CustomKeySchemaFormProps {
 }
 
 const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
-  const web3 = useWeb3();
+  const { network } = useNetworkSync();
 
   const {
     name: sampleName,
@@ -440,7 +440,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
   };
 
   const handleGetData = async () => {
-    if (!web3 || !address) return;
+    if (!network?.rpcUrl || !address) return;
 
     const customSchemaResult = getCompleteCustomSchema();
 
@@ -460,7 +460,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
     const { key, keyType, valueType, valueContent } = customSchema;
 
     try {
-      const dataToDecode = await getData(address, key, web3);
+      const dataToDecode = await getData(address, key, network.rpcUrl);
 
       if (!dataToDecode) {
         setRawData('0x');
@@ -475,7 +475,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
       const erc725js = new ERC725(
         [customSchema],
         address,
-        web3?.currentProvider,
+        network.rpcUrl,
         {
           ipfsGateway: 'https://api.universalprofile.cloud/ipfs/',
         },

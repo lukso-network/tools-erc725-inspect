@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import { isAddress } from 'web3-utils';
+import { isAddress } from 'viem';
 
 import '@/styles/Inspect.module.css';
 import { checkInterface } from '@/utils/web3';
@@ -13,9 +13,7 @@ import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
 import ContractOwner from '@/components/features/ContractOwner';
 import DataKeysTable from '@/components/features/DataKeysTable';
 import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
-import { NetworkContext } from '@/contexts/NetworksContext';
-
-import useWeb3 from '@/hooks/useWeb3';
+import { useNetworkSync } from '@/hooks/useNetworkSync';
 import { LSP_SPECS_URL } from '@/constants/links';
 import ToolInfos from '@/components/layout/ToolInfos';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
@@ -33,8 +31,7 @@ export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { network } = useContext(NetworkContext);
-  const web3 = useWeb3();
+  const { network } = useNetworkSync();
 
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +59,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const check = async () => {
-      if (!web3) return;
+      if (!network) return;
 
       // Reset supported interfaces to default every time we run the check
       setSupportedInterfaces(DEFAULT_SUPPORTED_INTERFACE_ENTRIES);
@@ -89,10 +86,7 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       try {
-        const interfacesSupportedByAddress = await checkInterface(
-          address,
-          web3,
-        );
+        const interfacesSupportedByAddress = await checkInterface(address, network.rpcUrl);
         setSupportedInterfaces(interfacesSupportedByAddress);
       } catch (error) {
         setErrorMessage(
@@ -104,7 +98,7 @@ const Home: NextPage = () => {
       }
     };
     check();
-  }, [address, web3, errorMessage, network.name, router]);
+  }, [address, network, errorMessage, network.name, router]);
 
   const isLspDigitalAsset =
     isLsp7DigitalAsset || isLsp8IdentifiableDigitalAsset;
@@ -183,15 +177,15 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                      <div>
-                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
-                          <i className="has-text-centered mb-2">
-                            Scroll to see results
-                          </i>
-                          <p className="has-text-centered">⬇️</p>
+                        <div>
+                          <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                            <i className="has-text-centered mb-2">
+                              Scroll to see results
+                            </i>
+                            <p className="has-text-centered">⬇️</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 )}
               </div>

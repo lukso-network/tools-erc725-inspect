@@ -1,8 +1,14 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
+ * @author Jean Cavallera <CJ42>
  */
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
+import {
+  createPublicClient,
+  http,
+  type Address,
+  decodeAbiParameters,
+  parseAbiParameters,
+} from 'viem';
 import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import ERC725 from '@erc725/erc725.js';
@@ -17,23 +23,55 @@ import {
 } from '@lukso/lsp8-contracts';
 
 import {
-  eip165ABI,
-  getDataBatchABI,
-  getDataABI,
-  VersionABI,
-  aggregateABI,
-} from '@/constants/abi';
-import {
   GNOSIS_SAFE,
   GNOSIS_SAFE_PROXY_BYTECODE,
-  MULTICALL_CONTRACT_ADDRESS,
 } from '@/constants/contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import type { SupportedInterfaces } from '@/types/contract';
+import { getDataBatchAbi } from '@/hooks/useGetDataBatch';
+import { getDataAbi } from '@/hooks/useGetData';
+
+const eip165Abi = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes4',
+        name: 'interfaceId',
+        type: 'bytes4',
+      },
+    ],
+    name: 'supportsInterface',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
+
+const versionAbi = [
+  {
+    inputs: [],
+    name: 'VERSION',
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
 
 export const checkInterface = async (
   address: string,
-  web3: Web3,
+  rpcUrl: string,
 ): Promise<SupportedInterfaces> => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
   const supportsContractInterface = await checkSupportedInterfaces(
@@ -61,7 +99,7 @@ export const checkInterface = async (
       INTERFACE_IDS.LSP17Extension,
       INTERFACE_IDS.LSP26FollowerSystem,
     ],
-    web3,
+    rpcUrl,
   );
 
   // digital assets need to be checked against multiple interface IDs
@@ -75,7 +113,7 @@ export const checkInterface = async (
       INTERFACE_ID_LSP8_PREVIOUS['v0.14.0'],
       INTERFACE_ID_LSP8,
     ],
-    web3,
+    rpcUrl,
   );
 
   return {
@@ -114,59 +152,49 @@ export const checkInterface = async (
 async function checkSupportedInterfaces(
   assetAddress: string,
   interfaceIds: string[],
-  web3: Web3,
+  rpcUrl: string,
 ): Promise<boolean[]> {
-  const eip165Instance = new web3.eth.Contract(eip165ABI);
-
-  const supportsInterfaceCalls: [string, string][] = interfaceIds.map(
-    (interfaceId) => {
-      const result: [string, string] = [
-        assetAddress,
-        eip165Instance.methods.supportsInterface(interfaceId).encodeABI(),
-      ];
-      return result;
-    },
-  );
-  const response = await aggregateCalls(supportsInterfaceCalls, web3);
-
-  return response.map((entry) => {
-    try {
-      return web3.eth.abi.decodeParameter('bool', entry) as unknown as boolean;
-    } catch (decodingError) {
-      console.warn(
-        'Could not decode `supportsInterface` return data from aggregate call as `boolean`: ',
-        decodingError,
-      );
-      return false;
-    }
-  });
-}
-
-export const aggregateCalls = async (
-  calls: [string, string][],
-  web3: Web3,
-): Promise<string[]> => {
   try {
-    const multiCallContract = new web3.eth.Contract(
-      aggregateABI,
-      MULTICALL_CONTRACT_ADDRESS,
-    );
+    const publicClient = createPublicClient({
+      transport: http(rpcUrl),
+    });
 
-    const result = await multiCallContract.methods.aggregate(calls).call();
-    return result.returnData;
+    // Use viem's multicall which automatically uses the chain's multicall contract
+    const results = await publicClient.multicall({
+      contracts: interfaceIds.map((interfaceId) => ({
+        address: assetAddress as Address,
+        abi: eip165Abi,
+        functionName: 'supportsInterface',
+        args: [interfaceId as `0x${string}`],
+      })),
+      allowFailure: true, // Allow individual calls to fail without breaking the entire batch
+    });
+
+    return results.map((result) => {
+      if (result.status === 'success') {
+        return result.result as boolean;
+      }
+      return false;
+    });
   } catch (error) {
-    console.warn('could not aggregate results: ', error);
-    return ['', ''];
+    console.warn('Could not check supported interfaces: ', error);
+    return interfaceIds.map(() => false);
   }
-};
+}
 
 export async function checkIsGnosisSafe(
   address: string,
-  web3: Web3,
+  rpcUrl: string,
 ): Promise<{ isSafe: boolean; version?: string }> {
-  const codeAt = await web3.eth.getCode(address);
+  const publicClient = createPublicClient({
+    transport: http(rpcUrl),
+  });
 
-  if (codeAt != GNOSIS_SAFE_PROXY_BYTECODE) {
+  const codeAt = await publicClient.getBytecode({
+    address: address as Address,
+  });
+
+  if (codeAt !== GNOSIS_SAFE_PROXY_BYTECODE) {
     return { isSafe: false };
   }
 
@@ -175,12 +203,19 @@ export async function checkIsGnosisSafe(
   // to reduce deployment costs.
   //
   // example: https://explorer.execution.mainnet.lukso.network/address/0x14C2041eD166e00A8Ed2adad8c9C7389b3Dd87fb?tab=contract
-  const valueAtStorageSlot0 = await web3.eth.getStorageAt(address, 0);
+  const valueAtStorageSlot0 = await publicClient.getStorageAt({
+    address: address as Address,
+    slot: '0x0',
+  });
 
-  const implementationAddress = web3.eth.abi.decodeParameter(
-    'address',
+  if (!valueAtStorageSlot0) {
+    return { isSafe: false };
+  }
+
+  const [implementationAddress] = decodeAbiParameters(
+    parseAbiParameters('address'),
     valueAtStorageSlot0,
-  ) as unknown as string;
+  );
 
   const safeImplementation = GNOSIS_SAFE.find(
     (safeVersion) => safeVersion.address === implementationAddress,
@@ -198,13 +233,19 @@ export async function checkIsGnosisSafe(
 
 export const getVersion = async (
   address: string,
-  web3: Web3,
+  rpcUrl: string,
 ): Promise<string> => {
-  const Contract = new web3.eth.Contract(VersionABI, address);
+  const publicClient = createPublicClient({
+    transport: http(rpcUrl),
+  });
 
   try {
-    const result = await Contract.methods.VERSION().call();
-    if (result == '') {
+    const result = await publicClient.readContract({
+      address: address as Address,
+      abi: versionAbi,
+      functionName: 'VERSION',
+    });
+    if (result === '') {
       return 'unknown';
     }
     return result;
@@ -220,13 +261,20 @@ export const getVersion = async (
 export const getDataBatch = async (
   address: string,
   keys: string[],
-  web3: Web3,
-) => {
-  const Contract = new web3.eth.Contract(getDataBatchABI as AbiItem[], address);
+  rpcUrl: string,
+): Promise<readonly string[]> => {
+  const publicClient = createPublicClient({
+    transport: http(rpcUrl),
+  });
 
-  let data: string[] = [];
+  let data: readonly string[] = [];
   try {
-    data = await Contract.methods.getDataBatch(keys).call();
+    data = await publicClient.readContract({
+      address: address as Address,
+      abi: getDataBatchAbi,
+      functionName: 'getDataBatch',
+      args: [keys as `0x${string}`[]],
+    });
   } catch (err: any) {
     console.log(err.message);
   }
@@ -237,13 +285,20 @@ export const getDataBatch = async (
 export const getData = async (
   address: string,
   key: string,
-  web3: Web3,
+  rpcUrl: string,
 ): Promise<string | null> => {
-  const Contract = new web3.eth.Contract(getDataABI, address);
+  const publicClient = createPublicClient({
+    transport: http(rpcUrl),
+  });
 
   let data: string | null = null;
   try {
-    data = await Contract.methods.getData(key).call();
+    data = await publicClient.readContract({
+      address: address as Address,
+      abi: getDataAbi,
+      functionName: 'getData',
+      args: [key as `0x${string}`],
+    });
   } catch (err: any) {
     console.log(err.message);
   }
@@ -253,9 +308,9 @@ export const getData = async (
 
 export const getProfileMetadataJSON = async (
   address: string,
-  web3: Web3,
+  rpcUrl: string,
 ): Promise<any> => {
-  const erc725js = new ERC725(LSP3Schema, address, web3.currentProvider, {
+  const erc725js = new ERC725(LSP3Schema, address, rpcUrl, {
     ipfsGateway: LUKSO_IPFS_BASE_URL + '/',
     gas: 20_000_000, // high gas to fetch large amount of metadata
   });

@@ -12,9 +12,9 @@ import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 
 import SampleAddressInput from '@/components/ui/SampleAddressInput';
-import useWeb3 from '@/hooks/useWeb3';
+import { useNetworkSync } from '@/hooks/useNetworkSync';
 import { checkInterface, getDataBatch } from '@/utils/web3';
-import { isAddress, keccak256, stripHexPrefix } from 'web3-utils';
+import { isAddress, keccak256, toHex, size } from 'viem';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -44,7 +44,7 @@ type CheckResult = { dataKey: string; pass: Status; valueSet: string };
 type MetadataValidation = { hashMatch: boolean; jsonValid: boolean };
 
 const LSPChecker: NextPage = () => {
-  const web3 = useWeb3();
+  const { network } = useNetworkSync();
 
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +56,7 @@ const LSPChecker: NextPage = () => {
   });
 
   const getUniversalProfileResults = async () => {
-    if (!web3) {
+    if (!network?.rpcUrl) {
       return;
     }
 
@@ -68,7 +68,7 @@ const LSPChecker: NextPage = () => {
     const valuesFetched = await getDataBatch(
       address,
       nonDynamicSchemas.map((schema) => schema.key),
-      web3,
+      network.rpcUrl,
     );
 
     const checkResults = () => {
@@ -98,13 +98,10 @@ const LSPChecker: NextPage = () => {
           dataKey == 'LSP12IssuedAssets[]' ||
           dataKey == 'LSP5ReceivedAssets[]'
         ) {
-          // must be 16 bytes long
-          if (data == '0x') {
-            pass = Status.INFO;
-          } else {
-            pass =
-              stripHexPrefix(data).length / 2 == 16 ? Status.PASS : Status.FAIL;
-          }
+
+          const pass = data == '0x' 
+            ? Status.INFO
+            : size(data as `0x${string}`) == 16 ? Status.PASS : Status.FAIL;
         }
 
         return {
@@ -119,7 +116,7 @@ const LSPChecker: NextPage = () => {
   };
 
   const retrieveData = async () => {
-    if (!web3) {
+    if (!network?.rpcUrl) {
       return;
     }
 
@@ -127,7 +124,7 @@ const LSPChecker: NextPage = () => {
 
     let results: CheckResult[] = [];
 
-    const { isLsp0Erc725Account } = await checkInterface(address, web3);
+    const { isLsp0Erc725Account } = await checkInterface(address, network.rpcUrl);
 
     results = (await getUniversalProfileResults()) as CheckResult[];
 
@@ -156,7 +153,7 @@ const LSPChecker: NextPage = () => {
         LUKSO_IPFS_BASE_URL + '/',
       );
 
-      const hash = keccak256(JSON.stringify(json));
+      const hash = keccak256(toHex(JSON.stringify(json)));
 
       setMetadataValid({
         hashMatch: decodedVerifiableURI.verification.data == hash,

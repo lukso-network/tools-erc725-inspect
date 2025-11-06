@@ -1,7 +1,7 @@
-import { AbiItem } from 'web3-utils';
+import type { Abi } from 'viem';
 
 // Interface Detection
-export const eip165ABI: AbiItem[] = [
+export const eip165ABI = [
   {
     inputs: [
       {
@@ -21,10 +21,10 @@ export const eip165ABI: AbiItem[] = [
     stateMutability: 'view',
     type: 'function',
   },
-];
+] as const;
 
 // ERC725Y
-export const getDataABI: AbiItem[] = [
+export const getDataABI = [
   {
     inputs: [
       {
@@ -44,7 +44,7 @@ export const getDataABI: AbiItem[] = [
     stateMutability: 'view',
     type: 'function',
   },
-];
+] as const;
 
 export const getDataBatchABI = [
   {
@@ -66,10 +66,10 @@ export const getDataBatchABI = [
     stateMutability: 'view',
     type: 'function',
   },
-];
+] as const;
 
 // LSP Smart Contract version
-export const VersionABI: AbiItem[] = [
+export const VersionABI = [
   {
     inputs: [],
     name: 'VERSION',
@@ -83,44 +83,4 @@ export const VersionABI: AbiItem[] = [
     stateMutability: 'view',
     type: 'function',
   },
-];
-
-// Multicall
-export const aggregateABI: AbiItem[] = [
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: 'address',
-            name: 'target',
-            type: 'address',
-          },
-          {
-            internalType: 'bytes',
-            name: 'callData',
-            type: 'bytes',
-          },
-        ],
-        internalType: 'struct Multicall3.Call[]',
-        name: 'calls',
-        type: 'tuple[]',
-      },
-    ],
-    name: 'aggregate',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'blockNumber',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes[]',
-        name: 'returnData',
-        type: 'bytes[]',
-      },
-    ],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-];
+] as const;

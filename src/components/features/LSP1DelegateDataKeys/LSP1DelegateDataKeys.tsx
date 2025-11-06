@@ -1,6 +1,6 @@
-import useWeb3 from '@/hooks/useWeb3';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 import { useEffect, useState } from 'react';
+import { type Address, isAddress } from 'viem';
 
 // components
 import DataKeyBox from '@/components/ui/DataKeyBox/DataKeyBox';
@@ -12,8 +12,8 @@ import { LSP_DOCS_URL } from '@/constants/links';
 // LSP2 schemas
 import LSP1NotificationsSchema from '@/schemas/LSP1NotificationsSchema.json';
 
-// utilities
-import { getDataBatch } from '@/utils/web3';
+// hooks
+import { useGetDataBatch } from '@/hooks/useGetDataBatch';
 
 type Props = {
   address: string;
@@ -21,7 +21,12 @@ type Props = {
 };
 
 const LSP1DelegateDataKeys: React.FC<Props> = ({ address, isErc725Y }) => {
-  const web3 = useWeb3();
+  const dataKeys = LSP1NotificationsSchema.map((schema) => schema.key);
+  
+  const { data: result } = useGetDataBatch(
+    isAddress(address) && isErc725Y ? (address as Address) : undefined,
+    isErc725Y ? dataKeys : undefined
+  );
 
   const [data, setData] = useState<
     {
@@ -32,39 +37,31 @@ const LSP1DelegateDataKeys: React.FC<Props> = ({ address, isErc725Y }) => {
   >([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      if (!web3) return;
+    if (!result || !isErc725Y) {
+      setData([]);
+      return;
+    }
 
-      if (!isErc725Y) return;
+    const dataResult: {
+      key: string;
+      value: string;
+      schema: ERC725JSONSchema;
+    }[] = [];
 
-      const dataResult: {
-        key: string;
-        value: string;
-        schema: ERC725JSONSchema;
-      }[] = [];
+    try {
+      result.forEach((value, i) => {
+        dataResult.push({
+          key: dataKeys[i],
+          value,
+          schema: LSP1NotificationsSchema[i],
+        });
+      });
+    } catch (err) {
+      console.error(err);
+    }
 
-      try {
-        if (isErc725Y) {
-          const dataKeys = LSP1NotificationsSchema.map((schema) => schema.key);
-
-          const result = await getDataBatch(address, dataKeys, web3);
-          result.map((_, i) => {
-            dataResult.push({
-              key: dataKeys[i],
-              value: result[i],
-              schema: LSP1NotificationsSchema[i],
-            });
-          });
-        }
-      } catch (err) {
-        console.error(err);
-      }
-
-      setData(dataResult);
-    };
-
-    fetch();
-  }, [address, web3, isErc725Y]);
+    setData(dataResult);
+  }, [result, isErc725Y]);
 
   return (
     <div className="is-multiline">
