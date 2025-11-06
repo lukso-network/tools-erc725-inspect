@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
+import LSP6KeyManager from '@lukso/lsp6-contracts/artifacts/LSP6KeyManager.json';
 import useWeb3 from '@/hooks/useWeb3';
 import { LSP_SPECS_URL } from '@/constants/links';
 
@@ -25,17 +25,7 @@ const KeyManagerNonceChecker: React.FC = () => {
       web3.utils.toChecksumAddress(keyManagerAddress),
     );
 
-    const isKeyManagerV05 = await keyManagerInstance.methods
-      // Caution: Fixed Interface ID
-      .supportsInterface('0x6f4df48b')
-      .call();
-
-    const isKeyManagerV06 = await keyManagerInstance.methods
-      // Caution: Fixed Interface ID
-      .supportsInterface('0xc403d48f')
-      .call();
-
-    if (isKeyManagerV05 || isKeyManagerV06) {
+    try {
       const result: any = await keyManagerInstance.methods
         .getNonce(callerAddress, channelId)
         .call();
@@ -43,7 +33,7 @@ const KeyManagerNonceChecker: React.FC = () => {
       setNonce(result);
       setShowNonce(true);
       showError(false);
-    } else {
+    } catch (error) {
       setShowNonce(false);
       showError(true);
     }
