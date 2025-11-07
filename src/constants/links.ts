@@ -19,6 +19,8 @@ export const LSP_DOCS_URL = {
   ERC725Y:
     'https://docs.lukso.tech/standards/universal-profile/lsp0-erc725account#erc725y',
   LSP0: 'https://docs.lukso.tech/standards/accounts/lsp0-erc725account/',
+  LSP1Delegate:
+    'https://docs.lukso.tech/standards/accounts/lsp1-universal-receiver-delegate/',
   LSP2: 'https://docs.lukso.tech/standards/metadata/lsp2-json-schema/',
   LSP6: 'https://docs.lukso.tech/standards/access-control/lsp6-key-manager/',
 };

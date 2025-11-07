@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<!-- Soft overall yellow lighting -->
+		<radialGradient id="yellowSoft" cx="55%" cy="45%" r="65%" fx="52%" fy="52%">
+			<stop offset="0%" stop-color="#FFFFFF" />
+			<stop offset="40%" stop-color="#FFF6BF" />
+			<stop offset="70%" stop-color="#FFE066" />
+			<stop offset="100%" stop-color="#FFC300" />
+		</radialGradient>
+
+		<!-- Deeper yellow for the lower semicircle -->
+		<linearGradient id="yellowDeep" x1="0%" y1="50%" x2="100%" y2="50%">
+			<stop offset="0%" stop-color="#FFB800" />
+			<stop offset="100%" stop-color="#FFD84D" />
+		</linearGradient>
+
+		<!-- Small center glow to mimic the bright highlight -->
+		<radialGradient id="centerGlow" cx="50%" cy="50%" r="12%">
+			<stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" />
+			<stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+		</radialGradient>
+	</defs>
+
+	<!-- Base circle with soft yellow gradient -->
+	<circle cx="512" cy="512" r="512" fill="url(#yellowSoft)" />
+
+	<!-- Lower half in a slightly richer yellow, split exactly across the middle -->
+	<path d="M0,512 A512,512 0 0 0 512,1024 L512,512 Z" fill="url(#yellowDeep)" />
+
+	<!-- Subtle center highlight -->
+	<circle cx="512" cy="512" r="60" fill="url(#centerGlow)" />
+</svg>

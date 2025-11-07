@@ -65,7 +65,7 @@ const NetworkSwitch: React.FC = () => {
         }`}
       >
         {CHAINS.map((chain) => {
-          if (chain.rpc === network.rpc) {
+          if (chain.rpcUrl === network.rpcUrl) {
             return null;
           }
 
@@ -76,7 +76,7 @@ const NetworkSwitch: React.FC = () => {
                 e.stopPropagation();
                 handleNetworkChange(chain);
               }}
-              key={chain.rpc}
+              key={chain.name}
             >
               <img
                 className="mr-2"

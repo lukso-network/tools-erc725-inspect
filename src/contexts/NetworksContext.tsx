@@ -1,7 +1,9 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { INetwork, NetworkName } from '@/types/network';
+import { INetwork } from '@/types/network';
 import { CHAINS } from '@/constants/networks';
+
+const DEFAULT_NETWORK = CHAINS[0];
 
 export interface INetworksContext {
   network: INetwork;
@@ -9,7 +11,7 @@ export interface INetworksContext {
 }
 
 export const NetworkContext = createContext<INetworksContext>({
-  network: { name: NetworkName.MAINNET, rpc: '' },
+  network: DEFAULT_NETWORK,
   setNetwork: () => null,
 });
 
@@ -24,12 +26,12 @@ const NetworksProvider = ({ children }) => {
           CHAINS.find(
             (network) =>
               network.name.toLowerCase() === storedNetworkName.toLowerCase(),
-          ) || CHAINS[0]
+          ) || DEFAULT_NETWORK
         );
       }
     }
     // Return default if nothing is in local storage
-    return CHAINS[0];
+    return DEFAULT_NETWORK;
   };
 
   // Get network from URL or switch to default chain
@@ -47,7 +49,7 @@ const NetworksProvider = ({ children }) => {
   }, [router.query.network]);
 
   // Initialize state based on network
-  const [network, setNetwork] = useState(getNetworkFromUrlOrDefault);
+  const [network, setNetwork] = useState<INetwork>(DEFAULT_NETWORK);
 
   const updateUrlWithNetwork = useCallback(
     (networkName) => {
@@ -62,6 +64,10 @@ const NetworksProvider = ({ children }) => {
   );
 
   useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
     const networkFromUrl = getNetworkFromUrlOrDefault();
     if (networkFromUrl.name !== network.name) {
       setNetwork(networkFromUrl);
@@ -71,9 +77,10 @@ const NetworksProvider = ({ children }) => {
 
     if (networkParam === undefined) {
       // Update the URL with the network parameter if missing
-      updateUrlWithNetwork(network.name.toLowerCase());
+      updateUrlWithNetwork(networkFromUrl.name.toLowerCase());
     }
   }, [
+    router.isReady,
     router.query.network,
     network.name,
     getNetworkFromUrlOrDefault,

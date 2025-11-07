@@ -1,102 +1,70 @@
 import { useState, useEffect } from 'react';
-import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
+import { isAddress } from 'web3-utils';
 import useWeb3 from '@/hooks/useWeb3';
 
-import { eip165ABI } from '@/constants/abi';
-import { AbiItem, isAddress } from 'web3-utils';
-import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import AddressButtons from '@/components/ui/AddressButtons';
+import AddressInfos from '../AddressInfos';
+import { checkInterface } from '@/utils/web3';
 
 type Props = {
   contractAddress: string;
 };
 
-enum ownerTypeEnum {
-  EOA = '🗝️ EOA',
-  SmartContract = '📄 Smart Contract',
-  ERC725Account = '🆙 ERC725 Account',
-  KeyManager = '🔐 Key Manager',
-}
-
 const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
-  const [contractOwner, setContractOwner] = useState('');
-  const [ownerType, setOwnerType] = useState<ownerTypeEnum>();
-
   const web3 = useWeb3();
-
-  const checkIsKeyManagerOrUP = async (ownerAddress: string) => {
-    if (!web3) {
-      console.error('Web3 is not initialized');
-      return;
-    }
-
-    const OwnerContract = new web3.eth.Contract(eip165ABI as any, ownerAddress);
-
-    try {
-      if (
-        await OwnerContract.methods
-          .supportsInterface(INTERFACE_IDS.LSP6KeyManager)
-          .call()
-      ) {
-        return setOwnerType(ownerTypeEnum.KeyManager);
-      }
-      if (
-        await OwnerContract.methods
-          .supportsInterface(INTERFACE_IDS.LSP0ERC725Account)
-          .call()
-      ) {
-        return setOwnerType(ownerTypeEnum.ERC725Account);
-      }
-    } catch (err: any) {
-      console.warn(err.message);
-    }
-
-    // if not key manager or UP then it is a generic smart contract
-    setOwnerType(ownerTypeEnum.SmartContract);
-  };
-
-  const findOwnerType = async (ownerAddress: string) => {
-    if (!web3) {
-      console.error('Web3 is not initialized');
-      return;
-    }
-
-    try {
-      const isEOA = (await web3.eth.getCode(ownerAddress)) === '0x';
-      if (isEOA) {
-        setOwnerType(ownerTypeEnum.EOA);
-        return;
-      }
-      await checkIsKeyManagerOrUP(ownerAddress);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [contractOwner, setContractOwner] = useState('');
+  const [standards, setStandards] = useState({
+    isLsp0Erc725Account: false,
+    isLsp7DigitalAsset: false,
+    isLsp8IdentifiableDigitalAsset: false,
+  });
 
   useEffect(() => {
     if (!web3 || !contractAddress) return;
     if (!isAddress(contractAddress)) return;
 
-    const universalProfile = new web3.eth.Contract(
-      ERC725Account.abi as AbiItem[],
+    const contractInstance = new web3.eth.Contract(
+      [
+        {
+          inputs: [],
+          name: 'owner',
+          outputs: [
+            {
+              internalType: 'address',
+              name: '',
+              type: 'address',
+            },
+          ],
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ],
       contractAddress,
     );
 
-    const setOwner = async () => {
+    const getOwnerInfos = async () => {
       try {
-        await universalProfile.methods
-          .owner()
-          .call()
-          .then((owner: string) => {
-            setContractOwner(owner);
-            findOwnerType(owner);
-          });
+        const owner = await contractInstance.methods.owner().call();
+
+        setContractOwner(owner);
+
+        const {
+          isLsp0Erc725Account,
+          isLsp7DigitalAsset,
+          isLsp8IdentifiableDigitalAsset,
+        } = await checkInterface(owner, web3);
+
+        setStandards({
+          isLsp0Erc725Account,
+          isLsp7DigitalAsset,
+          isLsp8IdentifiableDigitalAsset,
+        });
       } catch (error) {
-        console.log(error);
+        console.error('Error while getting owner infos:', error);
       }
     };
 
-    setOwner();
+    getOwnerInfos();
   }, [contractAddress, web3]);
 
   return (
@@ -112,6 +80,9 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
               Owner ↗️
             </a>
           </div>
+          <div className="has-background-link-light p-2 m-4 is-size-6">
+            Returned by the <code>owner()</code> function
+          </div>
           <ul>
             <li>
               <strong>Owner address:</strong>
@@ -120,14 +91,15 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
               </span>
               <code>{contractOwner}</code>
             </li>
-            <li>
-              <strong>Owner type:</strong> <code>{ownerType}</code>
+            <li className="is-flex is-align-items-center">
+              <strong className="mr-2">Owner type:</strong>
+              <AddressInfos address={contractOwner} showAddress={false} />
             </li>
           </ul>
         </div>
       </div>
       <div className="column">
-        <AddressButtons address={contractOwner} />
+        <AddressButtons address={contractOwner} standards={standards} />
       </div>
     </div>
   );

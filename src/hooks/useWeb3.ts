@@ -11,7 +11,7 @@ export default function useWeb3() {
 
   useEffect(() => {
     const getWeb3 = async () => {
-      const web3 = new Web3(network.rpc);
+      const web3 = new Web3(network.rpcUrl);
       return web3;
     };
 

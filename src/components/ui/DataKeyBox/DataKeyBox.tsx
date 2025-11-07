@@ -1,10 +1,10 @@
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 
-import { SCHEMA_DOCS_LINKS, SchemaName } from './schemas';
+import { SCHEMA_DOCS_LINKS, SchemaName } from '@/constants/schemas';
 
 import AddressButtons from '@/components/ui/AddressButtons';
 import ValueTypeDecoder from '@/components/features/ValueTypeDecoder';
-import CollapsibleSchema from '../CollapsibleSchema';
+import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
 
 type DataKeyBoxProps = {
   address: string;

@@ -2,16 +2,17 @@
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Felix Hildebrandt <fhildeb>
  */
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { NetworkContext } from '@/contexts/NetworksContext';
+import { NetworkName } from '@/types/network';
 
 interface Props {
   address: string;
   showInspectButton?: boolean;
   standards?: {
-    isLSP0ERC725Account: boolean;
-    isLSP7DigitalAsset: boolean;
-    isLSP8IdentifiableDigitalAsset: boolean;
+    isLsp0Erc725Account: boolean;
+    isLsp7DigitalAsset: boolean;
+    isLsp8IdentifiableDigitalAsset: boolean;
   } | null;
 }
 
@@ -20,23 +21,68 @@ const AddressButtons: React.FC<Props> = ({
   showInspectButton = true,
   standards,
 }) => {
-  const { network } = useContext(NetworkContext);
+  const { network: currentNetwork } = useContext(NetworkContext);
+  const [universalEverythingUrl, setUniversalEverythingUrl] =
+    useState<string>();
 
-  const networkType = network.name.toLocaleLowerCase();
+  const isLuksoNetwork =
+    currentNetwork.name === NetworkName.LUKSO_MAINNET ||
+    currentNetwork.name === NetworkName.LUKSO_TESTNET;
 
-  const universalEverythingURL =
-    standards && standards.isLSP7DigitalAsset
-      ? `https://universaleverything.io/asset/${address}?network=${networkType}`
-      : `https://universaleverything.io/${address}?network=${networkType}`;
+  const networkType =
+    currentNetwork.name === NetworkName.LUKSO_TESTNET ? 'testnet' : 'mainnet';
+
+  useEffect(() => {
+    if (!standards || !isLuksoNetwork) return;
+
+    if (
+      standards.isLsp7DigitalAsset ||
+      standards.isLsp8IdentifiableDigitalAsset
+    ) {
+      setUniversalEverythingUrl(
+        `https://universaleverything.io/asset/${address}?network=${networkType}`,
+      );
+    }
+
+    if (standards.isLsp0Erc725Account) {
+      setUniversalEverythingUrl(
+        `https://universaleverything.io/${address}?network=${networkType}`,
+      );
+    }
+  }, [standards, address, networkType]);
+
+  const explorerUrl = useMemo(
+    () =>
+      currentNetwork.explorerBaseUrl
+        ? `${currentNetwork.explorerBaseUrl}/address/${address}`
+        : undefined,
+    [currentNetwork, address],
+  );
+
+  const explorerLogo = useMemo(
+    () =>
+      currentNetwork.explorerName === 'Etherscan'
+        ? '/etherscan-logo.svg'
+        : '/blockscout-logo-white.svg',
+    [currentNetwork],
+  );
+
+  const inspectUrl = useMemo(
+    () =>
+      typeof window !== 'undefined'
+        ? `${window.location.href.split('?')[0]}?address=${address}`
+        : `?address=${address}`,
+    [window, address],
+  );
 
   return (
     <div className="buttons are-small flex is-flex-direction-column is-align-items-flex-start">
-      {standards && (
+      {universalEverythingUrl && (
         <a
           className="button is-normal"
           target="_blank"
           rel="noreferrer"
-          href={universalEverythingURL}
+          href={universalEverythingUrl}
         >
           <span className="icon is-small p-1">
             <img
@@ -47,22 +93,28 @@ const AddressButtons: React.FC<Props> = ({
           <span>View on Universal Everything</span>
         </a>
       )}
-      <a
-        className="button is-normal is-info"
-        target="_blank"
-        rel="noreferrer"
-        href={`https://explorer.execution.${networkType}.lukso.network/address/${address}`}
-      >
-        <span className="icon is-small mr-2">
-          <img src="/blockscout-logo-white.svg" alt="Blockscout" />
-        </span>
-        <span>View on Blockscout Explorer</span>
-      </a>
-      {showInspectButton && (
+      {explorerUrl && (
         <a
-          className="button is-primary is-normal"
-          href={`${window.location.href.split('?')[0]}?address=${address}`}
+          className={`button is-normal ${
+            currentNetwork.explorerName === 'Etherscan'
+              ? 'is-normal'
+              : 'is-info'
+          }`}
+          target="_blank"
+          rel="noreferrer"
+          href={explorerUrl}
         >
+          <span className="icon is-small mr-2">
+            <img
+              src={explorerLogo}
+              alt={currentNetwork.explorerName || 'Explorer'}
+            />
+          </span>
+          <span>View on {currentNetwork.explorerName || 'Explorer'}</span>
+        </a>
+      )}
+      {showInspectButton && (
+        <a className="button is-primary is-normal" href={inspectUrl}>
           <span className="icon is-small">
             <img src="/inspect-icon.svg" alt="ERC725 Inspect" />
           </span>

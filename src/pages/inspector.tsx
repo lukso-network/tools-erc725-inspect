@@ -25,8 +25,9 @@ import {
 } from '@/constants/interface-ids';
 
 import { LSP_SPECS_URL } from '@/constants/links';
-import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import ToolInfos from '@/components/layout/ToolInfos';
+import AddressInfos from '@/components/features/AddressInfos';
+import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -41,35 +42,33 @@ const Home: NextPage = () => {
   // Account Standards
   const [isErc725X, setIsErc725X] = useState(false);
   const [isErc725Y, setIsErc725Y] = useState(false);
-  const [isERC1271, setIsERC1271] = useState(false);
-  const [isLSP0ERC725Account, setIsLSP0ERC725Account] = useState(false);
-  const [isLSP1UniversalReceiver, setIsLSP1UniversalReceiver] = useState(false);
-  const [isLSP17Extendable, setIsLSP17Extendable] = useState(false);
-  const [isLSP25ExecuteRelayCall, setIsLSP25ExecuteRelayCall] = useState(false);
+  const [isErc1271, setIsErc1271] = useState(false);
+  const [isLsp0Erc725Account, setIsLsp0Erc725Account] = useState(false);
+  const [isLsp1UniversalReceiver, setIsLsp1UniversalReceiver] = useState(false);
+  const [isLsp17Extendable, setIsLsp17Extendable] = useState(false);
+  const [isLsp25ExecuteRelayCall, setIsLsp25ExecuteRelayCall] = useState(false);
 
   // Access Control Standards
-  const [isLSP6KeyManager, setIsLSP6KeyManager] = useState(false);
-  const [isLSP14OwnableTwoSteps, setIsLSP14OwnableTwoSteps] = useState(false);
-  const [isLSP20CallVerification, setIsLSP20CallVerification] = useState(false);
-  const [isLSP20CallVerifier, setIsLSP20CallVerifier] = useState(false);
+  const [isLsp6KeyManager, setIsLsp6KeyManager] = useState(false);
+  const [isLsp14OwnableTwoSteps, setIsLsp14OwnableTwoSteps] = useState(false);
+  const [isLsp20CallVerification, setIsLsp20CallVerification] = useState(false);
+  const [isLsp20CallVerifier, setIsLsp20CallVerifier] = useState(false);
 
   // Asset Standards
-  const [isLSP7DigitalAsset, setIsLSP7DigitalAsset] = useState(false);
-  const [isLSP8IdentifiableDigitalAsset, setIsLSP8IdentifiableDigitalAsset] =
+  const [isLsp7DigitalAsset, setIsLsp7DigitalAsset] = useState(false);
+  const [isLsp8IdentifiableDigitalAsset, setIsLsp8IdentifiableDigitalAsset] =
     useState(false);
-  const [isERC20, setIsERC20] = useState(false);
-  const [isERC721, setIsERC721] = useState(false);
+  const [isErc20, setIsErc20] = useState(false);
+  const [isErc721, setIsErc721] = useState(false);
 
   // Other Standards
-  const [isLSP1Delegate, setIsLSP1Delegate] = useState(false);
-  const [isLSP9Vault, setIsLSP9Vault] = useState(false);
-  const [isLSP17Extension, setIsLSP17Extension] = useState(false);
-  const [isLSP26FollowerSystem, setIsLSP26FollowerSystem] = useState(false);
+  const [isLsp1Delegate, setIsLsp1Delegate] = useState(false);
+  const [isLsp9Vault, setIsLsp9Vault] = useState(false);
+  const [isLsp17Extension, setIsLsp17Extension] = useState(false);
+  const [isLsp26FollowerSystem, setIsLsp26FollowerSystem] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
   const [isEmptyInput, setIsEmptyInput] = useState(true);
-
-  const [contractVersion, setContractVersion] = useState('');
 
   useEffect(() => {
     if (router.query.address) {
@@ -86,23 +85,23 @@ const Home: NextPage = () => {
       // Reset all interface states
       setIsErc725X(false);
       setIsErc725Y(false);
-      setIsERC1271(false);
-      setIsLSP0ERC725Account(false);
-      setIsLSP1UniversalReceiver(false);
-      setIsLSP17Extendable(false);
-      setIsLSP25ExecuteRelayCall(false);
-      setIsLSP6KeyManager(false);
-      setIsLSP14OwnableTwoSteps(false);
-      setIsLSP20CallVerification(false);
-      setIsLSP20CallVerifier(false);
-      setIsLSP7DigitalAsset(false);
-      setIsLSP8IdentifiableDigitalAsset(false);
-      setIsERC20(false);
-      setIsERC721(false);
-      setIsLSP1Delegate(false);
-      setIsLSP9Vault(false);
-      setIsLSP17Extension(false);
-      setIsLSP26FollowerSystem(false);
+      setIsErc1271(false);
+      setIsLsp0Erc725Account(false);
+      setIsLsp1UniversalReceiver(false);
+      setIsLsp17Extendable(false);
+      setIsLsp25ExecuteRelayCall(false);
+      setIsLsp6KeyManager(false);
+      setIsLsp14OwnableTwoSteps(false);
+      setIsLsp20CallVerification(false);
+      setIsLsp20CallVerifier(false);
+      setIsLsp7DigitalAsset(false);
+      setIsLsp8IdentifiableDigitalAsset(false);
+      setIsErc20(false);
+      setIsErc721(false);
+      setIsLsp1Delegate(false);
+      setIsLsp9Vault(false);
+      setIsLsp17Extension(false);
+      setIsLsp26FollowerSystem(false);
       setErrorMessage('');
 
       if (address.length === 0) {
@@ -126,39 +125,36 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
 
-      const fetchedContractVersion = await getVersion(address, web3);
-      setContractVersion(fetchedContractVersion);
-
       const supportStandards = await checkInterface(address, web3);
 
       // Account Standards
       setIsErc725X(supportStandards.isErc725X);
       setIsErc725Y(supportStandards.isErc725Y);
-      setIsERC1271(supportStandards.isErc1271);
-      setIsLSP0ERC725Account(supportStandards.isLsp0Erc725Account);
-      setIsLSP1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
-      setIsLSP17Extendable(supportStandards.isLsp17Extendable);
-      setIsLSP25ExecuteRelayCall(supportStandards.isLsp25ExecuteRelayCall);
+      setIsErc1271(supportStandards.isErc1271);
+      setIsLsp0Erc725Account(supportStandards.isLsp0Erc725Account);
+      setIsLsp1UniversalReceiver(supportStandards.isLsp1UniversalReceiver);
+      setIsLsp17Extendable(supportStandards.isLsp17Extendable);
+      setIsLsp25ExecuteRelayCall(supportStandards.isLsp25ExecuteRelayCall);
 
       // Access Control Standards
-      setIsLSP6KeyManager(supportStandards.isLsp6KeyManager);
-      setIsLSP14OwnableTwoSteps(supportStandards.isLsp14OwnableTwoSteps);
-      setIsLSP20CallVerification(supportStandards.isLsp20CallVerification);
-      setIsLSP20CallVerifier(supportStandards.isLsp20CallVerifier);
+      setIsLsp6KeyManager(supportStandards.isLsp6KeyManager);
+      setIsLsp14OwnableTwoSteps(supportStandards.isLsp14OwnableTwoSteps);
+      setIsLsp20CallVerification(supportStandards.isLsp20CallVerification);
+      setIsLsp20CallVerifier(supportStandards.isLsp20CallVerifier);
 
       // Asset Standards
-      setIsLSP7DigitalAsset(supportStandards.isLsp7DigitalAsset);
-      setIsLSP8IdentifiableDigitalAsset(
+      setIsLsp7DigitalAsset(supportStandards.isLsp7DigitalAsset);
+      setIsLsp8IdentifiableDigitalAsset(
         supportStandards.isLsp8IdentifiableDigitalAsset,
       );
-      setIsERC20(supportStandards.isErc20);
-      setIsERC721(supportStandards.isERC721);
+      setIsErc20(supportStandards.isErc20);
+      setIsErc721(supportStandards.isErc721);
 
       // Other Standards
-      setIsLSP1Delegate(supportStandards.isLsp1UniversalReceiverDelegate);
-      setIsLSP9Vault(supportStandards.isLsp9Vault);
-      setIsLSP17Extension(supportStandards.isLsp17Extension);
-      setIsLSP26FollowerSystem(supportStandards.isLsp26FollowerSystem);
+      setIsLsp1Delegate(supportStandards.isLsp1UniversalReceiverDelegate);
+      setIsLsp9Vault(supportStandards.isLsp9Vault);
+      setIsLsp17Extension(supportStandards.isLsp17Extension);
+      setIsLsp26FollowerSystem(supportStandards.isLsp26FollowerSystem);
 
       setIsLoading(false);
     };
@@ -171,44 +167,47 @@ const Home: NextPage = () => {
       // Account Standards
       ERC725X: isErc725X,
       ERC725Y: isErc725Y,
-      ERC1271: isERC1271,
-      LSP0ERC725Account: isLSP0ERC725Account,
-      LSP1UniversalReceiver: isLSP1UniversalReceiver,
-      LSP17Extendable: isLSP17Extendable,
-      LSP25ExecuteRelayCall: isLSP25ExecuteRelayCall,
+      ERC1271: isErc1271,
+      LSP0Erc725Account: isLsp0Erc725Account,
+      LSP1UniversalReceiver: isLsp1UniversalReceiver,
+      LSP17Extendable: isLsp17Extendable,
+      LSP25ExecuteRelayCall: isLsp25ExecuteRelayCall,
       // Access Control Standards
-      LSP6KeyManager: isLSP6KeyManager,
-      LSP14OwnableTwoSteps: isLSP14OwnableTwoSteps,
-      LSP20CallVerification: isLSP20CallVerification,
-      LSP20CallVerifier: isLSP20CallVerifier,
+      LSP6KeyManager: isLsp6KeyManager,
+      LSP14OwnableTwoSteps: isLsp14OwnableTwoSteps,
+      LSP20CallVerification: isLsp20CallVerification,
+      LSP20CallVerifier: isLsp20CallVerifier,
       // Asset Standards
-      LSP7DigitalAsset: isLSP7DigitalAsset,
-      LSP8IdentifiableDigitalAsset: isLSP8IdentifiableDigitalAsset,
-      ERC20: isERC20,
-      ERC721: isERC721,
+      LSP7DigitalAsset: isLsp7DigitalAsset,
+      LSP8IdentifiableDigitalAsset: isLsp8IdentifiableDigitalAsset,
+      ERC20: isErc20,
+      ERC721: isErc721,
       // Other Standards
-      LSP1Delegate: isLSP1Delegate,
-      LSP9Vault: isLSP9Vault,
-      LSP17Extension: isLSP17Extension,
-      LSP26FollowerSystem: isLSP26FollowerSystem,
+      LSP1Delegate: isLsp1Delegate,
+      LSP9Vault: isLsp9Vault,
+      LSP17Extension: isLsp17Extension,
+      LSP26FollowerSystem: isLsp26FollowerSystem,
     };
 
     return interfaceMap[standard] || false;
   };
 
+  const isLspDigitalAsset =
+    isLsp7DigitalAsset || isLsp8IdentifiableDigitalAsset;
+
   const ERC725InspectResult = () => {
     if (
+      !isLoading &&
+      !isEmptyInput &&
       !isErc725X &&
       !isErc725Y &&
-      !isLSP1UniversalReceiver &&
-      !isLSP6KeyManager &&
-      !isLSP0ERC725Account &&
-      !isEmptyInput &&
-      !isLoading
+      !isLsp1UniversalReceiver &&
+      !isLsp6KeyManager &&
+      !isLsp0Erc725Account
     ) {
       return (
         <div className="help is-danger inspect-result">
-          <p>This address is not a valid ERC725 or LSP contract.</p>
+          <p>This address is not a valid ERC725 or Lsp contract.</p>
           <p>Please check if the address is correct.</p>
         </div>
       );
@@ -393,7 +392,7 @@ const Home: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder={SAMPLE_ADDRESS[network.name].UP}
+                  placeholder="Enter a UP, LSP7 or LSP8 address"
                   value={address}
                   onChange={(e) => {
                     setAddress(e.target.value);
@@ -408,10 +407,6 @@ const Home: NextPage = () => {
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
                       <div>
-                        <div className="tags has-addons">
-                          <span className="tag is-dark">version</span>
-                          <span className="tag is-info">{contractVersion}</span>
-                        </div>
                         <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
                           <i className="has-text-centered mb-2">
                             Scroll to see results
@@ -436,9 +431,9 @@ const Home: NextPage = () => {
             !isLoading &&
             (isErc725X ||
               isErc725Y ||
-              isLSP1UniversalReceiver ||
-              isLSP6KeyManager ||
-              isLSP0ERC725Account) && (
+              isLsp1UniversalReceiver ||
+              isLsp6KeyManager ||
+              isLsp0Erc725Account) && (
               <>
                 <>
                   <h3 className="title is-3">Instance and Ownership</h3>
@@ -463,12 +458,16 @@ const Home: NextPage = () => {
                             </span>
                             <code>{address}</code>
                           </li>
-                          <li>
-                            <strong>Contract type:</strong>{' '}
-                            <code>
-                              {isLSP0ERC725Account && '🆙 Universal Profile'}{' '}
-                              (ERC725-compatible)
-                            </code>
+                          <li className="is-flex is-align-items-center">
+                            <strong className="mr-2">Contract type:</strong>{' '}
+                            <AddressInfos
+                              address={address}
+                              assetBadgeOptions={{
+                                showBalance: false,
+                                showName: true,
+                              }}
+                              showAddress={false}
+                            />
                           </li>
                         </ul>
                       </div>
@@ -478,9 +477,9 @@ const Home: NextPage = () => {
                         address={address}
                         showInspectButton={false}
                         standards={{
-                          isLSP0ERC725Account,
-                          isLSP7DigitalAsset,
-                          isLSP8IdentifiableDigitalAsset,
+                          isLsp0Erc725Account,
+                          isLsp7DigitalAsset,
+                          isLsp8IdentifiableDigitalAsset,
                         }}
                       />
                     </div>
@@ -495,11 +494,19 @@ const Home: NextPage = () => {
                     <DataKeysTable
                       address={address}
                       isErc725Y={isErc725Y}
-                      isAsset={
-                        isLSP7DigitalAsset || isLSP8IdentifiableDigitalAsset
-                      }
-                      isLSP8={isLSP8IdentifiableDigitalAsset}
+                      isAsset={isLspDigitalAsset}
+                      isLSP8={isLsp8IdentifiableDigitalAsset}
                     />
+
+                    {
+                      /* Show data keys related to LSP1 Delegates for specific notification types separately */
+                      !isLspDigitalAsset && (
+                        <LSP1DelegateDataKeys
+                          address={address}
+                          isErc725Y={isErc725Y}
+                        />
+                      )
+                    }
                   </>
                 )}
               </>

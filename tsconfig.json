@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,15 +23,17 @@
     "noImplicitAny": false, // error with @lukso/lsp-smart-contracts/constants.js file
     "baseUrl": "src",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/hooks/*": ["hooks/*"],
-      "@/utils/*": ["utils/*"],
-      "@/contexts/*": ["contexts/*"],
-      "@/types/*": ["types/*"],
-      "@/constants/*": ["constants/*"],
-      "@/styles/*": ["styles/*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

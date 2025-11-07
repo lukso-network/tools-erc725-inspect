@@ -263,7 +263,7 @@ const GetData: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder={SAMPLE_ADDRESS[network.name].UP}
+                  placeholder="Enter a UP, LSP7 or LSP8 address"
                   value={address}
                   onChange={(e) => onContractAddressChange(e.target.value)}
                 />

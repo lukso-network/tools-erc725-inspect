@@ -98,7 +98,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
       supportsAssetInterface[4] ||
       supportsAssetInterface[5],
     isErc20: supportsContractInterface[11],
-    isERC721: supportsContractInterface[12],
+    isErc721: supportsContractInterface[12],
     // Other Standards
     isLsp1UniversalReceiverDelegate: supportsContractInterface[13],
     isLsp9Vault: supportsContractInterface[14],

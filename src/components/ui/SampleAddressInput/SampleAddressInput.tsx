@@ -15,43 +15,29 @@ interface Props {
 
 const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
   const { network } = useContext(NetworkContext);
+  const sampleAddresses = SAMPLE_ADDRESS[network.name];
 
-  const changeInputAddress = (type: AddressType) => {
-    let address = '';
-
-    switch (type) {
-      case AddressType.UP:
-        address = SAMPLE_ADDRESS[network.name].UP;
-        break;
-      case AddressType.LSP7:
-        address = SAMPLE_ADDRESS[network.name].LSP7;
-        break;
-      case AddressType.LSP8:
-        address = SAMPLE_ADDRESS[network.name].LSP8;
-        break;
-    }
-
-    onClick(address);
-  };
+  // Do not show for networks that do not have sample addresses
+  if (sampleAddresses === null) return;
 
   return (
     <div className="is-flex is-flex-direction-row is-align-items-center">
       <span className="mr-2">Try with:</span>
       <button
         className="button is-light is-small my-4"
-        onClick={() => changeInputAddress(AddressType.UP)}
+        onClick={() => onClick(sampleAddresses[AddressType.UP])}
       >
         🆙 Universal Profile Sample Address
       </button>
       <button
         className="button is-light is-small my-4 ml-2"
-        onClick={() => changeInputAddress(AddressType.LSP7)}
+        onClick={() => onClick(sampleAddresses[AddressType.LSP7])}
       >
         🪙 LSP7 Sample Address
       </button>
       <button
         className="button is-light is-small my-4 ml-2"
-        onClick={() => changeInputAddress(AddressType.LSP8)}
+        onClick={() => onClick(sampleAddresses[AddressType.LSP8])}
       >
         🖼️ LSP8 Sample Address
       </button>
