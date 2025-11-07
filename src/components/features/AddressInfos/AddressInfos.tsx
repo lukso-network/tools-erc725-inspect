@@ -65,7 +65,7 @@ const AddressInfos: React.FC<Props> = ({
 
     const {
       isLsp0Erc725Account,
-      isLsp1UniversalReceiverDelegate,
+      isLsp1Delegate,
       isLsp7DigitalAsset,
       isLsp8IdentifiableDigitalAsset,
       isLsp6KeyManager,
@@ -75,7 +75,7 @@ const AddressInfos: React.FC<Props> = ({
     setIsLSP7(isLsp7DigitalAsset);
     setIsLSP8(isLsp8IdentifiableDigitalAsset);
 
-    setIsLSP1Delegate(isLsp1UniversalReceiverDelegate);
+    setIsLSP1Delegate(isLsp1Delegate);
     setIsLsp6KeyManager(isLsp6KeyManager);
 
     const { isSafe, version } = await checkIsGnosisSafe(_address, web3);

@@ -29,8 +29,12 @@ import {
   MULTICALL_CONTRACT_ADDRESS,
 } from '@/constants/contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
+import type { SupportedInterfaces } from '@/types/contract';
 
-export const checkInterface = async (address: string, web3: Web3) => {
+export const checkInterface = async (
+  address: string,
+  web3: Web3,
+): Promise<SupportedInterfaces> => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
   const supportsContractInterface = await checkSupportedInterfaces(
     address,
@@ -100,7 +104,7 @@ export const checkInterface = async (address: string, web3: Web3) => {
     isErc20: supportsContractInterface[11],
     isErc721: supportsContractInterface[12],
     // Other Standards
-    isLsp1UniversalReceiverDelegate: supportsContractInterface[13],
+    isLsp1Delegate: supportsContractInterface[13],
     isLsp9Vault: supportsContractInterface[14],
     isLsp17Extension: supportsContractInterface[15],
     isLsp26FollowerSystem: supportsContractInterface[16],
