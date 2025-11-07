@@ -13,11 +13,7 @@ type Props = {
 const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
   const web3 = useWeb3();
   const [contractOwner, setContractOwner] = useState('');
-  const [standards, setStandards] = useState<{
-    isLsp0Erc725Account: boolean;
-    isLsp7DigitalAsset: boolean;
-    isLsp8IdentifiableDigitalAsset: boolean;
-  }>({
+  const [standards, setStandards] = useState({
     isLsp0Erc725Account: false,
     isLsp7DigitalAsset: false,
     isLsp8IdentifiableDigitalAsset: false,

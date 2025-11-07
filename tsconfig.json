@@ -23,29 +23,8 @@
     "noImplicitAny": false, // error with @lukso/lsp-smart-contracts/constants.js file
     "baseUrl": "src",
     "paths": {
-      "@/components/*": [
-        "components/*"
-      ],
-      "@/hooks/*": [
-        "hooks/*"
-      ],
-      "@/utils/*": [
-        "utils/*"
-      ],
-      "@/contexts/*": [
-        "contexts/*"
-      ],
-      "@/types/*": [
-        "types/*"
-      ],
-      "@/constants/*": [
-        "constants/*"
-      ],
-      "@/styles/*": [
-        "styles/*"
-      ],
-      "@/schemas/*": [
-        "schemas/*"
+      "@/*": [
+        "./*"
       ]
     }
   },

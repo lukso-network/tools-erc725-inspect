@@ -2,7 +2,7 @@
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Felix Hildebrandt <fhildeb>
  */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { NetworkName } from '@/types/network';
 
@@ -22,9 +22,8 @@ const AddressButtons: React.FC<Props> = ({
   standards,
 }) => {
   const { network: currentNetwork } = useContext(NetworkContext);
-  const [universalEverythingUrl, setUniversalEverythingUrl] = useState<
-    string | undefined
-  >(undefined);
+  const [universalEverythingUrl, setUniversalEverythingUrl] =
+    useState<string>();
 
   const isLuksoNetwork =
     currentNetwork.name === NetworkName.LUKSO_MAINNET ||
@@ -52,19 +51,29 @@ const AddressButtons: React.FC<Props> = ({
     }
   }, [standards, address, networkType]);
 
-  const explorerUrl = currentNetwork.explorerBaseUrl
-    ? `${currentNetwork.explorerBaseUrl}/address/${address}`
-    : undefined;
+  const explorerUrl = useMemo(
+    () =>
+      currentNetwork.explorerBaseUrl
+        ? `${currentNetwork.explorerBaseUrl}/address/${address}`
+        : undefined,
+    [currentNetwork, address],
+  );
 
-  const explorerLogo =
-    currentNetwork.explorerName === 'Etherscan'
-      ? '/etherscan-logo.svg'
-      : '/blockscout-logo-white.svg';
+  const explorerLogo = useMemo(
+    () =>
+      currentNetwork.explorerName === 'Etherscan'
+        ? '/etherscan-logo.svg'
+        : '/blockscout-logo-white.svg',
+    [currentNetwork],
+  );
 
-  const inspectUrl =
-    typeof window !== 'undefined'
-      ? `${window.location.href.split('?')[0]}?address=${address}`
-      : `?address=${address}`;
+  const inspectUrl = useMemo(
+    () =>
+      typeof window !== 'undefined'
+        ? `${window.location.href.split('?')[0]}?address=${address}`
+        : `?address=${address}`,
+    [window, address],
+  );
 
   return (
     <div className="buttons are-small flex is-flex-direction-column is-align-items-flex-start">
