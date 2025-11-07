@@ -56,9 +56,7 @@ const LSPChecker: NextPage = () => {
   });
 
   const getUniversalProfileResults = async () => {
-    if (!network?.rpcUrl) {
-      return;
-    }
+    if (!network) return;
 
     const schemas = LSP3Schema.concat(LSP6Schema);
     const nonDynamicSchemas = schemas.filter(
@@ -102,8 +100,8 @@ const LSPChecker: NextPage = () => {
             data == '0x'
               ? Status.INFO
               : size(data as `0x${string}`) == 16
-              ? Status.PASS
-              : Status.FAIL;
+                ? Status.PASS
+                : Status.FAIL;
         }
 
         return {
@@ -118,9 +116,7 @@ const LSPChecker: NextPage = () => {
   };
 
   const retrieveData = async () => {
-    if (!network?.rpcUrl) {
-      return;
-    }
+    if (!network) return;
 
     setIsLoading(true);
 

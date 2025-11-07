@@ -6,13 +6,14 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 
 export function useGetSupportedInterfaces(address: Address | undefined) {
   const { network } = useContext(NetworkContext);
-  const [data, setData] = useState<SupportedInterfaces | undefined>(undefined);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [supportedInterfaces, setSupportedInterfaces] = useState<SupportedInterfaces | undefined>(undefined);
 
   const fetchInterfaces = useCallback(async () => {
     if (!address || !network?.rpcUrl) {
-      setData(undefined);
+      setSupportedInterfaces(undefined);
       return;
     }
 
@@ -21,11 +22,11 @@ export function useGetSupportedInterfaces(address: Address | undefined) {
 
     try {
       const interfaces = await checkInterface(address, network);
-      setData(interfaces);
+      setSupportedInterfaces(interfaces);
     } catch (error) {
       console.error('Error checking interfaces:', error);
       setIsError(true);
-      setData(undefined);
+      setSupportedInterfaces(undefined);
     } finally {
       setIsLoading(false);
     }
@@ -36,7 +37,7 @@ export function useGetSupportedInterfaces(address: Address | undefined) {
   }, [fetchInterfaces]);
 
   return {
-    data,
+    supportedInterfaces,
     isLoading,
     isError,
     refetch: fetchInterfaces,

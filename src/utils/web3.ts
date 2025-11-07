@@ -9,10 +9,18 @@ import {
   decodeAbiParameters,
   parseAbiParameters,
 } from 'viem';
-import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
-import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import ERC725 from '@erc725/erc725.js';
 
+// types
+import { INetwork } from '@/types/network';
+import type { SupportedInterfaces } from '@/types/contract';
+
+// utils
+import { getChainByNetworkName } from '@/config/wagmi';
+
+// constants
+import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
+import { INTERFACE_IDS } from '@lukso/lsp-smart-contracts';
 import {
   INTERFACE_ID_LSP7,
   INTERFACE_ID_LSP7_PREVIOUS,
@@ -24,48 +32,9 @@ import {
 
 import { GNOSIS_SAFE, GNOSIS_SAFE_PROXY_BYTECODE } from '@/constants/contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
-import type { SupportedInterfaces } from '@/types/contract';
-import { getDataAbi, getDataBatchAbi } from '@/constants/abi';
-import { INetwork } from '@/types/network';
-import { getChainByNetworkName } from '@/config/wagmi';
 
-const eip165Abi = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes4',
-        name: 'interfaceId',
-        type: 'bytes4',
-      },
-    ],
-    name: 'supportsInterface',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
-
-const versionAbi = [
-  {
-    inputs: [],
-    name: 'VERSION',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
+// abis
+import { getDataAbi, getDataBatchAbi, eip165Abi, versionAbi } from '@/constants/abi';
 
 export const checkInterface = async (
   address: string,

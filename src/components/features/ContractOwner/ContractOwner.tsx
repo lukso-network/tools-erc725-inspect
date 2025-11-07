@@ -1,54 +1,26 @@
-import { useState, useEffect, useContext } from 'react';
 import { isAddress, type Address } from 'viem';
+
 import { useGetOwner } from '@/hooks/useGetOwner';
 
-import { checkInterface } from '@/utils/web3';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
-import { NetworkContext } from '@/contexts/NetworksContext';
+import { useGetSupportedInterfaces } from '@/hooks/useGetSupportedInterfaces';
 
 type Props = {
   contractAddress: string;
 };
 
 const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
-  const { network } = useContext(NetworkContext);
-  const { data: contractOwner, isLoading } = useGetOwner(
+  const { data: contractOwner } = useGetOwner(
     isAddress(contractAddress) ? (contractAddress as Address) : undefined,
   );
 
-  const [standards, setStandards] = useState<{
-    isLsp0Erc725Account: boolean;
-    isLsp7DigitalAsset: boolean;
-    isLsp8IdentifiableDigitalAsset: boolean;
-  }>({
-    isLsp0Erc725Account: false,
-    isLsp7DigitalAsset: false,
-    isLsp8IdentifiableDigitalAsset: false,
-  });
+  const { supportedInterfaces } = useGetSupportedInterfaces(contractOwner);
 
-  useEffect(() => {
-    if (!contractOwner || !network) return;
-
-    const getOwnerStandards = async () => {
-      try {
-        const {
-          isLsp0Erc725Account,
-          isLsp7DigitalAsset,
-          isLsp8IdentifiableDigitalAsset,
-        } = await checkInterface(contractOwner, network);
-
-        setStandards({
-          isLsp0Erc725Account,
-          isLsp7DigitalAsset,
-          isLsp8IdentifiableDigitalAsset,
-        });
-      } catch (error) {
-        console.error('Error while getting owner standards:', error);
-      }
-    };
-
-    getOwnerStandards();
-  }, [contractOwner, network]);
+  const {
+    isLsp0Erc725Account,
+    isLsp7DigitalAsset,
+    isLsp8IdentifiableDigitalAsset,
+  } = supportedInterfaces || {};
 
   return (
     <ContractTypeBox
@@ -56,7 +28,11 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
       link="https://docs.lukso.tech/standards/erc725/#ownership"
       label="Owner address"
       address={contractOwner || ''}
-      standards={standards}
+      standards={{
+        isLsp0Erc725Account: isLsp0Erc725Account || false,
+        isLsp7DigitalAsset: isLsp7DigitalAsset || false,
+        isLsp8IdentifiableDigitalAsset: isLsp8IdentifiableDigitalAsset || false,
+      }}
       description={
         <span>
           Returned by the <code>owner()</code> function

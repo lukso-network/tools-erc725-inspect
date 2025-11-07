@@ -18,6 +18,9 @@ export const NetworkContext = createContext<INetworksContext>({
 const NetworksProvider = ({ children }) => {
   const router = useRouter();
 
+  // Initialize state based on network
+  const [network, setNetwork] = useState<INetwork>(DEFAULT_NETWORK);
+
   const getNetworkFromLocalStorage = (): INetwork => {
     if (typeof window !== 'undefined') {
       const storedNetworkName = localStorage.getItem('erc725InspectNetwork');
@@ -48,9 +51,6 @@ const NetworksProvider = ({ children }) => {
     );
   }, [router.query.network]);
 
-  // Initialize state based on network
-  const [network, setNetwork] = useState<INetwork>(DEFAULT_NETWORK);
-
   const updateUrlWithNetwork = useCallback(
     (networkName) => {
       if (typeof window !== 'undefined') {
@@ -64,9 +64,7 @@ const NetworksProvider = ({ children }) => {
   );
 
   useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
+    if (!router.isReady) return;
 
     const networkFromUrl = getNetworkFromUrlOrDefault();
     if (networkFromUrl.name !== network.name) {

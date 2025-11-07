@@ -1,19 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
+import { usePublicClient } from 'wagmi';
+import { type Address, formatEther, hexToString } from 'viem';
 
-import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.json';
-import { AbiItem } from 'web3-utils';
+import { NetworkContext } from '@/contexts/NetworksContext';
+
+// utils
+import { getChainIdByNetworkName } from '@/config/wagmi';
 import { getDataBatch, getProfileMetadataJSON } from '@/utils/web3';
+
+// constants
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
-import { NetworkContext } from '@/contexts/NetworksContext';
-import {
-  Address,
-  createPublicClient,
-  formatEther,
-  hexToString,
-  http,
-} from 'viem';
-import { getChainByNetworkName } from '@/config/wagmi';
 
 interface BadgeProps {
   text: string;
@@ -65,6 +62,8 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
   showBalance = true,
 }) => {
   const { network } = useContext(NetworkContext);
+  const chainId = getChainIdByNetworkName(network.name);
+  const publicClient = usePublicClient({ chainId });
 
   const [assetBalance, setAssetBalance] = useState<string | bigint>();
   const [assetName, setAssetName] = useState('');
@@ -95,7 +94,7 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
     }
 
     async function fetchAssetInfos(currentAddress: string) {
-      if (!network) return;
+      if (!network || !publicClient) return;
 
       try {
         if (shouldFetchMetadata) {
@@ -117,11 +116,6 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
         }
 
         if (shouldFetchBalance) {
-          const publicClient = createPublicClient({
-            chain: getChainByNetworkName(network.name),
-            transport: http(network.rpcUrl),
-          });
-
           const fetchedBalance = await publicClient.readContract({
             address: currentAddress as Address,
             abi: [

@@ -51,16 +51,6 @@ export const config = createConfig({
   },
 });
 
-// Keeping old RPC URLs for reference
-
-// [lukso.id]: http('https://rpc.mainnet.lukso.network'),
-// [luksoTestnet.id]: http('https://rpc.testnet.lukso.network'),
-// [mainnet.id]: http('https://ethereum.publicnode.com'),
-// [sepolia.id]: http('https://ethereum-sepolia.publicnode.com'),
-// [base.id]: http('https://base.publicnode.com'),
-// [baseSepolia.id]: http('https://base-sepolia-rpc.publicnode.com'),
-// [localhost.id]: http('http://localhost:8545'),
-
 // Helper function to get chain by network name
 export function getChainByNetworkName(networkName: NetworkName) {
   return chainsByNetworkName[networkName];

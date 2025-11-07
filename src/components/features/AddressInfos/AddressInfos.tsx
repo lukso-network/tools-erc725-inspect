@@ -1,7 +1,7 @@
 /**
  * @author Jean Cavallera <CJ42>
  */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useBytecode } from 'wagmi';
 import { type Address, isAddress } from 'viem';
@@ -55,7 +55,7 @@ const AddressInfos: React.FC<Props> = ({
   const [contractVersion, setContractVersion] = useState('');
 
   const checkAddressInfos = async (_address: string) => {
-    if (!network?.rpcUrl || !_address || isBytecodeLoading) {
+    if (!network || !_address || isBytecodeLoading) {
       return;
     }
 

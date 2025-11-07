@@ -4,25 +4,32 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import { isAddress } from 'viem';
-
 import '@/styles/Inspect.module.css';
+
+// utils
+import { isAddress } from 'viem';
 import { checkInterface } from '@/utils/web3';
 
+// context
+import { NetworkContext } from '@/contexts/NetworksContext';
+
+// components
 import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
 import ContractOwner from '@/components/features/ContractOwner';
-import DataKeysTable from '@/components/features/DataKeysTable';
-import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
-import { LSP_SPECS_URL } from '@/constants/links';
-import ToolInfos from '@/components/layout/ToolInfos';
-import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
+import DataKeysTable from '@/components/features/DataKeysTable';
+import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys';
+
+import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
 import SupportedInterfacesTable from '@/components/ui/SupportedInterfacesTable';
+import ToolInfos from '@/components/layout/ToolInfos';
+
+// constants
 import {
   CONTRACT_INTERFACE_KEYS,
   type SupportedInterfaces,
 } from '@/types/contract';
-import { NetworkContext } from '@/contexts/NetworksContext';
+import { LSP_SPECS_URL } from '@/constants/links';
 
 export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
   Object.fromEntries(
@@ -32,8 +39,6 @@ export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
 const Home: NextPage = () => {
   const router = useRouter();
   const { network } = useContext(NetworkContext);
-
-  console.log('network: ', network);
 
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -182,15 +187,15 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                      <div>
-                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
-                          <i className="has-text-centered mb-2">
-                            Scroll to see results
-                          </i>
-                          <p className="has-text-centered">⬇️</p>
+                        <div>
+                          <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                            <i className="has-text-centered mb-2">
+                              Scroll to see results
+                            </i>
+                            <p className="has-text-centered">⬇️</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 )}
               </div>
