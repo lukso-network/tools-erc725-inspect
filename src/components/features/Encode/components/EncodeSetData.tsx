@@ -5,13 +5,14 @@ import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Accoun
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { AbiItem } from 'web3-utils';
 import styles from './EncodeSetData.module.scss';
+import { INetwork } from '@/types/network';
 
 interface Props {
-  web3: Web3;
+  network: INetwork;
   isBatch: boolean;
 }
 
-const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
+const EncodeSetData: React.FC<Props> = ({ network, isBatch }) => {
   const [encodedPayload, setEncodedPayload] = useState('');
   const [keyValuePairs, setKeyValuePairs] = useState<
     { key: string; value: string }[]
@@ -97,7 +98,7 @@ const EncodeSetData: React.FC<Props> = ({ web3, isBatch }) => {
   };
 
   const encodeABI = () => {
-    const erc725Account = new web3.eth.Contract(ERC725Account.abi as AbiItem[]);
+    const erc725Account = new network.provider.Contract(ERC725Account.abi as AbiItem[]);
 
     const keys = keyValuePairs.map((keyValuePair) => {
       return keyValuePair.key;

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
 
 import { getDataBatch } from '@/utils/web3';
-import useWeb3 from '@/hooks/useWeb3';
 import AddressInfos from '@/components/features/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 interface PermissionDataKeyDisplayProps {
   permissionDataKey: string;
@@ -40,6 +40,10 @@ interface Props {
 }
 
 const ControllersList: React.FC<Props> = ({ address, controllers }) => {
+  const { network } = useContext(NetworkContext);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const [controllersPermissions, setControllersPermissions] = useState<{
     [key: number]: {
       controller: string | null;
@@ -50,16 +54,13 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
     };
   }>({});
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const web3 = useWeb3();
 
   useEffect(() => {
     const getPermissions = async () => {
       setIsLoading(true);
 
       try {
-        if (address && web3 !== undefined) {
+        if (address && network !== undefined) {
           controllers.map(async (controller, index) => {
             const currentState = controllersPermissions;
 
@@ -106,8 +107,8 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
 
           const permissionsDataValues = await getDataBatch(
             address,
-            permissionsDataKeysToFetch,
-            web3,
+            permissionsDataKeysToFetch as `0x${string}`[],
+            network,
           );
 
           Object.values(controllersPermissions).forEach(
@@ -119,10 +120,10 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
 
               currentState[index].permissions = controller
                 ? (ERC725.decodePermissions(
-                    permissionsDataValues[index] as `0x${string}`,
-                  ) as {
-                    [key: string]: any;
-                  })
+                  permissionsDataValues[index] as `0x${string}`,
+                ) as {
+                  [key: string]: any;
+                })
                 : {};
 
               setControllersPermissions({ ...currentState });
@@ -136,7 +137,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
       setIsLoading(false);
     };
     getPermissions();
-  }, [address, web3]);
+  }, [address, network]);
 
   return (
     <>
@@ -287,8 +288,8 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                             {bitArray == '0x' ||
                               (bitArray ==
                                 '0x0000000000000000000000000000000000000000000000000000000000000000' && (
-                                <i>No permission set</i>
-                              ))}
+                                  <i>No permission set</i>
+                                ))}
                             {Object.entries(permissions).map(
                               ([permission, isSet]) =>
                                 isSet &&

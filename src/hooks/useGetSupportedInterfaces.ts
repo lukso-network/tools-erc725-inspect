@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import type { Address } from 'viem';
 import type { SupportedInterfaces } from '@/types/contract';
 import { checkInterface } from '@/utils/web3';
-import { useNetworkSync } from '@/hooks/useNetworkSync';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 export function useGetSupportedInterfaces(address: Address | undefined) {
-  const { network } = useNetworkSync();
+  const { network } = useContext(NetworkContext);
   const [data, setData] = useState<SupportedInterfaces | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);

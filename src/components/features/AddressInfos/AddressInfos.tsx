@@ -1,12 +1,10 @@
 /**
  * @author Jean Cavallera <CJ42>
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useBytecode } from 'wagmi';
 import { type Address, isAddress } from 'viem';
-
-import { useNetworkSync } from '@/hooks/useNetworkSync';
 
 import {
   LUKSO_LSP1_DELEGATE,
@@ -17,6 +15,8 @@ import {
 import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
+import { NetworkContext } from '@/contexts/NetworksContext';
+import { getChainIdByNetworkName } from '@/config/wagmi';
 
 interface Props {
   address: string;
@@ -35,9 +35,10 @@ const AddressInfos: React.FC<Props> = ({
   assetBadgeOptions,
   showAddress = true,
 }) => {
-  const { network } = useNetworkSync();
+  const { network } = useContext(NetworkContext);
   const { data: bytecode, isLoading: isBytecodeLoading } = useBytecode({
     address: isAddress(address) ? (address as Address) : undefined,
+    chainId: getChainIdByNetworkName(network.name),
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -71,7 +72,7 @@ const AddressInfos: React.FC<Props> = ({
       isLsp7DigitalAsset,
       isLsp8IdentifiableDigitalAsset,
       isLsp6KeyManager,
-    } = await checkInterface(_address, network.rpcUrl);
+    } = await checkInterface(_address, network);
 
     setIsLSP0(isLsp0Erc725Account);
     setIsLSP7(isLsp7DigitalAsset);
@@ -80,7 +81,7 @@ const AddressInfos: React.FC<Props> = ({
     setIsLSP1Delegate(isLsp1Delegate);
     setIsLsp6KeyManager(isLsp6KeyManager);
 
-    const { isSafe, version } = await checkIsGnosisSafe(_address, network.rpcUrl);
+    const { isSafe, version } = await checkIsGnosisSafe(_address, network);
     setIsGnosisSafe(isSafe);
 
     if (isSafe && version) {
@@ -88,7 +89,7 @@ const AddressInfos: React.FC<Props> = ({
     }
 
     if (isLsp0Erc725Account) {
-      const fetchedContractVersion = await getVersion(address, network.rpcUrl);
+      const fetchedContractVersion = await getVersion(address, network);
       setContractVersion(fetchedContractVersion);
     }
   };

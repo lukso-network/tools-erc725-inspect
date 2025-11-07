@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
@@ -12,10 +12,10 @@ import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 
 import SampleAddressInput from '@/components/ui/SampleAddressInput';
-import { useNetworkSync } from '@/hooks/useNetworkSync';
 import { checkInterface, getDataBatch } from '@/utils/web3';
 import { isAddress, keccak256, toHex, size } from 'viem';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { isProfileMetadata } = require('@lukso/lsp-utils');
@@ -44,7 +44,7 @@ type CheckResult = { dataKey: string; pass: Status; valueSet: string };
 type MetadataValidation = { hashMatch: boolean; jsonValid: boolean };
 
 const LSPChecker: NextPage = () => {
-  const { network } = useNetworkSync();
+  const { network } = useContext(NetworkContext);
 
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -99,7 +99,7 @@ const LSPChecker: NextPage = () => {
           dataKey == 'LSP5ReceivedAssets[]'
         ) {
 
-          const pass = data == '0x' 
+          const pass = data == '0x'
             ? Status.INFO
             : size(data as `0x${string}`) == 16 ? Status.PASS : Status.FAIL;
         }

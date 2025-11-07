@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { isAddress, type Address } from 'viem';
 import { useGetOwner } from '@/hooks/useGetOwner';
-import { useNetworkSync } from '@/hooks/useNetworkSync';
 
 import { checkInterface } from '@/utils/web3';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 type Props = {
   contractAddress: string;
 };
 
 const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
-  const { network } = useNetworkSync();
+  const { network } = useContext(NetworkContext);
   const { data: contractOwner, isLoading } = useGetOwner(
     isAddress(contractAddress) ? (contractAddress as Address) : undefined
   );

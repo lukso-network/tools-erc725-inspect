@@ -6,7 +6,7 @@ import type { AppProps } from 'next/app';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-
+import NetworksProvider from '@/contexts/NetworksContext';
 import NavBar from '@/components/layout/NavBar';
 
 // icons
@@ -23,14 +23,16 @@ const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <NavBar />
-        <section className="mt-5">
-          <Component {...pageProps} />
-        </section>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <NetworksProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <NavBar />
+          <section className="mt-5">
+            <Component {...pageProps} />
+          </section>
+        </QueryClientProvider>
+      </WagmiProvider >
+    </NetworksProvider>
   );
 }
 

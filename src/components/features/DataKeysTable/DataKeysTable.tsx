@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 
 // components
@@ -10,8 +10,8 @@ import AssetSchema from '@/schemas/AssetSchema.json';
 import LSP8Schema from '@/schemas/LSP8Schema.json';
 
 // utilities
-import useWeb3 from '@/hooks/useWeb3';
 import { getDataBatch } from '@/utils/web3';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 interface Props {
   address: string;
@@ -26,7 +26,7 @@ const DataKeysTable: React.FC<Props> = ({
   isAsset,
   isLSP8,
 }) => {
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
 
   const [data, setData] = useState<
     {
@@ -38,7 +38,7 @@ const DataKeysTable: React.FC<Props> = ({
 
   useEffect(() => {
     const fetch = async () => {
-      if (!web3) return;
+      if (!network) return;
 
       if (!isErc725Y) return;
 
@@ -58,7 +58,7 @@ const DataKeysTable: React.FC<Props> = ({
 
           const dataKeys = schemaToLoad.map((schema) => schema.key);
 
-          const result = await getDataBatch(address, dataKeys, web3);
+          const result = await getDataBatch(address, dataKeys as `0x${string}`[], network);
           result.map((_, i) => {
             dataResult.push({
               key: dataKeys[i],
@@ -75,9 +75,9 @@ const DataKeysTable: React.FC<Props> = ({
     };
 
     fetch();
-  }, [address, web3, isErc725Y, isAsset, isLSP8]);
+  }, [address, network, isErc725Y, isAsset, isLSP8]);
 
-  if (!web3) return <p>error: could not load provider</p>;
+  if (!network) return <p>error: could not load provider</p>;
 
   if (!address) {
     return <p>⬆️ enter the address of your UP</p>;

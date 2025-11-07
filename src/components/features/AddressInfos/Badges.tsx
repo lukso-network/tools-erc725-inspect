@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
-import useWeb3 from '@/hooks/useWeb3';
+import { useContext, useEffect, useState } from 'react';
 
 import LSP7Artifact from '@lukso/lsp-smart-contracts/artifacts/LSP7DigitalAsset.json';
 import { AbiItem } from 'web3-utils';
 import { getDataBatch, getProfileMetadataJSON } from '@/utils/web3';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
+import { NetworkContext } from '@/contexts/NetworksContext';
+import { Address, createPublicClient, formatEther, hexToString, http } from 'viem';
+import { getChainByNetworkName } from '@/config/wagmi';
 
 interface BadgeProps {
   text: string;
@@ -56,9 +58,9 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
   showSymbol = true,
   showBalance = true,
 }) => {
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
 
-  const [assetBalance, setAssetBalance] = useState<string | undefined>();
+  const [assetBalance, setAssetBalance] = useState<string | bigint>();
   const [assetName, setAssetName] = useState('');
   const [assetSymbol, setAssetSymbol] = useState('');
 
@@ -68,7 +70,7 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
     const shouldFetchMetadata = showName || showSymbol;
     const shouldFetchBalance = showBalance && Boolean(userAddress);
 
-    if (!web3) {
+    if (!network) {
       setAssetName('');
       setAssetSymbol('');
       setAssetBalance(undefined);
@@ -87,7 +89,7 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
     }
 
     async function fetchAssetInfos(currentAddress: string) {
-      if (!web3) return;
+      if (!network) return;
 
       try {
         if (shouldFetchMetadata) {
@@ -97,31 +99,54 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
               ERC725YDataKeys.LSP4.LSP4TokenName,
               ERC725YDataKeys.LSP4.LSP4TokenSymbol,
             ],
-            web3,
+            network,
           );
 
           if (!ignore) {
             setAssetName(
-              nameBytesValue ? web3.utils.toUtf8(nameBytesValue) : '',
+              nameBytesValue ? hexToString(nameBytesValue) : '',
             );
             setAssetSymbol(
-              symbolBytesValue ? web3.utils.toUtf8(symbolBytesValue) : '',
+              symbolBytesValue ? hexToString(symbolBytesValue) : '',
             );
           }
         }
 
         if (shouldFetchBalance) {
-          const tokenContract = new web3.eth.Contract(
-            LSP7Artifact.abi as AbiItem[],
-            currentAddress,
-          );
+          const publicClient = createPublicClient({
+            chain: getChainByNetworkName(network.name),
+            transport: http(network.rpcUrl),
+          });
 
-          const fetchedBalance = await tokenContract.methods
-            .balanceOf(userAddress as string)
-            .call();
+          const fetchedBalance = await publicClient.readContract({
+            address: currentAddress as Address,
+            abi: [
+              {
+                "inputs": [
+                  {
+                    "internalType": "address",
+                    "name": "tokenOwner",
+                    "type": "address"
+                  }
+                ],
+                "name": "balanceOf",
+                "outputs": [
+                  {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                  }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+              }
+            ],
+            functionName: 'balanceOf',
+            args: [userAddress as `0x${string}`],
+          })
 
           const formattedBalance = isLSP7
-            ? parseFloat(web3.utils.fromWei(fetchedBalance, 'ether')).toFixed(2)
+            ? parseFloat(formatEther(fetchedBalance)).toFixed(2)
             : fetchedBalance;
 
           if (!ignore) {
@@ -147,7 +172,7 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
     };
   }, [
     assetAddress,
-    web3,
+    network,
     userAddress,
     isLSP7,
     showName,
@@ -192,17 +217,17 @@ interface ProfileProps {
 export const ProfileInfosBadge: React.FC<ProfileProps> = ({
   profileAddress,
 }) => {
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
 
   const [profileName, setProfileName] = useState('');
   const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
     async function fetchProfileMetadata(address) {
-      if (!web3 || !address) return;
+      if (!network || !address) return;
 
       try {
-        const profileMetadata = await getProfileMetadataJSON(address, web3);
+        const profileMetadata = await getProfileMetadataJSON(address, network.rpcUrl);
 
         if (profileMetadata?.value?.LSP3Profile) {
           const { name, profileImage } = profileMetadata.value.LSP3Profile;
@@ -232,7 +257,7 @@ export const ProfileInfosBadge: React.FC<ProfileProps> = ({
       }
     }
     fetchProfileMetadata(profileAddress);
-  }, [web3]);
+  }, [network]);
 
   return (
     <>

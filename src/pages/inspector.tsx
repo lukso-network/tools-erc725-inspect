@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -13,16 +13,13 @@ import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
 import ContractOwner from '@/components/features/ContractOwner';
 import DataKeysTable from '@/components/features/DataKeysTable';
 import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
-import { useNetworkSync } from '@/hooks/useNetworkSync';
 import { LSP_SPECS_URL } from '@/constants/links';
 import ToolInfos from '@/components/layout/ToolInfos';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
 import SupportedInterfacesTable from '@/components/ui/SupportedInterfacesTable';
-import {
-  CONTRACT_INTERFACE_KEYS,
-  type SupportedInterfaces,
-} from '@/types/contract';
+import { CONTRACT_INTERFACE_KEYS, type SupportedInterfaces } from '@/types/contract';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
   Object.fromEntries(
@@ -31,7 +28,9 @@ export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { network } = useNetworkSync();
+  const { network } = useContext(NetworkContext);
+
+  console.log("network: ", network)
 
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -86,7 +85,7 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       try {
-        const interfacesSupportedByAddress = await checkInterface(address, network.rpcUrl);
+        const interfacesSupportedByAddress = await checkInterface(address, network);
         setSupportedInterfaces(interfacesSupportedByAddress);
       } catch (error) {
         setErrorMessage(

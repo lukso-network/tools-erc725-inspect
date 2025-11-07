@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { ERC725, ERC725JSONSchema, encodeKeyName } from '@erc725/erc725.js';
 import { isHex } from 'viem';
 
-import { useNetworkSync } from '@/hooks/useNetworkSync';
 import { getData } from '@/utils/web3';
 
 import CodeEditor from '@/components/ui/CodeEditor';
 
 import { LSP_SPECS_URL } from '@/constants/links';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 const SCHEMA_PLACEHOLDER = {
   name: 'MyCustomKey',
@@ -257,7 +257,7 @@ interface CustomKeySchemaFormProps {
 }
 
 const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
-  const { network } = useNetworkSync();
+  const { network } = useContext(NetworkContext);
 
   const {
     name: sampleName,
@@ -460,7 +460,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
     const { key, keyType, valueType, valueContent } = customSchema;
 
     try {
-      const dataToDecode = await getData(address, key, network.rpcUrl);
+      const dataToDecode = await getData(address, key, network);
 
       if (!dataToDecode) {
         setRawData('0x');

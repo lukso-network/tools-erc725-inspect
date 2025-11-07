@@ -1,13 +1,18 @@
 /* eslint-disable react/no-unescaped-entities */
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { isAddress, getAddress, type Address } from 'viem';
 import { useReadContract } from 'wagmi';
 
 import LSP6KeyManager from '@lukso/lsp6-contracts/artifacts/LSP6KeyManager.json';
 import { LSP_SPECS_URL } from '@/constants/links';
+import { NetworkContext } from '@/contexts/NetworksContext';
+import { getChainIdByNetworkName } from '@/config/wagmi';
 
 const KeyManagerNonceChecker: React.FC = () => {
+  const { network } = useContext(NetworkContext);
+  const chainId = getChainIdByNetworkName(network.name);
+
   const [keyManagerAddress, setKeyManagerAddress] = useState('');
   const [callerAddress, setCallerAddress] = useState('');
   const [channelId, setChannelId] = useState('');
@@ -24,6 +29,7 @@ const KeyManagerNonceChecker: React.FC = () => {
       isValidCaller ? getAddress(callerAddress) : '0x0',
       channelId || '0',
     ],
+    chainId,
     query: {
       enabled: false, // Manual fetching on button click
     },

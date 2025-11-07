@@ -21,13 +21,13 @@ import LSP12DataKeys from '@erc725/erc725.js/schemas/LSP12IssuedAssets.json';
 import LSP17DataKeys from '@erc725/erc725.js/schemas/LSP17ContractExtension.json';
 
 import { checkInterface, getData } from '@/utils/web3';
-import { useNetworkSync } from '@/hooks/useNetworkSync';
 
 import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
 import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import { useRouter } from 'next/router';
 import ToolInfos from '@/components/layout/ToolInfos';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 // using local variable for LSP28TheGrid key for now
 const LSP28_THE_GRID_KEY =
@@ -64,7 +64,7 @@ const GetData: NextPage = () => {
   const [erc725js, setERC725JsInstance] = useState<ERC725>();
   const router = useRouter();
 
-  const { network } = useNetworkSync();
+  const { network } = useContext(NetworkContext);
 
   const schemas = [
     ...LSP1DataKeys,
@@ -347,10 +347,10 @@ const GetData: NextPage = () => {
                   ERC725YDataKeys.LSP6['AddressPermissions:Permissions'],
                 )
                   ? JSON.stringify(
-                      ERC725.decodePermissions(data as `0x${string}`),
-                      undefined,
-                      2,
-                    )
+                    ERC725.decodePermissions(data as `0x${string}`),
+                    undefined,
+                    2,
+                  )
                   : decodedData}
               </pre>
             </div>

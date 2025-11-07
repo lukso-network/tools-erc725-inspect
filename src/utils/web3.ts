@@ -30,6 +30,8 @@ import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import type { SupportedInterfaces } from '@/types/contract';
 import { getDataBatchAbi } from '@/hooks/useGetDataBatch';
 import { getDataAbi } from '@/hooks/useGetData';
+import { INetwork } from '@/types/network';
+import { getChainByNetworkName } from '@/config/wagmi';
 
 const eip165Abi = [
   {
@@ -71,7 +73,7 @@ const versionAbi = [
 
 export const checkInterface = async (
   address: string,
-  rpcUrl: string,
+  network: INetwork,
 ): Promise<SupportedInterfaces> => {
   // aggregate multiple supportsInterface calls in a batch Multicall for efficiency
   const supportsContractInterface = await checkSupportedInterfaces(
@@ -99,7 +101,7 @@ export const checkInterface = async (
       INTERFACE_IDS.LSP17Extension,
       INTERFACE_IDS.LSP26FollowerSystem,
     ],
-    rpcUrl,
+    network,
   );
 
   // digital assets need to be checked against multiple interface IDs
@@ -113,7 +115,7 @@ export const checkInterface = async (
       INTERFACE_ID_LSP8_PREVIOUS['v0.14.0'],
       INTERFACE_ID_LSP8,
     ],
-    rpcUrl,
+    network,
   );
 
   return {
@@ -152,12 +154,14 @@ export const checkInterface = async (
 async function checkSupportedInterfaces(
   assetAddress: string,
   interfaceIds: string[],
-  rpcUrl: string,
+  network: INetwork,
 ): Promise<boolean[]> {
   try {
     const publicClient = createPublicClient({
-      transport: http(rpcUrl),
+      chain: getChainByNetworkName(network.name),
+      transport: http(network.rpcUrl),
     });
+    console.log("publicClient: ", publicClient)
 
     // Use viem's multicall which automatically uses the chain's multicall contract
     const results = await publicClient.multicall({
@@ -184,13 +188,14 @@ async function checkSupportedInterfaces(
 
 export async function checkIsGnosisSafe(
   address: string,
-  rpcUrl: string,
+  network: INetwork,
 ): Promise<{ isSafe: boolean; version?: string }> {
   const publicClient = createPublicClient({
-    transport: http(rpcUrl),
+    chain: getChainByNetworkName(network.name),
+    transport: http(network.rpcUrl),
   });
 
-  const codeAt = await publicClient.getBytecode({
+  const codeAt = await publicClient.getCode({
     address: address as Address,
   });
 
@@ -233,10 +238,11 @@ export async function checkIsGnosisSafe(
 
 export const getVersion = async (
   address: string,
-  rpcUrl: string,
+  network: INetwork,
 ): Promise<string> => {
   const publicClient = createPublicClient({
-    transport: http(rpcUrl),
+    chain: getChainByNetworkName(network.name),
+    transport: http(network.rpcUrl),
   });
 
   try {
@@ -260,20 +266,21 @@ export const getVersion = async (
 
 export const getDataBatch = async (
   address: string,
-  keys: string[],
-  rpcUrl: string,
-): Promise<readonly string[]> => {
+  keys: `0x${string}`[],
+  network: INetwork,
+): Promise<readonly `0x${string}`[]> => {
   const publicClient = createPublicClient({
-    transport: http(rpcUrl),
+    chain: getChainByNetworkName(network.name),
+    transport: http(network.rpcUrl),
   });
 
-  let data: readonly string[] = [];
+  let data: readonly `0x${string}`[] = [];
   try {
     data = await publicClient.readContract({
       address: address as Address,
       abi: getDataBatchAbi,
       functionName: 'getDataBatch',
-      args: [keys as `0x${string}`[]],
+      args: [keys],
     });
   } catch (err: any) {
     console.log(err.message);
@@ -285,10 +292,11 @@ export const getDataBatch = async (
 export const getData = async (
   address: string,
   key: string,
-  rpcUrl: string,
+  network: INetwork,
 ): Promise<string | null> => {
   const publicClient = createPublicClient({
-    transport: http(rpcUrl),
+    chain: getChainByNetworkName(network.name),
+    transport: http(network.rpcUrl),
   });
 
   let data: string | null = null;
