@@ -13,7 +13,7 @@ type Props = {
 const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
   const { network } = useContext(NetworkContext);
   const { data: contractOwner, isLoading } = useGetOwner(
-    isAddress(contractAddress) ? (contractAddress as Address) : undefined
+    isAddress(contractAddress) ? (contractAddress as Address) : undefined,
   );
 
   const [standards, setStandards] = useState<{
@@ -27,7 +27,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
   });
 
   useEffect(() => {
-    if (!contractOwner || !network?.rpcUrl) return;
+    if (!contractOwner || !network) return;
 
     const getOwnerStandards = async () => {
       try {
@@ -35,7 +35,7 @@ const ContractOwner: React.FC<Props> = ({ contractAddress }) => {
           isLsp0Erc725Account,
           isLsp7DigitalAsset,
           isLsp8IdentifiableDigitalAsset,
-        } = await checkInterface(contractOwner, network.rpcUrl);
+        } = await checkInterface(contractOwner, network);
 
         setStandards({
           isLsp0Erc725Account,

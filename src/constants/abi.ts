@@ -1,7 +1,5 @@
-import type { Abi } from 'viem';
-
 // Interface Detection
-export const eip165ABI = [
+export const eip165Abi = [
   {
     inputs: [
       {
@@ -24,7 +22,7 @@ export const eip165ABI = [
 ] as const;
 
 // ERC725Y
-export const getDataABI = [
+export const getDataAbi = [
   {
     inputs: [
       {
@@ -46,7 +44,7 @@ export const getDataABI = [
   },
 ] as const;
 
-export const getDataBatchABI = [
+export const getDataBatchAbi = [
   {
     inputs: [
       {
@@ -68,8 +66,25 @@ export const getDataBatchABI = [
   },
 ] as const;
 
+// ERC725 Ownership
+export const ownerAbi = [
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
+
 // LSP Smart Contract version
-export const VersionABI = [
+export const versionAbi = [
   {
     inputs: [],
     name: 'VERSION',

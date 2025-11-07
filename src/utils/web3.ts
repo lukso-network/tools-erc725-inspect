@@ -22,14 +22,10 @@ import {
   INTERFACE_ID_LSP8,
 } from '@lukso/lsp8-contracts';
 
-import {
-  GNOSIS_SAFE,
-  GNOSIS_SAFE_PROXY_BYTECODE,
-} from '@/constants/contracts';
+import { GNOSIS_SAFE, GNOSIS_SAFE_PROXY_BYTECODE } from '@/constants/contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import type { SupportedInterfaces } from '@/types/contract';
-import { getDataBatchAbi } from '@/hooks/useGetDataBatch';
-import { getDataAbi } from '@/hooks/useGetData';
+import { getDataAbi, getDataBatchAbi } from '@/constants/abi';
 import { INetwork } from '@/types/network';
 import { getChainByNetworkName } from '@/config/wagmi';
 
@@ -161,7 +157,7 @@ async function checkSupportedInterfaces(
       chain: getChainByNetworkName(network.name),
       transport: http(network.rpcUrl),
     });
-    console.log("publicClient: ", publicClient)
+    console.log('publicClient: ', publicClient);
 
     // Use viem's multicall which automatically uses the chain's multicall contract
     const results = await publicClient.multicall({

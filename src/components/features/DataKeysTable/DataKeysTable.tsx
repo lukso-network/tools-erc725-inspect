@@ -58,7 +58,11 @@ const DataKeysTable: React.FC<Props> = ({
 
           const dataKeys = schemaToLoad.map((schema) => schema.key);
 
-          const result = await getDataBatch(address, dataKeys as `0x${string}`[], network);
+          const result = await getDataBatch(
+            address,
+            dataKeys as `0x${string}`[],
+            network,
+          );
           result.map((_, i) => {
             dataResult.push({
               key: dataKeys[i],

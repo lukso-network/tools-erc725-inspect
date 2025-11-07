@@ -20,7 +20,7 @@ export function useGetSupportedInterfaces(address: Address | undefined) {
     setIsError(false);
 
     try {
-      const interfaces = await checkInterface(address, network.rpcUrl);
+      const interfaces = await checkInterface(address, network);
       setData(interfaces);
     } catch (error) {
       console.error('Error checking interfaces:', error);
@@ -42,5 +42,3 @@ export function useGetSupportedInterfaces(address: Address | undefined) {
     refetch: fetchInterfaces,
   };
 }
-
-

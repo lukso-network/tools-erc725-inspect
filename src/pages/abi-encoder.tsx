@@ -71,12 +71,8 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className="container">
-        {mode === TX_PARSER_MODES.ENCODE && network ? (
-          <Encode web3={network} />
-        ) : null}
-        {mode === TX_PARSER_MODES.DECODE && network ? (
-          <Decode web3={network} />
-        ) : null}
+        {mode === TX_PARSER_MODES.ENCODE && network ? <Encode /> : null}
+        {mode === TX_PARSER_MODES.DECODE && network ? <Decode /> : null}
       </div>
     </>
   );

@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </section>
         </QueryClientProvider>
-      </WagmiProvider >
+      </WagmiProvider>
     </NetworksProvider>
   );
 }

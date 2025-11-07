@@ -18,7 +18,10 @@ import ToolInfos from '@/components/layout/ToolInfos';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
 import SupportedInterfacesTable from '@/components/ui/SupportedInterfacesTable';
-import { CONTRACT_INTERFACE_KEYS, type SupportedInterfaces } from '@/types/contract';
+import {
+  CONTRACT_INTERFACE_KEYS,
+  type SupportedInterfaces,
+} from '@/types/contract';
 import { NetworkContext } from '@/contexts/NetworksContext';
 
 export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
@@ -30,7 +33,7 @@ const Home: NextPage = () => {
   const router = useRouter();
   const { network } = useContext(NetworkContext);
 
-  console.log("network: ", network)
+  console.log('network: ', network);
 
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +88,10 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       try {
-        const interfacesSupportedByAddress = await checkInterface(address, network);
+        const interfacesSupportedByAddress = await checkInterface(
+          address,
+          network,
+        );
         setSupportedInterfaces(interfacesSupportedByAddress);
       } catch (error) {
         setErrorMessage(
@@ -176,15 +182,15 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                        <div>
-                          <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
-                            <i className="has-text-centered mb-2">
-                              Scroll to see results
-                            </i>
-                            <p className="has-text-centered">⬇️</p>
-                          </div>
+                      <div>
+                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                          <i className="has-text-centered mb-2">
+                            Scroll to see results
+                          </i>
+                          <p className="has-text-centered">⬇️</p>
                         </div>
-                      )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>

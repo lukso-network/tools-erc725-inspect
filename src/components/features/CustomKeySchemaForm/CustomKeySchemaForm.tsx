@@ -472,14 +472,9 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
       setRawData(dataToDecode);
 
       // Create ERC725 instance with the custom schema
-      const erc725js = new ERC725(
-        [customSchema],
-        address,
-        network.rpcUrl,
-        {
-          ipfsGateway: 'https://api.universalprofile.cloud/ipfs/',
-        },
-      );
+      const erc725js = new ERC725([customSchema], address, network.rpcUrl, {
+        ipfsGateway: 'https://api.universalprofile.cloud/ipfs/',
+      });
 
       const fetchedResult = await erc725js.fetchData([customSchema.name]);
 

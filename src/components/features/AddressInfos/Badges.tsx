@@ -6,7 +6,13 @@ import { getDataBatch, getProfileMetadataJSON } from '@/utils/web3';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import { NetworkContext } from '@/contexts/NetworksContext';
-import { Address, createPublicClient, formatEther, hexToString, http } from 'viem';
+import {
+  Address,
+  createPublicClient,
+  formatEther,
+  hexToString,
+  http,
+} from 'viem';
 import { getChainByNetworkName } from '@/config/wagmi';
 
 interface BadgeProps {
@@ -103,9 +109,7 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
           );
 
           if (!ignore) {
-            setAssetName(
-              nameBytesValue ? hexToString(nameBytesValue) : '',
-            );
+            setAssetName(nameBytesValue ? hexToString(nameBytesValue) : '');
             setAssetSymbol(
               symbolBytesValue ? hexToString(symbolBytesValue) : '',
             );
@@ -122,28 +126,28 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
             address: currentAddress as Address,
             abi: [
               {
-                "inputs": [
+                inputs: [
                   {
-                    "internalType": "address",
-                    "name": "tokenOwner",
-                    "type": "address"
-                  }
+                    internalType: 'address',
+                    name: 'tokenOwner',
+                    type: 'address',
+                  },
                 ],
-                "name": "balanceOf",
-                "outputs": [
+                name: 'balanceOf',
+                outputs: [
                   {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                  }
+                    internalType: 'uint256',
+                    name: '',
+                    type: 'uint256',
+                  },
                 ],
-                "stateMutability": "view",
-                "type": "function"
-              }
+                stateMutability: 'view',
+                type: 'function',
+              },
             ],
             functionName: 'balanceOf',
             args: [userAddress as `0x${string}`],
-          })
+          });
 
           const formattedBalance = isLSP7
             ? parseFloat(formatEther(fetchedBalance)).toFixed(2)
@@ -227,7 +231,10 @@ export const ProfileInfosBadge: React.FC<ProfileProps> = ({
       if (!network || !address) return;
 
       try {
-        const profileMetadata = await getProfileMetadataJSON(address, network.rpcUrl);
+        const profileMetadata = await getProfileMetadataJSON(
+          address,
+          network.rpcUrl,
+        );
 
         if (profileMetadata?.value?.LSP3Profile) {
           const { name, profileImage } = profileMetadata.value.LSP3Profile;

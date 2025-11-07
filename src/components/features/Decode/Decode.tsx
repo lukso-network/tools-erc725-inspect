@@ -1,13 +1,9 @@
 import React, { ReactElement, useState } from 'react';
-import Web3 from 'web3';
 import { TRANSACTION_TYPES } from '@/types/transaction';
 import { TRANSACTION_SELECTORS } from '@/constants/selectors';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import styles from './Decode.module.scss';
-
-interface Props {
-  web3: Web3;
-}
+import { decodeAbiParameters } from 'viem';
 
 interface MethodProps {
   text: string;
@@ -29,7 +25,7 @@ const Method: React.FC<MethodProps> = ({ focus, link, text }) => (
   </span>
 );
 
-const Decode: React.FC<Props> = ({ web3 }) => {
+const Decode: React.FC = () => {
   const [abiError, setABIError] = useState({ isError: false, message: '' });
   const [selector, setSelector] = useState('');
   const [payload, setPayload] = useState('');
@@ -65,31 +61,29 @@ const Decode: React.FC<Props> = ({ web3 }) => {
   function ShowDecoder({
     selector,
     payload,
-    web3,
   }: {
     selector: string;
     payload: string;
-    web3: Web3;
   }) {
     switch (selector) {
       case TRANSACTION_SELECTORS.SET_DATA: {
         setTransactionType(TRANSACTION_TYPES.SET_DATA);
-        return decodeSetData(payload, web3);
+        return decodeSetData(payload);
       }
       case TRANSACTION_SELECTORS.SET_DATA_BATCH: {
         setTransactionType(TRANSACTION_TYPES.SET_DATA_BATCH);
-        return decodeSetData(payload, web3, true);
+        return decodeSetData(payload, true);
       }
       case TRANSACTION_SELECTORS.EXECUTE: {
         setTransactionType(TRANSACTION_TYPES.EXECUTE);
-        return decodeExecute(payload, web3);
+        return decodeExecute(payload);
       }
       case TRANSACTION_SELECTORS.EXECUTE_BATCH: {
         setTransactionType(TRANSACTION_TYPES.EXECUTE_BATCH);
       }
       case TRANSACTION_SELECTORS.TRANSFER_OWNERSHIP: {
         setTransactionType(TRANSACTION_TYPES.TRANSFER_OWNERSHIP);
-        return decodeTransferOwnership(payload, web3);
+        return decodeTransferOwnership(payload);
       }
       case TRANSACTION_SELECTORS.ACCEPT_OWNERSHIP: {
         setTransactionType(TRANSACTION_TYPES.ACCEPT_OWNERSHIP);
@@ -165,7 +159,7 @@ const Decode: React.FC<Props> = ({ web3 }) => {
 
       <div className="mb-2">
         {!abiError.isError && payload.length > 0 ? (
-          <ShowDecoder selector={selector} payload={payload} web3={web3} />
+          <ShowDecoder selector={selector} payload={payload} />
         ) : (
           ''
         )}
@@ -174,14 +168,15 @@ const Decode: React.FC<Props> = ({ web3 }) => {
   );
 };
 
-const decodeTransferOwnership = (payload: string, web3: Web3) => {
+const decodeTransferOwnership = (payload: string) => {
   try {
-    const result = web3.eth.abi.decodeParameters(['address'], payload);
+    const result = decodeAbiParameters([{ type: 'address' }], `0x${payload}`);
+    const newOwner = result[0];
     return (
       <div>
         <div className="mb-2">
           <div className="notification is-danger m-2">
-            This payload will transfer ownership to {result[0]}.<br /> Be
+            This payload will transfer ownership to {newOwner}.<br /> Be
             cautious!
           </div>
         </div>
@@ -192,7 +187,7 @@ const decodeTransferOwnership = (payload: string, web3: Web3) => {
               type="text"
               className="input m-2"
               placeholder="0x..."
-              value={result[0]}
+              value={newOwner}
               readOnly
             />
           </div>
@@ -229,20 +224,30 @@ const decodeRenounceOwnership = () => {
   );
 };
 
-const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
+const decodeSetData = (payload: string, isBatch = false) => {
   try {
     const result = isBatch
-      ? web3.eth.abi.decodeParameters(['bytes32[]', 'bytes[]'], payload)
-      : web3.eth.abi.decodeParameters(['bytes32', 'bytes'], payload);
+      ? decodeAbiParameters(
+          [{ type: 'bytes32[]' }, { type: 'bytes[]' }],
+          `0x${payload}`,
+        )
+      : decodeAbiParameters(
+          [{ type: 'bytes32' }, { type: 'bytes' }],
+          `0x${payload}`,
+        );
 
-    const keys = isBatch ? result[0] : [result[0]];
-    const values = isBatch ? result[1] : [result[1]];
+    const keys = (
+      isBatch ? result[0] : [result[0]]
+    ) as readonly `0x${string}`[];
+    const values = (
+      isBatch ? result[1] : [result[1]]
+    ) as readonly `0x${string}`[];
 
     return (
       <div>
         <div className="mb-2">Keys</div>
         <div className="mb-2">Values</div>
-        {keys.map((key: string, index: number) => (
+        {keys.map((key, index) => (
           <React.Fragment key={index}>
             <div className="mb-2">
               <input type="text" className="input m-2" value={key} readOnly />
@@ -268,17 +273,27 @@ const decodeSetData = (payload: string, web3: Web3, isBatch = false) => {
   }
 };
 
-const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
+const decodeExecute = (payload: string): ReactElement | null => {
   try {
-    const result = web3.eth.abi.decodeParameters(
-      ['uint256', 'address', 'uint256', 'bytes'],
-      payload,
+    const result = decodeAbiParameters(
+      [
+        { type: 'uint256' },
+        { type: 'address' },
+        { type: 'uint256' },
+        { type: 'bytes' },
+      ],
+      `0x${payload}`,
     );
     return (
       <div>
         <div className="mb-2">
           <label className={styles.inputDescription}>Operation</label>
-          <input type="text" className="input m-2" value={result[0]} readOnly />
+          <input
+            type="text"
+            className="input m-2"
+            value={result[0].toString()}
+            readOnly
+          />
         </div>
         <div className={`mb-2 ${styles.inputContainer}`}>
           <label className={styles.inputDescription}>Recipient</label>
@@ -286,7 +301,12 @@ const decodeExecute = (payload: string, web3: Web3): ReactElement | null => {
         </div>
         <div className={`mb-2 ${styles.inputContainer}`}>
           <label className={styles.inputDescription}>Amount</label>
-          <input type="text" className="input m-2" value={result[2]} readOnly />
+          <input
+            type="text"
+            className="input m-2"
+            value={result[2].toString()}
+            readOnly
+          />
         </div>
         <div className={`mb-2 ${styles.inputContainer}`}>
           <label className={styles.inputDescription}>Data</label>

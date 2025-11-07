@@ -67,8 +67,8 @@ const LSPChecker: NextPage = () => {
 
     const valuesFetched = await getDataBatch(
       address,
-      nonDynamicSchemas.map((schema) => schema.key),
-      network.rpcUrl,
+      nonDynamicSchemas.map((schema) => schema.key) as `0x${string}`[],
+      network,
     );
 
     const checkResults = () => {
@@ -98,10 +98,12 @@ const LSPChecker: NextPage = () => {
           dataKey == 'LSP12IssuedAssets[]' ||
           dataKey == 'LSP5ReceivedAssets[]'
         ) {
-
-          const pass = data == '0x'
-            ? Status.INFO
-            : size(data as `0x${string}`) == 16 ? Status.PASS : Status.FAIL;
+          const pass =
+            data == '0x'
+              ? Status.INFO
+              : size(data as `0x${string}`) == 16
+              ? Status.PASS
+              : Status.FAIL;
         }
 
         return {
@@ -124,7 +126,7 @@ const LSPChecker: NextPage = () => {
 
     let results: CheckResult[] = [];
 
-    const { isLsp0Erc725Account } = await checkInterface(address, network.rpcUrl);
+    const { isLsp0Erc725Account } = await checkInterface(address, network);
 
     results = (await getUniversalProfileResults()) as CheckResult[];
 

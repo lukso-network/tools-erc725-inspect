@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import Web3 from 'web3';
-import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
-import ErrorMessage from '@/components/ui/ErrorMessage';
-import { AbiItem } from 'web3-utils';
+import { useState } from 'react';
+
 import styles from './EncodeSetData.module.scss';
-import { INetwork } from '@/types/network';
+
+import EncodedPayload from './EncodedPayload';
+import ErrorMessage from '@/components/ui/ErrorMessage';
+
+import { type AbiItem, encodeFunctionData } from 'viem';
 
 interface Props {
-  network: INetwork;
   isBatch: boolean;
 }
 
-const EncodeSetData: React.FC<Props> = ({ network, isBatch }) => {
+const EncodeSetData: React.FC<Props> = ({ isBatch }) => {
   const [encodedPayload, setEncodedPayload] = useState('');
   const [keyValuePairs, setKeyValuePairs] = useState<
     { key: string; value: string }[]
@@ -98,23 +98,22 @@ const EncodeSetData: React.FC<Props> = ({ network, isBatch }) => {
   };
 
   const encodeABI = () => {
-    const erc725Account = new network.provider.Contract(ERC725Account.abi as AbiItem[]);
-
-    const keys = keyValuePairs.map((keyValuePair) => {
-      return keyValuePair.key;
-    });
-
-    const values = keyValuePairs.map((keyValuePair) => {
-      return keyValuePair.value;
-    });
-
     try {
-      setEncodedPayload(
-        isBatch
-          ? erc725Account.methods.setDataBatch(keys, values).encodeABI()
-          : erc725Account.methods.setData(keys[0], values[0]).encodeABI(),
-      );
+      const keys = keyValuePairs.map((keyValuePair) => {
+        return keyValuePair.key;
+      });
 
+      const values = keyValuePairs.map((keyValuePair) => {
+        return keyValuePair.value;
+      });
+
+      const encodedCalldata = encodeFunctionData({
+        abi: ERC725Account.abi as AbiItem[],
+        functionName: isBatch ? 'setDataBatch' : 'setData',
+        args: isBatch ? [keys, values] : [keys[0], values[0]],
+      });
+
+      setEncodedPayload(encodedCalldata);
       setEncodingError({ isError: false, message: '' });
     } catch (error: any) {
       setEncodingError({ isError: true, message: error.message });

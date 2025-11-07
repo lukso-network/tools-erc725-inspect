@@ -126,11 +126,9 @@ const GetData: NextPage = () => {
 
     setAddressError('');
 
-    if (!network?.rpcUrl) {
-      return;
-    }
+    if (!network) return;
 
-    const result = await checkInterface(address, network.rpcUrl);
+    const result = await checkInterface(address, network);
     setInterfaces(result);
   };
 
@@ -156,9 +154,7 @@ const GetData: NextPage = () => {
   };
 
   const onGetDataClick = async () => {
-    if (!web3 || !erc725js) {
-      return;
-    }
+    if (!network || !erc725js) return;
 
     if (!interfaces.isErc725Y) {
       console.log('Contract not compatible with ERC725');
@@ -166,7 +162,7 @@ const GetData: NextPage = () => {
       return;
     }
 
-    const data = await getData(address, dataKey, network.rpcUrl);
+    const data = await getData(address, dataKey, network);
 
     if (!data) {
       setData('0x');
@@ -220,11 +216,11 @@ const GetData: NextPage = () => {
 
   useEffect(() => {
     setERC725JsInstance(
-      new ERC725(schemas, address, web3?.currentProvider, {
+      new ERC725(schemas, address, network.rpcUrl, {
         ipfsGateway: `${LUKSO_IPFS_BASE_URL}/`,
       }),
     );
-  }, [address, web3]);
+  }, [address, network]);
 
   return (
     <>
@@ -347,10 +343,10 @@ const GetData: NextPage = () => {
                   ERC725YDataKeys.LSP6['AddressPermissions:Permissions'],
                 )
                   ? JSON.stringify(
-                    ERC725.decodePermissions(data as `0x${string}`),
-                    undefined,
-                    2,
-                  )
+                      ERC725.decodePermissions(data as `0x${string}`),
+                      undefined,
+                      2,
+                    )
                   : decodedData}
               </pre>
             </div>

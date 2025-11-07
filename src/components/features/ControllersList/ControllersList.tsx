@@ -54,7 +54,6 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
     };
   }>({});
 
-
   useEffect(() => {
     const getPermissions = async () => {
       setIsLoading(true);
@@ -120,10 +119,10 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
 
               currentState[index].permissions = controller
                 ? (ERC725.decodePermissions(
-                  permissionsDataValues[index] as `0x${string}`,
-                ) as {
-                  [key: string]: any;
-                })
+                    permissionsDataValues[index] as `0x${string}`,
+                  ) as {
+                    [key: string]: any;
+                  })
                 : {};
 
               setControllersPermissions({ ...currentState });
@@ -288,8 +287,8 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                             {bitArray == '0x' ||
                               (bitArray ==
                                 '0x0000000000000000000000000000000000000000000000000000000000000000' && (
-                                  <i>No permission set</i>
-                                ))}
+                                <i>No permission set</i>
+                              ))}
                             {Object.entries(permissions).map(
                               ([permission, isSet]) =>
                                 isSet &&

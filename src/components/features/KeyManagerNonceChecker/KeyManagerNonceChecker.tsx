@@ -21,14 +21,16 @@ const KeyManagerNonceChecker: React.FC = () => {
   const isValidKeyManager = isAddress(keyManagerAddress);
   const isValidCaller = isAddress(callerAddress);
 
-  const { data: nonce, isError, isSuccess, refetch } = useReadContract({
+  const {
+    data: nonce,
+    isError,
+    isSuccess,
+    refetch,
+  } = useReadContract({
     address: isValidKeyManager ? getAddress(keyManagerAddress) : undefined,
     abi: LSP6KeyManager.abi as any,
     functionName: 'getNonce',
-    args: [
-      isValidCaller ? getAddress(callerAddress) : '0x0',
-      channelId || '0',
-    ],
+    args: [isValidCaller ? getAddress(callerAddress) : '0x0', channelId || '0'],
     chainId,
     query: {
       enabled: false, // Manual fetching on button click

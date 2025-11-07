@@ -22,10 +22,10 @@ type Props = {
 
 const LSP1DelegateDataKeys: React.FC<Props> = ({ address, isErc725Y }) => {
   const dataKeys = LSP1NotificationsSchema.map((schema) => schema.key);
-  
+
   const { data: result } = useGetDataBatch(
     isAddress(address) && isErc725Y ? (address as Address) : undefined,
-    isErc725Y ? dataKeys : undefined
+    isErc725Y ? dataKeys : undefined,
   );
 
   const [data, setData] = useState<

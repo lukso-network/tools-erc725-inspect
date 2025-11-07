@@ -3,22 +3,7 @@ import type { Address } from 'viem';
 import { useContext } from 'react';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { getChainIdByNetworkName } from '@/config/wagmi';
-
-export const ownerAbi = [
-  {
-    inputs: [],
-    name: 'owner',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
+import { ownerAbi } from '@/constants/abi';
 
 export function useGetOwner(address: Address | undefined) {
   const { network } = useContext(NetworkContext);
@@ -34,4 +19,3 @@ export function useGetOwner(address: Address | undefined) {
     },
   });
 }
-

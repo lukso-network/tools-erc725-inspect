@@ -116,5 +116,3 @@ export function useNetworkSync() {
 
   return { network, setNetwork };
 }
-
-
