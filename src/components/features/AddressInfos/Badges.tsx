@@ -6,7 +6,8 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 
 // utils
 import { getChainIdByNetworkName } from '@/config/wagmi';
-import { getDataBatch, getProfileMetadataJSON } from '@/utils/web3';
+import { getDataBatch } from '@/utils/erc725y';
+import { fetchProfileMetadataJSON } from '@/utils/metadata';
 
 // constants
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
@@ -225,7 +226,7 @@ export const ProfileInfosBadge: React.FC<ProfileProps> = ({
       if (!network || !address) return;
 
       try {
-        const profileMetadata = await getProfileMetadataJSON(
+        const profileMetadata = await fetchProfileMetadataJSON(
           address,
           network.rpcUrl,
         );

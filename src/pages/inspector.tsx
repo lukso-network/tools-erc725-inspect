@@ -8,7 +8,7 @@ import '@/styles/Inspect.module.css';
 
 // utils
 import { isAddress } from 'viem';
-import { checkInterface } from '@/utils/web3';
+import { getAllSupportedInterfaces } from '@/utils/interface-detection';
 
 // context
 import { NetworkContext } from '@/contexts/NetworksContext';
@@ -93,7 +93,7 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       try {
-        const interfacesSupportedByAddress = await checkInterface(
+        const interfacesSupportedByAddress = await getAllSupportedInterfaces(
           address,
           network,
         );
@@ -187,15 +187,15 @@ const Home: NextPage = () => {
                     {(errorMessage && (
                       <div className="help is-danger">{errorMessage}</div>
                     )) || (
-                        <div>
-                          <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
-                            <i className="has-text-centered mb-2">
-                              Scroll to see results
-                            </i>
-                            <p className="has-text-centered">⬇️</p>
-                          </div>
+                      <div>
+                        <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-6">
+                          <i className="has-text-centered mb-2">
+                            Scroll to see results
+                          </i>
+                          <p className="has-text-centered">⬇️</p>
                         </div>
-                      )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>

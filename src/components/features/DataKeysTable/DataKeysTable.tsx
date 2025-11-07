@@ -10,7 +10,7 @@ import AssetSchema from '@/schemas/AssetSchema.json';
 import LSP8Schema from '@/schemas/LSP8Schema.json';
 
 // utilities
-import { getDataBatch } from '@/utils/web3';
+import { getDataBatch } from '@/utils/erc725y';
 import { NetworkContext } from '@/contexts/NetworksContext';
 
 interface Props {

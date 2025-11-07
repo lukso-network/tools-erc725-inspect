@@ -12,7 +12,8 @@ import LSP3Schema from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
 import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 
 import SampleAddressInput from '@/components/ui/SampleAddressInput';
-import { checkInterface, getDataBatch } from '@/utils/web3';
+import { getDataBatch } from '@/utils/erc725y';
+import { getAllSupportedInterfaces } from '@/utils/interface-detection';
 import { isAddress, keccak256, toHex, size } from 'viem';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 import { NetworkContext } from '@/contexts/NetworksContext';
@@ -100,8 +101,8 @@ const LSPChecker: NextPage = () => {
             data == '0x'
               ? Status.INFO
               : size(data as `0x${string}`) == 16
-                ? Status.PASS
-                : Status.FAIL;
+              ? Status.PASS
+              : Status.FAIL;
         }
 
         return {
@@ -122,7 +123,10 @@ const LSPChecker: NextPage = () => {
 
     let results: CheckResult[] = [];
 
-    const { isLsp0Erc725Account } = await checkInterface(address, network);
+    const { isLsp0Erc725Account } = await getAllSupportedInterfaces(
+      address,
+      network,
+    );
 
     results = (await getUniversalProfileResults()) as CheckResult[];
 

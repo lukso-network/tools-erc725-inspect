@@ -4,7 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import { ERC725, ERC725JSONSchema, encodeKeyName } from '@erc725/erc725.js';
 import { isHex } from 'viem';
 
-import { getData } from '@/utils/web3';
+import { getData } from '@/utils/erc725y';
 
 import CodeEditor from '@/components/ui/CodeEditor';
 

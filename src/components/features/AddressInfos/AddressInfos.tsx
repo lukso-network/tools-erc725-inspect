@@ -12,7 +12,8 @@ import {
   LUKSO_UP_RECOVERY_ADDRESSES,
 } from '@/constants/contracts';
 
-import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
+import { getAllSupportedInterfaces } from '@/utils/interface-detection';
+import { isGnosisSafeProxy, getVersion } from '@/utils/contract-info';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
 import { NetworkContext } from '@/contexts/NetworksContext';
@@ -72,7 +73,7 @@ const AddressInfos: React.FC<Props> = ({
       isLsp7DigitalAsset,
       isLsp8IdentifiableDigitalAsset,
       isLsp6KeyManager,
-    } = await checkInterface(_address, network);
+    } = await getAllSupportedInterfaces(_address, network);
 
     setIsLSP0(isLsp0Erc725Account);
     setIsLSP7(isLsp7DigitalAsset);
@@ -81,11 +82,11 @@ const AddressInfos: React.FC<Props> = ({
     setIsLSP1Delegate(isLsp1Delegate);
     setIsLsp6KeyManager(isLsp6KeyManager);
 
-    const { isSafe, version } = await checkIsGnosisSafe(_address, network);
-    setIsGnosisSafe(isSafe);
+    const gnosisSafeCheck = await isGnosisSafeProxy(_address, network);
+    setIsGnosisSafe(gnosisSafeCheck.isGnosisSafe);
 
-    if (isSafe && version) {
-      setContractVersion(version);
+    if (gnosisSafeCheck.isGnosisSafe && gnosisSafeCheck.version) {
+      setContractVersion(gnosisSafeCheck.version);
     }
 
     if (isLsp0Erc725Account) {
