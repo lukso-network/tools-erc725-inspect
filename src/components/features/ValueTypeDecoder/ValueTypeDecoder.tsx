@@ -2,17 +2,20 @@
  * @author Hugo Masclet <git@hugom.xyz>
  */
 import React, { useState, useEffect, useContext } from 'react';
-import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
-import AddressButtons from '@/components/ui/AddressButtons';
-import ControllersList from '@/components/features/ControllersList';
-import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
+import {
+  ERC725,
+  type ERC725JSONSchema,
+  type DecodeDataOutput,
+} from '@erc725/erc725.js';
 
-import type { DecodeDataOutput } from '@erc725/erc725.js';
-import AddressInfos from '@/components/features/AddressInfos';
-
-import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';
-import CodeEditor from '../../ui/CodeEditor';
 import { NetworkContext } from '@/contexts/NetworksContext';
+
+// components
+import AddressInfos from '@/components/features/AddressInfos';
+import ControllersList from '@/components/features/ControllersList';
+import TokenTypeBadge from '@/components/ui/TokenTypeBadge';
+import TokenIdFormatBadge from '@/components/ui/TokenIdFormatBadge';
+import VerifiableURIViewer from '@/components/ui/VerifiableURIViewer';
 
 interface Props {
   address: string;
@@ -40,23 +43,22 @@ const ValueTypeDecoder: React.FC<Props> = ({
 
   useEffect(() => {
     const startDecoding = async () => {
+      if (!network?.rpcUrl) return;
+
       try {
-        if (address && network?.rpcUrl) {
-          const schema: ERC725JSONSchema[] = [erc725JSONSchema];
-          const erc725 = new ERC725(schema, address, network.rpcUrl);
+        const erc725 = new ERC725([erc725JSONSchema], address, network.rpcUrl);
 
-          const decodedData = erc725.decodeData([
-            {
-              keyName: erc725JSONSchema.name,
-              value: value as string,
-            },
-          ]);
-          setDecodedDataOneKey(decodedData);
+        const decodedData = erc725.decodeData([
+          {
+            keyName: erc725JSONSchema.name,
+            value: value as string,
+          },
+        ]);
+        setDecodedDataOneKey(decodedData);
 
-          if (erc725JSONSchema.keyType === 'Array') {
-            const result = await erc725.getData(erc725JSONSchema.name);
-            setDecodedDataArray(result);
-          }
+        if (erc725JSONSchema.keyType === 'Array') {
+          const result = await erc725.getData(erc725JSONSchema.name);
+          setDecodedDataArray(result);
         }
       } catch (error: any) {
         console.log(error.message);
@@ -65,131 +67,91 @@ const ValueTypeDecoder: React.FC<Props> = ({
     startDecoding();
   }, [address, network, erc725JSONSchema, value]);
 
-  try {
-    if (decodedDataOneKey[0].name.startsWith('LSP1UniversalReceiverDelegate')) {
-      const badgeContent = decodedDataOneKey[0].value;
+  if (
+    !decodedDataOneKey ||
+    !decodedDataOneKey[0] ||
+    !decodedDataOneKey[0].value
+  ) {
+    return <span className="help">No data found for this key.</span>;
+  }
 
+  const { value: decodedValue } = decodedDataOneKey[0];
+  const { name: keyName, keyType, valueContent } = erc725JSONSchema;
+
+  try {
+    // Handle the case for arrays
+    if (
+      decodedDataArray &&
+      keyType === 'Array' &&
+      Array.isArray(decodedDataArray.value)
+    ) {
+      // TODO: not sure if this should go in the underlying components or not
+      if (decodedDataArray.value.length === 0) {
+        return <span className="help">No array entries found.</span>;
+      }
+
+      if (keyName == 'AddressPermissions[]') {
+        return (
+          <ControllersList
+            address={address}
+            controllers={decodedDataArray.value as string[]}
+          />
+        );
+      }
+
+      // TODO: create a table component <AssetsTable> for LSP5 + LSP12 Issued Assets
+
+      // TODO: create a a generic table component to display the values as fallback (e.g: LSP10 Vaults)
+      return (
+        <ul>
+          <li style={{ listStyleType: 'none' }}>
+            {decodedDataArray.value.length} elements in Array
+          </li>
+          {decodedDataArray.value.map(
+            (item, index) =>
+              item && (
+                <li key={index}>
+                  <AddressInfos
+                    address={item.toString()}
+                    userAddress={address}
+                  />
+                </li>
+              ),
+          )}
+        </ul>
+      );
+    }
+
+    if (valueContent === 'VerifiableURI' || valueContent === 'JSONURL') {
+      return <VerifiableURIViewer value={decodedValue} />;
+    }
+
+    if (keyName == 'LSP4TokenType') {
+      return <TokenTypeBadge value={decodedValue} />;
+    }
+
+    if (keyName == 'LSP8TokenIdFormat') {
+      return <TokenIdFormatBadge value={decodedValue} />;
+    }
+
+    if (valueContent === 'Address') {
       return (
         <>
           <code>{value}</code>
           <div className="mt-4"></div>
-          <AddressInfos address={badgeContent} userAddress={address} />
+          <AddressInfos address={decodedValue} userAddress={address} />
         </>
       );
     }
 
-    if (
-      !decodedDataOneKey[0].name.endsWith('[]') &&
-      (typeof decodedDataOneKey[0].value === 'string' ||
-        typeof decodedDataOneKey[0].value === 'number')
-    ) {
-      let badgeContent = decodedDataOneKey[0].value;
-
-      if (erc725JSONSchema.valueContent === 'Address') {
-        return (
-          <>
-            <code>{value}</code>
-            <div className="mt-4"></div>
-            <AddressButtons address={badgeContent} />
-          </>
-        );
-      }
-
-      if (erc725JSONSchema.name == 'LSP4TokenType') {
-        const tokenTypeName = Object.keys(LSP4_TOKEN_TYPES).filter((key) =>
-          LSP4_TOKEN_TYPES[key].toString().includes(badgeContent),
-        );
-        badgeContent += ` - ${tokenTypeName}`;
-      }
-
+    // Handle all the remaining cases
+    if (typeof decodedValue === 'string' || typeof decodedValue === 'number') {
       return (
-        <>
-          <span className="tag is-medium is-info is-light">{badgeContent}</span>
-        </>
+        <span className="tag is-medium is-info is-light">{decodedValue}</span>
       );
     }
 
-    if (
-      decodedDataArray !== undefined &&
-      Array.isArray(decodedDataArray.value) &&
-      erc725JSONSchema.keyType === 'Array'
-    ) {
-      if (decodedDataArray.value.length === 0) {
-        return <span className="help">No array entries found.</span>;
-      } else {
-        if (erc725JSONSchema.name == 'AddressPermissions[]') {
-          return (
-            <ControllersList
-              address={address}
-              controllers={decodedDataArray.value as string[]}
-            />
-          );
-        }
-
-        return (
-          <ul>
-            <li style={{ listStyleType: 'none' }}>
-              {decodedDataArray.value.length} elements in Array
-            </li>
-            {decodedDataArray.value.map(
-              (item, index) =>
-                item && (
-                  <li key={index}>
-                    <AddressInfos
-                      address={item.toString()}
-                      userAddress={address}
-                    />
-                  </li>
-                ),
-            )}
-          </ul>
-        );
-      }
-    }
-
-    if (
-      erc725JSONSchema.valueContent === 'VerifiableURI' ||
-      erc725JSONSchema.valueContent === 'JSONURL'
-    ) {
-      if (
-        !decodedDataOneKey ||
-        !decodedDataOneKey[0] ||
-        !decodedDataOneKey[0].value
-      ) {
-        return <span className="help">No data found for this key.</span>;
-      }
-
-      return (
-        <>
-          <CodeEditor
-            sourceCode={JSON.stringify(decodedDataOneKey[0].value, null, 4)}
-            readOnly={true}
-          />
-
-          <span>
-            URL:
-            <code className="ml-2">{decodedDataOneKey[0].value.url}</code>
-          </span>
-          {decodedDataOneKey[0].value.url &&
-            decodedDataOneKey[0].value.url.indexOf('ipfs://') !== -1 && (
-              <>
-                <a
-                  className="has-text-link button is-small is-light is-info"
-                  target="_blank"
-                  rel="noreferrer"
-                  href={`${LUKSO_IPFS_BASE_URL}/${decodedDataOneKey[0].value.url.replace(
-                    'ipfs://',
-                    '',
-                  )}`}
-                >
-                  Retrieve IPFS File ↗️
-                </a>
-              </>
-            )}
-        </>
-      );
-    }
-
+    // This part of the code should never be reached, but we keep it for debugging purposes
     // display in a code block as a fallback
     return (
       <div>
@@ -198,7 +160,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
     );
   } catch (err) {
     console.warn('Could not decode the key: ', err);
-    return <span>Can&apos;t decode this key</span>;
+    return <span>Couldn&apos;t decode the value for this data key</span>;
   }
 };
 
