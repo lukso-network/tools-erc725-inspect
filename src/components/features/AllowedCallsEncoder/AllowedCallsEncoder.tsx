@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { isAddress, zeroAddress } from 'viem';
+import {
+  Abi,
+  isAddress,
+  isHex,
+  toFunctionSelector,
+  toFunctionSignature,
+  zeroAddress,
+} from 'viem';
 import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
 const { encodeAllowedCalls } = require('@lukso/lsp-utils');
@@ -12,6 +19,8 @@ import { LSP_DOCS_URL } from '@/constants/links';
 import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
 import { CallType } from '@/types/erc725js';
 import ButtonCallType from '@/components/ui/ButtonCallType';
+import request from 'graphql-request';
+import { AddressDocument } from '@/generated/graphql';
 
 const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
   (schema) => schema.name.startsWith('AddressPermissions:AllowedCalls:'),
@@ -48,6 +57,10 @@ const AllowedCallsEncoder: React.FC = () => {
   >('any');
   const [allowedAddressValue, setAllowedAddressValue] =
     useState<`0x${string}`>('0x');
+  const [allowedAddressIsContract, setAllowedAddressIsContract] =
+    useState(false);
+  const [allowedAddressName, setAllowedAddressName] = useState<string>();
+  const [allowedAddressAbi, setAllowedAddressAbi] = useState<Abi>([]);
 
   const [allowedFunctionMode, setAllowedFunctionMode] = useState<
     'any' | 'custom'
@@ -182,6 +195,43 @@ const AllowedCallsEncoder: React.FC = () => {
     setAllowedCallTypes(updatedCallTypes);
   };
 
+  useEffect(() => {
+    // TODO get address abi if exists
+    async function getAbi() {
+      if (!isAddress(allowedAddressValue)) {
+        setAllowedAddressIsContract(false);
+        setAllowedAddressName(undefined);
+        setAllowedAddressAbi([]);
+        return;
+      }
+
+      const { address } = await request(
+        'https://explorer.execution.mainnet.lukso.network/api/v1/graphql',
+        AddressDocument,
+        {
+          address: allowedAddressValue,
+        },
+      );
+
+      if (address?.contractCode && typeof address.contractCode === 'string') {
+        setAllowedAddressIsContract(address.contractCode.length > 0);
+      }
+      if (
+        address?.smartContract?.name &&
+        typeof address.smartContract.name === 'string'
+      ) {
+        setAllowedAddressName(address.smartContract.name);
+      }
+      if (
+        address?.smartContract?.abi &&
+        typeof address.smartContract.abi === 'string'
+      ) {
+        setAllowedAddressAbi(JSON.parse(address.smartContract.abi));
+      }
+    }
+    getAbi();
+  }, [allowedAddressValue]);
+
   return (
     <div className="container container-key-manager">
       <h2 className="title is-2">Allowed Calls</h2>
@@ -261,7 +311,7 @@ const AllowedCallsEncoder: React.FC = () => {
         </div>
       </div>
 
-      <div className="columns">
+      <div className="columns gap-0">
         <div className="column is-two-thirds">
           <table className="table is-fullwidth mb-4">
             <thead>
@@ -459,6 +509,50 @@ const AllowedCallsEncoder: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {allowedAddressName && allowedAddressAbi && (
+          <div className="column is-one-quarter has-background-light my-6 ml-6">
+            <table className="table is-fullwidth">
+              <tr>
+                <td>
+                  <strong>Contract Name</strong>
+                </td>
+                <td>{allowedAddressName}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Available Funcitons</strong>
+                </td>
+                <td>
+                  <div className="select">
+                    <select
+                      onChange={(event) =>
+                        isHex(event.target.value)
+                          ? (setAllowedFunctionMode('custom'),
+                            setAllowedFunctionValue(event.target.value))
+                          : null
+                      }
+                    >
+                      <option>Funcitons</option>
+                      {allowedAddressAbi.map((abiItem) =>
+                        abiItem.type === 'function' ? (
+                          <option
+                            key={toFunctionSelector(abiItem)}
+                            value={toFunctionSelector(abiItem)}
+                          >
+                            {toFunctionSignature(abiItem)}
+                          </option>
+                        ) : (
+                          <></>
+                        ),
+                      )}
+                    </select>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
