@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import Decode from '@/components/features/Decode';
 import Encode from '@/components/features/Encode';
-import useWeb3 from '@/hooks/useWeb3';
 import { LSP_DOCS_URL } from '@/constants/links';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 enum TX_PARSER_MODES {
   ENCODE = 'ENCODE',
@@ -15,7 +15,7 @@ enum TX_PARSER_MODES {
 const DEFAULT_MODE = TX_PARSER_MODES.ENCODE;
 
 const Home: NextPage = () => {
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
 
   const [mode, setMode] = useState(DEFAULT_MODE);
 
@@ -71,12 +71,8 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className="container">
-        {mode === TX_PARSER_MODES.ENCODE && web3 ? (
-          <Encode web3={web3} />
-        ) : null}
-        {mode === TX_PARSER_MODES.DECODE && web3 ? (
-          <Decode web3={web3} />
-        ) : null}
+        {mode === TX_PARSER_MODES.ENCODE && network ? <Encode /> : null}
+        {mode === TX_PARSER_MODES.DECODE && network ? <Decode /> : null}
       </div>
     </>
   );

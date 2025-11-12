@@ -1,15 +1,11 @@
 import { useState } from 'react';
-import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import { Contract } from 'web3-eth-contract';
 import styles from './EncodeTransferOwnership.module.scss';
-interface Props {
-  web3: Web3;
-}
+import { AbiItem, encodeFunctionData } from 'viem';
 
-const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
+const EncodeTransferOwnership: React.FC = () => {
   const [newOwner, setNewOwner] = useState('');
   const [encodedPayload, setEncodedPayload] = useState('');
   const [encodingError, setEncodingError] = useState({
@@ -17,20 +13,17 @@ const EncodeTransferOwnership: React.FC<Props> = ({ web3 }) => {
     message: '',
   });
 
-  let erc725Account;
-
   const handleChange = (value: string) => {
     setNewOwner(value);
 
-    if (!erc725Account) {
-      erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
-    }
-
     try {
-      setEncodedPayload(
-        erc725Account.methods.transferOwnership(value).encodeABI(),
-      );
+      const encodedCalldata = encodeFunctionData({
+        abi: ERC725Account.abi as AbiItem[],
+        functionName: 'transferOwnership',
+        args: [value],
+      });
 
+      setEncodedPayload(encodedCalldata);
       setEncodingError({ isError: false, message: '' });
     } catch (error: any) {
       setEncodingError({ isError: true, message: error.message });

@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { ERC725, ERC725JSONSchema, encodeKeyName } from '@erc725/erc725.js';
-import { isHex } from 'web3-utils';
+import { isHex } from 'viem';
 
-import useWeb3 from '@/hooks/useWeb3';
-import { getData } from '@/utils/web3';
+import { getData } from '@/utils/erc725y';
 
 import CodeEditor from '@/components/ui/CodeEditor';
 
-import { LSP_SPECS_URL } from '@/constants/links';
+import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 const SCHEMA_PLACEHOLDER = {
   name: 'MyCustomKey',
@@ -257,7 +257,7 @@ interface CustomKeySchemaFormProps {
 }
 
 const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
 
   const {
     name: sampleName,
@@ -440,7 +440,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
   };
 
   const handleGetData = async () => {
-    if (!web3 || !address) return;
+    if (!network || !address) return;
 
     const customSchemaResult = getCompleteCustomSchema();
 
@@ -460,7 +460,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
     const { key, keyType, valueType, valueContent } = customSchema;
 
     try {
-      const dataToDecode = await getData(address, key, web3);
+      const dataToDecode = await getData(address, key, network);
 
       if (!dataToDecode) {
         setRawData('0x');
@@ -472,14 +472,9 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
       setRawData(dataToDecode);
 
       // Create ERC725 instance with the custom schema
-      const erc725js = new ERC725(
-        [customSchema],
-        address,
-        web3?.currentProvider,
-        {
-          ipfsGateway: 'https://api.universalprofile.cloud/ipfs/',
-        },
-      );
+      const erc725js = new ERC725([customSchema], address, network.rpcUrl, {
+        ipfsGateway: `${LUKSO_IPFS_BASE_URL}/`,
+      });
 
       const fetchedResult = await erc725js.fetchData([customSchema.name]);
 

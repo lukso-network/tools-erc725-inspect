@@ -3,9 +3,8 @@
  */
 import React, { useState, useContext, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
-
-import { NetworkContext } from '@/contexts/NetworksContext';
-import useWeb3 from '@/hooks/useWeb3';
+import { useBytecode } from 'wagmi';
+import { type Address, getAddress, isAddress } from 'viem';
 
 import {
   LUKSO_LSP1_DELEGATE,
@@ -13,9 +12,12 @@ import {
   LUKSO_UP_RECOVERY_ADDRESSES,
 } from '@/constants/contracts';
 
-import { checkInterface, checkIsGnosisSafe, getVersion } from '@/utils/web3';
+import { getAllSupportedInterfaces } from '@/utils/interface-detection';
+import { isGnosisSafeProxy, getVersion } from '@/utils/contract-info';
 
 import { AddressTypeBadge, AssetInfosBadge, ProfileInfosBadge } from './Badges';
+import { NetworkContext } from '@/contexts/NetworksContext';
+import { getChainIdByNetworkName } from '@/config/wagmi';
 
 interface Props {
   address: string;
@@ -34,8 +36,11 @@ const AddressInfos: React.FC<Props> = ({
   assetBadgeOptions,
   showAddress = true,
 }) => {
-  const web3 = useWeb3();
   const { network } = useContext(NetworkContext);
+  const { data: bytecode, isLoading: isBytecodeLoading } = useBytecode({
+    address: isAddress(address) ? getAddress(address) : undefined,
+    chainId: getChainIdByNetworkName(network.name),
+  });
 
   const [isLoading, setIsLoading] = useState(true);
   const [isEOA, setIsEOA] = useState(true);
@@ -51,11 +56,10 @@ const AddressInfos: React.FC<Props> = ({
   const [contractVersion, setContractVersion] = useState('');
 
   const checkAddressInfos = async (_address: string) => {
-    if (!web3 || !_address) {
+    if (!network || !_address || isBytecodeLoading) {
       return;
     }
 
-    const bytecode = await web3.eth.getCode(_address);
     if (!bytecode || bytecode === '0x') {
       setIsEOA(true);
       return;
@@ -69,7 +73,7 @@ const AddressInfos: React.FC<Props> = ({
       isLsp7DigitalAsset,
       isLsp8IdentifiableDigitalAsset,
       isLsp6KeyManager,
-    } = await checkInterface(_address, web3);
+    } = await getAllSupportedInterfaces(_address, network);
 
     setIsLSP0(isLsp0Erc725Account);
     setIsLSP7(isLsp7DigitalAsset);
@@ -78,28 +82,28 @@ const AddressInfos: React.FC<Props> = ({
     setIsLSP1Delegate(isLsp1Delegate);
     setIsLsp6KeyManager(isLsp6KeyManager);
 
-    const { isSafe, version } = await checkIsGnosisSafe(_address, web3);
-    setIsGnosisSafe(isSafe);
+    const gnosisSafeCheck = await isGnosisSafeProxy(_address, network);
+    setIsGnosisSafe(gnosisSafeCheck.isGnosisSafe);
 
-    if (isSafe && version) {
-      setContractVersion(version);
+    if (gnosisSafeCheck.isGnosisSafe && gnosisSafeCheck.version) {
+      setContractVersion(gnosisSafeCheck.version);
     }
 
     if (isLsp0Erc725Account) {
-      const fetchedContractVersion = await getVersion(address, web3);
+      const fetchedContractVersion = await getVersion(address, network);
       setContractVersion(fetchedContractVersion);
     }
   };
 
   useEffect(() => {
-    if (!address) return;
+    if (!address || isBytecodeLoading) return;
     setIsLoading(true);
     setIsLSP1GraveForwarder(address === LSP1_GRAVE_FORWARDER);
 
     checkAddressInfos(address)
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
-  }, [address, web3]);
+  }, [address, network, bytecode, isBytecodeLoading]);
 
   // Display addresses that are "official" contracts from LUKSO
 

@@ -1,61 +1,73 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
 import { useContext, useState, useEffect } from 'react';
-import { isAddress } from 'web3-utils';
+import Head from 'next/head';
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { isAddress } from 'viem';
 import ERC725, {
+  DynamicNameSchema,
   ERC725JSONSchema,
   getSchema,
   isDynamicKeyName,
 } from '@erc725/erc725.js';
-import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
-import LSP1DataKeys from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
-import LSP3DataKeys from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
-import LSP4DataKeys from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
-import LSP5DataKeys from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
-import LSP6DataKeys from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
-import LSP8DataKeys from '@erc725/erc725.js/schemas/LSP8IdentifiableDigitalAsset.json';
-import LSP9DataKeys from '@erc725/erc725.js/schemas/LSP9Vault.json';
-import LSP10DataKeys from '@erc725/erc725.js/schemas/LSP10ReceivedVaults.json';
-import LSP12DataKeys from '@erc725/erc725.js/schemas/LSP12IssuedAssets.json';
-import LSP17DataKeys from '@erc725/erc725.js/schemas/LSP17ContractExtension.json';
-
-import { checkInterface, getData } from '@/utils/web3';
-import useWeb3 from '@/hooks/useWeb3';
-
-import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
-import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
-import { SAMPLE_ADDRESS } from '@/constants/contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
-import { useRouter } from 'next/router';
+
+// components
+import DataKeyBox from '@/components/ui/DataKeyBox/DataKeyBox';
+import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
 import ToolInfos from '@/components/layout/ToolInfos';
 
+// LSP2 JSON Schemas
+import LSP1Schemas from '@erc725/erc725.js/schemas/LSP1UniversalReceiverDelegate.json';
+import LSP3Schemas from '@erc725/erc725.js/schemas/LSP3ProfileMetadata.json';
+import LSP4Schemas from '@erc725/erc725.js/schemas/LSP4DigitalAsset.json';
+import LSP5Schemas from '@erc725/erc725.js/schemas/LSP5ReceivedAssets.json';
+import LSP6Schemas from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
+import LSP8Schemas from '@erc725/erc725.js/schemas/LSP8IdentifiableDigitalAsset.json';
+import LSP9Schemas from '@erc725/erc725.js/schemas/LSP9Vault.json';
+import LSP10Schemas from '@erc725/erc725.js/schemas/LSP10ReceivedVaults.json';
+import LSP12Schemas from '@erc725/erc725.js/schemas/LSP12IssuedAssets.json';
+import LSP17Schemas from '@erc725/erc725.js/schemas/LSP17ContractExtension.json';
+
+// utils
+import { getData } from '@/utils/erc725y';
+import { getAllSupportedInterfaces } from '@/utils/interface-detection';
+
+// constants
+import { LSP6DataKeys } from '@lukso/lsp6-contracts';
+import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
+
 // using local variable for LSP28TheGrid key for now
-const LSP28_THE_GRID_KEY =
+const LSP28_THE_GRID_DATA_KEY =
   '0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff';
 
 const dataKeyList = [
-  ...LSP1DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '📢' })),
-  ...LSP3DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '👤' })),
-  ...LSP4DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔵' })),
-  ...LSP5DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💰' })),
-  ...LSP6DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔑' })),
-  ...LSP8DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
-  ...LSP9DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
-  ...LSP10DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🔒' })),
-  ...LSP12DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '🖼️' })),
-  ...LSP17DataKeys.map((key) => ({ name: key.name, key: key.key, icon: '💎' })),
-  { name: 'LSP28TheGrid', key: LSP28_THE_GRID_KEY, icon: '🌐' },
+  ...LSP1Schemas.map(({ name, key }) => ({ name, key, icon: '📢' })),
+  ...LSP3Schemas.map(({ name, key }) => ({ name, key, icon: '👤' })),
+  ...LSP4Schemas.map(({ name, key }) => ({ name, key, icon: '🔵' })),
+  ...LSP5Schemas.map(({ name, key }) => ({ name, key, icon: '💰' })),
+  ...LSP6Schemas.map(({ name, key }) => ({ name, key, icon: '🔑' })),
+  ...LSP8Schemas.map(({ name, key }) => ({ name, key, icon: '🖼️' })),
+  ...LSP9Schemas.map(({ name, key }) => ({ name, key, icon: '🔒' })),
+  ...LSP10Schemas.map(({ name, key }) => ({ name, key, icon: '🔒' })),
+  ...LSP12Schemas.map(({ name, key }) => ({ name, key, icon: '🖼️' })),
+  ...LSP17Schemas.map(({ name, key }) => ({ name, key, icon: '💎' })),
+  { name: 'LSP28TheGrid', key: LSP28_THE_GRID_DATA_KEY, icon: '🌐' },
 ];
 
 const GetData: NextPage = () => {
   const [address, setAddress] = useState('');
   const [addressError, setAddressError] = useState('');
+
   const [dataKey, setDataKey] = useState(dataKeyList[0].key);
   const [dataKeyError, setDataKeyError] = useState('');
 
   const [data, setData] = useState('');
   const [decodedData, setDecodedData] = useState('');
+
+  const [schemaOfDataKey, setSchemaOfDataKey] = useState<
+    ERC725JSONSchema | undefined
+  >(undefined);
 
   const [interfaces, setInterfaces] = useState({
     isErc725X: false,
@@ -63,25 +75,24 @@ const GetData: NextPage = () => {
   });
 
   const [erc725js, setERC725JsInstance] = useState<ERC725>();
-  const { network } = useContext(NetworkContext);
   const router = useRouter();
 
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
 
   const schemas = [
-    ...LSP1DataKeys,
-    ...LSP3DataKeys,
-    ...LSP4DataKeys,
-    ...LSP5DataKeys,
-    ...LSP6DataKeys,
-    ...LSP8DataKeys,
-    ...LSP9DataKeys,
-    ...LSP10DataKeys,
-    ...LSP12DataKeys,
-    ...LSP17DataKeys,
+    ...LSP1Schemas,
+    ...LSP3Schemas,
+    ...LSP4Schemas,
+    ...LSP5Schemas,
+    ...LSP6Schemas,
+    ...LSP8Schemas,
+    ...LSP9Schemas,
+    ...LSP10Schemas,
+    ...LSP12Schemas,
+    ...LSP17Schemas,
     {
       name: 'LSP28TheGrid',
-      key: LSP28_THE_GRID_KEY,
+      key: LSP28_THE_GRID_DATA_KEY,
       keyType: 'Singleton',
       valueType: 'bytes',
       valueContent: 'VerifiableURI',
@@ -128,11 +139,9 @@ const GetData: NextPage = () => {
 
     setAddressError('');
 
-    if (!web3) {
-      return;
-    }
+    if (!network) return;
 
-    const result = await checkInterface(address, web3);
+    const result = await getAllSupportedInterfaces(address, network);
     setInterfaces(result);
   };
 
@@ -158,9 +167,7 @@ const GetData: NextPage = () => {
   };
 
   const onGetDataClick = async () => {
-    if (!web3 || !erc725js) {
-      return;
-    }
+    if (!network || !erc725js) return;
 
     if (!interfaces.isErc725Y) {
       console.log('Contract not compatible with ERC725');
@@ -168,7 +175,7 @@ const GetData: NextPage = () => {
       return;
     }
 
-    const data = await getData(address, dataKey, web3);
+    const data = await getData(address, dataKey, network);
 
     if (!data) {
       setData('0x');
@@ -176,34 +183,66 @@ const GetData: NextPage = () => {
     } else {
       setData(data);
 
-      const foundSchema = getSchema(dataKey) as ERC725JSONSchema;
-      if (!foundSchema && dataKey !== LSP28_THE_GRID_KEY) {
-        return;
-      }
-      let keyName, valueType, valueContent;
+      let keyName, keyType, valueType, valueContent;
 
-      if (foundSchema) {
-        ({ name: keyName, valueType, valueContent } = foundSchema);
-      } else if (dataKey === LSP28_THE_GRID_KEY) {
+      // Handle LSP28TheGrid data key differently since we don't have a schema from the library
+      if (dataKey === LSP28_THE_GRID_DATA_KEY) {
         keyName = 'LSP28TheGrid';
         valueType = 'bytes';
         valueContent = 'VerifiableURI';
-      } else {
+        setSchemaOfDataKey({
+          name: keyName,
+          key: dataKey,
+          keyType: 'Singleton',
+          valueType,
+          valueContent,
+        });
+        return;
+      }
+
+      const foundSchema = getSchema(dataKey);
+
+      if (!foundSchema) {
+        setSchemaOfDataKey(undefined);
         console.error('Unknown schema');
         return;
       }
 
+      console.log('foundSchema', foundSchema);
+
+      ({ name: keyName, valueType, valueContent } = foundSchema);
+
       let decodedValue;
 
       if (isDynamicKeyName(keyName)) {
+        // for dynamic key names, we need to use the:
+        // - `dynamicName` property of the schema as name
+        // - and the `dynamicKeyParts` property for decoding
+        const dynamicSchema = foundSchema as DynamicNameSchema;
+
+        console.log('dynamicSchema', dynamicSchema);
+
+        const { dynamicName: keyName, dynamicKeyParts } = dynamicSchema;
+
+        setSchemaOfDataKey({
+          name: keyName as string,
+          key: dataKey,
+          keyType,
+          valueType,
+          valueContent,
+        });
+
+        console.log('dynamicKeyParts', dynamicKeyParts);
+
         decodedValue = erc725js.decodeData([
           {
-            keyName,
-            dynamicKeyParts: dataKey.slice(26),
+            keyName: dynamicSchema.name as string,
+            dynamicKeyParts,
             value: data,
           },
         ]);
       } else {
+        setSchemaOfDataKey(foundSchema as ERC725JSONSchema);
         decodedValue = erc725js.decodeData([
           {
             keyName,
@@ -211,6 +250,7 @@ const GetData: NextPage = () => {
           },
         ]);
       }
+
       // TODO: export isValidTuple from @erc725/erc725.js library and it it in this check
       const decodedResult =
         valueContent == 'VerifiableURI'
@@ -222,11 +262,11 @@ const GetData: NextPage = () => {
 
   useEffect(() => {
     setERC725JsInstance(
-      new ERC725(schemas, address, web3?.currentProvider, {
+      new ERC725(schemas, address, network.rpcUrl, {
         ipfsGateway: `${LUKSO_IPFS_BASE_URL}/`,
       }),
     );
-  }, [address, web3]);
+  }, [address, network]);
 
   return (
     <>
@@ -306,7 +346,7 @@ const GetData: NextPage = () => {
                 <input
                   className="input"
                   type="text"
-                  placeholder={LSP1DataKeys[0].key}
+                  placeholder={LSP1Schemas[0].key}
                   value={dataKey}
                   onChange={(e) => onDataKeyChange(e.target.value)}
                 />
@@ -335,27 +375,40 @@ const GetData: NextPage = () => {
 
         {data && (
           <div className="is-full-width">
-            <div className="columns is-vcentered my-2">
-              <span className="mr-3">Encoded Value:</span>
-              <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                {data}
-              </pre>
-            </div>
+            {schemaOfDataKey ? (
+              <DataKeyBox
+                address={address}
+                data={{ key: dataKey, value: data, schema: schemaOfDataKey }}
+              />
+            ) : (
+              <>
+                <div className="columns is-vcentered my-2">
+                  <span className="mr-3">Encoded Value:</span>
+                  <pre
+                    style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
+                  >
+                    {data}
+                  </pre>
+                </div>
 
-            <div className="columns is-vcentered my-2">
-              <span className="mr-3">Decoded Value</span>
-              <pre style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-                {dataKey.startsWith(
-                  ERC725YDataKeys.LSP6['AddressPermissions:Permissions'],
-                )
-                  ? JSON.stringify(
-                      ERC725.decodePermissions(data as `0x${string}`),
-                      undefined,
-                      2,
+                <div className="columns is-vcentered my-2">
+                  <span className="mr-3">Decoded Value</span>
+                  <pre
+                    style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
+                  >
+                    {dataKey.startsWith(
+                      LSP6DataKeys['AddressPermissions:Permissions'],
                     )
-                  : decodedData}
-              </pre>
-            </div>
+                      ? JSON.stringify(
+                          ERC725.decodePermissions(data as `0x${string}`),
+                          undefined,
+                          2,
+                        )
+                      : decodedData}
+                  </pre>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

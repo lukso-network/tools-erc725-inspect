@@ -1,15 +1,11 @@
 import { useState } from 'react';
-import Web3 from 'web3';
 import EncodedPayload from './EncodedPayload';
 import ERC725Account from '@lukso/lsp-smart-contracts/artifacts/LSP0ERC725Account.json';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import styles from './EncodeExecute.module.scss';
+import { AbiItem, encodeFunctionData, parseEther } from 'viem';
 
-interface Props {
-  web3: Web3;
-}
-
-const EncodeExecute: React.FC<Props> = ({ web3 }) => {
+const EncodeExecute: React.FC = () => {
   const [encodedPayload, setEncodedPayload] = useState('');
   const [operation, setOperation] = useState('0');
   const [recipient, setRecipient] = useState('');
@@ -21,17 +17,16 @@ const EncodeExecute: React.FC<Props> = ({ web3 }) => {
   });
 
   const encodeABI = () => {
-    const erc725Account = new web3.eth.Contract(ERC725Account.abi as any);
-
     try {
-      const weiAmount = web3.utils.toWei(amount);
+      const weiAmount = parseEther(amount);
 
-      setEncodedPayload(
-        erc725Account.methods
-          .execute(operation, recipient, weiAmount, data)
-          .encodeABI(),
-      );
+      const encodedCalldata = encodeFunctionData({
+        abi: ERC725Account.abi as AbiItem[],
+        functionName: 'execute',
+        args: [operation, recipient, weiAmount, data],
+      });
 
+      setEncodedPayload(encodedCalldata);
       setEncodingError({ message: '', isError: false });
     } catch (error: any) {
       setEncodedPayload('');

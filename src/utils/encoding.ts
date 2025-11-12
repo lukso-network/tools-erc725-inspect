@@ -1,5 +1,4 @@
-import { hexToBigInt, size, isHex, toHex } from 'viem';
-import { pad } from 'viem';
+import { hexToBigInt, size, isHex, toHex, pad } from 'viem';
 import { CALLTYPE } from '@lukso/lsp-smart-contracts';
 
 import type { CallType } from '@/types/erc725js';

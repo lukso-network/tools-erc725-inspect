@@ -1,25 +1,18 @@
-import { createContext, useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import { useChainId, useSwitchChain } from 'wagmi';
+
+import { getChainByNetworkName } from '@/config/wagmi';
+
 import { INetwork } from '@/types/network';
 import { CHAINS } from '@/constants/networks';
 
 const DEFAULT_NETWORK = CHAINS[0];
 
-export interface INetworksContext {
-  network: INetwork;
-  setNetwork: (network: INetwork) => void;
-}
-
-export const NetworkContext = createContext<INetworksContext>({
-  network: DEFAULT_NETWORK,
-  setNetwork: () => null,
-});
-
-const NetworksProvider = ({ children }) => {
+export function useNetworkSync() {
   const router = useRouter();
-
-  // Initialize state based on network
-  const [network, setNetwork] = useState<INetwork>(DEFAULT_NETWORK);
+  const currentChainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   const getNetworkFromLocalStorage = (): INetwork => {
     if (typeof window !== 'undefined') {
@@ -33,15 +26,12 @@ const NetworksProvider = ({ children }) => {
         );
       }
     }
-    // Return default if nothing is in local storage
     return DEFAULT_NETWORK;
   };
 
-  // Get network from URL or switch to default chain
   const getNetworkFromUrlOrDefault = useCallback(() => {
     const networkParam = router.query.network;
     if (typeof networkParam !== 'string') {
-      // Fallback to local storage or default network
       return getNetworkFromLocalStorage();
     }
     return (
@@ -51,8 +41,10 @@ const NetworksProvider = ({ children }) => {
     );
   }, [router.query.network]);
 
+  const [network, setNetworkState] = useState<INetwork>(DEFAULT_NETWORK);
+
   const updateUrlWithNetwork = useCallback(
-    (networkName) => {
+    (networkName: string) => {
       if (typeof window !== 'undefined') {
         const queryParams = new URLSearchParams(window.location.search);
         queryParams.set('network', networkName);
@@ -63,40 +55,64 @@ const NetworksProvider = ({ children }) => {
     [router],
   );
 
+  const setNetwork = useCallback(
+    (newNetwork: INetwork) => {
+      setNetworkState(newNetwork);
+
+      // Sync with wagmi
+      const chain = getChainByNetworkName(newNetwork.name);
+      if (chain && switchChain) {
+        try {
+          switchChain({ chainId: chain.id });
+        } catch (error) {
+          console.warn('Failed to switch chain:', error);
+        }
+      }
+
+      // Update URL
+      updateUrlWithNetwork(newNetwork.name.toLowerCase());
+
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('erc725InspectNetwork', newNetwork.name);
+      }
+    },
+    [switchChain, updateUrlWithNetwork],
+  );
+
+  // Initialize from URL on mount
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!router.isReady) {
+      return;
+    }
 
     const networkFromUrl = getNetworkFromUrlOrDefault();
     if (networkFromUrl.name !== network.name) {
-      setNetwork(networkFromUrl);
+      setNetworkState(networkFromUrl);
+
+      // Sync with wagmi
+      const chain = getChainByNetworkName(networkFromUrl.name);
+      if (chain && switchChain && currentChainId !== chain.id) {
+        try {
+          switchChain({ chainId: chain.id });
+        } catch (error) {
+          console.warn('Failed to switch chain on mount:', error);
+        }
+      }
     }
 
     const networkParam = router.query.network;
-
     if (networkParam === undefined) {
-      // Update the URL with the network parameter if missing
       updateUrlWithNetwork(networkFromUrl.name.toLowerCase());
     }
-  }, [
-    router.isReady,
-    router.query.network,
-    network.name,
-    getNetworkFromUrlOrDefault,
-    updateUrlWithNetwork,
-  ]);
+  }, [router.isReady, router.query.network]);
 
+  // Save to localStorage whenever network changes
   useEffect(() => {
-    // Save to local storage whenever the network changes
     if (typeof window !== 'undefined') {
       localStorage.setItem('erc725InspectNetwork', network.name);
     }
   }, [network]);
 
-  return (
-    <NetworkContext.Provider value={{ network, setNetwork }}>
-      {children}
-    </NetworkContext.Provider>
-  );
-};
-
-export default NetworksProvider;
+  return { network, setNetwork };
+}
