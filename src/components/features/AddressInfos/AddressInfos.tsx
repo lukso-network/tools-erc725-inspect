@@ -4,7 +4,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useBytecode } from 'wagmi';
-import { type Address, isAddress } from 'viem';
+import { type Address, getAddress, isAddress } from 'viem';
 
 import {
   LUKSO_LSP1_DELEGATE,
@@ -38,7 +38,7 @@ const AddressInfos: React.FC<Props> = ({
 }) => {
   const { network } = useContext(NetworkContext);
   const { data: bytecode, isLoading: isBytecodeLoading } = useBytecode({
-    address: isAddress(address) ? (address as Address) : undefined,
+    address: isAddress(address) ? getAddress(address) : undefined,
     chainId: getChainIdByNetworkName(network.name),
   });
 

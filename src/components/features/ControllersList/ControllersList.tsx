@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
+import type { Hex } from 'viem';
 
 import { getDataBatch } from '@/utils/erc725y';
 import AddressInfos from '@/components/features/AddressInfos';
@@ -119,7 +120,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
 
               currentState[index].permissions = controller
                 ? (ERC725.decodePermissions(
-                    permissionsDataValues[index] as `0x${string}`,
+                    permissionsDataValues[index] as Hex,
                   ) as {
                     [key: string]: any;
                   })

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Web3 from 'web3';
 
 import EncodeExecute from './components/EncodeExecute';
 import EncodeSetData from './components/EncodeSetData';
