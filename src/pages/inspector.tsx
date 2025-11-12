@@ -4,27 +4,32 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-import { isAddress } from 'web3-utils';
-
 import '@/styles/Inspect.module.css';
-import { checkInterface } from '@/utils/web3';
 
-import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
-import ContractOwner from '@/components/features/ContractOwner';
-import DataKeysTable from '@/components/features/DataKeysTable';
-import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
+// utils
+import { isAddress } from 'viem';
+import { getAllSupportedInterfaces } from '@/utils/interface-detection';
+
+// context
 import { NetworkContext } from '@/contexts/NetworksContext';
 
-import useWeb3 from '@/hooks/useWeb3';
-import { LSP_SPECS_URL } from '@/constants/links';
-import ToolInfos from '@/components/layout/ToolInfos';
-import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys/LSP1DelegateDataKeys';
+// components
+import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
+import ContractOwner from '@/components/features/ContractOwner';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
+import DataKeysTable from '@/components/features/DataKeysTable';
+import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys';
+
+import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
 import SupportedInterfacesTable from '@/components/ui/SupportedInterfacesTable';
+import ToolInfos from '@/components/layout/ToolInfos';
+
+// constants
 import {
   CONTRACT_INTERFACE_KEYS,
   type SupportedInterfaces,
 } from '@/types/contract';
+import { LSP_SPECS_URL } from '@/constants/links';
 
 export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
   Object.fromEntries(
@@ -34,7 +39,6 @@ export const DEFAULT_SUPPORTED_INTERFACE_ENTRIES: SupportedInterfaces =
 const Home: NextPage = () => {
   const router = useRouter();
   const { network } = useContext(NetworkContext);
-  const web3 = useWeb3();
 
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +66,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const check = async () => {
-      if (!web3) return;
+      if (!network) return;
 
       // Reset supported interfaces to default every time we run the check
       setSupportedInterfaces(DEFAULT_SUPPORTED_INTERFACE_ENTRIES);
@@ -89,9 +93,9 @@ const Home: NextPage = () => {
 
       setIsLoading(true);
       try {
-        const interfacesSupportedByAddress = await checkInterface(
+        const interfacesSupportedByAddress = await getAllSupportedInterfaces(
           address,
-          web3,
+          network,
         );
         setSupportedInterfaces(interfacesSupportedByAddress);
       } catch (error) {
@@ -104,7 +108,7 @@ const Home: NextPage = () => {
       }
     };
     check();
-  }, [address, web3, errorMessage, network.name, router]);
+  }, [address, network, errorMessage, network.name, router]);
 
   const isLspDigitalAsset =
     isLsp7DigitalAsset || isLsp8IdentifiableDigitalAsset;

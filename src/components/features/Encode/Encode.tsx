@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Web3 from 'web3';
 
 import EncodeExecute from './components/EncodeExecute';
 import EncodeSetData from './components/EncodeSetData';
@@ -8,13 +7,9 @@ import styles from './Encode.module.scss';
 
 import { TRANSACTION_TYPES } from '@/types/transaction';
 
-interface Props {
-  web3: Web3;
-}
-
 const DEFAULT_TRANSACTION_TYPE = TRANSACTION_TYPES.SET_DATA;
 
-const Encode: React.FC<Props> = ({ web3 }) => {
+const Encode: React.FC = () => {
   const [mode, setMode] = useState(DEFAULT_TRANSACTION_TYPE);
 
   return (
@@ -105,16 +100,14 @@ const Encode: React.FC<Props> = ({ web3 }) => {
       <div className="columns">
         <div className="column">
           {mode === TRANSACTION_TYPES.SET_DATA ? (
-            <EncodeSetData web3={web3} isBatch={false} />
+            <EncodeSetData isBatch={false} />
           ) : null}
           {mode === TRANSACTION_TYPES.SET_DATA_BATCH ? (
-            <EncodeSetData web3={web3} isBatch={true} />
+            <EncodeSetData isBatch={true} />
           ) : null}
-          {mode === TRANSACTION_TYPES.EXECUTE ? (
-            <EncodeExecute web3={web3} />
-          ) : null}
+          {mode === TRANSACTION_TYPES.EXECUTE ? <EncodeExecute /> : null}
           {mode === TRANSACTION_TYPES.TRANSFER_OWNERSHIP ? (
-            <EncodeTransferOwnership web3={web3} />
+            <EncodeTransferOwnership />
           ) : null}
         </div>
       </div>

@@ -1,19 +1,18 @@
 /**
  * @author Hugo Masclet <git@hugom.xyz>
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ERC725, ERC725JSONSchema } from '@erc725/erc725.js';
 import AddressButtons from '@/components/ui/AddressButtons';
 import ControllersList from '@/components/features/ControllersList';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
-
-import useWeb3 from '@/hooks/useWeb3';
 
 import type { DecodeDataOutput } from '@erc725/erc725.js';
 import AddressInfos from '@/components/features/AddressInfos';
 
 import { LSP4_TOKEN_TYPES } from '@lukso/lsp-smart-contracts';
 import CodeEditor from '../../ui/CodeEditor';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 interface Props {
   address: string;
@@ -37,14 +36,14 @@ const ValueTypeDecoder: React.FC<Props> = ({
     value: [],
   });
 
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
 
   useEffect(() => {
     const startDecoding = async () => {
       try {
-        if (address && web3 !== undefined) {
+        if (address && network?.rpcUrl) {
           const schema: ERC725JSONSchema[] = [erc725JSONSchema];
-          const erc725 = new ERC725(schema, address, web3.currentProvider);
+          const erc725 = new ERC725(schema, address, network.rpcUrl);
 
           const decodedData = erc725.decodeData([
             {
@@ -64,7 +63,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
       }
     };
     startDecoding();
-  }, [address, web3, erc725JSONSchema, value]);
+  }, [address, network, erc725JSONSchema, value]);
 
   try {
     if (decodedDataOneKey[0].name.startsWith('LSP1UniversalReceiverDelegate')) {

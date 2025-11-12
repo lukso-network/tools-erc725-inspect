@@ -1,52 +1,51 @@
 /* eslint-disable react/no-unescaped-entities */
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { isAddress, getAddress, type Address } from 'viem';
+import { useReadContract } from 'wagmi';
 
-import LSP6KeyManager from '@lukso/lsp-smart-contracts/artifacts/LSP6KeyManager.json';
-import useWeb3 from '@/hooks/useWeb3';
+import { ilsp25ExecuteRelayCallAbi } from '@lukso/lsp25-contracts/abi';
 import { LSP_SPECS_URL } from '@/constants/links';
+import { NetworkContext } from '@/contexts/NetworksContext';
+import { getChainIdByNetworkName } from '@/config/wagmi';
 
 const KeyManagerNonceChecker: React.FC = () => {
-  const web3 = useWeb3();
+  const { network } = useContext(NetworkContext);
+  const chainId = getChainIdByNetworkName(network.name);
 
   const [keyManagerAddress, setKeyManagerAddress] = useState('');
   const [callerAddress, setCallerAddress] = useState('');
   const [channelId, setChannelId] = useState('');
-  const [nonce, setNonce] = useState('');
+  const [shouldFetch, setShouldFetch] = useState(false);
 
-  const [showNonce, setShowNonce] = useState(false);
-  const [error, showError] = useState(false);
+  const isValidKeyManager = isAddress(keyManagerAddress);
+  const isValidCaller = isAddress(callerAddress);
+
+  const {
+    data: nonce,
+    isError,
+    isSuccess,
+    refetch,
+  } = useReadContract({
+    address: isValidKeyManager ? getAddress(keyManagerAddress) : undefined,
+    abi: ilsp25ExecuteRelayCallAbi,
+    functionName: 'getNonce',
+    args: [
+      isValidCaller ? getAddress(callerAddress) : '0x0',
+      BigInt(channelId),
+    ],
+    chainId,
+    query: {
+      enabled: false, // Manual fetching on button click
+    },
+  });
 
   const getNonceFromKeyManager = async () => {
-    if (!web3) return;
-
-    const keyManagerInstance = new web3.eth.Contract(
-      LSP6KeyManager.abi as any,
-      web3.utils.toChecksumAddress(keyManagerAddress),
-    );
-
-    const isKeyManagerV05 = await keyManagerInstance.methods
-      // Caution: Fixed Interface ID
-      .supportsInterface('0x6f4df48b')
-      .call();
-
-    const isKeyManagerV06 = await keyManagerInstance.methods
-      // Caution: Fixed Interface ID
-      .supportsInterface('0xc403d48f')
-      .call();
-
-    if (isKeyManagerV05 || isKeyManagerV06) {
-      const result: any = await keyManagerInstance.methods
-        .getNonce(callerAddress, channelId)
-        .call();
-
-      setNonce(result);
-      setShowNonce(true);
-      showError(false);
-    } else {
-      setShowNonce(false);
-      showError(true);
+    if (!isValidKeyManager || !isValidCaller) {
+      return;
     }
+    setShouldFetch(true);
+    await refetch();
   };
 
   return (
@@ -164,15 +163,15 @@ const KeyManagerNonceChecker: React.FC = () => {
       </div>
       <div
         className="notification is-danger is-light"
-        style={{ display: error ? 'block' : 'none' }}
+        style={{ display: isError && shouldFetch ? 'block' : 'none' }}
       >
         address <code>{keyManagerAddress}</code> is not a KeyManager
       </div>
       <div
         className="notification is-success is-light"
-        style={{ display: showNonce ? 'block' : 'none' }}
+        style={{ display: isSuccess && shouldFetch ? 'block' : 'none' }}
       >
-        Nonce = <code>{nonce}</code>
+        Nonce = <code>{nonce?.toString()}</code>
       </div>
     </div>
   );

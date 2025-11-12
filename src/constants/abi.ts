@@ -1,7 +1,5 @@
-import { AbiItem } from 'web3-utils';
-
 // Interface Detection
-export const eip165ABI: AbiItem[] = [
+export const eip165Abi = [
   {
     inputs: [
       {
@@ -21,10 +19,10 @@ export const eip165ABI: AbiItem[] = [
     stateMutability: 'view',
     type: 'function',
   },
-];
+] as const;
 
 // ERC725Y
-export const getDataABI: AbiItem[] = [
+export const getDataAbi = [
   {
     inputs: [
       {
@@ -44,9 +42,9 @@ export const getDataABI: AbiItem[] = [
     stateMutability: 'view',
     type: 'function',
   },
-];
+] as const;
 
-export const getDataBatchABI = [
+export const getDataBatchAbi = [
   {
     inputs: [
       {
@@ -66,10 +64,27 @@ export const getDataBatchABI = [
     stateMutability: 'view',
     type: 'function',
   },
-];
+] as const;
+
+// ERC725 Ownership
+export const ownerAbi = [
+  {
+    inputs: [],
+    name: 'owner',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
 
 // LSP Smart Contract version
-export const VersionABI: AbiItem[] = [
+export const versionAbi = [
   {
     inputs: [],
     name: 'VERSION',
@@ -83,44 +98,4 @@ export const VersionABI: AbiItem[] = [
     stateMutability: 'view',
     type: 'function',
   },
-];
-
-// Multicall
-export const aggregateABI: AbiItem[] = [
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: 'address',
-            name: 'target',
-            type: 'address',
-          },
-          {
-            internalType: 'bytes',
-            name: 'callData',
-            type: 'bytes',
-          },
-        ],
-        internalType: 'struct Multicall3.Call[]',
-        name: 'calls',
-        type: 'tuple[]',
-      },
-    ],
-    name: 'aggregate',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'blockNumber',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes[]',
-        name: 'returnData',
-        type: 'bytes[]',
-      },
-    ],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-];
+] as const;
