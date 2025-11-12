@@ -5,7 +5,7 @@ export const CHAINS: INetwork[] = [
     name: NetworkName.LUKSO_MAINNET,
     rpcUrl: 'https://rpc.mainnet.lukso.network',
     explorerName: 'Blockscout',
-    explorerBaseUrl: 'https://explorer.lukso.network',
+    explorerBaseUrl: 'https://explorer.execution.mainnet.lukso.network',
     imgUrl: '/lukso-signet-fuschia.svg',
   },
   {

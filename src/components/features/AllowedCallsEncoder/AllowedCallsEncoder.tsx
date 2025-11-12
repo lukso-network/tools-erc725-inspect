@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
-  Abi,
+  type Abi,
   isAddress,
   isHex,
   toFunctionSelector,
@@ -21,12 +21,15 @@ import { CallType } from '@/types/erc725js';
 import ButtonCallType from '@/components/ui/ButtonCallType';
 import request from 'graphql-request';
 import { AddressDocument } from '@/generated/graphql';
+import { NetworkContext } from '@/contexts/NetworksContext';
 
 const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
   (schema) => schema.name.startsWith('AddressPermissions:AllowedCalls:'),
 );
 
 const AllowedCallsEncoder: React.FC = () => {
+  const { network } = useContext(NetworkContext);
+
   const [controllerAddress, setControllerAddress] = useState('');
   const [encodedAllowedCall, setEncodedAllowedCall] =
     useState<`0x${string}`>('0x');
@@ -196,7 +199,6 @@ const AllowedCallsEncoder: React.FC = () => {
   };
 
   useEffect(() => {
-    // TODO get address abi if exists
     async function getAbi() {
       if (!isAddress(allowedAddressValue)) {
         setAllowedAddressIsContract(false);
@@ -205,28 +207,37 @@ const AllowedCallsEncoder: React.FC = () => {
         return;
       }
 
-      const { address } = await request(
-        'https://explorer.execution.mainnet.lukso.network/api/v1/graphql',
-        AddressDocument,
-        {
-          address: allowedAddressValue,
-        },
-      );
+      try {
+        console.log(network.explorerBaseUrl);
+        const { address } = await request(
+          network.explorerBaseUrl
+            ? network.explorerBaseUrl.endsWith('/')
+              ? `${network.explorerBaseUrl}api/v1/graphql`
+              : `${network.explorerBaseUrl}/api/v1/graphql`
+            : 'https://explorer.execution.mainnet.lukso.network/api/v1/graphql',
+          AddressDocument,
+          {
+            address: allowedAddressValue,
+          },
+        );
 
-      if (address?.contractCode && typeof address.contractCode === 'string') {
-        setAllowedAddressIsContract(address.contractCode.length > 0);
-      }
-      if (
-        address?.smartContract?.name &&
-        typeof address.smartContract.name === 'string'
-      ) {
-        setAllowedAddressName(address.smartContract.name);
-      }
-      if (
-        address?.smartContract?.abi &&
-        typeof address.smartContract.abi === 'string'
-      ) {
-        setAllowedAddressAbi(JSON.parse(address.smartContract.abi));
+        if (address?.contractCode && typeof address.contractCode === 'string') {
+          setAllowedAddressIsContract(address.contractCode.length > 0);
+        }
+        if (
+          address?.smartContract?.name &&
+          typeof address.smartContract.name === 'string'
+        ) {
+          setAllowedAddressName(address.smartContract.name);
+        }
+        if (
+          address?.smartContract?.abi &&
+          typeof address.smartContract.abi === 'string'
+        ) {
+          setAllowedAddressAbi(JSON.parse(address.smartContract.abi));
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
     getAbi();
@@ -521,7 +532,7 @@ const AllowedCallsEncoder: React.FC = () => {
               </tr>
               <tr>
                 <td>
-                  <strong>Available Funcitons</strong>
+                  <strong>Available Functions</strong>
                 </td>
                 <td>
                   <div className="select">
@@ -533,7 +544,7 @@ const AllowedCallsEncoder: React.FC = () => {
                           : null
                       }
                     >
-                      <option>Funcitons</option>
+                      <option>Functions</option>
                       {allowedAddressAbi.map((abiItem) =>
                         abiItem.type === 'function' ? (
                           <option
