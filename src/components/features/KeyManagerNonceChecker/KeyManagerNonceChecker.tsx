@@ -4,7 +4,7 @@ import { useState, useContext } from 'react';
 import { isAddress, getAddress, type Address } from 'viem';
 import { useReadContract } from 'wagmi';
 
-import LSP6KeyManager from '@lukso/lsp6-contracts/artifacts/LSP6KeyManager.json';
+import { ilsp25ExecuteRelayCallAbi } from '@lukso/lsp25-contracts/abi';
 import { LSP_SPECS_URL } from '@/constants/links';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { getChainIdByNetworkName } from '@/config/wagmi';
@@ -28,9 +28,12 @@ const KeyManagerNonceChecker: React.FC = () => {
     refetch,
   } = useReadContract({
     address: isValidKeyManager ? getAddress(keyManagerAddress) : undefined,
-    abi: LSP6KeyManager.abi as any,
+    abi: ilsp25ExecuteRelayCallAbi,
     functionName: 'getNonce',
-    args: [isValidCaller ? getAddress(callerAddress) : '0x0', channelId || '0'],
+    args: [
+      isValidCaller ? getAddress(callerAddress) : '0x0',
+      BigInt(channelId),
+    ],
     chainId,
     query: {
       enabled: false, // Manual fetching on button click

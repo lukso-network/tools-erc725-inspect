@@ -1,6 +1,6 @@
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 import { useEffect, useState } from 'react';
-import { type Address, isAddress } from 'viem';
+import { type Address, getAddress, isAddress } from 'viem';
 
 // components
 import DataKeyBox from '@/components/ui/DataKeyBox/DataKeyBox';
@@ -24,7 +24,7 @@ const LSP1DelegateDataKeys: React.FC<Props> = ({ address, isErc725Y }) => {
   const dataKeys = LSP1NotificationsSchema.map((schema) => schema.key);
 
   const { data: result } = useGetDataBatch(
-    isAddress(address) && isErc725Y ? (address as Address) : undefined,
+    isAddress(address) && isErc725Y ? getAddress(address) : undefined,
     isErc725Y ? dataKeys : undefined,
   );
 

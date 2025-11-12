@@ -1,9 +1,11 @@
 import { useReadContract } from 'wagmi';
-import type { Address } from 'viem';
+import type { Address, Hex } from 'viem';
 import { useContext } from 'react';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { getChainIdByNetworkName } from '@/config/wagmi';
-import { getDataBatchAbi } from '@/constants/abi';
+
+// TODO: might be better to use typed ERC725Y ABIs since we also use the `getDataBatch(bytes32[])` function for digital assets
+import { universalProfileAbi } from '@lukso/universalprofile-contracts/abi';
 
 export function useGetDataBatch(
   address: Address | undefined,
@@ -14,9 +16,9 @@ export function useGetDataBatch(
 
   return useReadContract({
     address,
-    abi: getDataBatchAbi,
+    abi: universalProfileAbi,
     functionName: 'getDataBatch',
-    args: dataKeys ? [dataKeys as `0x${string}`[]] : undefined,
+    args: dataKeys ? [dataKeys as Hex[]] : undefined,
     chainId,
     query: {
       enabled: !!address && !!dataKeys && dataKeys.length > 0,

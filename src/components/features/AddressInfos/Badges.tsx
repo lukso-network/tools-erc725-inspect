@@ -11,6 +11,7 @@ import { fetchProfileMetadataJSON } from '@/utils/metadata';
 
 // constants
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
+import { ilsp7DigitalAssetAbi } from '@lukso/lsp7-contracts/abi';
 import { LUKSO_IPFS_BASE_URL } from '@/constants/links';
 
 interface BadgeProps {
@@ -119,27 +120,7 @@ export const AssetInfosBadge: React.FC<AssetProps> = ({
         if (shouldFetchBalance) {
           const fetchedBalance = await publicClient.readContract({
             address: currentAddress as Address,
-            abi: [
-              {
-                inputs: [
-                  {
-                    internalType: 'address',
-                    name: 'tokenOwner',
-                    type: 'address',
-                  },
-                ],
-                name: 'balanceOf',
-                outputs: [
-                  {
-                    internalType: 'uint256',
-                    name: '',
-                    type: 'uint256',
-                  },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-              },
-            ],
+            abi: ilsp7DigitalAssetAbi,
             functionName: 'balanceOf',
             args: [userAddress as `0x${string}`],
           });

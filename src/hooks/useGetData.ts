@@ -1,9 +1,11 @@
 import { useReadContract } from 'wagmi';
-import type { Address } from 'viem';
+import { isHex, type Address } from 'viem';
 import { useContext } from 'react';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { getChainIdByNetworkName } from '@/config/wagmi';
-import { getDataAbi } from '@/constants/abi';
+
+// TODO: might be better to use typed ERC725Y ABIs since we also use the `getData(bytes32)` function for digital assets
+import { universalProfileAbi } from '@lukso/universalprofile-contracts/abi';
 
 export function useGetData(
   address: Address | undefined,
@@ -14,9 +16,9 @@ export function useGetData(
 
   return useReadContract({
     address,
-    abi: getDataAbi,
+    abi: universalProfileAbi,
     functionName: 'getData',
-    args: dataKey ? [dataKey as `0x${string}`] : undefined,
+    args: isHex(dataKey) ? [dataKey] : undefined,
     chainId,
     query: {
       enabled: !!address && !!dataKey,

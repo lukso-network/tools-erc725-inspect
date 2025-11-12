@@ -11,7 +11,8 @@ import { INetwork } from '@/types/network';
 import { getChainByNetworkName } from '@/config/wagmi';
 
 // abis
-import { getDataAbi, getDataBatchAbi } from '@/constants/abi';
+// TODO: might be better to use typed ERC725Y ABIs since we also use the `getData(bytes32)` function for digital assets
+import { universalProfileAbi } from '@lukso/universalprofile-contracts/abi';
 
 export const getDataBatch = async (
   address: string,
@@ -27,7 +28,7 @@ export const getDataBatch = async (
   try {
     data = await publicClient.readContract({
       address: address as Address,
-      abi: getDataBatchAbi,
+      abi: universalProfileAbi,
       functionName: 'getDataBatch',
       args: [keys],
     });
@@ -52,7 +53,7 @@ export const getData = async (
   try {
     data = await publicClient.readContract({
       address: address as Address,
-      abi: getDataAbi,
+      abi: universalProfileAbi,
       functionName: 'getData',
       args: [key as `0x${string}`],
     });

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ERC725JSONSchema } from '@erc725/erc725.js';
+import type { Hex } from 'viem';
 
 // components
 import DataKeyBox from '../../ui/DataKeyBox';
@@ -60,7 +61,7 @@ const DataKeysTable: React.FC<Props> = ({
 
           const result = await getDataBatch(
             address,
-            dataKeys as `0x${string}`[],
+            dataKeys as Hex[],
             network,
           );
           result.map((_, i) => {

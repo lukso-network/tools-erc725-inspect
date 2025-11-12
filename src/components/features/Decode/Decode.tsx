@@ -1,9 +1,10 @@
 import React, { ReactElement, useState } from 'react';
 import { TRANSACTION_TYPES } from '@/types/transaction';
 import { TRANSACTION_SELECTORS } from '@/constants/selectors';
+import { decodeAbiParameters, type Hex } from 'viem';
+
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import styles from './Decode.module.scss';
-import { decodeAbiParameters } from 'viem';
 
 interface MethodProps {
   text: string;
@@ -236,12 +237,9 @@ const decodeSetData = (payload: string, isBatch = false) => {
           `0x${payload}`,
         );
 
-    const keys = (
-      isBatch ? result[0] : [result[0]]
-    ) as readonly `0x${string}`[];
-    const values = (
-      isBatch ? result[1] : [result[1]]
-    ) as readonly `0x${string}`[];
+
+    const keys = (isBatch ? result[0] : [result[0]]) as readonly Hex[];
+    const values = (isBatch ? result[1] : [result[1]]) as readonly Hex[];
 
     return (
       <div>
