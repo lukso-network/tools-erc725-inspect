@@ -237,7 +237,6 @@ const decodeSetData = (payload: string, isBatch = false) => {
           `0x${payload}`,
         );
 
-
     const keys = (isBatch ? result[0] : [result[0]]) as readonly Hex[];
     const values = (isBatch ? result[1] : [result[1]]) as readonly Hex[];
 

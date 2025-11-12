@@ -67,15 +67,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
     startDecoding();
   }, [address, network, erc725JSONSchema, value]);
 
-  if (
-    !decodedDataOneKey ||
-    !decodedDataOneKey[0] ||
-    !decodedDataOneKey[0].value
-  ) {
-    return <span className="help">No data found for this key.</span>;
-  }
-
-  const { value: decodedValue } = decodedDataOneKey[0];
   const { name: keyName, keyType, valueContent } = erc725JSONSchema;
 
   try {
@@ -122,6 +113,17 @@ const ValueTypeDecoder: React.FC<Props> = ({
       );
     }
 
+    // TODO: re-introduce better error handling for this case. This check fails and does not display LSP8TokenIdFormat anymore
+    // if (
+    //   !decodedDataOneKey ||
+    //   !decodedDataOneKey[0] ||
+    //   !decodedDataOneKey[0].value
+    // ) {
+    //   return <span className="help">No data found for this key.</span>;
+    // }
+
+    const { value: decodedValue } = decodedDataOneKey[0];
+
     if (valueContent === 'VerifiableURI' || valueContent === 'JSONURL') {
       return <VerifiableURIViewer value={decodedValue} />;
     }
@@ -131,6 +133,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
     }
 
     if (keyName == 'LSP8TokenIdFormat') {
+      console.log('found LSP8 Token Id Format!');
       return <TokenIdFormatBadge value={decodedValue} />;
     }
 

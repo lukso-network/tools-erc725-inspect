@@ -66,9 +66,9 @@ const TokenIdFormatBadge: React.FC<TokenIdFormatBadgeProps> = ({ value }) => {
       break;
     // when the token ID format is set but not found in the list of formats
     default:
-        badgeColour = 'is-info is-light';
-        icon = <FontAwesomeIcon icon={faQuestionCircle} />
-        break;
+      badgeColour = 'is-info is-light';
+      icon = <FontAwesomeIcon icon={faQuestionCircle} />;
+      break;
   }
 
   return (

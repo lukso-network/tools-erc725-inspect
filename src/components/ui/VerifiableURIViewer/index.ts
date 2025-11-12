@@ -1,1 +1,1 @@
-export { default } from './VerifiableUriViewer';
+export { default } from './VerifiableURIViewer';
