@@ -406,6 +406,18 @@ const AllowedCallsEncoder: React.FC = () => {
                 </td>
               </tr>
 
+              {/* Row 2.1 (phantom): Contract name if verified on blockscout */}
+              {allowedAddressName && (
+                <tr>
+                  <td>
+                    <p className="mb-2 ml-4" style={{ minHeight: 32 }}>
+                      <strong>Contract Name</strong>
+                    </p>
+                  </td>
+                  <td>{allowedAddressName}</td>
+                </tr>
+              )}
+
               {/* Row 3: Allowed Standards (interface IDs) */}
               <tr>
                 <td>
@@ -517,53 +529,44 @@ const AllowedCallsEncoder: React.FC = () => {
                   </div>
                 </td>
               </tr>
+
+              {/* Row 4.1 (phantom): Contract ABI if verified on blockscout */}
+              {allowedAddressAbi && (
+                <tr>
+                  <td>
+                    <strong className="mb-2 ml-4">Available Functions</strong>
+                  </td>
+                  <td>
+                    <div className="select">
+                      <select
+                        onChange={(event) =>
+                          isHex(event.target.value)
+                            ? (setAllowedFunctionMode('custom'),
+                              setAllowedFunctionValue(event.target.value))
+                            : null
+                        }
+                      >
+                        <option>Functions</option>
+                        {allowedAddressAbi.map((abiItem) =>
+                          abiItem.type === 'function' ? (
+                            <option
+                              key={toFunctionSelector(abiItem)}
+                              value={toFunctionSelector(abiItem)}
+                            >
+                              {toFunctionSignature(abiItem)}
+                            </option>
+                          ) : (
+                            <></>
+                          ),
+                        )}
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
-
-        {allowedAddressName && allowedAddressAbi && (
-          <div className="column is-one-quarter has-background-light my-6 ml-6">
-            <table className="table is-fullwidth">
-              <tr>
-                <td>
-                  <strong>Contract Name</strong>
-                </td>
-                <td>{allowedAddressName}</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Available Functions</strong>
-                </td>
-                <td>
-                  <div className="select">
-                    <select
-                      onChange={(event) =>
-                        isHex(event.target.value)
-                          ? (setAllowedFunctionMode('custom'),
-                            setAllowedFunctionValue(event.target.value))
-                          : null
-                      }
-                    >
-                      <option>Functions</option>
-                      {allowedAddressAbi.map((abiItem) =>
-                        abiItem.type === 'function' ? (
-                          <option
-                            key={toFunctionSelector(abiItem)}
-                            value={toFunctionSelector(abiItem)}
-                          >
-                            {toFunctionSignature(abiItem)}
-                          </option>
-                        ) : (
-                          <></>
-                        ),
-                      )}
-                    </select>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-        )}
       </div>
     </div>
   );
