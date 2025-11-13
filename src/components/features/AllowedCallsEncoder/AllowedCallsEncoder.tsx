@@ -19,9 +19,8 @@ import { LSP_DOCS_URL } from '@/constants/links';
 import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
 import { CallType } from '@/types/erc725js';
 import ButtonCallType from '@/components/ui/ButtonCallType';
-import request from 'graphql-request';
-import { AddressDocument } from '@/generated/graphql';
 import { NetworkContext } from '@/contexts/NetworksContext';
+import { useGetBlockscoutContractInfos } from '@/hooks/useGetBlockscoutContractInfos';
 
 const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
   (schema) => schema.name.startsWith('AddressPermissions:AllowedCalls:'),
@@ -48,7 +47,6 @@ const AllowedCallsEncoder: React.FC = () => {
     DELEGATECALL: false,
   });
 
-  // Allowed Standards value = ERC165 interface ID
   const [allowedStandardsMode, setAllowedStandardsMode] = useState<
     'any' | 'custom'
   >('any');
@@ -60,16 +58,14 @@ const AllowedCallsEncoder: React.FC = () => {
   >('any');
   const [allowedAddressValue, setAllowedAddressValue] =
     useState<`0x${string}`>('0x');
-  const [allowedAddressIsContract, setAllowedAddressIsContract] =
-    useState(false);
-  const [allowedAddressName, setAllowedAddressName] = useState<string>();
-  const [allowedAddressAbi, setAllowedAddressAbi] = useState<Abi>([]);
-
   const [allowedFunctionMode, setAllowedFunctionMode] = useState<
     'any' | 'custom'
   >('any');
   const [allowedFunctionValue, setAllowedFunctionValue] =
     useState<`0x${string}`>('0x');
+
+  const blockscoutContractInfos = useGetBlockscoutContractInfos(allowedAddressValue);
+  console.log("blockscoutContractInfos: ", blockscoutContractInfos)
 
   const allowedValuesToEncode = useMemo(() => {
     const allowedAddressToEncode =
@@ -197,51 +193,6 @@ const AllowedCallsEncoder: React.FC = () => {
 
     setAllowedCallTypes(updatedCallTypes);
   };
-
-  useEffect(() => {
-    async function getAbi() {
-      if (!isAddress(allowedAddressValue)) {
-        setAllowedAddressIsContract(false);
-        setAllowedAddressName(undefined);
-        setAllowedAddressAbi([]);
-        return;
-      }
-
-      try {
-        console.log(network.explorerBaseUrl);
-        const { address } = await request(
-          network.explorerBaseUrl
-            ? network.explorerBaseUrl.endsWith('/')
-              ? `${network.explorerBaseUrl}api/v1/graphql`
-              : `${network.explorerBaseUrl}/api/v1/graphql`
-            : 'https://explorer.execution.mainnet.lukso.network/api/v1/graphql',
-          AddressDocument,
-          {
-            address: allowedAddressValue,
-          },
-        );
-
-        if (address?.contractCode && typeof address.contractCode === 'string') {
-          setAllowedAddressIsContract(address.contractCode.length > 0);
-        }
-        if (
-          address?.smartContract?.name &&
-          typeof address.smartContract.name === 'string'
-        ) {
-          setAllowedAddressName(address.smartContract.name);
-        }
-        if (
-          address?.smartContract?.abi &&
-          typeof address.smartContract.abi === 'string'
-        ) {
-          setAllowedAddressAbi(JSON.parse(address.smartContract.abi));
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getAbi();
-  }, [allowedAddressValue]);
 
   return (
     <div className="container container-key-manager">
@@ -407,14 +358,14 @@ const AllowedCallsEncoder: React.FC = () => {
               </tr>
 
               {/* Row 2.1 (phantom): Contract name if verified on blockscout */}
-              {allowedAddressName && (
+              {blockscoutContractInfos.contractName && (
                 <tr>
                   <td>
                     <p className="mb-2 ml-4" style={{ minHeight: 32 }}>
                       <strong>Contract Name</strong>
                     </p>
                   </td>
-                  <td>{allowedAddressName}</td>
+                  <td>{blockscoutContractInfos.contractName}</td>
                 </tr>
               )}
 
@@ -531,7 +482,7 @@ const AllowedCallsEncoder: React.FC = () => {
               </tr>
 
               {/* Row 4.1 (phantom): Contract ABI if verified on blockscout */}
-              {allowedAddressAbi && (
+              {blockscoutContractInfos.abi && (
                 <tr>
                   <td>
                     <strong className="mb-2 ml-4">Available Functions</strong>
@@ -547,7 +498,7 @@ const AllowedCallsEncoder: React.FC = () => {
                         }
                       >
                         <option>Functions</option>
-                        {allowedAddressAbi.map((abiItem) =>
+                        {blockscoutContractInfos.abi.map((abiItem) =>
                           abiItem.type === 'function' ? (
                             <option
                               key={toFunctionSelector(abiItem)}
@@ -566,6 +517,23 @@ const AllowedCallsEncoder: React.FC = () => {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="column is-one-third flex is-align-content-center">
+          {isAddress(allowedAddressValue) && !blockscoutContractInfos.isContract && (
+            <div className="notification is-warning is-light">
+              <p>
+                The address allowed is not a contract. Could not fetch the ABI from block explorer
+              </p>
+            </div>
+          )}
+          {blockscoutContractInfos.contractName && blockscoutContractInfos.abi && (
+            <div className="notification is-info is-light">
+              <p>
+                Found contract name <code>{blockscoutContractInfos.contractName}</code> and ABI on block explorer.
+                Select the function to allow from the dropdown list below if wanting to restrict to a specfic function. 
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
