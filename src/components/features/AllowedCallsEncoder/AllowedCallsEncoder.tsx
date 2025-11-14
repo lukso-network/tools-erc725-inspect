@@ -21,6 +21,7 @@ import { CallType } from '@/types/erc725js';
 import ButtonCallType from '@/components/ui/ButtonCallType';
 import { NetworkContext } from '@/contexts/NetworksContext';
 import { useGetBlockscoutContractInfos } from '@/hooks/useGetBlockscoutContractInfos';
+import AddressInfos from '../AddressInfos';
 
 const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
   (schema) => schema.name.startsWith('AddressPermissions:AllowedCalls:'),
@@ -64,8 +65,8 @@ const AllowedCallsEncoder: React.FC = () => {
   const [allowedFunctionValue, setAllowedFunctionValue] =
     useState<`0x${string}`>('0x');
 
-  const blockscoutContractInfos = useGetBlockscoutContractInfos(allowedAddressValue);
-  console.log("blockscoutContractInfos: ", blockscoutContractInfos)
+  const blockscoutContractInfos =
+    useGetBlockscoutContractInfos(allowedAddressValue);
 
   const allowedValuesToEncode = useMemo(() => {
     const allowedAddressToEncode =
@@ -354,20 +355,47 @@ const AllowedCallsEncoder: React.FC = () => {
                       </div>
                     )}
                   </div>
+                  {/* Show Blockscout contract infos */}
+                  {isAddress(allowedAddressValue) &&
+                    !blockscoutContractInfos.isLoading &&
+                    blockscoutContractInfos.isContract &&
+                    blockscoutContractInfos.contractName && (
+                      <div className="notification is-success is-light">
+                        <div>
+                          <span className="mr-4">
+                            <strong>Contract Name</strong>
+                          </span>
+                          <code>{blockscoutContractInfos.contractName}</code>
+                        </div>
+                        <div>
+                          <span className="mr-4">
+                            <strong>Contract Type</strong>
+                          </span>
+                          <span className={`tag is-primary is-light`}>
+                            {blockscoutContractInfos.isProxy ||
+                              'normal contract'}
+                          </span>
+                        </div>
+                        <div>
+                          <span>
+                            <strong>Contract Details</strong>
+                          </span>
+                          <div className="mt-2">
+                            <AddressInfos
+                              address={allowedAddressValue}
+                              showAddress={false}
+                              assetBadgeOptions={{
+                                showName: true,
+                                showSymbol: true,
+                                showBalance: false,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                 </td>
               </tr>
-
-              {/* Row 2.1 (phantom): Contract name if verified on blockscout */}
-              {blockscoutContractInfos.contractName && (
-                <tr>
-                  <td>
-                    <p className="mb-2 ml-4" style={{ minHeight: 32 }}>
-                      <strong>Contract Name</strong>
-                    </p>
-                  </td>
-                  <td>{blockscoutContractInfos.contractName}</td>
-                </tr>
-              )}
 
               {/* Row 3: Allowed Standards (interface IDs) */}
               <tr>
@@ -478,62 +506,82 @@ const AllowedCallsEncoder: React.FC = () => {
                       </div>
                     )}
                   </div>
+                  {/* Row 4.1 (phantom): Contract ABI if verified on blockscout */}
+                  {isAddress(allowedAddressValue) &&
+                    !blockscoutContractInfos.isLoading &&
+                    blockscoutContractInfos.isContract &&
+                    blockscoutContractInfos.abi && (
+                      <div className="notification is-success is-light">
+                        <strong className="mb-2 ml-4">
+                          Available Functions
+                        </strong>
+                        <div className="select mt-2">
+                          <select
+                            onChange={(event) =>
+                              isHex(event.target.value)
+                                ? (setAllowedFunctionMode('custom'),
+                                  setAllowedFunctionValue(event.target.value))
+                                : null
+                            }
+                          >
+                            <option>Functions</option>
+                            {blockscoutContractInfos.abi.map((abiItem) =>
+                              abiItem.type === 'function' ? (
+                                <option
+                                  key={toFunctionSelector(abiItem)}
+                                  value={toFunctionSelector(abiItem)}
+                                >
+                                  {toFunctionSignature(abiItem)}
+                                </option>
+                              ) : (
+                                <></>
+                              ),
+                            )}
+                          </select>
+                        </div>
+                      </div>
+                    )}
                 </td>
               </tr>
-
-              {/* Row 4.1 (phantom): Contract ABI if verified on blockscout */}
-              {blockscoutContractInfos.abi && (
-                <tr>
-                  <td>
-                    <strong className="mb-2 ml-4">Available Functions</strong>
-                  </td>
-                  <td>
-                    <div className="select">
-                      <select
-                        onChange={(event) =>
-                          isHex(event.target.value)
-                            ? (setAllowedFunctionMode('custom'),
-                              setAllowedFunctionValue(event.target.value))
-                            : null
-                        }
-                      >
-                        <option>Functions</option>
-                        {blockscoutContractInfos.abi.map((abiItem) =>
-                          abiItem.type === 'function' ? (
-                            <option
-                              key={toFunctionSelector(abiItem)}
-                              value={toFunctionSelector(abiItem)}
-                            >
-                              {toFunctionSignature(abiItem)}
-                            </option>
-                          ) : (
-                            <></>
-                          ),
-                        )}
-                      </select>
-                    </div>
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
-        <div className="column is-one-third flex is-align-content-center">
-          {isAddress(allowedAddressValue) && !blockscoutContractInfos.isContract && (
-            <div className="notification is-warning is-light">
-              <p>
-                The address allowed is not a contract. Could not fetch the ABI from block explorer
-              </p>
-            </div>
-          )}
-          {blockscoutContractInfos.contractName && blockscoutContractInfos.abi && (
-            <div className="notification is-info is-light">
-              <p>
-                Found contract name <code>{blockscoutContractInfos.contractName}</code> and ABI on block explorer.
-                Select the function to allow from the dropdown list below if wanting to restrict to a specfic function. 
-              </p>
-            </div>
-          )}
+
+        <div className="column is-one-third">
+          {allowedAddressMode === 'custom' &&
+            isAddress(allowedAddressValue) && (
+              <div>
+                {!blockscoutContractInfos.isLoading &&
+                  !blockscoutContractInfos.isContract && (
+                    <div className="notification is-info is-light">
+                      <h5 className="title is-5">Blockscout results</h5>
+                      <p>🔑 The address allowed is an EOA.</p>
+                    </div>
+                  )}
+
+                {!blockscoutContractInfos.isLoading &&
+                blockscoutContractInfos.isContract &&
+                blockscoutContractInfos.contractName &&
+                blockscoutContractInfos.abi ? (
+                  <div className="notification is-success is-light">
+                    <h5 className="title is-5">Blockscout results</h5>
+                    <p>
+                      ✅ Found verified contract and its ABI on block explorer.
+                      Select the function from the list below if you want to
+                      restrict to a specific function.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="notification is-warning is-light">
+                    <h5 className="title is-5">Blockscout results</h5>
+                    <p>
+                      ⚠️ The address allowed is a contract, but we could not
+                      fetch the ABI
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
         </div>
       </div>
     </div>

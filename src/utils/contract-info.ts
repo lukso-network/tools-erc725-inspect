@@ -13,7 +13,13 @@ import { getChainByNetworkName } from '@/config/wagmi';
 
 // constants
 import { versionAbi } from '@/constants/abi';
-import { GNOSIS_SAFE, GNOSIS_SAFE_PROXY_BYTECODE, MINIMAL_PROXY_RUNTIME_BYTECODE_PREFIX, MINIMAL_PROXY_RUNTIME_BYTECODE_SUFFIX } from '@/constants/contracts';
+import {
+  GNOSIS_SAFE,
+  GNOSIS_SAFE_PROXY_BYTECODE,
+  MINIMAL_PROXY_RUNTIME_BYTECODE_PREFIX,
+  MINIMAL_PROXY_RUNTIME_BYTECODE_SUFFIX,
+  TRANSPARENT_UPGRADABLE_PROXY_IMPLEMENTATION_STORAGE_SLOT,
+} from '@/constants/contracts';
 
 export async function isGnosisSafeProxy(
   address: string,
@@ -93,6 +99,27 @@ export const getVersion = async (
   }
 };
 
+export const getTransparentProxyImplementationAddress = async (
+  address: Address,
+  network: INetwork,
+): Promise<Address | null> => {
+  const publicClient = createPublicClient({
+    chain: getChainByNetworkName(network.name),
+    transport: http(network.rpcUrl),
+  });
+
+  const dataAtStorageSlot = await publicClient.getStorageAt({
+    address: address as Address,
+    slot: TRANSPARENT_UPGRADABLE_PROXY_IMPLEMENTATION_STORAGE_SLOT,
+  });
+
+  if (!dataAtStorageSlot) return null;
+
+  const [implementationAddress] = decodeAbiParameters([ { type: 'address' }], dataAtStorageSlot);
+
+  return implementationAddress;
+};
+
 export async function isMinimalProxyContract(
   address: string,
   network: INetwork,
@@ -118,14 +145,17 @@ export function isMinimalProxyBytecode(bytecode: string): boolean {
 
   const normalizedBytecode = bytecode.toLowerCase();
 
-  return normalizedBytecode.startsWith(MINIMAL_PROXY_RUNTIME_BYTECODE_PREFIX) && normalizedBytecode.endsWith(MINIMAL_PROXY_RUNTIME_BYTECODE_SUFFIX);
+  return (
+    normalizedBytecode.startsWith(MINIMAL_PROXY_RUNTIME_BYTECODE_PREFIX) &&
+    normalizedBytecode.endsWith(MINIMAL_PROXY_RUNTIME_BYTECODE_SUFFIX)
+  );
 }
 
 export function extractImplementationAddressFromMinimalProxyBytecode(
   bytecode: Hex,
-): string | null {
+): Address | null {
   if (!isMinimalProxyBytecode(bytecode)) return null;
-  
+
   const implementationHex = bytecode.slice(
     MINIMAL_PROXY_RUNTIME_BYTECODE_PREFIX.length,
     bytecode.length - MINIMAL_PROXY_RUNTIME_BYTECODE_SUFFIX.length,
