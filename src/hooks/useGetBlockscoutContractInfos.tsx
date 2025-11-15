@@ -115,7 +115,7 @@ export function useGetBlockscoutContractInfos(
     ) {
       setAbi(JSON.parse(data.smartContract.abi));
     }
-  }, [data, isLoading, isFetched]);
+  }, [data]);
 
   return {
     isLoading,

@@ -15,8 +15,8 @@ import ButtonCallType from '@/components/ui/ButtonCallType';
 import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
 import CodeEditor from '@/components/ui/CodeEditor';
 
+import AddressInfos from '@/components/features/AddressInfos/AddressInfos';
 import {
-  BlockscoutResults,
   BlockscoutContractInfos,
   BlockscoutAbiFunctionsDropdown,
 } from '@/components/features/AllowedCallsEncoder/BlockscoutResults';
@@ -67,6 +67,7 @@ const AllowedCallsEncoder: React.FC = () => {
 
   const blockscoutContractInfos =
     useGetBlockscoutContractInfos(allowedAddressValue);
+  console.log('blockscoutContractInfos', blockscoutContractInfos);
 
   const allowedValuesToEncode = useMemo(() => {
     const allowedAddressToEncode =
@@ -275,7 +276,7 @@ const AllowedCallsEncoder: React.FC = () => {
       </div>
 
       <div className="columns gap-0">
-        <div className="column is-two-thirds">
+        <div className="column is-three-quarters">
           <table className="table is-fullwidth mb-4">
             <thead>
               <tr>
@@ -357,10 +358,30 @@ const AllowedCallsEncoder: React.FC = () => {
                   </div>
                   {allowedAddressMode === 'custom' &&
                     isAddress(allowedAddressValue) && (
-                      <BlockscoutContractInfos
-                        blockscoutContractInfos={blockscoutContractInfos}
-                        address={allowedAddressValue}
-                      />
+                      <>
+                        <div className="notification is-info is-light is-flex is-flex-direction-row is-align-items-center">
+                          <span className="mr-4">
+                            <strong>Address Infos</strong>
+                          </span>
+                          <div>
+                            <AddressInfos
+                              address={allowedAddressValue}
+                              showAddress={false}
+                              assetBadgeOptions={{
+                                showName: blockscoutContractInfos.isContract,
+                                showSymbol: blockscoutContractInfos.isContract,
+                                showBalance: false,
+                              }}
+                            />
+                          </div>
+                        </div>
+                        {blockscoutContractInfos.isContract && (
+                          <BlockscoutContractInfos
+                            blockscoutContractInfos={blockscoutContractInfos}
+                            address={allowedAddressValue}
+                          />
+                        )}
+                      </>
                     )}
                 </td>
               </tr>
@@ -490,15 +511,6 @@ const AllowedCallsEncoder: React.FC = () => {
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <div className="column is-one-third">
-          {allowedAddressMode === 'custom' &&
-            isAddress(allowedAddressValue) && (
-              <BlockscoutResults
-                blockscoutContractInfos={blockscoutContractInfos}
-              />
-            )}
         </div>
       </div>
     </div>
