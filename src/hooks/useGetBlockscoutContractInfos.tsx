@@ -54,7 +54,13 @@ export function useGetBlockscoutContractInfos(
   const { data, isLoading } = useQuery({
     queryKey: ['blockscout_data', address, network?.name],
     queryFn: async () => {
-      if (!network || !isAddress(address)) return null;
+      if (
+        !network ||
+        network.explorerName !== 'Blockscout' ||
+        !isAddress(address)
+      ) {
+        return null;
+      }
 
       // Store the address for this query to check later
       const queryAddress = address;

@@ -28,6 +28,8 @@ const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
 );
 
 const AllowedCallsEncoder: React.FC = () => {
+  const { network } = useContext(NetworkContext);
+
   const [controllerAddress, setControllerAddress] = useState('');
   const [encodedAllowedCall, setEncodedAllowedCall] =
     useState<`0x${string}`>('0x');
@@ -374,7 +376,7 @@ const AllowedCallsEncoder: React.FC = () => {
                         </div>
                         <BlockscoutContractInfos
                           blockscoutContractInfos={blockscoutContractInfos}
-                          address={allowedAddressValue}
+                          explorerName={network.explorerName ?? ''}
                         />
                       </>
                     )}
@@ -406,8 +408,8 @@ const AllowedCallsEncoder: React.FC = () => {
                     </div>
                     <div className="control">
                       <button
-                        className={`button ${
-                          allowedStandardsMode === 'custom'
+                        className={`button is-info ${
+                          allowedStandardsMode == 'custom'
                             ? 'is-info'
                             : 'is-info is-outlined'
                         }`}

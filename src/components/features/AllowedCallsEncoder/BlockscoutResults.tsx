@@ -7,16 +7,26 @@ import {
   toFunctionSignature,
 } from 'viem';
 import type { BlockscoutContractInfosResult } from '@/hooks/useGetBlockscoutContractInfos';
-import AddressInfos from '@/components/features/AddressInfos';
 
 interface BlockscoutContractInfosProps {
   blockscoutContractInfos: BlockscoutContractInfosResult;
-  address: Address;
+  explorerName: string;
 }
 
 export const BlockscoutContractInfos: React.FC<
   BlockscoutContractInfosProps
-> = ({ blockscoutContractInfos, address }) => {
+> = ({ blockscoutContractInfos, explorerName }) => {
+  if (explorerName !== 'Blockscout') {
+    return (
+      <div className="notification is-light">
+        <h5 className="title is-5 mb-3">Block Explorer results</h5>
+        <span>
+          Querying infos from block explorer not supported for this network
+        </span>
+      </div>
+    );
+  }
+
   const {
     isLoading,
     isContract,
@@ -26,13 +36,16 @@ export const BlockscoutContractInfos: React.FC<
     implementationAddress,
   } = blockscoutContractInfos;
 
+  if (!isContract) return null;
+
   const couldDecodeAbi = contractName && abi && abi.length > 0;
   const notificationClass =
     isLoading || couldDecodeAbi ? 'is-primary' : 'is-warning';
 
   return (
     <div className={`notification is-light ${notificationClass}`}>
-      <div className="m-3" hidden={!isLoading}>
+      <h5 className="title is-5 mb-3">Block Explorer results</h5>
+      <div className="my-3" hidden={!isLoading}>
         <span>Loading infos from block explorer...</span>
         <progress
           className="progress is-small is-primary mt-1"
@@ -43,23 +56,13 @@ export const BlockscoutContractInfos: React.FC<
         </progress>
       </div>
       {!isLoading && (
-        <div>
-          <h5 className="title is-5 mb-3">Block Explorer results</h5>
-          <div className="mb-3">
-            {couldDecodeAbi ? (
+        <div className="mb-3">
+          {couldDecodeAbi ? (
+            <>
               <p>
                 ✅ Found verified contract and its ABI. See the{' '}
                 <strong>Available Functions</strong> below.
               </p>
-            ) : (
-              <p>
-                ⚠️ The address allowed is a contract, but could not fetch the
-                ABI. Contract might not be verified on block explorer.
-              </p>
-            )}
-          </div>
-          {isContract && (
-            <>
               <div className="mb-1">
                 <span className="mr-4">
                   <strong>Contract Type</strong>
@@ -85,6 +88,11 @@ export const BlockscoutContractInfos: React.FC<
                 )}
               </div>
             </>
+          ) : (
+            <p>
+              ⚠️ The address allowed is a contract, but could not fetch the ABI.
+              Contract might not be verified on block explorer.
+            </p>
           )}
         </div>
       )}
@@ -93,7 +101,7 @@ export const BlockscoutContractInfos: React.FC<
 };
 
 interface BlockscoutAbiFunctionsDropdownProps {
-  blockscoutContractInfos: BlockscoutContractInfosResult;
+  blockscoutContractInfos: BlockscoutContractInfosResult | undefined;
   address: Address;
   onFunctionSelect: (functionSelector: string) => void;
 }
@@ -101,6 +109,10 @@ interface BlockscoutAbiFunctionsDropdownProps {
 export const BlockscoutAbiFunctionsDropdown: React.FC<
   BlockscoutAbiFunctionsDropdownProps
 > = ({ blockscoutContractInfos, address, onFunctionSelect }) => {
+  if (!blockscoutContractInfos) {
+    return null;
+  }
+
   const { isLoading, isContract, abi } = blockscoutContractInfos;
 
   if (!isAddress(address) || !isContract || !abi) {
@@ -109,7 +121,7 @@ export const BlockscoutAbiFunctionsDropdown: React.FC<
 
   return (
     <div className="notification is-primary is-light">
-      <div className="m-3" hidden={!isLoading}>
+      <div className="my-3" hidden={!isLoading}>
         <span>Loading infos from block explorer...</span>
         <progress
           className="progress is-small is-primary mt-1"

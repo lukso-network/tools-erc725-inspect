@@ -115,7 +115,10 @@ export const getTransparentProxyImplementationAddress = async (
 
   if (!dataAtStorageSlot) return null;
 
-  const [implementationAddress] = decodeAbiParameters([ { type: 'address' }], dataAtStorageSlot);
+  const [implementationAddress] = decodeAbiParameters(
+    [{ type: 'address' }],
+    dataAtStorageSlot,
+  );
 
   return implementationAddress;
 };
