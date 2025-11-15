@@ -2,7 +2,7 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 import { AddressDocument } from '@/generated/graphql';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { type Address, isAddress } from 'viem';
 import {
   extractImplementationAddressFromMinimalProxyBytecode,
@@ -25,6 +25,7 @@ export function useGetBlockscoutContractInfos(
   address: string,
 ): BlockscoutContractInfosResult {
   const { network } = useContext(NetworkContext);
+  const currentAddressRef = useRef<string>(address);
 
   const [isContract, setIsContract] = useState(false);
   const [isProxy, setIsProxy] = useState<ProxyType | undefined>(undefined);
@@ -50,24 +51,33 @@ export function useGetBlockscoutContractInfos(
     return blockscoutData;
   };
 
-  const { data, isFetched, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['blockscout_data', address, network?.name],
     queryFn: async () => {
       if (!network || !isAddress(address)) return null;
 
+      // Store the address for this query to check later
+      const queryAddress = address;
+
       const blockscoutData = await queryBlockscoutData(address);
-      console.log('blockscoutData', blockscoutData);
+
+      // Only update state if address hasn't changed during async operations
+      if (currentAddressRef.current !== queryAddress) {
+        return blockscoutData;
+      }
 
       const isTransparentUpgradableProxy =
         blockscoutData?.smartContract?.name === 'TransparentUpgradeableProxy';
 
       if (isTransparentUpgradableProxy) {
-        console.log('transparent upgradable proxy detected');
         const implementationAddress =
           await getTransparentProxyImplementationAddress(address, network);
-        console.log('implementationAddress', implementationAddress);
 
-        if (implementationAddress) {
+        // Check again before setting state (address might have changed during async call)
+        if (
+          implementationAddress &&
+          currentAddressRef.current === queryAddress
+        ) {
           setIsProxy('transparent-upgradable-proxy');
           setImplementationAddress(implementationAddress);
           const blockscoutDataImplementation = await queryBlockscoutData(
@@ -84,7 +94,12 @@ export function useGetBlockscoutContractInfos(
             blockscoutData?.contractCode,
           );
 
-        if (implementationAddress && isAddress(implementationAddress)) {
+        // Check again before setting state (address might have changed during async call)
+        if (
+          implementationAddress &&
+          isAddress(implementationAddress) &&
+          currentAddressRef.current === queryAddress
+        ) {
           setIsProxy('minimal-proxy');
           setImplementationAddress(implementationAddress);
           const blockscoutDataImplementation = await queryBlockscoutData(
@@ -98,24 +113,61 @@ export function useGetBlockscoutContractInfos(
     },
   });
 
+  // Reset state when address changes (before new query starts)
   useEffect(() => {
-    console.log('data', data);
+    currentAddressRef.current = address;
+    setIsContract(false);
+    setIsProxy(undefined);
+    setImplementationAddress(undefined);
+    setContractName(undefined);
+    setAbi([]);
+  }, [address]);
+
+  useEffect(() => {
+    // Only update state if this data belongs to the current address
+    if (currentAddressRef.current !== address) {
+      return;
+    }
+
+    if (!data) {
+      // Only reset if we have no data and we're not loading (query completed with null)
+      if (!isLoading) {
+        setIsContract(false);
+        setIsProxy(undefined);
+        setImplementationAddress(undefined);
+        setContractName(undefined);
+        setAbi([]);
+      }
+      return;
+    }
+
     if (data?.contractCode && typeof data.contractCode === 'string') {
       setIsContract(data.contractCode.length > 0);
+    } else {
+      setIsContract(false);
     }
+
     if (
       data?.smartContract?.name &&
       typeof data.smartContract.name === 'string'
     ) {
       setContractName(data.smartContract.name);
+    } else {
+      setContractName(undefined);
     }
+
     if (
       data?.smartContract?.abi &&
       typeof data.smartContract.abi === 'string'
     ) {
       setAbi(JSON.parse(data.smartContract.abi));
+    } else {
+      setAbi([]);
     }
-  }, [data]);
+
+    // Note: isProxy and implementationAddress are set in queryFn for proxy contracts
+    // For non-proxy contracts, they remain undefined (already reset when address changed)
+  }, [data, isLoading, address]);
 
   return {
     isLoading,

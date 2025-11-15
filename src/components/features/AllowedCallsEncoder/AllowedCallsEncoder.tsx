@@ -28,8 +28,6 @@ const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
 );
 
 const AllowedCallsEncoder: React.FC = () => {
-  const { network } = useContext(NetworkContext);
-
   const [controllerAddress, setControllerAddress] = useState('');
   const [encodedAllowedCall, setEncodedAllowedCall] =
     useState<`0x${string}`>('0x');
@@ -67,7 +65,6 @@ const AllowedCallsEncoder: React.FC = () => {
 
   const blockscoutContractInfos =
     useGetBlockscoutContractInfos(allowedAddressValue);
-  console.log('blockscoutContractInfos', blockscoutContractInfos);
 
   const allowedValuesToEncode = useMemo(() => {
     const allowedAddressToEncode =
@@ -359,7 +356,7 @@ const AllowedCallsEncoder: React.FC = () => {
                   {allowedAddressMode === 'custom' &&
                     isAddress(allowedAddressValue) && (
                       <>
-                        <div className="notification is-info is-light is-flex is-flex-direction-row is-align-items-center">
+                        <div className="notification is-info is-light is-flex is-flex-direction-row is-align-items-center mb-3">
                           <span className="mr-4">
                             <strong>Address Infos</strong>
                           </span>
@@ -375,12 +372,10 @@ const AllowedCallsEncoder: React.FC = () => {
                             />
                           </div>
                         </div>
-                        {blockscoutContractInfos.isContract && (
-                          <BlockscoutContractInfos
-                            blockscoutContractInfos={blockscoutContractInfos}
-                            address={allowedAddressValue}
-                          />
-                        )}
+                        <BlockscoutContractInfos
+                          blockscoutContractInfos={blockscoutContractInfos}
+                          address={allowedAddressValue}
+                        />
                       </>
                     )}
                 </td>
