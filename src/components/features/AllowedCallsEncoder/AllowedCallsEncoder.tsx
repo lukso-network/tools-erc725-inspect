@@ -1,23 +1,35 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { isAddress, zeroAddress } from 'viem';
 import LSP6Schema from '@erc725/erc725.js/schemas/LSP6KeyManager.json';
 import ERC725, { ERC725JSONSchema } from '@erc725/erc725.js';
 const { encodeAllowedCalls } = require('@lukso/lsp-utils');
 
-import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
+import type { CallType } from '@/types/erc725js';
+import { NetworkContext } from '@/contexts/NetworksContext';
+
+import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
+import { useGetBlockscoutContractInfos } from '@/hooks/useGetBlockscoutContractInfos';
+
 import ToolInfos from '@/components/layout/ToolInfos';
+import ButtonCallType from '@/components/ui/ButtonCallType';
+import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
 import CodeEditor from '@/components/ui/CodeEditor';
 
+import AddressInfos from '@/components/features/AddressInfos/AddressInfos';
+import {
+  BlockscoutContractInfos,
+  BlockscoutAbiFunctionsDropdown,
+} from '@/components/features/AllowedCallsEncoder/BlockscoutResults';
+
 import { LSP_DOCS_URL } from '@/constants/links';
-import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
-import { CallType } from '@/types/erc725js';
-import ButtonCallType from '@/components/ui/ButtonCallType';
 
 const AllowedCallsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
   (schema) => schema.name.startsWith('AddressPermissions:AllowedCalls:'),
 );
 
 const AllowedCallsEncoder: React.FC = () => {
+  const { network } = useContext(NetworkContext);
+
   const [controllerAddress, setControllerAddress] = useState('');
   const [encodedAllowedCall, setEncodedAllowedCall] =
     useState<`0x${string}`>('0x');
@@ -36,7 +48,6 @@ const AllowedCallsEncoder: React.FC = () => {
     DELEGATECALL: false,
   });
 
-  // Allowed Standards value = ERC165 interface ID
   const [allowedStandardsMode, setAllowedStandardsMode] = useState<
     'any' | 'custom'
   >('any');
@@ -48,12 +59,14 @@ const AllowedCallsEncoder: React.FC = () => {
   >('any');
   const [allowedAddressValue, setAllowedAddressValue] =
     useState<`0x${string}`>('0x');
-
   const [allowedFunctionMode, setAllowedFunctionMode] = useState<
     'any' | 'custom'
   >('any');
   const [allowedFunctionValue, setAllowedFunctionValue] =
     useState<`0x${string}`>('0x');
+
+  const blockscoutContractInfos =
+    useGetBlockscoutContractInfos(allowedAddressValue);
 
   const allowedValuesToEncode = useMemo(() => {
     const allowedAddressToEncode =
@@ -261,8 +274,8 @@ const AllowedCallsEncoder: React.FC = () => {
         </div>
       </div>
 
-      <div className="columns">
-        <div className="column is-two-thirds">
+      <div className="columns gap-0">
+        <div className="column is-three-quarters">
           <table className="table is-fullwidth mb-4">
             <thead>
               <tr>
@@ -342,6 +355,31 @@ const AllowedCallsEncoder: React.FC = () => {
                       </div>
                     )}
                   </div>
+                  {allowedAddressMode === 'custom' &&
+                    isAddress(allowedAddressValue) && (
+                      <>
+                        <div className="notification is-info is-light is-flex is-flex-direction-row is-align-items-center mb-3">
+                          <span className="mr-4">
+                            <strong>Address Infos</strong>
+                          </span>
+                          <div>
+                            <AddressInfos
+                              address={allowedAddressValue}
+                              showAddress={false}
+                              assetBadgeOptions={{
+                                showName: blockscoutContractInfos.isContract,
+                                showSymbol: blockscoutContractInfos.isContract,
+                                showBalance: false,
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <BlockscoutContractInfos
+                          blockscoutContractInfos={blockscoutContractInfos}
+                          explorerName={network.explorerName ?? ''}
+                        />
+                      </>
+                    )}
                 </td>
               </tr>
 
@@ -370,8 +408,8 @@ const AllowedCallsEncoder: React.FC = () => {
                     </div>
                     <div className="control">
                       <button
-                        className={`button ${
-                          allowedStandardsMode === 'custom'
+                        className={`button is-info ${
+                          allowedStandardsMode == 'custom'
                             ? 'is-info'
                             : 'is-info is-outlined'
                         }`}
@@ -454,6 +492,18 @@ const AllowedCallsEncoder: React.FC = () => {
                       </div>
                     )}
                   </div>
+                  {allowedAddressMode === 'custom' && allowedAddressValue && (
+                    <BlockscoutAbiFunctionsDropdown
+                      blockscoutContractInfos={blockscoutContractInfos}
+                      address={allowedAddressValue}
+                      onFunctionSelect={(functionSelector) => {
+                        setAllowedFunctionMode('custom');
+                        setAllowedFunctionValue(
+                          functionSelector as `0x${string}`,
+                        );
+                      }}
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>

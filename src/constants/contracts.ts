@@ -1,6 +1,13 @@
 import { CrossChainImplementationContract } from '@/types/contract';
 import { NetworkName } from '@/types/network';
 
+export const MINIMAL_PROXY_RUNTIME_BYTECODE_PREFIX = '0x363d3d373d3d3d363d73';
+export const MINIMAL_PROXY_RUNTIME_BYTECODE_SUFFIX =
+  '5af43d82803e903d91602b57fd5bf3';
+
+export const TRANSPARENT_UPGRADABLE_PROXY_IMPLEMENTATION_STORAGE_SLOT =
+  '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc';
+
 // Sample Address Inputs
 export const SAMPLE_ADDRESS: Record<
   NetworkName,
