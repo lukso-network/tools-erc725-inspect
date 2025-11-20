@@ -1,0 +1,36 @@
+// CollapsibleSchema details/summary styling
+.collapsibleSchemaDetails {
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+      user-select: none;
+      line-height: 1;
+    }
+  }
+
+  // When details is open, show down arrow
+  &[open] {
+    summary::before {
+      content: '▼' !important;
+    }
+  }
+
+  // When details is closed (default), show right arrow
+  &:not([open]) {
+    summary::before {
+      content: '▶' !important;
+    }
+  }
+}
