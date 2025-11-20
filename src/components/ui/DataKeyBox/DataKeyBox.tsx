@@ -28,11 +28,8 @@ const DataKeyBox = ({ address, data }: DataKeyBoxProps) => {
     <div className="columns is-multiline my-3 dataKeyBox" key={data.key}>
       <div className={`column ${columnClass}`}>
         <div className="content">
-          <details
-            className={`${styles.dataKeyBoxDetails} is-open is-clickable`}
-            open
-          >
-            <summary className="has-text-weight-semibold">
+          <details className={`${styles.dataKeyBoxDetails} is-open`} open>
+            <summary className="has-text-weight-semibold is-clickable">
               <div className="title is-4">
                 {data.schema.name in SchemaName ? (
                   <a
