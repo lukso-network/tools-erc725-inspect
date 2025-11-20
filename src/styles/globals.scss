@@ -27,9 +27,14 @@ code {
   word-break: break-all;
 }
 
+@media screen and (max-width: 1440px) {
+  .container {
+    margin: 0 2rem;
+  }
+}
+
 // Increase container max-width for Key Manager permissions page
 // to fit buttons on table horizontally
-
 @media screen and (min-width: 1408px) {
   .container:not(.is-max-desktop):not(.is-max-widescreen) {
     max-width: 1500px;
@@ -199,7 +204,7 @@ code {
   margin-right: 0.5rem;
 }
 
-.radioLabel+.radioLabel {
+.radioLabel + .radioLabel {
   margin-left: 1.2rem;
 }
 

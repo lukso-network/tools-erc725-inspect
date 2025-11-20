@@ -21,22 +21,22 @@ const SampleAddressInput: React.FC<Props> = ({ onClick }) => {
   if (sampleAddresses === null) return;
 
   return (
-    <div className="is-flex is-flex-direction-row is-align-items-center">
+    <div className="is-flex is-flex-direction-row is-flex-wrap-wrap is-align-items-center">
       <span className="mr-2">Try with:</span>
       <button
-        className="button is-light is-small my-4"
+        className="button is-light is-small my-2"
         onClick={() => onClick(sampleAddresses[AddressType.UP])}
       >
         🆙 Universal Profile Sample Address
       </button>
       <button
-        className="button is-light is-small my-4 ml-2"
+        className="button is-light is-small my-2 ml-2"
         onClick={() => onClick(sampleAddresses[AddressType.LSP7])}
       >
         🪙 LSP7 Sample Address
       </button>
       <button
-        className="button is-light is-small my-4 ml-2"
+        className="button is-light is-small my-2 ml-2"
         onClick={() => onClick(sampleAddresses[AddressType.LSP8])}
       >
         🖼️ LSP8 Sample Address
