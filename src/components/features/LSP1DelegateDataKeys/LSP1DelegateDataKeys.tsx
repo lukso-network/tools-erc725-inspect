@@ -10,7 +10,7 @@ import { LSP1TypeIdsDescriptions } from '@/constants/schemas';
 import { LSP_DOCS_URL } from '@/constants/links';
 
 // LSP2 schemas
-import LSP1NotificationsSchema from '@/schemas/LSP1NotificationsSchema.json';
+import { LSP1NotificationSchemas } from '@/constants/schemas';
 
 // hooks
 import { useGetDataBatch } from '@/hooks/useGetDataBatch';
@@ -21,7 +21,7 @@ type Props = {
 };
 
 const LSP1DelegateDataKeys: React.FC<Props> = ({ address, isErc725Y }) => {
-  const dataKeys = LSP1NotificationsSchema.map((schema) => schema.key);
+  const dataKeys = LSP1NotificationSchemas.map((schema) => schema.key);
 
   const { data: result } = useGetDataBatch(
     isAddress(address) && isErc725Y ? getAddress(address) : undefined,
@@ -53,7 +53,7 @@ const LSP1DelegateDataKeys: React.FC<Props> = ({ address, isErc725Y }) => {
         dataResult.push({
           key: dataKeys[i],
           value,
-          schema: LSP1NotificationsSchema[i],
+          schema: LSP1NotificationSchemas[i],
         });
       });
     } catch (err) {
