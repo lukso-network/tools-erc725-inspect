@@ -1,4 +1,12 @@
 @charset "utf-8";
+
+@import '../../node_modules/bulma/sass/utilities/mixins.sass';
+
+// override colours of bulma pagination buttons
+$pagination-current-color: $primary-invert !default;
+$pagination-current-background-color: $primary !default;
+$pagination-current-border-color: $primary !default;
+
 @import '../../node_modules/bulma/bulma.sass';
 
 html,

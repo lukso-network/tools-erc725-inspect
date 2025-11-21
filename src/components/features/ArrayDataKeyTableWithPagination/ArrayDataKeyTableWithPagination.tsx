@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import { isAddress, hexToString } from 'viem';
 import { encodeArrayKey, ERC725JSONSchema } from '@erc725/erc725.js';
+import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
+
 import {
   faChevronLeft,
   faChevronRight,
   faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isAddress } from 'viem';
-import { hexToString } from 'viem';
-import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 
-import AddressInfos from '@/components/features/AddressInfos';
 import { NetworkContext } from '@/contexts/NetworksContext';
+import AddressInfos from '@/components/features/AddressInfos';
 import { getDataBatch } from '@/utils/erc725y';
+
+import styles from './ArrayDataKeyTableWithPagination.module.scss';
 
 interface Props {
   schema: ERC725JSONSchema;
@@ -213,19 +215,19 @@ const ArrayDataKeyTableWithPagination: React.FC<Props> = ({
     return (
       <nav
         ref={paginationRef}
-        className="pagination is-centered is-rounded gap-1"
+        className="pagination is-small is-centered is-rounded"
         role="navigation"
         aria-label="pagination"
       >
-        <ul className="pagination-list is-flex is-align-items-center is-justify-content-center gap-2">
+        <ul className="pagination-list">
           <li>
             <a
-              className="pagination-previous"
+              className="pagination-previous mx-4"
               onClick={() => handlePageChange(currentPage - 1)}
               style={{
                 cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
                 opacity: currentPage === 1 ? 0.5 : 1,
-                marginRight: '0.5rem',
+                marginTop: '0.25rem',
               }}
             >
               <FontAwesomeIcon icon={faChevronLeft} />
@@ -258,7 +260,7 @@ const ArrayDataKeyTableWithPagination: React.FC<Props> = ({
           })}
           <li>
             <a
-              className="pagination-next"
+              className="pagination-next mx-4"
               onClick={() => handlePageChange(currentPage + 1)}
               style={{
                 cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
@@ -273,111 +275,99 @@ const ArrayDataKeyTableWithPagination: React.FC<Props> = ({
     );
   };
 
-  return (
-    <>
-      <p style={{ display: 'inline' }}>{values.length} elements found</p>
-
-      <div className="my-3 mr-6">
-        <div className="is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
-          {renderPagination()}
-          <div
-            hidden={values.length <= 10}
-            className="field"
-            // TODO: put most of the inline css below in a scss module
-            style={{
-              position: 'relative',
-              width: '30%',
-              margin: '0 auto',
-            }}
-          >
-            <div className="control has-icons-left">
-              <input
-                className="input "
-                type="text"
-                placeholder="Search by address or name..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <span className="icon is-left">
-                <FontAwesomeIcon icon={faSearch} />
-              </span>
-            </div>
-
-            {/* Search Results Dropdown */}
-            {searchQuery.trim() && (
-              <div
-                className="box"
-                style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  right: 0,
-                  zIndex: 1000,
-                  maxHeight: '300px',
-                  overflowY: 'auto',
-                  marginTop: '0.25rem',
-                  display:
-                    searchResults.length > 0 || isSearching ? 'block' : 'none',
-                }}
-              >
-                {isSearching ? (
-                  <p className="has-text-grey">Searching...</p>
-                ) : searchResults.length > 0 ? (
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    <li className="is-size-7">
-                      {searchResults.length} results found
-                    </li>
-                    {searchResults.map((result) => (
-                      <li
-                        key={result.index}
-                        className="p-2"
-                        onClick={() => handleSearchResultClick(result.index)}
-                        style={{
-                          cursor: 'pointer',
-                          borderBottom: '1px solid #e0e0e0',
-                          transition: 'background-color 0.2s',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#f5f5f5';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                      >
-                        <div>
-                          <p className="has-text-weight-bold is-size-7">
-                            {schema.name.replace('[]', '')}[{result.index}]
-                          </p>
-                          <code className="is-size-7">{result.address}</code>
-                          {result.name && (
-                            <p className="has-text-grey is-size-7 mt-1">
-                              {result.name}{' '}
-                              {result.symbol && `(${result.symbol})`}
-                            </p>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="has-text-grey">No results found</p>
-                )}
-              </div>
-            )}
-          </div>
+  const renderSearchField = () => {
+    return (
+      <div
+        hidden={values.length <= ITEMS_PER_PAGE}
+        className={`${styles.searchField} field`}
+      >
+        <div className="control has-icons-left">
+          <input
+            className="input is-small is-primary is-rounded has-background-primary-light"
+            type="text"
+            placeholder="Search by address or name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <span className="icon is-left">
+            <FontAwesomeIcon icon={faSearch} />
+          </span>
         </div>
 
+        {/* Search Results Dropdown */}
+        {searchQuery.trim() && (
+          <div
+            className={`${styles.searchResultsDropdown} box`}
+            style={{
+              display:
+                searchResults.length > 0 || isSearching ? 'block' : 'none',
+            }}
+          >
+            {isSearching ? (
+              <p className="has-text-grey">Searching...</p>
+            ) : searchResults.length > 0 ? (
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                <li className="is-size-7">
+                  {searchResults.length} results found
+                </li>
+                {searchResults.map((result) => (
+                  <li
+                    key={result.index}
+                    className={`${styles.searchResultItem} p-2`}
+                    onClick={() => handleSearchResultClick(result.index)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f5f5f5';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <div>
+                      <p className="has-text-weight-bold is-size-7">
+                        {schema.name.replace('[]', '')}[{result.index}]
+                      </p>
+                      <code className="is-size-7">{result.address}</code>
+                      {result.name && (
+                        <p className="has-text-grey is-size-7 mt-1">
+                          {result.name} {result.symbol && `(${result.symbol})`}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="has-text-grey">No results found</p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <p className="is-inline">{values.length} elements found</p>
+
+      <div className="my-3 mr-6">
+        {renderPagination()}
+        {renderSearchField()}
+
         <table
-          className="table my-3"
-          style={{ backgroundColor: 'transparent' }}
+          className="table is-hoverable my-3"
+          style={{ background: 'transparent' }}
         >
           <thead>
             <tr>
               <th>
-                <abbr title="Data Key Index">Data Key index</abbr>
+                <abbr className="is-size-5" title="Data Key Index">
+                  Data Key index
+                </abbr>
               </th>
               <th>
-                <abbr title="Value">Value</abbr>
+                <abbr className="is-size-5" title="Value">
+                  Value
+                </abbr>
               </th>
             </tr>
           </thead>
