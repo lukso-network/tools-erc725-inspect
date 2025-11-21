@@ -219,58 +219,63 @@ const ArrayDataKeyTableWithPagination: React.FC<Props> = ({
         role="navigation"
         aria-label="pagination"
       >
-        <ul className="pagination-list">
-          <li>
-            <a
-              className="pagination-previous mx-4"
-              onClick={() => handlePageChange(currentPage - 1)}
-              style={{
-                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                opacity: currentPage === 1 ? 0.5 : 1,
-                marginTop: '0.25rem',
-              }}
-            >
-              <FontAwesomeIcon icon={faChevronLeft} />
-            </a>
-          </li>
-          {pages.map((page, index) => {
-            if (page === '...') {
+        <div
+          className="buttons is-flex is-align-items-center is-justify-content-center"
+          style={{ width: '100%' }}
+        >
+          <a
+            className="pagination-previous mx-4"
+            onClick={() => handlePageChange(currentPage - 1)}
+            style={{
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              opacity: currentPage === 1 ? 0.5 : 1,
+            }}
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </a>
+
+          {/* The inline css below ensures the "Previous" and "Next" buttons are kept as close to the pagination list as possible */}
+          <ul className="pagination-list" style={{ flexGrow: 0, margin: 0 }}>
+            {pages.map((page, index) => {
+              if (page === '...') {
+                return (
+                  <li key={`ellipsis-${index}`}>
+                    <span className="pagination-ellipsis">&hellip;</span>
+                  </li>
+                );
+              }
+
+              const pageNumber = page as number;
               return (
-                <li key={`ellipsis-${index}`}>
-                  <span className="pagination-ellipsis">&hellip;</span>
+                <li key={pageNumber}>
+                  <a
+                    className={`pagination-link cursor-pointer ${
+                      pageNumber === currentPage ? 'is-current' : ''
+                    }`}
+                    aria-label={`Page ${pageNumber}`}
+                    aria-current={
+                      pageNumber === currentPage ? 'page' : undefined
+                    }
+                    onClick={() => handlePageChange(pageNumber)}
+                  >
+                    {pageNumber}
+                  </a>
                 </li>
               );
-            }
+            })}
+          </ul>
 
-            const pageNumber = page as number;
-            return (
-              <li key={pageNumber}>
-                <a
-                  className={`pagination-link cursor-pointer ${
-                    pageNumber === currentPage ? 'is-current' : ''
-                  }`}
-                  aria-label={`Page ${pageNumber}`}
-                  aria-current={pageNumber === currentPage ? 'page' : undefined}
-                  onClick={() => handlePageChange(pageNumber)}
-                >
-                  {pageNumber}
-                </a>
-              </li>
-            );
-          })}
-          <li>
-            <a
-              className="pagination-next mx-4"
-              onClick={() => handlePageChange(currentPage + 1)}
-              style={{
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                opacity: currentPage === totalPages ? 0.5 : 1,
-              }}
-            >
-              <FontAwesomeIcon icon={faChevronRight} />
-            </a>
-          </li>
-        </ul>
+          <a
+            className="pagination-next mx-4"
+            onClick={() => handlePageChange(currentPage + 1)}
+            style={{
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              opacity: currentPage === totalPages ? 0.5 : 1,
+            }}
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </a>
+        </div>
       </nav>
     );
   };

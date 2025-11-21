@@ -1,7 +1,11 @@
 .searchField {
   position: relative;
   margin: auto;
-  width: 50vh;
+  width: 40vh;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .searchResultsDropdown {
