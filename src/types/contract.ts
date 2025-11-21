@@ -1,3 +1,8 @@
+import { LSP0_TYPE_IDS } from '@lukso/lsp0-contracts';
+import { LSP7_TYPE_IDS } from '@lukso/lsp7-contracts';
+import { LSP8_TYPE_IDS } from '@lukso/lsp8-contracts';
+import { LSP26_TYPE_IDS } from '@lukso/lsp26-contracts';
+
 export type CrossChainImplementationContract = {
   address: string;
   version: string;
@@ -50,3 +55,9 @@ export const CONTRACT_INTERFACE_KEYS = [
   'isLsp17Extension',
   'isLsp26FollowerSystem',
 ] as const satisfies ReadonlyArray<keyof SupportedInterfaces>;
+
+export type LSP1DelegateTypeIdName =
+  | keyof typeof LSP7_TYPE_IDS
+  | keyof typeof LSP8_TYPE_IDS
+  | keyof typeof LSP26_TYPE_IDS
+  | keyof typeof LSP0_TYPE_IDS;

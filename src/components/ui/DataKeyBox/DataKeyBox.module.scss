@@ -1,0 +1,33 @@
+// DataKeyBox details/summary styling
+.dataKeyBoxDetails {
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      flex: 1;
+    }
+  }
+
+  &[open] summary::before {
+    content: '▼';
+  }
+}

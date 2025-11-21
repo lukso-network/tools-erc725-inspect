@@ -6,9 +6,11 @@ import type { Hex } from 'viem';
 import DataKeyBox from '../../ui/DataKeyBox';
 
 // LSP2 schemas
-import ProfileSchema from '@/schemas/ProfileSchema.json';
-import AssetSchema from '@/schemas/AssetSchema.json';
-import LSP8Schema from '@/schemas/LSP8Schema.json';
+import {
+  UniversalProfileNonDynamicSchemas,
+  AssetNonDynamicSchemas,
+  LSP8NonDynamicSchemas,
+} from '@/constants/schemas';
 
 // utilities
 import { getDataBatch } from '@/utils/erc725y';
@@ -51,10 +53,12 @@ const DataKeysTable: React.FC<Props> = ({
 
       try {
         if (isErc725Y) {
-          let schemaToLoad = isAsset ? AssetSchema : ProfileSchema;
+          let schemaToLoad = isAsset
+            ? AssetNonDynamicSchemas
+            : UniversalProfileNonDynamicSchemas;
 
           if (isLSP8) {
-            schemaToLoad = schemaToLoad.concat(LSP8Schema);
+            schemaToLoad = schemaToLoad.concat(LSP8NonDynamicSchemas);
           }
 
           const dataKeys = schemaToLoad.map((schema) => schema.key);
