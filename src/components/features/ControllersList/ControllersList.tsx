@@ -6,6 +6,8 @@ import { getDataBatch } from '@/utils/erc725y';
 import AddressInfos from '@/components/features/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
+import PermissionTag from '@/components/ui/PermissionTag';
+import type { PermissionName } from '@/types/permission';
 
 interface PermissionDataKeyDisplayProps {
   permissionDataKey: string;
@@ -300,12 +302,10 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                               ([permission, isSet]) =>
                                 isSet &&
                                 permission !== '0x' && (
-                                  <span
+                                  <PermissionTag
                                     key={permission}
-                                    className="tag is-primary m-1"
-                                  >
-                                    {permission}
-                                  </span>
+                                    permission={permission as PermissionName}
+                                  />
                                 ),
                             )}
                           </p>
