@@ -17,7 +17,7 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
 import ContractOwner from '@/components/features/ContractOwner';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
-import DataKeysTable from '@/components/features/DataKeysTable';
+import DataKeysList from '@/components/features/DataKeysList';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys';
 
 import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
@@ -238,7 +238,7 @@ const Home: NextPage = () => {
               {isErc725Y && (
                 <>
                   <CustomKeySchemaForm address={address} />
-                  <DataKeysTable
+                  <DataKeysList
                     address={address}
                     isErc725Y={isErc725Y}
                     isAsset={isLspDigitalAsset}
