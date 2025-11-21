@@ -23,7 +23,7 @@ interface Props {
   isLSP8: boolean;
 }
 
-const DataKeysTable: React.FC<Props> = ({
+const DataKeysList: React.FC<Props> = ({
   address,
   isErc725Y,
   isAsset,
@@ -108,4 +108,4 @@ const DataKeysTable: React.FC<Props> = ({
   );
 };
 
-export default DataKeysTable;
+export default DataKeysList;

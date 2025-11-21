@@ -13,6 +13,7 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 // components
 import AddressInfos from '@/components/features/AddressInfos';
 import ControllersList from '@/components/features/ControllersList';
+import ArrayDataKeyTableWithPagination from '@/components/features/ArrayDataKeyTableWithPagination';
 import TokenTypeBadge from '@/components/ui/TokenTypeBadge';
 import TokenIdFormatBadge from '@/components/ui/TokenIdFormatBadge';
 import VerifiableURIViewer from '@/components/ui/VerifiableURIViewer';
@@ -90,26 +91,12 @@ const ValueTypeDecoder: React.FC<Props> = ({
         );
       }
 
-      // TODO: create a table component <AssetsTable> for LSP5 + LSP12 Issued Assets
-
-      // TODO: create a a generic table component to display the values as fallback (e.g: LSP10 Vaults)
       return (
-        <ul>
-          <li style={{ listStyleType: 'none' }}>
-            {decodedDataArray.value.length} elements in Array
-          </li>
-          {decodedDataArray.value.map(
-            (item, index) =>
-              item && (
-                <li key={index}>
-                  <AddressInfos
-                    address={item.toString()}
-                    userAddress={address}
-                  />
-                </li>
-              ),
-          )}
-        </ul>
+        <ArrayDataKeyTableWithPagination
+          schema={erc725JSONSchema}
+          values={decodedDataArray.value as (string | null)[]}
+          userAddress={address}
+        />
       );
     }
 

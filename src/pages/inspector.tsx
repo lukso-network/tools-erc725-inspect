@@ -17,7 +17,7 @@ import { NetworkContext } from '@/contexts/NetworksContext';
 import CustomKeySchemaForm from '@/components/features/CustomKeySchemaForm';
 import ContractOwner from '@/components/features/ContractOwner';
 import ContractTypeBox from '@/components/ui/ContractTypeBox/ContractTypeBox';
-import DataKeysTable from '@/components/features/DataKeysTable';
+import DataKeysList from '@/components/features/DataKeysList';
 import LSP1DelegateDataKeys from '@/components/features/LSP1DelegateDataKeys';
 
 import SampleAddressInput from '@/components/ui/SampleAddressInput/SampleAddressInput';
@@ -209,56 +209,55 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        <div className="container">
-          {!errorMessage &&
-            !isLoading &&
-            (isErc725X ||
-              isErc725Y ||
-              isLsp1UniversalReceiver ||
-              isLsp6KeyManager ||
-              isLsp0Erc725Account) && (
-              <>
-                <>
-                  <h3 className="title is-3">Instance and Ownership</h3>
-                  <ContractTypeBox
-                    title="Contract"
-                    link="https://docs.lukso.tech/standards/erc725/"
-                    label="Contract address"
-                    address={address}
-                    standards={{
-                      isLsp0Erc725Account,
-                      isLsp7DigitalAsset,
-                      isLsp8IdentifiableDigitalAsset,
-                    }}
-                  />
-                </>
-                {(isErc725X || isErc725Y) && (
-                  <ContractOwner contractAddress={address} />
-                )}
-                {isErc725Y && (
-                  <>
-                    <CustomKeySchemaForm address={address} />
-                    <DataKeysTable
-                      address={address}
-                      isErc725Y={isErc725Y}
-                      isAsset={isLspDigitalAsset}
-                      isLSP8={isLsp8IdentifiableDigitalAsset}
-                    />
 
-                    {
-                      /* Show data keys related to LSP1 Delegates for specific notification types separately */
-                      !isLspDigitalAsset && (
-                        <LSP1DelegateDataKeys
-                          address={address}
-                          isErc725Y={isErc725Y}
-                        />
-                      )
-                    }
-                  </>
-                )}
+        {!errorMessage &&
+          !isLoading &&
+          (isErc725X ||
+            isErc725Y ||
+            isLsp1UniversalReceiver ||
+            isLsp6KeyManager ||
+            isLsp0Erc725Account) && (
+            <>
+              <>
+                <h3 className="title is-3">Instance and Ownership</h3>
+                <ContractTypeBox
+                  title="Contract"
+                  link="https://docs.lukso.tech/standards/erc725/"
+                  label="Contract address"
+                  address={address}
+                  standards={{
+                    isLsp0Erc725Account,
+                    isLsp7DigitalAsset,
+                    isLsp8IdentifiableDigitalAsset,
+                  }}
+                />
               </>
-            )}
-        </div>
+              {(isErc725X || isErc725Y) && (
+                <ContractOwner contractAddress={address} />
+              )}
+              {isErc725Y && (
+                <>
+                  <CustomKeySchemaForm address={address} />
+                  <DataKeysList
+                    address={address}
+                    isErc725Y={isErc725Y}
+                    isAsset={isLspDigitalAsset}
+                    isLSP8={isLsp8IdentifiableDigitalAsset}
+                  />
+
+                  {
+                    /* Show data keys related to LSP1 Delegates for specific notification types separately */
+                    !isLspDigitalAsset && (
+                      <LSP1DelegateDataKeys
+                        address={address}
+                        isErc725Y={isErc725Y}
+                      />
+                    )
+                  }
+                </>
+              )}
+            </>
+          )}
       </div>
     </>
   );
