@@ -6,8 +6,7 @@ import { getDataBatch } from '@/utils/erc725y';
 import AddressInfos from '@/components/features/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
-import PermissionTag from '@/components/ui/PermissionTag';
-import type { PermissionName } from '@/types/permission';
+import PermissionsList from './PermissionsList';
 
 interface PermissionDataKeyDisplayProps {
   permissionDataKey: string;
@@ -284,12 +283,6 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                     </div>
 
                     <div className="mb-3">
-                      <p className="text-bold">
-                        Permissions:{' '}
-                        {controller && (
-                          <code className="has-text-primary">{bitArray}</code>
-                        )}
-                      </p>
                       {controller ? (
                         <div>
                           <p>
@@ -298,17 +291,11 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                                 '0x0000000000000000000000000000000000000000000000000000000000000000' && (
                                 <i>No permission set</i>
                               ))}
-                            {Object.entries(permissions).map(
-                              ([permission, isSet]) =>
-                                isSet &&
-                                permission !== '0x' && (
-                                  <PermissionTag
-                                    key={permission}
-                                    permission={permission as PermissionName}
-                                  />
-                                ),
-                            )}
                           </p>
+                          <PermissionsList
+                            permissions={permissions}
+                            bitArray={bitArray}
+                          />
                         </div>
                       ) : (
                         <p className="notification is-warning is-light">
