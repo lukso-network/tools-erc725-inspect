@@ -6,7 +6,7 @@ type Props = {
   onClick: () => void;
 };
 
-const ButtonCallType: React.FC<Props> = ({ callType, isActive, onClick }) => {
+const CallTypeButton: React.FC<Props> = ({ callType, isActive, onClick }) => {
   const btnClass =
     callType === 'DELEGATECALL'
       ? 'is-red'
@@ -22,4 +22,4 @@ const ButtonCallType: React.FC<Props> = ({ callType, isActive, onClick }) => {
   );
 };
 
-export default ButtonCallType;
+export default CallTypeButton;

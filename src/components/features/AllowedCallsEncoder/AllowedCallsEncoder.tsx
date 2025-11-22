@@ -11,7 +11,7 @@ import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
 import { useGetBlockscoutContractInfos } from '@/hooks/useGetBlockscoutContractInfos';
 
 import ToolInfos from '@/components/layout/ToolInfos';
-import ButtonCallType from '@/components/ui/ButtonCallType';
+import CallTypeButton from '@/components/ui/CallTypeButton';
 import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
 import CodeEditor from '@/components/ui/CodeEditor';
 
@@ -292,7 +292,7 @@ const AllowedCallsEncoder: React.FC = () => {
                 <td>
                   <div className="buttons">
                     {Object.keys(allowedCallTypes).map((type) => (
-                      <ButtonCallType
+                      <CallTypeButton
                         key={type}
                         callType={type as CallType}
                         isActive={allowedCallTypes[type as CallType]}
