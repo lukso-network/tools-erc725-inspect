@@ -1,92 +1,62 @@
 import React from 'react';
-import PermissionTag from '@/components/ui/PermissionTag';
+import { size, type Hex } from 'viem';
+import ERC725 from '@erc725/erc725.js';
+
 import type { PermissionName } from '@/types/permission';
-import type { Hex } from 'viem';
-import PermissionsSummary from './PermissionsDescriptionSummary';
+import { PERMISSION_CATEGORIES } from '@/constants/permissions';
 
-interface PermissionsListProps {
-  permissions: { [key: string]: boolean };
-  bitArray: Hex | null;
+import PermissionBadge from '@/components/ui/PermissionBadge';
+import PermissionsDescriptionSummary from '../PermissionsDescriptionSummary';
+
+interface Props {
+  bitArrayHexValue: string | null;
+  showPermissionTable: boolean;
 }
 
-interface PermissionCategory {
-  title: string;
-  permissions: PermissionName[];
-}
-
-const PERMISSION_CATEGORIES: PermissionCategory[] = [
-  {
-    title: 'Administration & Ownership',
-    permissions: ['CHANGEOWNER', 'ADDCONTROLLER', 'EDITPERMISSIONS'],
-  },
-  {
-    title: 'LSP17 Extensions',
-    permissions: ['ADDEXTENSIONS', 'CHANGEEXTENSIONS'],
-  },
-  {
-    title: 'LSP1 Universal Receivers Delegates',
-    permissions: [
-      'ADDUNIVERSALRECEIVERDELEGATE',
-      'CHANGEUNIVERSALRECEIVERDELEGATE',
-    ],
-  },
-  {
-    title: 'Contract Interactions',
-    permissions: [
-      'SUPER_TRANSFERVALUE',
-      'TRANSFERVALUE',
-      'SUPER_CALL',
-      'CALL',
-      'SUPER_STATICCALL',
-      'STATICCALL',
-      'DEPLOY',
-      'EXECUTE_RELAY_CALL',
-      'SUPER_DELEGATECALL',
-      'DELEGATECALL',
-      'REENTRANCY',
-      'ERC4337_PERMISSION',
-    ],
-  },
-  {
-    title: 'Metadata',
-    permissions: ['SUPER_SETDATA', 'SETDATA'],
-  },
-  {
-    title: 'Signing Verification',
-    permissions: ['SIGN', 'ENCRYPT', 'DECRYPT'],
-  },
-];
-
-const PermissionsList: React.FC<PermissionsListProps> = ({
-  permissions,
-  bitArray,
+const PermissionsEnabledList: React.FC<Props> = ({
+  bitArrayHexValue,
+  showPermissionTable = true,
 }) => {
+  if (
+    !bitArrayHexValue ||
+    bitArrayHexValue == '0x' ||
+    bitArrayHexValue ==
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
+  ) {
+    return <i>No permissions set</i>;
+  }
+
+  if (size(bitArrayHexValue as Hex) !== 32) {
+    return (
+      <i className="notification is-warning is-light">
+        Invalid bit array length: {size(bitArrayHexValue as Hex)}
+      </i>
+    );
+  }
+
+  const permissions = bitArrayHexValue
+    ? ERC725.decodePermissions(bitArrayHexValue as Hex)
+    : {};
+
   // Filter categories to only show those with at least one enabled permission
   const visibleCategories = PERMISSION_CATEGORIES.filter((category) =>
     category.permissions.some((permission) => permissions[permission]),
   );
-
-  if (visibleCategories.length === 0) {
-    return <i>No permissions set</i>;
-  }
 
   const permissionsEnabledCount = Object.values(permissions).filter(
     (isEnabled) => isEnabled == true,
   ).length;
 
   return (
-    <div className="container">
-      <PermissionsSummary permissions={permissions} />
-      <details>
+    <div className="container mt-5">
+      <PermissionsDescriptionSummary permissions={permissions} />
+      <details open={showPermissionTable}>
         <summary className="has-background-primary-light p-2 is-clickable has-text-weight-semibold is-size-7">
           {permissionsEnabledCount} permission
           {permissionsEnabledCount > 1 ? 's' : ''} found
+          {showPermissionTable ? '' : ' (click to expand)'}
         </summary>
         <div className="p-2">
-          <p className="text-bold">
-            Permissions:{' '}
-            {bitArray && <code className="has-text-primary">{bitArray}</code>}
-          </p>
           <table
             className="table is-narrow is-fullwidth is-bordered is-hoverable"
             style={{ backgroundColor: 'transparent' }}
@@ -107,7 +77,7 @@ const PermissionsList: React.FC<PermissionsListProps> = ({
                     {category.permissions
                       .filter((permission) => permissions[permission])
                       .map((permission) => (
-                        <PermissionTag
+                        <PermissionBadge
                           key={permission}
                           permission={permission as PermissionName}
                         />
@@ -123,4 +93,4 @@ const PermissionsList: React.FC<PermissionsListProps> = ({
   );
 };
 
-export default PermissionsList;
+export default PermissionsEnabledList;

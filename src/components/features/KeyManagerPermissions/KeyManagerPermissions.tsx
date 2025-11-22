@@ -6,10 +6,11 @@ import { isAddress, isHex } from 'viem';
 
 import CodeEditor from '@/components/ui/CodeEditor';
 import CollapsibleSchema from '@/components/ui/CollapsibleSchema';
-import PermissionsBtns from '@/components/ui/PermissionsBtns';
 import ToolInfos from '@/components/layout/ToolInfos';
 
 import { LSP_DOCS_URL } from '@/constants/links';
+import { PERMISSION_CATEGORIES } from '@/constants/permissions';
+import PermissionButton from '@/components/ui/PermissionButton';
 
 const AddressPermissionsSchema: ERC725JSONSchema | undefined = LSP6Schema.find(
   (schema) => schema.name.startsWith('AddressPermissions:Permissions:'),
@@ -190,128 +191,26 @@ const KeyManagerPermissions: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <strong className="mb-2 ">Administration & Ownership</strong>
-                </td>
-                <td>
-                  <PermissionsBtns
-                    permissions={[
-                      'CHANGEOWNER',
-                      'ADDCONTROLLER',
-                      'EDITPERMISSIONS',
-                    ]}
-                    color={'is-red'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong className="mb-2 ">LSP17 Extensions</strong>
-                </td>
-                <td>
-                  {' '}
-                  <PermissionsBtns
-                    permissions={['ADDEXTENSIONS', 'CHANGEEXTENSIONS']}
-                    color={'is-extension'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong className="mb-2 ">
-                    LSP1 Universal Receivers Delegates
-                  </strong>
-                </td>
-                <td>
-                  {' '}
-                  <PermissionsBtns
-                    permissions={[
-                      'ADDUNIVERSALRECEIVERDELEGATE',
-                      'CHANGEUNIVERSALRECEIVERDELEGATE',
-                    ]}
-                    color={'is-fuschia'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong className="mb-2 ">Contract Interactions</strong>
-                </td>
-                <td>
-                  {' '}
-                  <PermissionsBtns
-                    permissions={[
-                      'SUPER_TRANSFERVALUE',
-                      'TRANSFERVALUE',
-                      'SUPER_CALL',
-                      'CALL',
-                      'SUPER_STATICCALL',
-                      'STATICCALL',
-                      'DEPLOY',
-                    ]}
-                    color={'is-yellow'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                  <PermissionsBtns
-                    permissions={['EXECUTE_RELAY_CALL']}
-                    color={'is-orange'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                  <PermissionsBtns
-                    permissions={[
-                      'SUPER_DELEGATECALL',
-                      'DELEGATECALL',
-                      'REENTRANCY',
-                    ]}
-                    color={'is-red'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                  <PermissionsBtns
-                    permissions={['ERC4337_PERMISSION']}
-                    color={'is-grey'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong className="mb-2 ">Metadata</strong>
-                </td>
-                <td>
-                  {' '}
-                  <PermissionsBtns
-                    permissions={['SUPER_SETDATA', 'SETDATA']}
-                    color={'is-blue'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <strong className="mb-2 ">Signing Verification</strong>
-                </td>
-                <td>
-                  {' '}
-                  <PermissionsBtns
-                    permissions={['SIGN', 'ENCRYPT', 'DECRYPT']}
-                    color={'is-purple'}
-                    decodedPermissions={decodedPermissions}
-                    handlePermissionClick={handlePermissionClick}
-                  />
-                </td>
-              </tr>
+              {PERMISSION_CATEGORIES.map((category) => (
+                <tr key={category.title}>
+                  <td>
+                    <strong className="mb-2 ">{category.title}</strong>
+                  </td>
+                  <td>
+                    <div className="buttons">
+                      {category.permissions.map((permission) => (
+                        <PermissionButton
+                          key={permission}
+                          permissionName={permission}
+                          permissionHex={permission}
+                          isActive={decodedPermissions[permission]}
+                          handlePermissionClick={handlePermissionClick}
+                        />
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

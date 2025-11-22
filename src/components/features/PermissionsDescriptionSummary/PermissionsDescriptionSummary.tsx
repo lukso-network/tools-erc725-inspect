@@ -1,8 +1,8 @@
 import React from 'react';
 
-interface PermissionsDescriptionSummaryProps {
+type Props = {
   permissions: { [key: string]: boolean };
-}
+};
 
 interface PermissionCapability {
   icon: string;
@@ -42,11 +42,11 @@ const PERMISSION_CAPABILITIES: PermissionCapability[] = [
       const canAdd = permissions['ADDUNIVERSALRECEIVERDELEGATE'];
       const canChange = permissions['CHANGEUNIVERSALRECEIVERDELEGATE'];
       if (canAdd && canChange) {
-        return 'Can connect LSP1 Universal Receiver Delegates to this UP + update them';
+        return 'Can connect new or update existing Universal Receiver Delegates contracts on this UP to react on notifications';
       } else if (canAdd) {
-        return 'Can connect LSP1 Universal Receiver Delegates to this UP';
+        return 'Can connect new Universal Receiver Delegates contracts to this UP to react on notifications';
       } else if (canChange) {
-        return 'Can update the LSP1 Universal Receiver Delegates connected to this UP';
+        return 'Can change the Universal Receiver Delegates contracts connected to this UP that react on notifications';
       }
       return '';
     },
@@ -158,7 +158,7 @@ const PERMISSION_CAPABILITIES: PermissionCapability[] = [
       const hasRelayCall = permissions['EXECUTE_RELAY_CALL'];
 
       if (hasRelayCall) {
-        return '✅ This controller can use relayers to perform gasless transactions on this UP (sign tx and give this tx to another address to execute it)';
+        return '✅ This controller can use relayers to perform gasless transactions on this UP';
       }
       return '';
     },
@@ -178,9 +178,7 @@ const PERMISSION_CAPABILITIES: PermissionCapability[] = [
   },
 ];
 
-const PermissionsDescriptonSummary: React.FC<
-  PermissionsDescriptionSummaryProps
-> = ({ permissions }) => {
+const PermissionsDescriptionSummary: React.FC<Props> = ({ permissions }) => {
   const visibleCapabilities = PERMISSION_CAPABILITIES.filter((capability) => {
     const isEnabled = capability.checkPermissions(permissions);
     if (isEnabled) {
@@ -214,4 +212,4 @@ const PermissionsDescriptonSummary: React.FC<
   );
 };
 
-export default PermissionsDescriptonSummary;
+export default PermissionsDescriptionSummary;
