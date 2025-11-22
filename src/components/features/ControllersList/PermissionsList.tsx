@@ -2,6 +2,7 @@ import React from 'react';
 import PermissionTag from '@/components/ui/PermissionTag';
 import type { PermissionName } from '@/types/permission';
 import type { Hex } from 'viem';
+import PermissionsSummary from './PermissionsDescriptionSummary';
 
 interface PermissionsListProps {
   permissions: { [key: string]: boolean };
@@ -75,6 +76,7 @@ const PermissionsList: React.FC<PermissionsListProps> = ({
 
   return (
     <div className="container">
+      <PermissionsSummary permissions={permissions} />
       <details>
         <summary className="has-background-primary-light p-2 is-clickable has-text-weight-semibold is-size-7">
           {permissionsEnabledCount} permission
