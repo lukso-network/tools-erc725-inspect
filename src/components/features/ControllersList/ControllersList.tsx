@@ -6,6 +6,7 @@ import { getDataBatch } from '@/utils/erc725y';
 import AddressInfos from '@/components/features/AddressInfos';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
+import PermissionsDecoder from '@/components/features/PermissionsDecoder';
 
 interface PermissionDataKeyDisplayProps {
   permissionDataKey: string;
@@ -51,7 +52,6 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
       arrayIndexDataKey: string;
       permissionDataKey: string | null;
       bitArray: string | null;
-      permissions: { [key: string]: boolean };
     };
   }>({});
 
@@ -86,7 +86,6 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
               controller,
               permissionDataKey,
               bitArray,
-              permissions: {},
             };
 
             setControllersPermissions(currentState);
@@ -117,14 +116,6 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
 
               currentState[index].bitArray =
                 controller && permissionsDataValues[index];
-
-              currentState[index].permissions = controller
-                ? (ERC725.decodePermissions(
-                    permissionsDataValues[index] as Hex,
-                  ) as {
-                    [key: string]: any;
-                  })
-                : {};
 
               setControllersPermissions({ ...currentState });
             },
@@ -223,13 +214,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
           <tbody>
             {Object.values(controllersPermissions).map(
               (
-                {
-                  controller,
-                  arrayIndexDataKey,
-                  permissionDataKey,
-                  bitArray,
-                  permissions,
-                },
+                { controller, arrayIndexDataKey, permissionDataKey, bitArray },
                 index,
               ) => (
                 <tr key={index}>
@@ -266,57 +251,36 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                     </div>
                   </td>
                   <td style={{ width: '50%' }}>
-                    <div className="mb-3">
-                      <div className="is-flex">
-                        <span className="mr-2">Controller:</span>
-                        <div>
-                          {controller ? (
-                            <AddressInfos address={controller} />
-                          ) : (
-                            <p className="notification is-warning is-light">
-                              ⚠️ No controller found at index {index}
-                            </p>
-                          )}
-                        </div>
+                    <div className="is-flex mb-0">
+                      <span className="mr-2">Controller:</span>
+                      <div>
+                        {controller ? (
+                          <AddressInfos address={controller} />
+                        ) : (
+                          <p className="notification is-warning is-light">
+                            ⚠️ No controller found at index {index}
+                          </p>
+                        )}
                       </div>
                     </div>
 
-                    <div className="mb-3">
-                      <p className="text-bold">
-                        Permissions:{' '}
-                        {controller && (
+                    {controller ? (
+                      <div>
+                        <p className="text-bold">
+                          Permissions:{' '}
                           <code className="has-text-primary">{bitArray}</code>
-                        )}
-                      </p>
-                      {controller ? (
-                        <div>
-                          <p>
-                            {bitArray == '0x' ||
-                              (bitArray ==
-                                '0x0000000000000000000000000000000000000000000000000000000000000000' && (
-                                <i>No permission set</i>
-                              ))}
-                            {Object.entries(permissions).map(
-                              ([permission, isSet]) =>
-                                isSet &&
-                                permission !== '0x' && (
-                                  <span
-                                    key={permission}
-                                    className="tag is-primary m-1"
-                                  >
-                                    {permission}
-                                  </span>
-                                ),
-                            )}
-                          </p>
-                        </div>
-                      ) : (
-                        <p className="notification is-warning is-light">
-                          ⚠️ Cannot fetch permissions: controller unknown at
-                          index {index}
                         </p>
-                      )}
-                    </div>
+                        <PermissionsDecoder
+                          bitArrayHexValue={bitArray}
+                          showPermissionTable={false}
+                        />
+                      </div>
+                    ) : (
+                      <p className="notification is-warning is-light">
+                        ⚠️ Cannot fetch permissions: controller unknown at index{' '}
+                        {index}
+                      </p>
+                    )}
                   </td>
                 </tr>
               ),
