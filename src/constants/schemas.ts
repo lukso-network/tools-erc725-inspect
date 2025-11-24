@@ -65,7 +65,7 @@ export const LSP1TypeIdsDescriptions: Record<LSP1DelegateTypeIdName, string> = {
   LSP0OwnershipTransferred_RecipientNotification: '⚠️ Advanced usage. Details coming later.',
 };
 
-const LSP28TheGridJsonSchema = {
+export const LSP28TheGridJsonSchema = {
   name: 'LSP28TheGrid',
   key: '0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff',
   keyType: 'Singleton',

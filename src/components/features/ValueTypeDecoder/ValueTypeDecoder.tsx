@@ -6,6 +6,7 @@ import {
   ERC725,
   type ERC725JSONSchema,
   type DecodeDataOutput,
+  type DynamicNameSchema,
 } from '@erc725/erc725.js';
 
 import { NetworkContext } from '@/contexts/NetworksContext';
@@ -17,10 +18,11 @@ import ArrayDataKeyTableWithPagination from '@/components/features/ArrayDataKeyT
 import TokenTypeBadge from '@/components/ui/TokenTypeBadge';
 import TokenIdFormatBadge from '@/components/ui/TokenIdFormatBadge';
 import VerifiableURIViewer from '@/components/ui/VerifiableURIViewer';
+import PermissionsDecoder from '../PermissionsDecoder';
 
 interface Props {
   address: string;
-  erc725JSONSchema: ERC725JSONSchema;
+  erc725JSONSchema: ERC725JSONSchema | DynamicNameSchema;
   value: string | string[];
 }
 
@@ -49,12 +51,21 @@ const ValueTypeDecoder: React.FC<Props> = ({
       try {
         const erc725 = new ERC725([erc725JSONSchema], address, network.rpcUrl);
 
-        const decodedData = erc725.decodeData([
-          {
-            keyName: erc725JSONSchema.name,
-            value: value as string,
-          },
-        ]);
+        let decodeDataParams = {
+          keyName: erc725JSONSchema.name,
+          value: value as string,
+        };
+
+        if (
+          erc725JSONSchema.keyType === 'Mapping' ||
+          erc725JSONSchema.keyType === 'MappingWithGrouping'
+        ) {
+          decodeDataParams['dynamicKeyParts'] = (
+            erc725JSONSchema as DynamicNameSchema
+          ).dynamicKeyParts;
+        }
+
+        const decodedData = erc725.decodeData([decodeDataParams]);
         setDecodedDataOneKey(decodedData);
 
         if (erc725JSONSchema.keyType === 'Array') {
@@ -62,6 +73,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
           setDecodedDataArray(result);
         }
       } catch (error: any) {
+        console.log('there was an error', error);
         console.log(error.message);
       }
     };
@@ -100,16 +112,19 @@ const ValueTypeDecoder: React.FC<Props> = ({
       );
     }
 
-    // TODO: re-introduce better error handling for this case. This check fails and does not display LSP8TokenIdFormat anymore
-    // if (
-    //   !decodedDataOneKey ||
-    //   !decodedDataOneKey[0] ||
-    //   !decodedDataOneKey[0].value
-    // ) {
-    //   return <span className="help">No data found for this key.</span>;
-    // }
+    if (
+      !decodedDataOneKey ||
+      !decodedDataOneKey[0] ||
+      decodedDataOneKey[0].value === null
+    ) {
+      return <span className="help">No data found for this key.</span>;
+    }
 
     const { value: decodedValue } = decodedDataOneKey[0];
+
+    if (keyName.startsWith('AddressPermissions:Permissions:')) {
+      return <PermissionsDecoder bitArrayHexValue={decodedValue} />;
+    }
 
     if (valueContent === 'VerifiableURI' || valueContent === 'JSONURL') {
       return <VerifiableURIViewer value={decodedValue} />;
@@ -120,7 +135,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
     }
 
     if (keyName == 'LSP8TokenIdFormat') {
-      console.log('found LSP8 Token Id Format!');
       return <TokenIdFormatBadge value={decodedValue} />;
     }
 
@@ -150,7 +164,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
     );
   } catch (err) {
     console.warn('Could not decode the key: ', err);
-    return <span>Couldn&apos;t decode the value for this data key</span>;
+    return <span>Could not decode the value for this data key</span>;
   }
 };
 
