@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import { useState, useContext } from 'react';
-import { isAddress, getAddress, type Address } from 'viem';
+import { isAddress, getAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 
 import { ilsp25ExecuteRelayCallAbi } from '@lukso/lsp25-contracts/abi';

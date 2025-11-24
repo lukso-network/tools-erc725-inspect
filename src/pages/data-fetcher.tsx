@@ -41,7 +41,11 @@ import AddressInfos from '@/components/features/AddressInfos';
 
 const dataKeyList = [
   ...LSP1Schemas.map(({ name, key }) => ({ name, key, icon: '📢' })),
-  ...LSP3Schemas.map(({ name, key }) => ({ name, key, icon: '👤' })),
+  // LSP3 schema contains data keys for LSP1, LSP5, LSP12 and LSP17. Do not show these twice
+  ...LSP3Schemas.filter(
+    ({ name }) =>
+      name === 'SupportedStandards:LSP3Profile' || name == 'LSP3Profile',
+  ).map(({ name, key }) => ({ name, key, icon: '👤' })),
   ...LSP4Schemas.map(({ name, key }) => ({ name, key, icon: '🔵' })),
   ...LSP5Schemas.map(({ name, key }) => ({ name, key, icon: '💰' })),
   ...LSP6Schemas.map(({ name, key }) => ({ name, key, icon: '🔑' })),

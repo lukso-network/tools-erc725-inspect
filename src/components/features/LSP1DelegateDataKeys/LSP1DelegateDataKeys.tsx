@@ -1,6 +1,6 @@
 import { ERC725JSONSchema } from '@erc725/erc725.js';
 import { useEffect, useState } from 'react';
-import { type Address, getAddress, isAddress } from 'viem';
+import { getAddress, isAddress } from 'viem';
 
 // components
 import DataKeyBox from '@/components/ui/DataKeyBox/DataKeyBox';
