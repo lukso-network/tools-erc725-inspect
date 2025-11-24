@@ -73,7 +73,7 @@ const GetData: NextPage = () => {
   const [decodedData, setDecodedData] = useState('');
 
   const [schemaOfDataKey, setSchemaOfDataKey] = useState<
-    ERC725JSONSchema | undefined
+    ERC725JSONSchema | DynamicNameSchema | undefined
   >(undefined);
 
   const [interfaces, setInterfaces] = useState({
@@ -204,28 +204,26 @@ const GetData: NextPage = () => {
         return;
       }
 
-      const {
-        name: keyName,
-        keyType,
-        valueType,
-        valueContent,
-      } = foundSchema as ERC725JSONSchema;
+      const { name, keyType, valueType, valueContent } =
+        foundSchema as ERC725JSONSchema;
 
       let decodedValue;
 
-      if (isDynamicKeyName(keyName)) {
+      if (isDynamicKeyName(name)) {
         // for dynamic key names, we need to use the:
         // - `dynamicName` property of the schema as name
         // - and the `dynamicKeyParts` property for decoding
         const dynamicSchema = foundSchema as DynamicNameSchema;
-        const { dynamicName: keyName, dynamicKeyParts } = dynamicSchema;
+        const { dynamicName, dynamicKeyParts } = dynamicSchema;
 
         setSchemaOfDataKey({
-          name: keyName as string,
+          name,
           key: dataKey,
           keyType,
           valueType,
           valueContent,
+          dynamicKeyParts,
+          dynamicName,
         });
 
         decodedValue = erc725js.decodeData([
@@ -239,7 +237,7 @@ const GetData: NextPage = () => {
         setSchemaOfDataKey(foundSchema as ERC725JSONSchema);
         decodedValue = erc725js.decodeData([
           {
-            keyName,
+            keyName: name,
             value: data,
           },
         ]);

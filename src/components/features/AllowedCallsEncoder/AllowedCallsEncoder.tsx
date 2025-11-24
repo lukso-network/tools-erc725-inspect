@@ -7,7 +7,7 @@ const { encodeAllowedCalls } = require('@lukso/lsp-utils');
 import type { CallType } from '@/types/erc725js';
 import { NetworkContext } from '@/contexts/NetworksContext';
 
-import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
+import { encodeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
 import { useGetBlockscoutContractInfos } from '@/hooks/useGetBlockscoutContractInfos';
 
 import ToolInfos from '@/components/layout/ToolInfos';
@@ -90,7 +90,7 @@ const AllowedCallsEncoder: React.FC = () => {
         ? allowedFunctionValue
         : '0x00000000';
 
-    const callTypeBitsAsHex = computeCallTypeBits(allowedCallTypes);
+    const callTypeBitsAsHex = encodeCallTypeBits(allowedCallTypes);
 
     return {
       allowedAddressToEncode,

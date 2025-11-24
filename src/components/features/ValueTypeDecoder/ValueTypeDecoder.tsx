@@ -19,6 +19,7 @@ import TokenTypeBadge from '@/components/ui/TokenTypeBadge';
 import TokenIdFormatBadge from '@/components/ui/TokenIdFormatBadge';
 import VerifiableURIViewer from '@/components/ui/VerifiableURIViewer';
 import PermissionsDecoder from '../PermissionsDecoder';
+import AllowedCallsDecoder from '../AllowedCallsDecoder/AllowedCallsDecoder';
 
 interface Props {
   address: string;
@@ -49,6 +50,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
       if (!network?.rpcUrl) return;
 
       try {
+        console.log('erc725JSONSchema', erc725JSONSchema);
         const erc725 = new ERC725([erc725JSONSchema], address, network.rpcUrl);
 
         let decodeDataParams = {
@@ -66,6 +68,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
         }
 
         const decodedData = erc725.decodeData([decodeDataParams]);
+        console.log('decodedData', decodedData);
         setDecodedDataOneKey(decodedData);
 
         if (erc725JSONSchema.keyType === 'Array') {
@@ -120,10 +123,17 @@ const ValueTypeDecoder: React.FC<Props> = ({
       return <span className="help">No data found for this key.</span>;
     }
 
+    console.log('decodedDataOneKey', decodedDataOneKey);
+
     const { value: decodedValue } = decodedDataOneKey[0];
 
     if (keyName.startsWith('AddressPermissions:Permissions:')) {
       return <PermissionsDecoder bitArrayHexValue={decodedValue} />;
+    }
+
+    if (keyName.startsWith('AddressPermissions:AllowedCalls:')) {
+      console.log('decoding allowed calls');
+      return <AllowedCallsDecoder allowedCalls={decodedValue} />;
     }
 
     if (valueContent === 'VerifiableURI' || valueContent === 'JSONURL') {

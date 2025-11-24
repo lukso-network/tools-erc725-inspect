@@ -1,4 +1,4 @@
-import { ERC725JSONSchema } from '@erc725/erc725.js';
+import type { DynamicNameSchema, ERC725JSONSchema } from '@erc725/erc725.js';
 
 import { SCHEMA_DOCS_LINKS, SchemaName } from '@/constants/schemas';
 
@@ -12,7 +12,7 @@ type DataKeyBoxProps = {
   data: {
     key: string;
     value: string | string[];
-    schema: ERC725JSONSchema;
+    schema: ERC725JSONSchema | DynamicNameSchema;
   };
 };
 
@@ -70,7 +70,8 @@ const DataKeyBox = ({ address, data }: DataKeyBoxProps) => {
             </li>
             {isMappingDataKey && (
               <li>
-                Mapped value: <code>{schema.name.split(':').pop()}</code>{' '}
+                Mapped value:{' '}
+                <code>{(schema as DynamicNameSchema).dynamicKeyParts}</code>{' '}
               </li>
             )}
             <li>
