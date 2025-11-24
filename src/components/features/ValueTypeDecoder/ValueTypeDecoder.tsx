@@ -50,10 +50,9 @@ const ValueTypeDecoder: React.FC<Props> = ({
       if (!network?.rpcUrl) return;
 
       try {
-        console.log('erc725JSONSchema', erc725JSONSchema);
         const erc725 = new ERC725([erc725JSONSchema], address, network.rpcUrl);
 
-        let decodeDataParams = {
+        const decodeDataParams = {
           keyName: erc725JSONSchema.name,
           value: value as string,
         };
@@ -62,13 +61,15 @@ const ValueTypeDecoder: React.FC<Props> = ({
           erc725JSONSchema.keyType === 'Mapping' ||
           erc725JSONSchema.keyType === 'MappingWithGrouping'
         ) {
-          decodeDataParams['dynamicKeyParts'] = (
-            erc725JSONSchema as DynamicNameSchema
-          ).dynamicKeyParts;
+          const { dynamicKeyParts } = erc725JSONSchema as DynamicNameSchema;
+
+          decodeDataParams['dynamicKeyParts'] =
+            typeof dynamicKeyParts === 'string'
+              ? (dynamicKeyParts as string).toLowerCase()
+              : dynamicKeyParts;
         }
 
         const decodedData = erc725.decodeData([decodeDataParams]);
-        console.log('decodedData', decodedData);
         setDecodedDataOneKey(decodedData);
 
         if (erc725JSONSchema.keyType === 'Array') {
@@ -123,8 +124,6 @@ const ValueTypeDecoder: React.FC<Props> = ({
       return <span className="help">No data found for this key.</span>;
     }
 
-    console.log('decodedDataOneKey', decodedDataOneKey);
-
     const { value: decodedValue } = decodedDataOneKey[0];
 
     if (keyName.startsWith('AddressPermissions:Permissions:')) {
@@ -132,8 +131,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
     }
 
     if (keyName.startsWith('AddressPermissions:AllowedCalls:')) {
-      console.log('decoding allowed calls');
-      return <AllowedCallsDecoder allowedCalls={decodedValue} />;
+      return <AllowedCallsDecoder encodedAllowedCalls={decodedValue} />;
     }
 
     if (valueContent === 'VerifiableURI' || valueContent === 'JSONURL') {

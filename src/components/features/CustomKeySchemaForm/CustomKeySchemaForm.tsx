@@ -457,7 +457,7 @@ const CustomKeySchemaForm = ({ address }: CustomKeySchemaFormProps) => {
     setFetchError('');
 
     const customSchema = customSchemaResult.schema;
-    const { key, keyType, valueType, valueContent } = customSchema;
+    const { key, keyType, valueContent } = customSchema;
 
     try {
       const dataToDecode = await getData(address, key, network);
