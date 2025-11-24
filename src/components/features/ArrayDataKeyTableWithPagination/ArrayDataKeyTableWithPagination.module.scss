@@ -1,0 +1,27 @@
+.searchField {
+  position: relative;
+  margin: auto;
+  width: 40vh;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.searchResultsDropdown {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.searchResultItem {
+  cursor: pointer !important;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}

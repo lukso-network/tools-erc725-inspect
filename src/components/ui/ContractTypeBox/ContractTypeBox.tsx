@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import AddressInfos from '@/components/features/AddressInfos';
 import AddressButtons from '../AddressButtons';
+import styles from './ContractTypeBox.module.scss';
 
 type ContractTypeBoxProps = {
   title: string;
@@ -27,7 +28,7 @@ const ContractTypeBox = ({
   showInspectButton = true,
 }: ContractTypeBoxProps) => (
   <>
-    <div className="columns is-multiline dataKeyBox my-3">
+    <div className={`${styles.dataKeyBox} columns is-multiline my-3`}>
       <div className="column is-two-thirds">
         <div className="content">
           <div className="title is-4">
