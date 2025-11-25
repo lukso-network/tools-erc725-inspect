@@ -8,6 +8,8 @@ import { PERMISSION_CATEGORIES } from '@/constants/permissions';
 import PermissionBadge from '@/components/ui/PermissionBadge';
 import PermissionsDescriptionSummary from '../PermissionsDescriptionSummary';
 
+import styles from './PermissionsDecoder.module.scss';
+
 interface Props {
   bitArrayHexValue: string | null;
   showPermissionTable?: boolean;
@@ -50,7 +52,7 @@ const PermissionsDecoder: React.FC<Props> = ({
   return (
     <div className="container mt-5">
       <PermissionsDescriptionSummary permissions={permissions} />
-      <details open={showPermissionTable}>
+      <details open={showPermissionTable} className={styles.permissionsToggle}>
         <summary className="has-background-primary-light p-2 is-clickable has-text-weight-semibold is-size-7">
           {permissionsEnabledCount} permission
           {permissionsEnabledCount > 1 ? 's' : ''} found

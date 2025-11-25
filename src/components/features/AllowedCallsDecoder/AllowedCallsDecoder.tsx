@@ -183,7 +183,7 @@ const AllowedCallsDecoder: React.FC<Props> = ({
 
           return (
             <details
-              className={`box p-0 content ${styles.allowedCallBox}`}
+              className={`box p-0 content ${styles.allowedCallsToggle}`}
               key={index}
             >
               <summary className="has-background-link-light p-2 has-text-weight-semibold is-size-7">
