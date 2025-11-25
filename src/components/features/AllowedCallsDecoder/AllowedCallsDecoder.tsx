@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import { Hex, isAddress } from 'viem';
 import type { CallType } from '@/types/erc725js';
+import { FunctionSelectors } from '@lukso/lsp-smart-contracts';
 
 import CallTypeButton from '@/components/ui/CallTypeButton';
 
-import { decodeCallTypeBits } from '@/utils/encoding';
+import { decodeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
 
 import AddressInfos from '@/components/features/AddressInfos/AddressInfos';
 import styles from './AllowedCallsDecoder.module.scss';
@@ -43,58 +44,98 @@ const normalizeAllowedCalls = (
   });
 };
 
-type AllowedModeBadgeProps = {
+const AllowedModeBadge: React.FC<{
   mode: 'any' | 'custom';
-};
-
-const AllowedModeBadge: React.FC<AllowedModeBadgeProps> = ({ mode }) => (
-  <div className={`${styles.tagGroup}`}>
-    <span className={`tag is-info ${mode === 'any' ? '' : 'is-light'}`}>
-      Any
-    </span>
-    <span className={`tag is-info ${mode === 'custom' ? '' : 'is-light'}`}>
-      Custom
-    </span>
-  </div>
+}> = ({ mode }) => (
+  <span
+    className={`tag is-medium ${
+      mode === 'any' ? 'is-warning' : 'is-info is-light'
+    }`}
+  >
+    {/* Capitalize */}
+    {mode.charAt(0).toUpperCase() + mode.slice(1)}
+  </span>
 );
 
-const AllowedValueEntry: React.FC<{
+const AllowedAddressEntry: React.FC<{
   mode: 'any' | 'custom';
-  entryType: 'address' | 'standard' | 'function';
   value: string;
-  label: string;
-}> = ({ mode, entryType, value, label }) => {
+}> = ({ mode, value }) => {
   if (mode === 'any') {
-    const anyValueHex = entryType === 'address' ? ANY_ADDRESS : ANY_BYTES4;
-
-    return (
-      <code className={`${styles.value} is-family-monospace ml-3`}>
-        {anyValueHex}
-      </code>
-    );
+    return <code className="is-family-monospace ml-3">{ANY_ADDRESS}</code>;
   }
 
-  if (entryType == 'address' && isAddress(value)) {
+  if (mode === 'custom' && isAddress(value)) {
     return (
       <div className="ml-3">
-        <AddressInfos
-          address={value}
-          assetBadgeOptions={{
-            showName: true,
-            showSymbol: true,
-            showBalance: false,
-          }}
-          showAddress={true}
-        />
+        <AddressInfos address={value} showAddress={true} />
       </div>
     );
   }
 
-  return (
-    <code className={`${styles.value} is-family-monospace ml-3`}>
-      {value || label}
-    </code>
-  );
+  return <code className="is-family-monospace ml-3">{value}</code>;
+};
+
+const AllowedStandardEntry: React.FC<{
+  mode: 'any' | 'custom';
+  value: string;
+}> = ({ mode, value }) => {
+  if (mode === 'any') {
+    return <code className="is-family-monospace ml-3">{ANY_BYTES4}</code>;
+  }
+
+  // TODO: create re-usable component (shared with interface ID list table at the top of the inspector page), to display interface IDs
+  // Make it take a props for "position of interface ID" (right or left)
+  return <code className="is-family-monospace ml-3">{value}</code>;
+};
+
+const AllowedFunctionSelectorEntry: React.FC<{
+  mode: 'any' | 'custom';
+  value: string;
+}> = ({ mode, value }) => {
+  const foundFunctionSignature = useMemo(() => {
+    if (!isBytes4Hex(value)) {
+      return null;
+    }
+
+    for (const contractSelectors of Object.values(FunctionSelectors)) {
+      if (!contractSelectors) {
+        continue;
+      }
+
+      const matchedEntry = Object.entries(contractSelectors).find(
+        ([selector]) => selector.toLowerCase() === value.toLowerCase(),
+      );
+
+      if (matchedEntry) {
+        const [, selectorDetails] = matchedEntry;
+        return (selectorDetails as { sig?: string }).sig ?? null;
+      }
+    }
+
+    return null;
+  }, [value]);
+
+  if (mode === 'any') {
+    return <code className="is-family-monospace ml-3">{ANY_BYTES4}</code>;
+  }
+
+  if (mode === 'custom' && isBytes4Hex(value)) {
+    return (
+      <div className="tags has-addons ml-3">
+        <span className="tag is-medium is-primary is-light">
+          <code>{value}</code>
+        </span>
+        {foundFunctionSignature && (
+          <span className="tag is-medium is-primary is-foon">
+            {foundFunctionSignature}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  return <code className="is-family-monospace ml-3">{value}</code>;
 };
 
 type Props = {
@@ -130,16 +171,17 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
             allowedFunction.toLowerCase() === ANY_BYTES4 ? 'any' : 'custom';
 
           return (
-            <div
-              className={`box ${styles.wrapper}`}
-              key={`${callTypeBits}-${index}`}
+            <details
+              className={`box p-0 content ${styles.allowedCallBox}`}
+              key={index}
             >
-              {normalizedAllowedCalls.length > 1 && (
-                <p className="title is-6 mb-3">
+              <summary className="has-background-primary-light p-2 has-text-weight-semibold is-size-7">
+                <p className="title is-6">
                   Restriction #{index + 1} - AllowedCalls[{index}]
                 </p>
-              )}
-              <table className="table is-fullwidth mb-0">
+              </summary>
+
+              <table className="table is-fullwidth mb-0 mt-3">
                 <thead className="has-background-light">
                   <tr>
                     <th>Restriction</th>
@@ -152,7 +194,7 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
                       <strong>Allowed call types</strong>
                     </td>
                     <td>
-                      <div className={`buttons ${styles.callTypes}`}>
+                      <div className="buttons">
                         {CALL_TYPE_ORDER.map((type) => (
                           <CallTypeButton
                             key={type}
@@ -170,11 +212,9 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
                     <td>
                       <div className="is-flex is-align-items-center is-flex-wrap-wrap">
                         <AllowedModeBadge mode={allowedAddressMode} />
-                        <AllowedValueEntry
+                        <AllowedAddressEntry
                           mode={allowedAddressMode}
-                          entryType="address"
                           value={allowedAddress}
-                          label="No address configured"
                         />
                       </div>
                     </td>
@@ -186,11 +226,9 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
                     <td>
                       <div className="is-flex is-align-items-center is-flex-wrap-wrap">
                         <AllowedModeBadge mode={allowedStandardMode} />
-                        <AllowedValueEntry
+                        <AllowedStandardEntry
                           mode={allowedStandardMode}
-                          entryType="standard"
                           value={allowedStandard}
-                          label="No standard configured"
                         />
                       </div>
                     </td>
@@ -202,18 +240,16 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
                     <td>
                       <div className="is-flex is-align-items-center is-flex-wrap-wrap">
                         <AllowedModeBadge mode={allowedFunctionMode} />
-                        <AllowedValueEntry
+                        <AllowedFunctionSelectorEntry
                           mode={allowedFunctionMode}
-                          entryType="function"
                           value={allowedFunction}
-                          label="No function selector configured"
                         />
                       </div>
                     </td>
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </details>
           );
         },
       )}

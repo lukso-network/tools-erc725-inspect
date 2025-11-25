@@ -1,16 +1,9 @@
-.wrapper {
-  margin-bottom: 1.5rem;
-}
+.allowedCallBox {
+  &[open] summary::before {
+    content: '▼' !important;
+  }
 
-.value {
-  word-break: break-all;
-}
-
-.tagGroup {
-  display: inline-flex;
-  gap: 0.5rem;
-}
-
-.callTypes {
-  flex-wrap: wrap;
+  &:not([open]) summary::before {
+    content: '▶' !important;
+  }
 }
