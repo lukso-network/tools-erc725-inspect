@@ -2,7 +2,7 @@
  * @author Hugo Masclet <git@hugom.xyz>
  * @author Felix Hildebrandt <fhildeb>
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { NextRouter, useRouter } from 'next/router';
 import NetworkSwitch from './components/NetworksSwitch';
@@ -128,8 +128,14 @@ const NavBar: React.FC = () => {
 
   const toggleNavbar = () => setIsMobileOpen((prev) => !prev);
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const createLink = (path: string) => {
-    if (typeof window === 'undefined') {
+    if (!mounted || typeof window === 'undefined') {
       return path;
     }
     const urlParams = new URLSearchParams(window.location.search);

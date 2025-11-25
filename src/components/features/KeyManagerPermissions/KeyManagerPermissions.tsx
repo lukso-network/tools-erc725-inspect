@@ -34,14 +34,24 @@ const KeyManagerPermissions: React.FC = () => {
     { key: string; value: string } | string
   >();
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const handleEncodeDataKeyValue = () => {
+    // Clear previous errors
+    setValidationError(null);
+
     if (!AddressPermissionsSchema) {
-      alert('AddressPermissions schema not found');
+      setValidationError('AddressPermissions schema not found');
+      return;
+    }
+
+    if (!controllerAddress) {
+      setValidationError('Please enter a controller address');
       return;
     }
 
     if (!isAddress(controllerAddress.toLowerCase())) {
-      alert('Please enter a valid controller address');
+      setValidationError('Please enter a valid controller address');
       return;
     }
 
@@ -50,7 +60,9 @@ const KeyManagerPermissions: React.FC = () => {
       !isHex(encodedPermissions) ||
       encodedPermissions.length !== 66
     ) {
-      alert('Invalid encoded permissions. Must be a 32 bytes hex string');
+      setValidationError(
+        'Invalid encoded permissions. Must be a 32 bytes hex string',
+      );
       return;
     }
 
@@ -72,23 +84,16 @@ const KeyManagerPermissions: React.FC = () => {
       });
     } catch (error: any) {
       console.error('Error encoding data:', error);
-      setEncodedDataKeyValues(`Error: ${error.message}`);
+      setValidationError(`Error: ${error.message}`);
     }
   };
 
   const handleEncodedPermissionChange = (input: string) => {
-    if (
-      !encodedPermissions ||
-      !isHex(encodedPermissions) ||
-      encodedPermissions.length !== 66
-    ) {
-      alert('Invalid encoded permissions. Must be a 32 bytes hex string');
-      return;
-    }
-
     try {
       setEncodedPermissions(input);
-      setDecodedPermissions(ERC725.decodePermissions(input as `0x${string}`));
+      if (isHex(input) && input.length === 66) {
+        setDecodedPermissions(ERC725.decodePermissions(input as `0x${string}`));
+      }
     } catch (error: any) {
       console.log(error.message);
     }
@@ -169,6 +174,12 @@ const KeyManagerPermissions: React.FC = () => {
           >
             Encode Data Key / Value
           </button>
+
+          {validationError && (
+            <div className="notification is-warning is-light mt-4">
+              {validationError}
+            </div>
+          )}
 
           {encodedDataKeyValues && (
             <div className="mt-4">
