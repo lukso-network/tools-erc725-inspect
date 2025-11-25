@@ -131,7 +131,7 @@ const ValueTypeDecoder: React.FC<Props> = ({
     }
 
     if (keyName.startsWith('AddressPermissions:AllowedCalls:')) {
-      return <AllowedCallsDecoder encodedAllowedCalls={decodedValue} />;
+      return <AllowedCallsDecoder allowedCallsList={decodedValue} />;
     }
 
     if (valueContent === 'VerifiableURI' || valueContent === 'JSONURL') {

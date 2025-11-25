@@ -4,9 +4,15 @@ type Props = {
   callType: CallType;
   isActive: boolean;
   onClick?: () => void;
+  size?: 'small' | 'normal';
 };
 
-const CallTypeButton: React.FC<Props> = ({ callType, isActive, onClick }) => {
+const CallTypeButton: React.FC<Props> = ({
+  callType,
+  isActive,
+  onClick,
+  size = 'normal',
+}) => {
   const btnClass =
     callType === 'DELEGATECALL'
       ? 'is-red'
@@ -16,7 +22,10 @@ const CallTypeButton: React.FC<Props> = ({ callType, isActive, onClick }) => {
   const isOutlined = !isActive ? 'is-outlined' : '';
 
   return (
-    <button className={`button ${btnClass} ${isOutlined}`} onClick={onClick}>
+    <button
+      className={`button is-${size} ${btnClass} ${isOutlined}`}
+      onClick={onClick}
+    >
       {callType}
     </button>
   );

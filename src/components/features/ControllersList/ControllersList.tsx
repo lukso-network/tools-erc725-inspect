@@ -1,39 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
+import type { Hex } from 'viem';
 
 import { getDataBatch } from '@/utils/erc725y';
-import AddressInfos from '@/components/features/AddressInfos';
-import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
 import { NetworkContext } from '@/contexts/NetworksContext';
+
+import AddressInfos from '@/components/features/AddressInfos';
 import PermissionsDecoder from '@/components/features/PermissionsDecoder';
 
-interface PermissionDataKeyDisplayProps {
-  permissionDataKey: string;
-}
+import MappingWithGroupingDataKeyDisplay from '@/components/ui/MappingWithGroupingDataKeyDisplay';
 
-const PermissionDataKeyDisplay: React.FC<PermissionDataKeyDisplayProps> = ({
-  permissionDataKey,
-}) => {
-  // Extract the three parts of the permission data key
-  const addressPermissionsPrefix = permissionDataKey.slice(0, 22); // First 10 bytes: AddressPermissions:Permissions prefix
-  const separator = permissionDataKey.slice(22, 26); // Next 2 bytes: 0000 separator
-  const controllerAddress = permissionDataKey.slice(26); // Last 20 bytes: controller address
-
-  return (
-    <code className="has-text-weight-bold">
-      <span title="AddressPermissions:Permissions prefix (10 bytes)">
-        {addressPermissionsPrefix}
-      </span>
-      <span
-        className="has-text-grey"
-        title="Separator (2 bytes - should be 0000)"
-      >
-        {separator}
-      </span>
-      <span title="Controller address (20 bytes)">{controllerAddress}</span>
-    </code>
-  );
-};
+import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';
+import AllowedCallsDecoder from '../AllowedCallsDecoder/AllowedCallsDecoder';
+import { decodeAllowedCalls } from '@/utils/encoding';
 
 interface Props {
   address: string; // UP address
@@ -51,6 +30,8 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
       arrayIndexDataKey: string;
       permissionDataKey: string | null;
       bitArray: string | null;
+      allowedCallsDataKey: string | null;
+      allowedCallsList: Hex[][] | null;
     };
   }>({});
 
@@ -64,7 +45,9 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
             const currentState = controllersPermissions;
 
             let permissionDataKey: string | null = null;
+            let allowedCallsDataKey: string | null = null;
             let bitArray: string | null = null;
+            let allowedCallsList: Hex[][] | null = null;
 
             if (controller != null) {
               permissionDataKey = encodeKeyName(
@@ -72,9 +55,15 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                 controller,
               );
 
+              allowedCallsDataKey = encodeKeyName(
+                'AddressPermissions:AllowedCalls:<address>',
+                controller,
+              );
+
               // permission values are fetched below all at once via `getDataBatch`
               // for optimisation to avoid multiple RPC calls per controller
               bitArray = null;
+              allowedCallsList = null;
             }
 
             currentState[index] = {
@@ -85,19 +74,33 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
               controller,
               permissionDataKey,
               bitArray,
+              allowedCallsDataKey,
+              allowedCallsList,
             };
 
             setControllersPermissions(currentState);
           });
 
+          // for unknown controllers (null), we cannot encode the data key, so we use address(0) as placeholder
           const permissionsDataKeysToFetch = Object.values(
             controllersPermissions,
           ).map(({ permissionDataKey }) => {
-            // for unknown controllers (null), we cannot encode the data key, so we use address(0) as placeholder
             return (
               permissionDataKey ||
               encodeKeyName(
                 'AddressPermissions:Permissions:<address>',
+                '0x0000000000000000000000000000000000000000',
+              )
+            );
+          });
+
+          const allowedCallsDataKeysToFetch = Object.values(
+            controllersPermissions,
+          ).map(({ allowedCallsDataKey }) => {
+            return (
+              allowedCallsDataKey ||
+              encodeKeyName(
+                'AddressPermissions:AllowedCalls:<address>',
                 '0x0000000000000000000000000000000000000000',
               )
             );
@@ -109,12 +112,27 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
             network,
           );
 
+          const allowedCallsDataValues = await getDataBatch(
+            address,
+            allowedCallsDataKeysToFetch as `0x${string}`[],
+            network,
+          );
+
           Object.values(controllersPermissions).forEach(
             ({ controller }, index) => {
               const currentState = controllersPermissions;
 
               currentState[index].bitArray =
                 controller && permissionsDataValues[index];
+
+              if (controller && allowedCallsDataValues[index] !== '0x') {
+                const [{ value: decodedAllowedCalls }] = decodeAllowedCalls(
+                  allowedCallsDataValues[index],
+                  controller,
+                );
+
+                currentState[index].allowedCallsList = decodedAllowedCalls;
+              }
 
               setControllersPermissions({ ...currentState });
             },
@@ -213,7 +231,14 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
           <tbody>
             {Object.values(controllersPermissions).map(
               (
-                { controller, arrayIndexDataKey, permissionDataKey, bitArray },
+                {
+                  controller,
+                  arrayIndexDataKey,
+                  permissionDataKey,
+                  allowedCallsDataKey,
+                  bitArray,
+                  allowedCallsList,
+                },
                 index,
               ) => (
                 <tr key={index}>
@@ -238,8 +263,30 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                       {controller && permissionDataKey ? (
                         <p>
                           ➡{' '}
-                          <PermissionDataKeyDisplay
-                            permissionDataKey={permissionDataKey}
+                          <MappingWithGroupingDataKeyDisplay
+                            dataKey={permissionDataKey}
+                          />
+                        </p>
+                      ) : (
+                        <p className="notification is-warning is-light">
+                          ⚠️ Cannot encode data key: controller address unknown
+                        </p>
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <p className="has-text-weight-bold">
+                        AddressPermissions:AllowedCalls:
+                        <code className="is-size-7">
+                          {controller ? controller : 'unknown'}
+                        </code>
+                      </p>
+
+                      {controller && allowedCallsDataKey ? (
+                        <p>
+                          ➡{' '}
+                          <MappingWithGroupingDataKeyDisplay
+                            dataKey={allowedCallsDataKey}
+                            colourSecondWord="has-text-link"
                           />
                         </p>
                       ) : (
@@ -249,7 +296,7 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                       )}
                     </div>
                   </td>
-                  <td style={{ width: '50%' }}>
+                  <td style={{ width: '55%' }}>
                     <div className="is-flex mb-0">
                       <span className="mr-2">Controller:</span>
                       <div>
@@ -273,6 +320,24 @@ const ControllersList: React.FC<Props> = ({ address, controllers }) => {
                           bitArrayHexValue={bitArray}
                           showPermissionTable={false}
                         />
+                        {allowedCallsList !== null ? (
+                          <details className="my-2">
+                            <summary className="has-background-link-light p-2 is-clickable has-text-weight-semibold is-size-7">
+                              {allowedCallsList.length} allowed call
+                              {allowedCallsList.length > 1 ? 's' : ''} found
+                            </summary>
+                            <div className="px-2">
+                              <AllowedCallsDecoder
+                                allowedCallsList={allowedCallsList}
+                                size="small"
+                              />
+                            </div>
+                          </details>
+                        ) : (
+                          <p className="notification is-link is-light has-text-weight-semibold is-size-7 my-2 p-2">
+                            No allowed calls configured for this controller
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <p className="notification is-warning is-light">

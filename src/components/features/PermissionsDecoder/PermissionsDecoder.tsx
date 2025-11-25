@@ -13,7 +13,7 @@ interface Props {
   showPermissionTable?: boolean;
 }
 
-const PermissionsEnabledList: React.FC<Props> = ({
+const PermissionsDecoder: React.FC<Props> = ({
   bitArrayHexValue,
   showPermissionTable = true,
 }) => {
@@ -93,4 +93,4 @@ const PermissionsEnabledList: React.FC<Props> = ({
   );
 };
 
-export default PermissionsEnabledList;
+export default PermissionsDecoder;

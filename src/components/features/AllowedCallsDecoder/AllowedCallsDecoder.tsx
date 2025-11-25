@@ -29,8 +29,12 @@ type AllowedCallTuple = {
 
 // This should be an array of arrays of 4 hex values
 const normalizeAllowedCalls = (
-  allowedCallsList: Hex[][],
+  allowedCallsList: Hex[][] | null,
 ): AllowedCallTuple[] => {
+  if (allowedCallsList == null) {
+    return [];
+  }
+
   return allowedCallsList.map((allowedCallEntry: Hex[]) => {
     const [callTypeBits, allowedAddress, allowedStandard, allowedFunction] =
       allowedCallEntry;
@@ -46,9 +50,10 @@ const normalizeAllowedCalls = (
 
 const AllowedModeBadge: React.FC<{
   mode: 'any' | 'custom';
-}> = ({ mode }) => (
+  size?: 'small' | 'normal';
+}> = ({ mode, size = 'normal' }) => (
   <span
-    className={`tag is-medium ${
+    className={`tag is-${size} ${
       mode === 'any' ? 'is-warning' : 'is-info is-light'
     }`}
   >
@@ -139,18 +144,24 @@ const AllowedFunctionSelectorEntry: React.FC<{
 };
 
 type Props = {
-  encodedAllowedCalls: Hex[][];
+  allowedCallsList: Hex[][];
+  size?: 'small' | 'normal';
 };
 
-const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
+const AllowedCallsDecoder: React.FC<Props> = ({
+  allowedCallsList,
+  size = 'normal',
+}) => {
   const normalizedAllowedCalls = useMemo(
-    () => normalizeAllowedCalls(encodedAllowedCalls),
-    [encodedAllowedCalls],
+    () => normalizeAllowedCalls(allowedCallsList),
+    [allowedCallsList],
   );
 
   if (!normalizedAllowedCalls.length) {
     return <span className="help">No allowed calls configured.</span>;
   }
+
+  const titleSize = size === 'small' ? 'is-size-7' : 'is-size-6';
 
   return (
     <div className="mt-3">
@@ -175,22 +186,22 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
               className={`box p-0 content ${styles.allowedCallBox}`}
               key={index}
             >
-              <summary className="has-background-primary-light p-2 has-text-weight-semibold is-size-7">
-                <p className="title is-6">
+              <summary className="has-background-link-light p-2 has-text-weight-semibold is-size-7">
+                <p className={`title ${titleSize}`}>
                   Restriction #{index + 1} - AllowedCalls[{index}]
                 </p>
               </summary>
 
               <table className="table is-fullwidth mb-0 mt-3">
                 <thead className="has-background-light">
-                  <tr>
+                  <tr className={titleSize}>
                     <th>Restriction</th>
                     <th>Options</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>
+                    <td className={titleSize}>
                       <strong>Allowed call types</strong>
                     </td>
                     <td>
@@ -200,18 +211,22 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
                             key={type}
                             callType={type}
                             isActive={Boolean(allowedCallTypes[type])}
+                            size={size}
                           />
                         ))}
                       </div>
                     </td>
                   </tr>
                   <tr>
-                    <td>
+                    <td className={titleSize}>
                       <strong>Allowed Address</strong>
                     </td>
                     <td>
                       <div className="is-flex is-align-items-center is-flex-wrap-wrap">
-                        <AllowedModeBadge mode={allowedAddressMode} />
+                        <AllowedModeBadge
+                          mode={allowedAddressMode}
+                          size={size}
+                        />
                         <AllowedAddressEntry
                           mode={allowedAddressMode}
                           value={allowedAddress}
@@ -220,12 +235,15 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
                     </td>
                   </tr>
                   <tr>
-                    <td>
+                    <td className={titleSize}>
                       <strong>Allowed Standards (interface IDs)</strong>
                     </td>
                     <td>
                       <div className="is-flex is-align-items-center is-flex-wrap-wrap">
-                        <AllowedModeBadge mode={allowedStandardMode} />
+                        <AllowedModeBadge
+                          mode={allowedStandardMode}
+                          size={size}
+                        />
                         <AllowedStandardEntry
                           mode={allowedStandardMode}
                           value={allowedStandard}
@@ -234,12 +252,15 @@ const AllowedCallsDecoder: React.FC<Props> = ({ encodedAllowedCalls }) => {
                     </td>
                   </tr>
                   <tr>
-                    <td>
+                    <td className={titleSize}>
                       <strong>Allowed Function</strong>
                     </td>
                     <td>
                       <div className="is-flex is-align-items-center is-flex-wrap-wrap">
-                        <AllowedModeBadge mode={allowedFunctionMode} />
+                        <AllowedModeBadge
+                          mode={allowedFunctionMode}
+                          size={size}
+                        />
                         <AllowedFunctionSelectorEntry
                           mode={allowedFunctionMode}
                           value={allowedFunction}
