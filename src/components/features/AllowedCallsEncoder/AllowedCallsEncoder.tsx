@@ -7,7 +7,7 @@ const { encodeAllowedCalls } = require('@lukso/lsp-utils');
 import type { CallType } from '@/types/erc725js';
 import { NetworkContext } from '@/contexts/NetworksContext';
 
-import { computeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
+import { encodeCallTypeBits, isBytes4Hex } from '@/utils/encoding';
 import { useGetBlockscoutContractInfos } from '@/hooks/useGetBlockscoutContractInfos';
 
 import ToolInfos from '@/components/layout/ToolInfos';
@@ -38,6 +38,8 @@ const AllowedCallsEncoder: React.FC = () => {
   const [encodedDataKeyValues, setEncodedDataKeyValues] = useState<
     { key: string; value: string } | string
   >();
+
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const [allowedCallTypes, setAllowedCallTypes] = useState<
     Record<CallType, boolean>
@@ -90,7 +92,7 @@ const AllowedCallsEncoder: React.FC = () => {
         ? allowedFunctionValue
         : '0x00000000';
 
-    const callTypeBitsAsHex = computeCallTypeBits(allowedCallTypes);
+    const callTypeBitsAsHex = encodeCallTypeBits(allowedCallTypes);
 
     return {
       allowedAddressToEncode,
@@ -141,13 +143,25 @@ const AllowedCallsEncoder: React.FC = () => {
   }, [allowedValuesToEncode, AllowedCallsSchema]);
 
   const handleEncodeDataKeyValue = () => {
-    if (!controllerAddress || !encodedAllowedCall) {
-      alert('Please enter a controller address and encoded allowed call');
+    // Clear previous errors
+    setValidationError(null);
+
+    if (!controllerAddress) {
+      setValidationError('Please enter a controller address');
+      return;
+    }
+
+    if (!encodedAllowedCall || encodedAllowedCall === '0x') {
+      setValidationError(
+        'Please configure the allowed calls below to generate the encoded value',
+      );
       return;
     }
 
     if (!AllowedCallsSchema) {
-      alert('Internal error: AddressPermissions:AllowedCalls schema not found');
+      setValidationError(
+        'Internal error: AddressPermissions:AllowedCalls schema not found',
+      );
       return;
     }
 
@@ -182,7 +196,7 @@ const AllowedCallsEncoder: React.FC = () => {
         value: result.values[0],
       });
     } catch (error) {
-      alert(`Error encoding allowed calls: ${error}`);
+      setValidationError(`Error encoding allowed calls: ${error}`);
     }
   };
 
@@ -249,6 +263,7 @@ const AllowedCallsEncoder: React.FC = () => {
                 style={{ minHeight: '150px' }}
                 placeholder="select the configuration below to generate the bytes of the encoded allowed call"
                 value={encodedAllowedCall}
+                readOnly
               />
             </div>
           </div>
@@ -262,6 +277,11 @@ const AllowedCallsEncoder: React.FC = () => {
           >
             Encode Data Key / Value
           </button>
+          {validationError && (
+            <div className="notification is-warning is-light mt-4">
+              {validationError}
+            </div>
+          )}
           {encodedDataKeyValues && (
             <div className="mt-4">
               <h6 className="title is-6">Encoded Result:</h6>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { isAddress, hexToString } from 'viem';
 import { encodeArrayKey, ERC725JSONSchema } from '@erc725/erc725.js';
 import { ERC725YDataKeys } from '@lukso/lsp-smart-contracts';

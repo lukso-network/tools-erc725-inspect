@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import { useState, useContext } from 'react';
-import { isAddress, getAddress, type Address } from 'viem';
+import { isAddress, getAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 
 import { ilsp25ExecuteRelayCallAbi } from '@lukso/lsp25-contracts/abi';
@@ -17,9 +17,20 @@ const KeyManagerNonceChecker: React.FC = () => {
   const [callerAddress, setCallerAddress] = useState('');
   const [channelId, setChannelId] = useState('');
   const [shouldFetch, setShouldFetch] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const isValidKeyManager = isAddress(keyManagerAddress);
   const isValidCaller = isAddress(callerAddress);
+
+  // Safely convert channelId to BigInt, defaulting to 0 for invalid inputs
+  const getChannelIdAsBigInt = (): bigint => {
+    if (!channelId) return BigInt(0);
+    try {
+      return BigInt(channelId);
+    } catch {
+      return BigInt(0);
+    }
+  };
 
   const {
     data: nonce,
@@ -32,7 +43,7 @@ const KeyManagerNonceChecker: React.FC = () => {
     functionName: 'getNonce',
     args: [
       isValidCaller ? getAddress(callerAddress) : '0x0',
-      BigInt(channelId),
+      getChannelIdAsBigInt(),
     ],
     chainId,
     query: {
@@ -41,15 +52,34 @@ const KeyManagerNonceChecker: React.FC = () => {
   });
 
   const getNonceFromKeyManager = async () => {
-    if (!isValidKeyManager || !isValidCaller) {
+    // Clear previous errors
+    setValidationError(null);
+    setShouldFetch(false);
+
+    // Validate inputs
+    if (!keyManagerAddress) {
+      setValidationError('Please enter a Key Manager address');
       return;
     }
+    if (!isValidKeyManager) {
+      setValidationError('Invalid Key Manager address format');
+      return;
+    }
+    if (!callerAddress) {
+      setValidationError('Please enter a Controller address');
+      return;
+    }
+    if (!isValidCaller) {
+      setValidationError('Invalid Controller address format');
+      return;
+    }
+
     setShouldFetch(true);
     await refetch();
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5" style={{ paddingBottom: '5rem' }}>
       <h2 className="title is-2">Nonce</h2>
       <article className="message is-info">
         <div className="message-body">
@@ -161,6 +191,11 @@ const KeyManagerNonceChecker: React.FC = () => {
           </button>
         </div>
       </div>
+      {validationError && (
+        <div className="notification is-warning is-light">
+          {validationError}
+        </div>
+      )}
       <div
         className="notification is-danger is-light"
         style={{ display: isError && shouldFetch ? 'block' : 'none' }}

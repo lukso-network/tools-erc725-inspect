@@ -3,7 +3,7 @@ import { CallType } from '@/types/erc725js';
 type Props = {
   callType: CallType;
   isActive: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 const CallTypeButton: React.FC<Props> = ({ callType, isActive, onClick }) => {

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import ERC725, { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
-import type { Hex } from 'viem';
+import { encodeArrayKey, encodeKeyName } from '@erc725/erc725.js';
 
 import { getDataBatch } from '@/utils/erc725y';
 import AddressInfos from '@/components/features/AddressInfos';

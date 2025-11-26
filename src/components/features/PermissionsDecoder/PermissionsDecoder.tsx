@@ -10,7 +10,7 @@ import PermissionsDescriptionSummary from '../PermissionsDescriptionSummary';
 
 interface Props {
   bitArrayHexValue: string | null;
-  showPermissionTable: boolean;
+  showPermissionTable?: boolean;
 }
 
 const PermissionsEnabledList: React.FC<Props> = ({

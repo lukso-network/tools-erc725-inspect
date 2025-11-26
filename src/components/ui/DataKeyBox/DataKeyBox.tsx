@@ -1,4 +1,4 @@
-import { ERC725JSONSchema } from '@erc725/erc725.js';
+import type { DynamicNameSchema, ERC725JSONSchema } from '@erc725/erc725.js';
 
 import { SCHEMA_DOCS_LINKS, SchemaName } from '@/constants/schemas';
 
@@ -12,17 +12,17 @@ type DataKeyBoxProps = {
   data: {
     key: string;
     value: string | string[];
-    schema: ERC725JSONSchema;
+    schema: ERC725JSONSchema | DynamicNameSchema;
   };
 };
 
 const DataKeyBox = ({ address, data }: DataKeyBoxProps) => {
-  const {
-    value,
-    schema: { keyType, valueContent },
-  } = data;
+  const { value, schema } = data;
+  const { key, keyType, valueType, valueContent } = schema;
 
   const columnClass = keyType === 'Array' ? 'is-full' : 'is-two-thirds';
+  const isMappingDataKey =
+    keyType === 'Mapping' || keyType === 'MappingWithGrouping';
 
   return (
     <details
@@ -32,60 +32,58 @@ const DataKeyBox = ({ address, data }: DataKeyBoxProps) => {
     >
       <summary className="has-text-weight-semibold is-clickable">
         <div className="title is-4">
-          {data.schema.name in SchemaName ? (
+          {schema.name in SchemaName ? (
             <a
-              href={SCHEMA_DOCS_LINKS[data.schema.name]}
+              href={SCHEMA_DOCS_LINKS[schema.name]}
               target="_blank"
               rel="noopener noreferrer"
               className="home-link"
             >
-              {data.schema.name} ↗️
+              {schema.name} ↗️
             </a>
           ) : (
-            data.schema.name
+            schema.name
           )}
 
-          <span className="tag is-small mx-2 is-info">
-            {data.schema.keyType}
-          </span>
+          <span className="tag is-small mx-2 is-info">{keyType}</span>
         </div>
       </summary>
       <div className="columns is-multiline">
         <div className={`column ${columnClass}`}>
-          <CollapsibleSchema schema={data.schema} />
+          <CollapsibleSchema schema={schema} />
           <ul>
             <li>
-              <strong>Key:</strong> <code>{data.schema.key}</code>
+              <strong>Key:</strong> <code>{key}</code>
             </li>
             <li>
               <strong>Raw value: </strong>
               <span className="tag is-small mx-2 is-link is-light">
-                {data.schema.valueType}
+                {valueType}
               </span>
-              <code>{data.value}</code>
+              <code>{value}</code>
             </li>
             <li>
               <strong>Value Content: </strong>
               <span className="tag is-small is-link is-light">
-                {data.schema.valueContent}
+                {valueContent}
               </span>
             </li>
+            {isMappingDataKey && (
+              <li>
+                Mapped value:{' '}
+                <code>{(schema as DynamicNameSchema).dynamicKeyParts}</code>{' '}
+              </li>
+            )}
             <li>
               <strong>Decoded value: </strong>
               <span className="my-3 mr-3">
                 <ValueTypeDecoder
                   address={address}
-                  erc725JSONSchema={data.schema}
+                  erc725JSONSchema={schema}
                   value={data.value}
                 />
               </span>
             </li>
-            {data.schema.keyType === 'MappingWithGrouping' && (
-              <li>
-                Mapped address:{' '}
-                <code>0x{data.schema.name.split(':').pop()}</code>{' '}
-              </li>
-            )}
           </ul>
         </div>
         <div className="column">

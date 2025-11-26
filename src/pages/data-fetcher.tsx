@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react';
 import Head from 'next/head';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { isAddress } from 'viem';
+import { isAddress, isHex, size } from 'viem';
 import ERC725, {
   DynamicNameSchema,
   ERC725JSONSchema,
@@ -36,23 +36,34 @@ import { getAllSupportedInterfaces } from '@/utils/interface-detection';
 // constants
 import { LSP6DataKeys } from '@lukso/lsp6-contracts';
 import { LSP_SPECS_URL, LUKSO_IPFS_BASE_URL } from '@/constants/links';
-
-// using local variable for LSP28TheGrid key for now
-const LSP28_THE_GRID_DATA_KEY =
-  '0x724141d9918ce69e6b8afcf53a91748466086ba2c74b94cab43c649ae2ac23ff';
+import { LSP28TheGridJsonSchema } from '@/constants/schemas';
+import AddressInfos from '@/components/features/AddressInfos';
 
 const dataKeyList = [
   ...LSP1Schemas.map(({ name, key }) => ({ name, key, icon: '📢' })),
-  ...LSP3Schemas.map(({ name, key }) => ({ name, key, icon: '👤' })),
+  // LSP3 schema contains data keys for LSP1, LSP5, LSP12 and LSP17. Do not show these twice
+  ...LSP3Schemas.filter(
+    ({ name }) =>
+      name === 'SupportedStandards:LSP3Profile' || name == 'LSP3Profile',
+  ).map(({ name, key }) => ({ name, key, icon: '👤' })),
   ...LSP4Schemas.map(({ name, key }) => ({ name, key, icon: '🔵' })),
   ...LSP5Schemas.map(({ name, key }) => ({ name, key, icon: '💰' })),
   ...LSP6Schemas.map(({ name, key }) => ({ name, key, icon: '🔑' })),
   ...LSP8Schemas.map(({ name, key }) => ({ name, key, icon: '🖼️' })),
-  ...LSP9Schemas.map(({ name, key }) => ({ name, key, icon: '🔒' })),
+  // LSP9 schema contains also data keys related to LSP1 and LSP17. Do not show these
+  {
+    name: LSP9Schemas[0].name,
+    key: LSP9Schemas[0].key,
+    icon: '🔒',
+  },
   ...LSP10Schemas.map(({ name, key }) => ({ name, key, icon: '🔒' })),
   ...LSP12Schemas.map(({ name, key }) => ({ name, key, icon: '🖼️' })),
   ...LSP17Schemas.map(({ name, key }) => ({ name, key, icon: '💎' })),
-  { name: 'LSP28TheGrid', key: LSP28_THE_GRID_DATA_KEY, icon: '🌐' },
+  {
+    name: LSP28TheGridJsonSchema.name,
+    key: LSP28TheGridJsonSchema.key,
+    icon: '🌐',
+  },
 ];
 
 const GetData: NextPage = () => {
@@ -62,11 +73,11 @@ const GetData: NextPage = () => {
   const [dataKey, setDataKey] = useState(dataKeyList[0].key);
   const [dataKeyError, setDataKeyError] = useState('');
 
-  const [data, setData] = useState('');
+  const [fetchedData, setFetchedData] = useState('');
   const [decodedData, setDecodedData] = useState('');
 
   const [schemaOfDataKey, setSchemaOfDataKey] = useState<
-    ERC725JSONSchema | undefined
+    ERC725JSONSchema | DynamicNameSchema | undefined
   >(undefined);
 
   const [interfaces, setInterfaces] = useState({
@@ -90,13 +101,7 @@ const GetData: NextPage = () => {
     ...LSP10Schemas,
     ...LSP12Schemas,
     ...LSP17Schemas,
-    {
-      name: 'LSP28TheGrid',
-      key: LSP28_THE_GRID_DATA_KEY,
-      keyType: 'Singleton',
-      valueType: 'bytes',
-      valueContent: 'VerifiableURI',
-    },
+    LSP28TheGridJsonSchema,
   ];
 
   useEffect(() => {
@@ -119,13 +124,18 @@ const GetData: NextPage = () => {
   };
 
   const onContractAddressChange = async (address: string) => {
-    setAddress(address);
-    setData('');
+    if (!network) return;
 
+    setAddress(address);
+    setFetchedData('');
     updateURLParams(address, dataKey);
 
-    if (!isAddress(address) && address.length !== 0) {
-      setAddressError('The address is not valid');
+    if (!address.startsWith('0x') && address.length !== 0) {
+      setAddress(`0x${address}`);
+    }
+
+    if (!isAddress(address)) {
+      setAddressError('Please enter a valid address');
       setInterfaces({
         isErc725X: false,
         isErc725Y: false,
@@ -133,13 +143,7 @@ const GetData: NextPage = () => {
       return;
     }
 
-    if (address.slice(0, 2) !== '0x' && address.length !== 0) {
-      setAddress(`0x${address}`);
-    }
-
     setAddressError('');
-
-    if (!network) return;
 
     const result = await getAllSupportedInterfaces(address, network);
     setInterfaces(result);
@@ -147,20 +151,28 @@ const GetData: NextPage = () => {
 
   const onDataKeyChange = (dataKey: string) => {
     setDataKey(dataKey);
-    setData('');
-
+    setFetchedData('');
     updateURLParams(address, dataKey);
 
-    if (
-      (dataKey.length !== 64 && dataKey.length !== 66) ||
-      (dataKey.length === 66 && dataKey.slice(0, 2) !== '0x')
-    ) {
-      setDataKeyError('The data key is not valid');
+    if (dataKey.length === 0) {
+      setDataKeyError('');
       return;
     }
 
-    if (dataKey.slice(0, 2) !== '0x') {
+    if (!isHex(dataKey)) {
+      setDataKeyError('Invalid data key. Please enter a valid hex string');
+      return;
+    }
+
+    if (!dataKey.startsWith('0x')) {
       setDataKey(`0x${dataKey}`);
+    }
+
+    if (size(dataKey) !== 32) {
+      setDataKeyError(
+        'Invalid data key. Please enter a 32 bytes long data key',
+      );
+      return;
     }
 
     setDataKeyError('');
@@ -171,32 +183,20 @@ const GetData: NextPage = () => {
 
     if (!interfaces.isErc725Y) {
       console.log('Contract not compatible with ERC725');
-
       return;
     }
 
     const data = await getData(address, dataKey, network);
 
     if (!data) {
-      setData('0x');
+      setFetchedData('0x');
       setDecodedData('no data to decode 🤷');
     } else {
-      setData(data);
-
-      let keyName, keyType, valueType, valueContent;
+      setFetchedData(data);
 
       // Handle LSP28TheGrid data key differently since we don't have a schema from the library
-      if (dataKey === LSP28_THE_GRID_DATA_KEY) {
-        keyName = 'LSP28TheGrid';
-        valueType = 'bytes';
-        valueContent = 'VerifiableURI';
-        setSchemaOfDataKey({
-          name: keyName,
-          key: dataKey,
-          keyType: 'Singleton',
-          valueType,
-          valueContent,
-        });
+      if (dataKey === LSP28TheGridJsonSchema.key) {
+        setSchemaOfDataKey(LSP28TheGridJsonSchema);
         return;
       }
 
@@ -208,31 +208,27 @@ const GetData: NextPage = () => {
         return;
       }
 
-      console.log('foundSchema', foundSchema);
-
-      ({ name: keyName, valueType, valueContent } = foundSchema);
+      const { name, keyType, valueType, valueContent } =
+        foundSchema as ERC725JSONSchema;
 
       let decodedValue;
 
-      if (isDynamicKeyName(keyName)) {
+      if (isDynamicKeyName(name)) {
         // for dynamic key names, we need to use the:
         // - `dynamicName` property of the schema as name
         // - and the `dynamicKeyParts` property for decoding
         const dynamicSchema = foundSchema as DynamicNameSchema;
-
-        console.log('dynamicSchema', dynamicSchema);
-
-        const { dynamicName: keyName, dynamicKeyParts } = dynamicSchema;
+        const { dynamicName, dynamicKeyParts } = dynamicSchema;
 
         setSchemaOfDataKey({
-          name: keyName as string,
+          name,
           key: dataKey,
           keyType,
           valueType,
           valueContent,
+          dynamicKeyParts,
+          dynamicName,
         });
-
-        console.log('dynamicKeyParts', dynamicKeyParts);
 
         decodedValue = erc725js.decodeData([
           {
@@ -245,7 +241,7 @@ const GetData: NextPage = () => {
         setSchemaOfDataKey(foundSchema as ERC725JSONSchema);
         decodedValue = erc725js.decodeData([
           {
-            keyName,
+            keyName: name,
             value: data,
           },
         ]);
@@ -314,11 +310,17 @@ const GetData: NextPage = () => {
               {addressError !== '' && (
                 <p className="help is-danger">{addressError}</p>
               )}
+              {interfaces.isErc725Y === false && (
+                <p className="help is-danger">Contract not ERC725 compatible</p>
+              )}
               {(interfaces.isErc725X || interfaces.isErc725Y) && (
-                <p className="help is-success mt-3">
-                  ERC725X: {interfaces.isErc725X ? '✅' : '❌'} - ERC725Y{' '}
-                  {interfaces.isErc725Y ? '✅' : '❌'}
-                </p>
+                <>
+                  <p className="help is-success my-3">
+                    ERC725X: {interfaces.isErc725X ? '✅' : '❌'} - ERC725Y{' '}
+                    {interfaces.isErc725Y ? '✅' : '❌'}
+                  </p>
+                  <AddressInfos address={address} showAddress={false} />
+                </>
               )}
             </div>
 
@@ -373,12 +375,16 @@ const GetData: NextPage = () => {
         </div>
         <hr />
 
-        {data && (
+        {fetchedData && (
           <div className="is-full-width">
             {schemaOfDataKey ? (
               <DataKeyBox
                 address={address}
-                data={{ key: dataKey, value: data, schema: schemaOfDataKey }}
+                data={{
+                  key: dataKey,
+                  value: fetchedData,
+                  schema: schemaOfDataKey,
+                }}
               />
             ) : (
               <>
@@ -387,7 +393,7 @@ const GetData: NextPage = () => {
                   <pre
                     style={{ wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
                   >
-                    {data}
+                    {fetchedData}
                   </pre>
                 </div>
 
@@ -400,7 +406,9 @@ const GetData: NextPage = () => {
                       LSP6DataKeys['AddressPermissions:Permissions'],
                     )
                       ? JSON.stringify(
-                          ERC725.decodePermissions(data as `0x${string}`),
+                          ERC725.decodePermissions(
+                            fetchedData as `0x${string}`,
+                          ),
                           undefined,
                           2,
                         )

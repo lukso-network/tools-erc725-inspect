@@ -1,0 +1,9 @@
+.allowedCallBox {
+  &[open] summary::before {
+    content: '▼' !important;
+  }
+
+  &:not([open]) summary::before {
+    content: '▶' !important;
+  }
+}

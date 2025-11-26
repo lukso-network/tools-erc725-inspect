@@ -4,7 +4,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useBytecode } from 'wagmi';
-import { type Address, getAddress, isAddress } from 'viem';
+import { getAddress, isAddress } from 'viem';
 
 import {
   LUKSO_LSP1_DELEGATE,

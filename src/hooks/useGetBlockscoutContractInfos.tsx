@@ -36,12 +36,14 @@ export function useGetBlockscoutContractInfos(
   const [abi, setAbi] = useState([]);
 
   const queryBlockscoutData = async (address: Address) => {
+    const apiEndpoint = network.explorerBaseUrl
+      ? network.explorerBaseUrl.endsWith('/')
+        ? `${network.explorerBaseUrl}api/v1/graphql`
+        : `${network.explorerBaseUrl}/api/v1/graphql`
+      : 'https://explorer.execution.mainnet.lukso.network/api/v1/graphql';
+
     const { address: blockscoutData } = await request(
-      network.explorerBaseUrl
-        ? network.explorerBaseUrl.endsWith('/')
-          ? `${network.explorerBaseUrl}api/v1/graphql`
-          : `${network.explorerBaseUrl}/api/v1/graphql`
-        : 'https://explorer.execution.mainnet.lukso.network/api/v1/graphql',
+      apiEndpoint,
       AddressDocument,
       {
         address,
