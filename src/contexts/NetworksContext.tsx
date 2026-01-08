@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { INetwork } from '@/types/network';
 import { CHAINS } from '@/constants/networks';
@@ -17,6 +17,7 @@ export const NetworkContext = createContext<INetworksContext>({
 
 const NetworksProvider = ({ children }) => {
   const router = useRouter();
+  const hasInitialized = useRef(false);
 
   // Initialize state based on network
   const [network, setNetwork] = useState<INetwork>(DEFAULT_NETWORK);
@@ -55,24 +56,31 @@ const NetworksProvider = ({ children }) => {
     (networkName) => {
       if (typeof window !== 'undefined') {
         const queryParams = new URLSearchParams(window.location.search);
-        queryParams.set('network', networkName);
-        const updatedUrl = `${router.pathname}?${queryParams.toString()}`;
-        router.replace(updatedUrl, undefined, { shallow: true });
+        const currentNetworkParam = queryParams.get('network');
+
+        // Only update if the network parameter is actually different
+        if (currentNetworkParam?.toLowerCase() !== networkName.toLowerCase()) {
+          queryParams.set('network', networkName);
+          const updatedUrl = `${router.pathname}?${queryParams.toString()}`;
+          router.replace(updatedUrl, undefined, { shallow: true });
+        }
       }
     },
     [router],
   );
 
+  // Initialize network from URL or localStorage on mount
   useEffect(() => {
     if (!router.isReady) return;
 
+    // Only initialize once
+    if (hasInitialized.current) return;
+
     const networkFromUrl = getNetworkFromUrlOrDefault();
-    if (networkFromUrl.name !== network.name) {
-      setNetwork(networkFromUrl);
-    }
+    setNetwork(networkFromUrl);
+    hasInitialized.current = true;
 
     const networkParam = router.query.network;
-
     if (networkParam === undefined) {
       // Update the URL with the network parameter if missing
       updateUrlWithNetwork(networkFromUrl.name.toLowerCase());
@@ -80,9 +88,23 @@ const NetworksProvider = ({ children }) => {
   }, [
     router.isReady,
     router.query.network,
-    network.name,
     getNetworkFromUrlOrDefault,
     updateUrlWithNetwork,
+  ]);
+
+  // Sync network when URL changes (but not during initial load)
+  useEffect(() => {
+    if (!router.isReady || !hasInitialized.current) return;
+
+    const networkFromUrl = getNetworkFromUrlOrDefault();
+    if (networkFromUrl.name !== network.name) {
+      setNetwork(networkFromUrl);
+    }
+  }, [
+    router.isReady,
+    router.query.network,
+    network.name,
+    getNetworkFromUrlOrDefault,
   ]);
 
   useEffect(() => {
