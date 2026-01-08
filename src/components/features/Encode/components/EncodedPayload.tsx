@@ -16,14 +16,25 @@ const EncodedPayload: React.FC<Props> = ({ encodedPayload }) => {
     setIsTextCopied(false);
   }, [encodedPayload]);
 
-  const tooltipText = isTextCopied ? 'Copied!' : 'Copy to Clipboard';
+  const copyText = isTextCopied ? 'Copied!' : 'Copy to Clipboard';
 
   return (
     <div className="container">
-      <div className="notification">{tooltipText}</div>
-      <button className="button is-light" onClick={handleClick} type="button">
-        <p className={`is-family-code ${styles.codeBox}`}>{encodedPayload}</p>
-      </button>
+      <div className="is-flex is-align-items-center">
+        <p className="my-2 has-text-weight-bold">Encoded Payload:</p>
+        <button
+          className="button is-small is-info ml-2"
+          onClick={handleClick}
+          type="button"
+        >
+          {copyText}
+        </button>
+      </div>
+      <div>
+        <pre className={`is-family-code ${styles.codeBox}`}>
+          {encodedPayload}
+        </pre>
+      </div>
     </div>
   );
 };
