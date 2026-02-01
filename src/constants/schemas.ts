@@ -29,20 +29,21 @@ export enum SchemaName {
 
 export const SCHEMA_DOCS_LINKS: Record<SchemaName, string> = {
   LSP1UniversalReceiverDelegate:
-    'https://docs.lukso.tech/standards/generic-standards/lsp1-universal-receiver',
+    'https://docs.lukso.tech/standards/accounts/lsp1-universal-receiver-delegate/',
   'SupportedStandards:LSP3Profile':
-    'https://docs.lukso.tech/standards/standard-detection',
+    'https://docs.lukso.tech/standards/metadata/lsp3-profile-metadata/#supportedstandardslsp3profile',
   LSP3Profile:
-    'https://docs.lukso.tech/standards/universal-profile/lsp3-profile-metadata',
+    'https://docs.lukso.tech/standards/metadata/lsp3-profile-metadata/#lsp3profile',
   'LSP5ReceivedAssets[]':
-    'https://docs.lukso.tech/standards/universal-profile/lsp5-received-assets',
+    'https://docs.lukso.tech/standards/metadata/lsp5-received-assets/',
   'AddressPermissions[]':
-    'https://docs.lukso.tech/standards/access-control/lsp6-key-manager',
+    'https://docs.lukso.tech/standards/access-control/lsp6-key-manager/#retrieving-list-of-controllers',
   'LSP10Vaults[]':
-    'https://docs.lukso.tech/standards/universal-profile/lsp10-received-vaults',
+    'https://docs.lukso.tech/standards/metadata/lsp10-received-vaults/#lsp10vaults',
   'LSP12IssuedAssets[]':
-    'https://docs.lukso.tech/standards/universal-profile/lsp12-issued-assets',
-  LSP28TheGrid: 'https://docs.lukso.tech/standards/standard-detection', // TODO: update with correct link
+    'https://docs.lukso.tech/standards/metadata/lsp12-issued-assets/#lsp12issuedassets',
+  LSP28TheGrid:
+    'https://github.com/lukso-network/LIPs/blob/main/LSPs/LSP-28-TheGrid.md#lsp28thegrid',
 };
 
 // prettier-ignore
