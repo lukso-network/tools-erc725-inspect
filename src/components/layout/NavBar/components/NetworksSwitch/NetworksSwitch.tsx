@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { NetworkContext } from '@/contexts/NetworksContext';
-import { INetwork } from '@/types/network';
+import type { INetwork } from '@/types/network';
 import { CHAINS } from '@/constants/networks';
 import clsx from 'clsx';
 
 const NetworkSwitch: React.FC = () => {
   const router = useRouter();
-  const { network, setNetwork } = useContext(NetworkContext);
+  const { network } = useContext(NetworkContext);
   const [isDropdownActive, setIsDropdownActive] = useState(false);
 
   const toggleDropdown = () => {
@@ -15,10 +15,10 @@ const NetworkSwitch: React.FC = () => {
   };
 
   const handleNetworkChange = (chain: INetwork) => {
-    setNetwork(chain);
     setIsDropdownActive(false);
 
-    // Build the new URL with existing parameters
+    // Only update the URL - the context will handle syncing the state
+    // This prevents race conditions between direct state updates and URL-based syncing
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set('network', chain.name.toLowerCase());
     const updatedUrl = `${router.pathname}?${urlParams.toString()}`;

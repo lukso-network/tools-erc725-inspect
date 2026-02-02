@@ -22,33 +22,21 @@ const NetworksProvider = ({ children }) => {
   // Initialize state based on network
   const [network, setNetwork] = useState<INetwork>(DEFAULT_NETWORK);
 
-  const getNetworkFromLocalStorage = (): INetwork => {
-    if (typeof window !== 'undefined') {
-      const storedNetworkName = localStorage.getItem('erc725InspectNetwork');
-      if (storedNetworkName) {
-        return (
-          CHAINS.find(
-            (network) =>
-              network.name.toLowerCase() === storedNetworkName.toLowerCase(),
-          ) || DEFAULT_NETWORK
-        );
-      }
-    }
-    // Return default if nothing is in local storage
-    return DEFAULT_NETWORK;
-  };
+  // Use a ref to track current network for comparison without triggering effect re-runs
+  const networkRef = useRef(network);
+  networkRef.current = network;
 
   // Get network from URL or switch to default chain
   const getNetworkFromUrlOrDefault = useCallback(() => {
     const networkParam = router.query.network;
     if (typeof networkParam !== 'string') {
-      // Fallback to local storage or default network
-      return getNetworkFromLocalStorage();
+      // Fallback to default network
+      return DEFAULT_NETWORK;
     }
     return (
       CHAINS.find(
         (network) => network.name.toLowerCase() === networkParam?.toLowerCase(),
-      ) || getNetworkFromLocalStorage()
+      ) || DEFAULT_NETWORK
     );
   }, [router.query.network]);
 
@@ -93,19 +81,16 @@ const NetworksProvider = ({ children }) => {
   ]);
 
   // Sync network when URL changes (but not during initial load)
+  // Using networkRef instead of network.name in dependencies to prevent race conditions
+  // This effect should only run when the URL actually changes, not when state changes
   useEffect(() => {
     if (!router.isReady || !hasInitialized.current) return;
 
     const networkFromUrl = getNetworkFromUrlOrDefault();
-    if (networkFromUrl.name !== network.name) {
+    if (networkFromUrl.name !== networkRef.current.name) {
       setNetwork(networkFromUrl);
     }
-  }, [
-    router.isReady,
-    router.query.network,
-    network.name,
-    getNetworkFromUrlOrDefault,
-  ]);
+  }, [router.isReady, router.query.network, getNetworkFromUrlOrDefault]);
 
   useEffect(() => {
     // Save to local storage whenever the network changes
