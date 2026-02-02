@@ -22,33 +22,17 @@ const NetworksProvider = ({ children }) => {
   // Initialize state based on network
   const [network, setNetwork] = useState<INetwork>(DEFAULT_NETWORK);
 
-  const getNetworkFromLocalStorage = (): INetwork => {
-    if (typeof window !== 'undefined') {
-      const storedNetworkName = localStorage.getItem('erc725InspectNetwork');
-      if (storedNetworkName) {
-        return (
-          CHAINS.find(
-            (network) =>
-              network.name.toLowerCase() === storedNetworkName.toLowerCase(),
-          ) || DEFAULT_NETWORK
-        );
-      }
-    }
-    // Return default if nothing is in local storage
-    return DEFAULT_NETWORK;
-  };
-
   // Get network from URL or switch to default chain
   const getNetworkFromUrlOrDefault = useCallback(() => {
     const networkParam = router.query.network;
     if (typeof networkParam !== 'string') {
-      // Fallback to local storage or default network
-      return getNetworkFromLocalStorage();
+      // Fallback to default network
+      return DEFAULT_NETWORK;
     }
     return (
       CHAINS.find(
         (network) => network.name.toLowerCase() === networkParam?.toLowerCase(),
-      ) || getNetworkFromLocalStorage()
+      ) || DEFAULT_NETWORK
     );
   }, [router.query.network]);
 
